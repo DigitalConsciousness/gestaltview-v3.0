@@ -1,83 +1,85 @@
 {
-  "generatedAt": "2026-07-25T06:27:50.585Z",
-  "sourceRoot": "/workspaces/gestaltview-v3.0",
-  "generatedManifestRefreshed": true,
+  "generatedAt": "2026-07-25T06:35:39.212Z",
+  "contextContract": "gestaltview.di-context.v1",
+  "sourceRoot": ".",
+  "payloadRoot": "perplexity",
+  "generatedManifestRefreshed": false,
   "files": [
     {
       "source": "docs/CurrentState.md",
-      "target": ".perplexity/CurrentState.md",
-      "sha256": "1872f6e7c3afedd2de0078dbd64daa006d93aef0b280f141576d0feed3e9227d",
+      "target": "CurrentState.md",
+      "sha256": "be13f40794f9e8384225a8136ca3737ff4d5e52739937db643780b20ca1ed38a",
       "inSync": true
     },
     {
       "source": "docs/CurrentState.md",
-      "target": ".perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/07_CURRENT_STATE_AND_EVIDENCE/CurrentState.md",
-      "sha256": "1872f6e7c3afedd2de0078dbd64daa006d93aef0b280f141576d0feed3e9227d",
+      "target": "perplexity/GestaltView-Collaboration-Onboarding-Packet/07_CURRENT_STATE_AND_EVIDENCE/CurrentState.md",
+      "sha256": "be13f40794f9e8384225a8136ca3737ff4d5e52739937db643780b20ca1ed38a",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.json",
-      "target": ".perplexity/REPO_MANIFEST.json",
-      "sha256": "f2cf50d8e7ef995f7be788aa3cec7edf746c4e2546a76042d5cfd17d27396b2e",
+      "target": "REPO_MANIFEST.json",
+      "sha256": "0c0e554561530a1402417815da595df092505dabfe97ba2dacaba8064f2c7b0a",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.md",
-      "target": ".perplexity/REPO_MANIFEST.md",
-      "sha256": "632cea7bdb9c9746c39aa91519ecfba24922517979348b0df3dd2818c68e9a70",
+      "target": "REPO_MANIFEST.md",
+      "sha256": "36669b006cf24265dea0cd5061035b9cbabb652487b8ad3be886422b04642d2d",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.json",
-      "target": ".perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.json",
-      "sha256": "f2cf50d8e7ef995f7be788aa3cec7edf746c4e2546a76042d5cfd17d27396b2e",
+      "target": "perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.json",
+      "sha256": "0c0e554561530a1402417815da595df092505dabfe97ba2dacaba8064f2c7b0a",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.md",
-      "target": ".perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.md",
-      "sha256": "632cea7bdb9c9746c39aa91519ecfba24922517979348b0df3dd2818c68e9a70",
+      "target": "perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.md",
+      "sha256": "36669b006cf24265dea0cd5061035b9cbabb652487b8ad3be886422b04642d2d",
       "inSync": true
     },
     {
       "source": "docs/ContinuityStack.md",
-      "target": ".perplexity/ContinuityStack.md",
+      "target": "ContinuityStack.md",
       "sha256": "c569468f3569e919eb69215b934e9e9697fa3ae898280db21c96600567f6e58e",
       "inSync": true
     },
     {
       "source": "docs/SessionHandoffPacket.md",
-      "target": ".perplexity/SessionHandoffPacket.md",
+      "target": "SessionHandoffPacket.md",
       "sha256": "2f3d81166bb6379336c9c6a4d8823d96471c78ab80c2fc405815de80f3d73a15",
       "inSync": true
     },
     {
       "source": "docs/Workflows.md",
-      "target": ".perplexity/Workflows.md",
-      "sha256": "26fc6b3bea3acfe0f3d3a81b8067f4d623db641dfc0d64d216e8f6f478891321",
+      "target": "Workflows.md",
+      "sha256": "d001b581b1cf8c232d174d37b11ffc3781dbf4aea2f0231c0f3181916aad97ab",
       "inSync": true
     },
     {
       "source": "docs/README-manifest.md",
-      "target": ".perplexity/README-manifest.md",
+      "target": "README-manifest.md",
       "sha256": "f77b49cc91fdde85479e6bd6cf79554c202cfaac32615f4595ed1a647040433a",
       "inSync": true
     },
     {
       "source": "README.md",
-      "target": ".perplexity/REPO_README.md",
+      "target": "REPO_README.md",
       "sha256": "c0157c8abe9c16d58c6489eba12982531af64c25d973d7d5f60026bf19775dc1",
       "inSync": true
     },
     {
       "source": ".agents/skills/CurrentState.md",
-      "target": ".perplexity/agents-skills-CurrentState.md",
+      "target": "agents-skills-CurrentState.md",
       "sha256": "efee0bc0b1dc5240bb24d340f0e0411156bb0b46f221d4b1632cef13a7096165",
       "inSync": true
     },
     {
       "source": ".agents/skills/manifest.json",
-      "target": ".perplexity/agents-skills-manifest.json",
+      "target": "agents-skills-manifest.json",
       "sha256": "0ef44e36e3864115ce197d3f7569ac8e4e2473f514fe312f287aec8149f43467",
       "inSync": true
     }

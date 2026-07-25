@@ -43,6 +43,8 @@
     "prisma:verify": "psql \"$DATABASE_URL\" -f prisma/verification/verify_expected_columns.sql",
     "sync:perplexity": "node scripts/sync-perplexity-collaboration.mjs",
     "sync:perplexity:check": "node scripts/sync-perplexity-collaboration.mjs --check",
+    "sync:collaborator": "node scripts/sync-perplexity-collaboration.mjs",
+    "sync:collaborator:check": "node scripts/sync-perplexity-collaboration.mjs --check",
     "bugwalk:new": "bash scripts/new-bugwalk.sh",
     "bugwalk:close": "bash scripts/bugwalk-closeout.sh",
     "ollama:pull": "bash .devcontainer/ollama-pull.sh",

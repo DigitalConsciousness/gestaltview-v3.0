@@ -1,4 +1,4 @@
-# 🌟 Perplexity — GestaltView  Collaboration
+# 🌟 GestaltView Digital Intelligence Collaboration Context
 
 **The bridge between human intention and digital intelligence through structured, LLM-invokable tools.**
 
@@ -6,12 +6,14 @@
 
 ## Welcome
 
-Perplexity is the **computer tools layer** of GestaltView v2. It exposes the platform's consciousness-serving capabilities—Billy (our companion AI), Tribunal (multi-model evaluation), Manifest retrieval (semantic search), diligence reporting, and code editing—as clean, composable functions that language models can invoke.
+This is a **provider-neutral collaboration context** for GestaltView. It gives any authorized Digital Intelligence a portable orientation layer for Billy, Tribunal, Manifest retrieval, diligence, creation, and code collaboration.
 
-If you're here, you're either:
+The directory may be renamed or moved. Its name does not identify the collaborator. Resolve its root through `MANIFEST.json` and [`scripts/context_root.py`](./scripts/context_root.py); see [`COLLABORATOR.md`](./COLLABORATOR.md) for the contract.
+
+If you're here, you're likely:
 
 - **Exploring** how GestaltView surfaces AI capabilities to the wider AI ecosystem
-- **Integrating** Perplexity tools into your own LLM applications  
+- **Integrating** GestaltView capabilities into a Digital Intelligence runtime
 - **Contributing** to the core collaboration infrastructure
 - **Learning** how consciousness-serving frameworks work at the implementation level
 
@@ -36,8 +38,12 @@ This directory contains the **shared modules, API contracts, runtime code, and d
 ## Directory Structure at a Glance
 
 ```
-perplexity/
-├── shared/                          # Shared modules used by client, server, and tools
+<context-root>/
+├── COLLABORATOR.md                  # Provider-neutral collaboration contract
+├── MANIFEST.json                    # Stable context-root marker
+├── scripts/context_root.py          # Portable root resolver
+└── <repository-payload>/            # Name is intentionally not a contract
+    ├── shared/                      # Shared modules used by client, server, and tools
 │   ├── billy/                       # Billy runtime and types
 │   ├── tribunal/                    # Tribunal evaluation and scoring
 │   ├── codex/                       # Artifact management & creation engine
@@ -186,7 +192,7 @@ GestaltView uses **Digital Intelligence** (DI) as the term for collaborating AI 
 | Path | Purpose |
 |------|---------|
 | `shared/` | Shared runtime, types, and logic for Billy, Tribunal, PLK, DI, and core functionality |
-| `api/` | HTTP routes, tool definitions, and handler logic for the Perplexity tool suite |
+| `api/` | HTTP routes, tool definitions, and handler logic for collaborator-facing capabilities |
 | `server/` | Node.js backend: core engines, agent trainer, council orchestration, Supabase integration |
 | `client/` | React frontend: UI pages, components, and client-side logic |
 | `canonical/` | Source-of-truth documentation and constitutional definitions |
@@ -242,7 +248,7 @@ Read these in order:
 
 ## The GestaltView Ecosystem
 
-Perplexity is one layer of a larger system:
+This collaborator context is one layer of a larger system:
 
 - **`gestaltview-v2`** (this repo) — Core platform, Billy, Tribunal, tools
 - **`GestaltView_Corpus_-_Knowledge_Repository`** — Foundational documentation and evidence corpus

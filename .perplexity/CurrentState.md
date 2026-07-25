@@ -1,3 +1,29 @@
+# CurrentState — Provider-neutral Digital Intelligence collaborator context (2026-07-25)
+
+**Scope of this pass:** Made the default `.perplexity/` collaboration context portable across Digital Intelligence providers, directory names, checkout locations, current working directories, and repository payload names.
+
+### What changed
+
+- Added `gestaltview.di-context.v1` as the neutral root contract in `.perplexity/MANIFEST.json`.
+- Added `.perplexity/COLLABORATOR.md` with collaborator identity, path, provenance, consent, and verification boundaries.
+- Added `.perplexity/scripts/context_root.py` to resolve the context and repository payload roots without hardcoded names.
+- Made the collaboration sync workflow honor `GESTALTVIEW_COLLABORATOR_ROOT`, discover payloads structurally, and write root-relative manifest paths.
+- Added `sync:collaborator` and `sync:collaborator:check` while retaining the legacy `sync:perplexity` aliases.
+- Reframed the primary README and directory index as provider-neutral entry surfaces.
+
+### Validation performed
+
+- Four portability regression tests passed, including renamed context/payload directories and invocation from an unrelated current working directory.
+- `pnpm run sync:collaborator:check` passed.
+- `.perplexity/MANIFEST.json` passed JSON parsing.
+- `git diff --check` passed.
+
+### Remaining boundary
+
+- Historical snapshots and provider-specific source documents inside the payload retain their original names and language for provenance. They are reference material, not the active collaborator identity or path contract.
+
+---
+
 # CurrentState — Symbiote DI runtime and embodiment contract repair (2026-07-16)
 
 **Scope of this pass:** Repaired the clean-build failure caused by canonical Symbiote presentation tokens drifting beyond the shared embodiment contract, and verified the Symbiote across the persistent DI selector and live DI prompt runtime.

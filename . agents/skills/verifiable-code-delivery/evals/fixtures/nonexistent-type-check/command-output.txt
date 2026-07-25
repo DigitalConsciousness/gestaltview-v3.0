@@ -1,5 +1,0 @@
-$ pnpm run type-check
-ERR_PNPM_NO_SCRIPT Missing script: type-check
-
-$ pnpm run build
-PASS tsc --noEmit

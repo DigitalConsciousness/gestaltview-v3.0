@@ -356,9 +356,9 @@ export function hasBrowserStorage(): boolean {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
 }
 
-function emitBrowserEvent(name: string): void {
+function emitBrowserEvent<T>(name: string, detail?: T): void {
   if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent(name));
+    window.dispatchEvent(new CustomEvent(name, { detail }));
   }
 }
 
@@ -395,8 +395,8 @@ export function emitInnerWorldUpdated(): void {
   emitBrowserEvent(INNER_WORLD_EVENT);
 }
 
-export function emitBlueprintsUpdated(): void {
-  emitBrowserEvent(BLUEPRINT_EVENT);
+export function emitBlueprintsUpdated(blueprintId?: string): void {
+  emitBrowserEvent(BLUEPRINT_EVENT, blueprintId ? { blueprintId } : undefined);
 }
 
 export function emitSavedCapturesUpdated(): void {
@@ -775,9 +775,9 @@ export function readBlueprints(): CaptureBlueprint[] {
   return readJson<CaptureBlueprint[]>(STORAGE_KEYS.blueprints, []);
 }
 
-export function writeBlueprints(blueprints: CaptureBlueprint[]): void {
+export function writeBlueprints(blueprints: CaptureBlueprint[], activeBlueprintId?: string): void {
   writeJson(STORAGE_KEYS.blueprints, blueprints.slice(0, MAX_BLUEPRINTS));
-  emitBlueprintsUpdated();
+  emitBlueprintsUpdated(activeBlueprintId);
 }
 
 function syncBlueprintToServer(blueprint: CaptureBlueprint): void {
@@ -790,7 +790,7 @@ function deleteBlueprintFromServer(blueprintId: string): void {
 
 export function appendBlueprint(blueprint: CaptureBlueprint): CaptureBlueprint[] {
   const next = [blueprint, ...readBlueprints().filter((item) => item.id !== blueprint.id)].slice(0, MAX_BLUEPRINTS);
-  writeBlueprints(next);
+  writeBlueprints(next, blueprint.id);
   syncBlueprintToServer(blueprint);
   return next;
 }

@@ -143,7 +143,7 @@ Suggested handoff template:
 
 ## 5.5) Perplexity collaboration mirror
 
-The `.perplexity/` directory is the outside-collaboration mirror. Do not hand-copy state files into it.
+The default `.perplexity/` directory is a provider-neutral outside-collaboration context. Its name is not a collaborator identity or path contract. Set `GESTALTVIEW_COLLABORATOR_ROOT` to sync an equivalently structured context at any location. Do not hand-copy state files into it.
 
 Use:
 
@@ -152,7 +152,7 @@ npm run sync:perplexity
 npm run sync:perplexity:check
 ```
 
-`npm run sync:perplexity` refreshes `docs/gestaltview-v2.manifest.{json,md}` and copies canonical repo-state artifacts into `.perplexity/`, including:
+`pnpm run sync:collaborator` refreshes `docs/gestaltview-v2.manifest.{json,md}` and copies canonical repo-state artifacts into the configured collaborator context, including:
 
 - `docs/CurrentState.md`
 - `docs/gestaltview-v2.manifest.json`
@@ -165,7 +165,7 @@ npm run sync:perplexity:check
 - `.agents/skills/CurrentState.md`
 - `.agents/skills/manifest.json`
 
-It also updates the collaboration-packet copies under `.perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/` and writes `.perplexity/SYNC_MANIFEST.json` with source/target hashes.
+It also discovers the repository payload by structural markers, updates its collaboration-packet copies, and writes `SYNC_MANIFEST.json` with root-relative source/target hashes. The legacy `sync:perplexity` aliases remain available for compatibility.
 
 Use `npm run sync:perplexity:check` in validation or CI to fail when `.perplexity` is stale.
 

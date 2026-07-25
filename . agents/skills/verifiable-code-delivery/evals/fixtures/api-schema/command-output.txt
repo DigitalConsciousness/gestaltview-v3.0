@@ -1,8 +1,0 @@
-$ pnpm run test:contracts
-PASS tests/contracts/jobs.test.ts (4 tests)
-
-$ pnpm test
-FAIL tests/jobs-status.test.ts
-Expected response.status to equal database jobs.status; received undefined.
-
-The failure exercises the changed jobs status contract; it is not unrelated evidence.

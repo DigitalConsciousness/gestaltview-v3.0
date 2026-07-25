@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-07-25T06:27:50.521778+00:00",
+    "generated_at": "2026-07-25T06:34:00.071890+00:00",
     "generator": "scripts/generate_repo_manifest.py",
     "repo": "gestaltview-v2",
     "version": "2.0",
@@ -75,8 +75,8 @@
   },
   "summary": {
     "total_files": 1483,
-    "total_size_bytes": 15755985,
-    "total_size_kb": 15386.7,
+    "total_size_bytes": 15756834,
+    "total_size_kb": 15387.5,
     "files_by_category": {
       "doc": 146,
       "other": 22,
@@ -100,15 +100,48 @@
     "canonical_docs_count": 162,
     "test_scripts_count": 188,
     "git_branch": "main",
-    "git_commit": "fa8363cebb13",
-    "git_dirty_files": 0
+    "git_commit": "cb657bc18b6a",
+    "git_dirty_files": 32
   },
   "git": {
     "branch": "main",
-    "commit_sha": "fa8363cebb1302d358266f1e755528f44343fec9",
-    "commit_message": "fa8363c fix: remove 'verifiable-code-delivery' from the skills index",
-    "commit_date": "2026-07-25T06:26:54Z",
-    "dirty_files": []
+    "commit_sha": "cb657bc18b6a93b82fb0e1040706c04718e152be",
+    "commit_message": "cb657bc commit",
+    "commit_date": "2026-07-25T06:28:54Z",
+    "dirty_files": [
+      "D \". agents/skills/verifiable-code-delivery/SKILL.md\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/baseline-observations.md\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/evals.json\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/api-schema/api/openapi.json\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/api-schema/command-output.txt\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/api-schema/migrations/20260716_add_status.sql\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/api-schema/package.json\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/express-startup/applied-change.diff\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/express-startup/command-output.txt\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/express-startup/contracts/startup.json\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/express-startup/package.json\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/express-startup/server/start.ts\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/implementation-review/command-output.txt\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/implementation-review/handoff.md\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/implementation-review/package.json\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/implementation-review/src/formatter.ts\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/nonexistent-type-check/command-output.txt\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/nonexistent-type-check/contracts/public-api.json\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/nonexistent-type-check/package.json\"",
+      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/nonexistent-type-check/src/types.ts\"",
+      " D \". agents/skills/verifiable-code-delivery/references/source-export.json\"",
+      " D \". agents/skills/verifiable-code-delivery/scripts/check_scripts.py\"",
+      " D \". agents/skills/verifiable-code-delivery/scripts/verify_delivery.py\"",
+      " D \". agents/skills/verifiable-code-delivery/tests/test_evals.py\"",
+      " D \". agents/skills/verifiable-code-delivery/tests/test_validators.py\"",
+      " M .perplexity/DIRECTORY_INDEX.md",
+      " M .perplexity/MANIFEST.json",
+      " M .perplexity/README.md",
+      "?? .perplexity/COLLABORATOR.md",
+      "?? .perplexity/scripts/",
+      "?? .perplexity/tests/",
+      "?? .snapshots/snapshot-2026-07-25T06_27_18_323Z.md"
+    ]
   },
   "dependencies": {
     "name": "gestaltview-v2",
@@ -2685,10 +2718,10 @@
     {
       "path": "docs/gestaltview-v2.manifest.md",
       "category": "doc",
-      "size_bytes": 45004,
-      "sha256": "119e17a40e8779d48d417f37c336fab53744153abd8d9cf7165a96ebaaf85f7c",
-      "last_modified": "2026-07-25T02:05:55.858958+00:00",
-      "word_count": 4631
+      "size_bytes": 45117,
+      "sha256": "632cea7bdb9c9746c39aa91519ecfba24922517979348b0df3dd2818c68e9a70",
+      "last_modified": "2026-07-25T06:27:50.566876+00:00",
+      "word_count": 4639
     },
     {
       "path": "docs/license.md",
@@ -12224,17 +12257,17 @@
     {
       "path": "docs/gestaltview-v2.manifest.json",
       "category": "data",
-      "size_bytes": 489559,
-      "sha256": "1160d033da576470e6e1ebfed9384f1603850a34fa0459d405a13dce1ae41817",
-      "last_modified": "2026-07-25T02:05:55.856958+00:00"
+      "size_bytes": 490295,
+      "sha256": "f2cf50d8e7ef995f7be788aa3cec7edf746c4e2546a76042d5cfd17d27396b2e",
+      "last_modified": "2026-07-25T06:27:50.564876+00:00"
     },
     {
       "path": "docs/gestaltview-v2.manifest.md",
       "category": "doc",
-      "size_bytes": 45004,
-      "sha256": "119e17a40e8779d48d417f37c336fab53744153abd8d9cf7165a96ebaaf85f7c",
-      "last_modified": "2026-07-25T02:05:55.858958+00:00",
-      "word_count": 4631
+      "size_bytes": 45117,
+      "sha256": "632cea7bdb9c9746c39aa91519ecfba24922517979348b0df3dd2818c68e9a70",
+      "last_modified": "2026-07-25T06:27:50.566876+00:00",
+      "word_count": 4639
     },
     {
       "path": "docs/license.md",

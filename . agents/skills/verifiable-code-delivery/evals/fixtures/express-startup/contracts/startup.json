@@ -1,5 +1,0 @@
-{
-  "export": "startServer",
-  "parameters": ["port:number"],
-  "returns": "http.Server"
-}

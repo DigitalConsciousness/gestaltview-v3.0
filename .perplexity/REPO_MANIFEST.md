@@ -1,9 +1,9 @@
 # GestaltView v2 — Repository Manifest
 
-> Generated: `2026-07-25T06:27:50.521778+00:00`
+> Generated: `2026-07-25T06:34:00.071890+00:00`
 > Branch: `main`
-> Commit: `fa8363cebb13`
-> fa8363c fix: remove 'verifiable-code-delivery' from the skills index
+> Commit: `cb657bc18b6a`
+> cb657bc commit
 
 ---
 
@@ -12,12 +12,12 @@
 | Metric | Value |
 |---|---|
 | Total files | 1483 |
-| Total size | 15386.7 KB |
+| Total size | 15387.5 KB |
 | Routes | 115 |
 | API endpoints | 204 |
 | Canonical docs | 162 |
 | Test inventory | 188 |
-| Uncommitted files | 0 |
+| Uncommitted files | 32 |
 
 ### Files by Category
 
@@ -688,7 +688,7 @@
 | `docs/embodiment/EMBODIMENT_OPEN_QUESTIONS.md` | 216 | 1425 bytes |
 | `docs/embodiment/EMBODIMENT_RUNTIME_GAP_MATRIX.md` | 367 | 2192 bytes |
 | `docs/embodiment/PROFILE_DISTINCTIVENESS_MATRIX.md` | 311 | 1901 bytes |
-| `docs/gestaltview-v2.manifest.md` | 4631 | 45004 bytes |
+| `docs/gestaltview-v2.manifest.md` | 4639 | 45117 bytes |
 | `docs/license.md` | 793 | 5556 bytes |
 | `docs/md-refresh-status-2026-03-24.md` | 200 | 1899 bytes |
 | `docs/operation-render/CODEX_FULL_SWEEP_HANDOFF.md` | 251 | 2600 bytes |
@@ -759,7 +759,42 @@
 
 ## Git Status
 
-✓ Working tree clean.
+32 uncommitted change(s):
+
+```
+D ". agents/skills/verifiable-code-delivery/SKILL.md"
+ D ". agents/skills/verifiable-code-delivery/evals/baseline-observations.md"
+ D ". agents/skills/verifiable-code-delivery/evals/evals.json"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/api-schema/api/openapi.json"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/api-schema/command-output.txt"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/api-schema/migrations/20260716_add_status.sql"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/api-schema/package.json"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/express-startup/applied-change.diff"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/express-startup/command-output.txt"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/express-startup/contracts/startup.json"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/express-startup/package.json"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/express-startup/server/start.ts"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/implementation-review/command-output.txt"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/implementation-review/handoff.md"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/implementation-review/package.json"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/implementation-review/src/formatter.ts"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/nonexistent-type-check/command-output.txt"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/nonexistent-type-check/contracts/public-api.json"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/nonexistent-type-check/package.json"
+ D ". agents/skills/verifiable-code-delivery/evals/fixtures/nonexistent-type-check/src/types.ts"
+ D ". agents/skills/verifiable-code-delivery/references/source-export.json"
+ D ". agents/skills/verifiable-code-delivery/scripts/check_scripts.py"
+ D ". agents/skills/verifiable-code-delivery/scripts/verify_delivery.py"
+ D ". agents/skills/verifiable-code-delivery/tests/test_evals.py"
+ D ". agents/skills/verifiable-code-delivery/tests/test_validators.py"
+ M .perplexity/DIRECTORY_INDEX.md
+ M .perplexity/MANIFEST.json
+ M .perplexity/README.md
+?? .perplexity/COLLABORATOR.md
+?? .perplexity/scripts/
+?? .perplexity/tests/
+?? .snapshots/snapshot-2026-07-25T06_27_18_323Z.md
+```
 
 ---
 

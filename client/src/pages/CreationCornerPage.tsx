@@ -20,6 +20,7 @@ import { useDigitalIntelligence } from "@/hooks/useDigitalIntelligence";
 import { createArtifact as synthesizeArtifact, scoreResonance } from "@/lib/genEngineClient";
 import { requestOrchestrationDecision } from "@/lib/orchestratorClient";
 import BlueprintLibrary from "@/components/BlueprintLibrary";
+import BlueprintGenerativeWorkbench from "@/components/BlueprintGenerativeWorkbench";
 import { RoomHeaderBar } from "@/components/ui/RoomHeaderBar";
 import {
   readBlueprints,
@@ -299,7 +300,13 @@ export default function CreationCornerPage() {
 
   // ── Blueprint hydration ──────────────────────────────────────────────────
   useEffect(() => {
-    const refresh = () => setBlueprints(readBlueprints());
+    const refresh = (event?: Event) => {
+      setBlueprints(readBlueprints());
+      const blueprintId = (event as CustomEvent<{ blueprintId?: string }> | undefined)?.detail?.blueprintId;
+      if (blueprintId) {
+        setSelectedBlueprintId(blueprintId);
+      }
+    };
     refresh();
     window.addEventListener("storage", refresh);
     window.addEventListener("gestaltview:creation-blueprints-updated", refresh);
@@ -764,6 +771,23 @@ export default function CreationCornerPage() {
             Raw material in. Finished artifacts out. The Art Teacher sees what it wants to become.
           </p>
         </div>
+
+        <section className="mb-6 space-y-3">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-gv-aurora-amber">
+              Synthesis workbench
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold text-gv-text-primary">
+              Shape the active blueprint before forging it.
+            </h2>
+          </div>
+          <BlueprintGenerativeWorkbench
+            blueprint={selectedBlueprint}
+            blueprints={blueprints}
+            onSelectBlueprint={(nextBlueprint) => setSelectedBlueprintId(nextBlueprint.id)}
+            currentUserId={user?.id}
+          />
+        </section>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_380px]">
 

@@ -1,8 +1,16 @@
 {
-  "name": "Perplexity",
+  "name": "GestaltView Digital Intelligence Collaborator Context",
   "version": "2.0.0",
-  "type": "Computer Integration Framework",
-  "description": "LLM-invokable tools exposing GestaltView's consciousness-serving capabilities to the wider AI ecosystem",
+  "type": "Provider-Neutral Collaboration Context",
+  "description": "Portable context and repository material for any authorized Digital Intelligence collaborator",
+  "contextContract": "gestaltview.di-context.v1",
+  "pathPolicy": {
+    "contextRoot": "nearest ancestor containing this manifest",
+    "payloadRoot": "sole immediate child matching repository structural markers, or the context root itself",
+    "environmentOverride": "GESTALTVIEW_COLLABORATOR_ROOT",
+    "absolutePathsForbidden": true,
+    "directoryNameIsIdentity": false
+  },
   "author": "Keith Soyka",
   "organization": "GestaltView",
   "copyright": "© 2026 Keith Soyka / GestaltView",

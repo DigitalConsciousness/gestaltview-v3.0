@@ -1,6 +1,8 @@
-# Perplexity Directory Index
+# Digital Intelligence Collaborator Context Index
 
-**A detailed, room-by-room walkthrough of the Perplexity platform.**
+**A provider-neutral, path-relative walkthrough of the bundled GestaltView context.**
+
+All paths are relative to the context root identified by `MANIFEST.json`. The context directory and repository payload may be renamed; use `scripts/context_root.py` rather than hardcoding either name.
 
 ---
 
