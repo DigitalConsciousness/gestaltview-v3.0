@@ -280,6 +280,12 @@
         "copilotcli/auto",
         "copilot/auto"
       ]
+    },
+    "gestaltview-v3.0/.vscode/mcp.json: com.supabase/mcp": {
+      "allowedModels": [
+        "copilotcli/auto",
+        "copilot/auto"
+      ]
     }
   },
   "markdown.validate.enabled": true
