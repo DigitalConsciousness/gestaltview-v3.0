@@ -45,6 +45,7 @@ import {
   type RecapVoiceId,
 } from "@shared/sessionRecap";
 import type { RuntimeDailyEntry } from "@shared/orchestration/extraction";
+import { appendBlackboardRecapToCreationCorner } from "@/lib/blackboardRecapArtifacts";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -469,6 +470,10 @@ export default function SessionRecapGenerator({
             <button
               type="button"
               onClick={() => {
+                appendBlackboardRecapToCreationCorner(
+                  currentArtifact,
+                  captures.map((capture) => capture.id),
+                );
                 dispatchArtifactEvent("gestaltview:artifact:creation-corner", currentArtifact);
                 toast.success("Sent to Creation Corner", {
                   description: "Open Creation Corner to find your recap.",

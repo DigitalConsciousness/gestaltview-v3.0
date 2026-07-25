@@ -43,7 +43,14 @@ import {
   materializeCreationCornerBlueprint,
   mergeCreationCornerBlueprints,
 } from "@/lib/creationCornerContent";
-import { appendInnerWorldArtifact, type InnerWorldArtifactRecord } from "@/lib/innerWorldFiles";
+import {
+  appendInnerWorldArtifact,
+  appendUserFile,
+  createUserFileRecord,
+  type InnerWorldArtifactRecord,
+} from "@/lib/innerWorldFiles";
+import { uploadUserFileToServer } from "@/lib/fileStorage";
+import { readCreationCornerUpload } from "@/lib/creationCornerIntake";
 import { ArtifactExportViewer } from "@/lib/rendering";
 import GestaltRenderSurface from "@/components/rendering/GestaltRenderSurface";
 import { artifactsToSceneGraph } from "@/lib/rendering/fromArtifacts";
@@ -233,6 +240,8 @@ export default function CreationCornerPage() {
   const [destination, setDestination]     = useState<Destination>("creation_corner");
   const [customTitle, setCustomTitle]     = useState("");
   const [freeText, setFreeText]           = useState("");
+  const [selectedUploadName, setSelectedUploadName] = useState<string | null>(null);
+  const sourceFileInputRef = useRef<HTMLInputElement>(null);
 
   // ── Result state ─────────────────────────────────────────────────────────
   const [result, setResult]         = useState<ArtifactResult | null>(null);
@@ -332,6 +341,34 @@ export default function CreationCornerPage() {
     () => blueprints.find((b) => b.id === selectedBlueprintId) ?? blueprints[0] ?? null,
     [blueprints, selectedBlueprintId],
   );
+
+  const handleSourceFileSelected = async (file: File) => {
+    try {
+      const material = await readCreationCornerUpload(file);
+      setFreeText((current) =>
+        [current.trim(), material.text.trim()].filter(Boolean).join("\n\n"),
+      );
+      setSelectedUploadName(material.name);
+
+      const fileRecord = createUserFileRecord({
+        userId: user?.id ?? "local",
+        file,
+        roomOrigin: "creation_corner",
+        previewText: material.previewText,
+        previewHtml: material.previewHtml,
+      });
+      const persisted = user?.id
+        ? (await uploadUserFileToServer({
+          file: fileRecord,
+          content: material.previewHtml ?? material.previewText ?? material.text,
+        })) ?? fileRecord
+        : fileRecord;
+      appendUserFile(persisted);
+      toast.success(`${material.name} added as source material.`);
+    } catch {
+      toast.error("That file could not be read as source material.");
+    }
+  };
 
   const handleDeleteBlueprint = (blueprint: CaptureBlueprint) => {
     if (!window.confirm(`Remove "${blueprint.title}" from the workshop?`)) return;
@@ -736,6 +773,28 @@ export default function CreationCornerPage() {
             {/* Raw material input */}
             <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm">
               <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-sky-400">Raw Material</h2>
+              <input
+                ref={sourceFileInputRef}
+                type="file"
+                className="hidden"
+                onChange={(event) => {
+                  const file = event.currentTarget.files?.[0];
+                  event.currentTarget.value = "";
+                  if (file) void handleSourceFileSelected(file);
+                }}
+              />
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => sourceFileInputRef.current?.click()}
+                  className="rounded-full border border-sky-300/20 bg-sky-300/10 px-4 py-2 text-xs font-medium text-sky-100 transition-colors hover:bg-sky-300/15"
+                >
+                  Select uploaded material
+                </button>
+                {selectedUploadName ? (
+                  <span className="text-xs text-sky-300">Using: {selectedUploadName}</span>
+                ) : null}
+              </div>
               <textarea
                 value={freeText}
                 onChange={(e) => setFreeText(e.target.value)}

@@ -34,7 +34,6 @@ import { PERSONAS } from "@/data/personas";
 import { getRoomPersona, setRoomPersona } from "@/lib/personaManager";
 import { uploadUserFileToServer } from "@/lib/fileStorage";
 import { appendUserFile, createUserFileRecord, type UserFileRecord } from "@/lib/innerWorldFiles";
-import { appendBlackboardRecapToInnerWorld } from "@/lib/blackboardRecapArtifacts";
 import { enrichBlackboardCaptureWithResonance } from "@/lib/genEngineRoomWiring";
 import { routeBlackboardCaptureThroughPipeline } from "@/lib/profilePipeline/blackboardRouting";
 import {
@@ -1193,12 +1192,7 @@ export default function BlackboardRoomPage() {
   };
 
   const handleRecapArtifactReady = (artifact: RecapArtifact) => {
-    appendBlackboardRecapToInnerWorld(
-      artifact,
-      currentUserId,
-      summaryCaptures.map((capture) => capture.id),
-    );
-    toast.success("Recap sent to Dynamic Inner World.");
+    toast.success(`${artifact.title} is ready. Choose where to send it.`);
   };
 
   const handleCopyBlueprint = async () => {
@@ -1524,7 +1518,7 @@ export default function BlackboardRoomPage() {
               <div>
                 <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-violet-200/70">Session recap</p>
                 <p className="mt-2 text-sm leading-6 text-white/72">
-                  Billy can turn the captured thread into a living recap and forward it to Dynamic Inner World.
+                  Billy can turn the captured thread into a living recap. Nothing moves rooms until you choose a destination.
                 </p>
               </div>
               <button

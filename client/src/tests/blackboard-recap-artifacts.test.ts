@@ -1,9 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
+  appendBlackboardRecapToCreationCorner,
   appendBlackboardRecapToInnerWorld,
+  buildBlackboardRecapCreationBlueprint,
   buildBlackboardRecapInnerWorldArtifact,
 } from "@/lib/blackboardRecapArtifacts";
+import { readBlueprints } from "@/components/Scaffold";
 import { FILE_STORAGE_KEYS, readInnerWorldArtifacts } from "@/lib/innerWorldFiles";
 import type { RecapArtifact } from "@/components/SessionRecapGenerator";
 
@@ -93,5 +96,24 @@ describe("blackboard recap artifact helpers", () => {
       tags: expect.arrayContaining(["blackboard-room", "session-recap"]),
     });
     expect(window.localStorage.getItem(FILE_STORAGE_KEYS.innerWorldArtifacts)).toContain("recap-123");
+  });
+
+  it("persists a recap as Creation Corner source material", () => {
+    const blueprint = buildBlackboardRecapCreationBlueprint(FIXTURE_ARTIFACT, ["capture-a"]);
+
+    expect(blueprint).toMatchObject({
+      id: "recap-123",
+      title: "Blackboard Room · Recap",
+      sourceOrbIds: ["capture-a"],
+      captureCount: 2,
+      tags: expect.arrayContaining(["blackboard-room", "session-recap"]),
+    });
+    expect(blueprint.summary).toContain("We built the thing.");
+    expect(blueprint.outputs.markdown).toContain("We built the thing.");
+
+    appendBlackboardRecapToCreationCorner(FIXTURE_ARTIFACT, ["capture-a"]);
+    expect(readBlueprints()).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: "recap-123" })]),
+    );
   });
 });

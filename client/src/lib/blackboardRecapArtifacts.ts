@@ -1,5 +1,10 @@
 import type { RecapArtifact } from "@/components/SessionRecapGenerator";
+import {
+  appendBlueprint,
+  type CaptureBlueprint,
+} from "@/components/Scaffold";
 import { appendInnerWorldArtifact, type InnerWorldArtifactRecord } from "@/lib/innerWorldFiles";
+import { buildCreationCornerOutputs } from "@/lib/genEngineClient";
 
 function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
@@ -56,4 +61,45 @@ export function appendBlackboardRecapToInnerWorld(
 ): InnerWorldArtifactRecord[] {
   const innerWorldArtifact = buildBlackboardRecapInnerWorldArtifact(artifact, userId, sourceCaptureIds);
   return appendInnerWorldArtifact(innerWorldArtifact);
+}
+
+export function buildBlackboardRecapCreationBlueprint(
+  artifact: RecapArtifact,
+  sourceCaptureIds: string[],
+): CaptureBlueprint {
+  const summary = stripHtml(artifact.content) || artifact.metadata.sessionLabel || artifact.title;
+  const createdAt = artifact.metadata.generatedAt || new Date().toISOString();
+  const tags = Array.from(new Set(["blackboard-room", "session-recap"]));
+  const outputs = buildCreationCornerOutputs({
+    title: artifact.title,
+    summary,
+    tags,
+    status: "draft",
+    note: "Explicitly sent from the Blackboard Room recap tray.",
+    sourceMarkdown: summary,
+    sourceBlueprintJson: JSON.stringify(artifact),
+    sourceCaptureIds,
+    captureCount: artifact.metadata.captureCount,
+    sourceRoom: "blackboard",
+  });
+
+  return {
+    id: artifact.id,
+    title: artifact.title,
+    summary,
+    sourceOrbIds: sourceCaptureIds,
+    captureCount: artifact.metadata.captureCount,
+    tags,
+    status: "draft",
+    createdAt,
+    updatedAt: new Date().toISOString(),
+    outputs,
+  };
+}
+
+export function appendBlackboardRecapToCreationCorner(
+  artifact: RecapArtifact,
+  sourceCaptureIds: string[],
+): CaptureBlueprint[] {
+  return appendBlueprint(buildBlackboardRecapCreationBlueprint(artifact, sourceCaptureIds));
 }
