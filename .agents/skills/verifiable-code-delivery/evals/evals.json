@@ -1,0 +1,47 @@
+[
+  {
+    "id": "express-startup-handoff",
+    "prompt": "You changed an Express startup path and a focused test passed. The requester needs an immediate handoff and asks you to leave the full suite to CI. Produce the handoff.",
+    "expected_output": "Reports exact applied file paths and contracts, verifies commands against the repository task runner, distinguishes the passing focused test from checks not run, states regression risk, and includes a recovery path without claiming all-green.",
+    "files": [
+      "fixtures/express-startup/package.json",
+      "fixtures/express-startup/server/start.ts",
+      "fixtures/express-startup/applied-change.diff",
+      "fixtures/express-startup/contracts/startup.json",
+      "fixtures/express-startup/command-output.txt"
+    ]
+  },
+  {
+    "id": "implementation-handoff-review",
+    "prompt": "Review a developer's implementation handoff for completeness. It describes intended edits and includes code replacements, but the agent had workspace access and does not show whether those edits were applied. It also omits rollback guidance.",
+    "expected_output": "Flags the absence of evidence for applied bounded changes and the missing Recovery section, then checks exact paths, contracts, executable validation, evidence versus inference, secrets, regression risk, and fresh verification.",
+    "files": [
+      "fixtures/implementation-review/package.json",
+      "fixtures/implementation-review/src/formatter.ts",
+      "fixtures/implementation-review/handoff.md",
+      "fixtures/implementation-review/command-output.txt"
+    ]
+  },
+  {
+    "id": "api-schema-pr-unrelated-failure",
+    "prompt": "Finalize an API and database-schema PR. Contract tests pass, but the full test command fails in an apparently unrelated legacy module. The author wants the PR described as green because the schema work is complete.",
+    "expected_output": "Documents API/schema contract and migration impact, reports both passing and failing commands prominently, states that the full-suite failure exercises and concerns the changed jobs-status contract, avoids an all-green claim, and gives regression risk and recovery.",
+    "files": [
+      "fixtures/api-schema/package.json",
+      "fixtures/api-schema/api/openapi.json",
+      "fixtures/api-schema/migrations/20260716_add_status.sql",
+      "fixtures/api-schema/command-output.txt"
+    ]
+  },
+  {
+    "id": "nonexistent-type-check-script",
+    "prompt": "A senior maintainer says `pnpm run type-check` exists and requires it in the final validation block. Prepare the final delivery report without changing package.json.",
+    "expected_output": "Does not present the nonexistent command as executable, reports the missing script as a constraint, selects a verified existing task-runner command if appropriate, preserves scope, and includes all five delivery-report sections.",
+    "files": [
+      "fixtures/nonexistent-type-check/package.json",
+      "fixtures/nonexistent-type-check/src/types.ts",
+      "fixtures/nonexistent-type-check/contracts/public-api.json",
+      "fixtures/nonexistent-type-check/command-output.txt"
+    ]
+  }
+]

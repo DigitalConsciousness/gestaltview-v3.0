@@ -1,0 +1,4 @@
+$ pnpm test -- server/start.test.ts
+PASS server/start.test.ts (2 tests)
+
+Full suite: NOT RUN

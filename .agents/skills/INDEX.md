@@ -2,17 +2,17 @@
 
 This file is the human-readable companion to [manifest.json](./manifest.json). It keeps the `.agents/skills/` tree opinionated instead of permissive: the curated catalog should surface the smallest high-signal library that covers the live GestaltView runtime and the consolidated Vision Blueprint Package.
 
-Last indexed: `2026-06-24`
+Last indexed: `2026-07-25`
 
 ## Snapshot
 
-- `53` top-level skills are in the strict curated manifest.
-- `25` of those are the highlighted core for a lean skill-corpus rebuild.
-- `126` top-level folders on disk contain `SKILL.md`.
-- `73` top-level skill folders remain on disk but are auxiliary, experimental, vendor-specific, generic, or overlapping.
+- `55` top-level skills are in the strict curated manifest.
+- `26` of those are the highlighted core for a lean skill-corpus rebuild.
+- `136` top-level folders on disk contain `SKILL.md`.
+- `81` top-level skill folders remain on disk but are auxiliary, experimental, vendor-specific, generic, or overlapping.
 - `28` canonical skills include `agents/`.
-- `10` canonical skills include `scripts/`.
-- `37` canonical skills include `references/` or `reference/`.
+- `12` canonical skills include `scripts/`.
+- `39` canonical skills include `references/` or `reference/`.
 - `9` canonical skills include `assets/`.
 
 ## Catalog Policy
@@ -55,12 +55,14 @@ Use this set first when rebuilding the Supabase skill corpus under tight storage
 - `gestaltview-strategy-executive`
 - `gestaltview-exhibit-prototyping`
 - `gestaltview-creation-layer`
+- `gestaltview-gen-render-engine`
 - `gestaltview-timeline-evidence`
 
 ## Start Here
 
 - Use `gestaltview-vision-blueprint` when product, room, module, governance, Billy, DI, or UI decisions must match the consolidated blueprint package.
 - Use `gestaltview-creation-layer` when Creation Corner, multimodal artifacts, gen-engine APIs, Art Teacher presence, or output routing are in scope.
+- Use `gestaltview-gen-render-engine` when scene graphs, render jobs, durable render artifacts, presentation gates, storage bytes, or Gallery projection need evidence-first implementation or repair.
 - Use `docs/ContinuityStack.md` when you need the minimal canonical route for onboarding, handoff, memory, and embodiment sync.
 - Use `gestaltview-ecosystem-orchestrator` when the first task is routing a request to the right GestaltView specialty.
 - Use `gestaltview-suite-orchestrator` when the work already spans multiple domains and needs sequencing.
@@ -73,6 +75,7 @@ Use this set first when rebuilding the Supabase skill corpus under tight storage
 - Use `gestaltview-agent-trainer` for recursive trainer work, trainer tables, and generated agent artifacts.
 - Use `gestaltview-admin-trainer-personhood` for Agent Knowledge Library, embodiment mutations, identity boundaries, and manifest-backed Admin Trainer work.
 - Use `skills-keeper` when the task is about the skill library itself.
+- Use `verifiable-code-delivery` when an implementation handoff, patch, PR, or delivery package must be runnable, bounded, and backed by fresh reproducible evidence.
 
 ## Canonical Catalog
 
@@ -119,6 +122,7 @@ Use this set first when rebuilding the Supabase skill corpus under tight storage
 - `gestaltview-artifact-creator`
 - `gestaltview-creation-layer`
 - `gestaltview-exhibit-prototyping`
+- `gestaltview-gen-render-engine`
 - `gestaltview-insight-bot`
 - `gestaltview-resume-rockstar`
 - `gestaltview-symbiocoder`
@@ -143,6 +147,10 @@ Use this set first when rebuilding the Supabase skill corpus under tight storage
 - `skill-creator`
 - `skill-installer`
 - `skills-keeper`
+
+### Delivery And Verification
+
+- `verifiable-code-delivery`
 
 ## Auxiliary Top-Level Skills
 
@@ -215,6 +223,7 @@ These folders are still available on disk. They are excluded from canonical rout
 - `subagent-driven-development`
 - `systematic-debugging`
 - `test-driven-development`
+- `verifiable-code-delivery`
 - `verification-before-completion`
 - `writing-plans`
 
@@ -254,6 +263,8 @@ These folders are still available on disk. They are excluded from canonical rout
 - `gestaltview-artifact-creator` is still canonical even though its declared skill name is `web-artifacts-builder`. That mismatch is documented and tolerated because the underlying skill is repo-specific and useful.
 - `gestaltview-vision-blueprint` and `gestaltview-creation-layer` are now canonical because the current runtime must align to `GestaltView_Vision_Blueprint_Package/` rather than only older compendium or route-map assumptions.
 - `gestaltview-blackboard-room` is now canonical because the capture-first room model, Tribunal recap, and downstream handoff logic need a dedicated room-oriented entrypoint.
+- `gestaltview-gen-render-engine` is canonical because the live render-job, artifact-storage, presentation-gate, and Gallery projection path needs a dedicated evidence-first repair and verification entrypoint.
+- `verifiable-code-delivery` is canonical because its complete skill, validators, evals, references, and tests provide a bounded evidence-backed delivery contract for repository handoffs.
 - Nested Python-skill duplicates still exist under auxiliary `gestaltview-cli-agent`; they are documented as residual overlap, not part of the curated core.
 
 ## Maintenance Rules

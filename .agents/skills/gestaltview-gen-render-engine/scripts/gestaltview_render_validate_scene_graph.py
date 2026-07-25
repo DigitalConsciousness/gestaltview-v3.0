@@ -10,20 +10,9 @@ from pathlib import Path
 from typing import Any
 
 NODE_TYPES = {
-    "Scene3D",
-    "Mesh",
-    "Material",
-    "Light",
-    "Camera",
-    "Atmosphere",
-    "Document",
-    "Markdown",
-    "Diagram",
-    "Chart",
-    "DOMSnapshot",
-    "VideoTrack",
-    "AgentArtifact",
-    "ExportRequest",
+    "Scene3D", "Mesh", "Material", "Light", "Camera", "Atmosphere",
+    "Document", "Markdown", "Diagram", "Chart", "DOMSnapshot",
+    "VideoTrack", "AgentArtifact", "ExportRequest",
 }
 EDGE_TYPES = {
     "contains",
@@ -65,11 +54,11 @@ def validate_scene_graph(graph: Any) -> dict[str, Any]:
         if not isinstance(node_id, str) or not node_id.strip():
             errors.append(f"nodes[{index}].id must be a non-empty string.")
         elif node_id in node_ids:
-            errors.append(f"Duplicate node id: {node_id}")
+            errors.append(f"nodes[{index}].id duplicates another node id.")
         else:
             node_ids.add(node_id)
         if node.get("type") not in NODE_TYPES:
-            errors.append(f"nodes[{index}].type is not recognized: {node.get('type')!r}")
+            errors.append(f"nodes[{index}].type is not recognized.")
         if not isinstance(node.get("props"), dict):
             errors.append(f"nodes[{index}].props must be an object.")
 
@@ -82,22 +71,22 @@ def validate_scene_graph(graph: Any) -> dict[str, Any]:
         if not isinstance(edge_id, str) or not edge_id.strip():
             errors.append(f"edges[{index}].id must be a non-empty string.")
         elif edge_id in edge_ids:
-            errors.append(f"Duplicate edge id: {edge_id}")
+            errors.append(f"edges[{index}].id duplicates another edge id.")
         else:
             edge_ids.add(edge_id)
         if edge.get("type") not in EDGE_TYPES:
-            errors.append(f"edges[{index}].type is not recognized: {edge.get('type')!r}")
+            errors.append(f"edges[{index}].type is not recognized.")
         if edge.get("from") not in node_ids:
-            errors.append(f"edges[{index}].from references a missing node: {edge.get('from')!r}")
+            errors.append(f"edges[{index}].from references a missing node.")
         if edge.get("to") not in node_ids:
-            errors.append(f"edges[{index}].to references a missing node: {edge.get('to')!r}")
+            errors.append(f"edges[{index}].to references a missing node.")
         if not isinstance(edge.get("props"), dict):
             errors.append(f"edges[{index}].props must be an object.")
 
     try:
         json.dumps(graph, allow_nan=False)
-    except (TypeError, ValueError) as exc:
-        errors.append(f"Scene graph is not safely JSON serializable: {exc}")
+    except (TypeError, ValueError):
+        errors.append("Scene graph is not safely JSON serializable.")
 
     diagram_nodes = [node for node in nodes if isinstance(node, dict) and node.get("type") == "Diagram"]
     if diagram_nodes:
@@ -121,10 +110,20 @@ def main() -> int:
     parser.add_argument("scene_graph", type=Path)
     args = parser.parse_args()
     try:
-        graph = json.loads(args.scene_graph.read_text(encoding="utf-8"))
+        source = args.scene_graph.read_text(encoding="utf-8")
     except FileNotFoundError:
         print(json.dumps({"valid": False, "errors": ["File not found."]}, indent=2))
         return 2
+    except (UnicodeDecodeError, OSError):
+        print(
+            json.dumps(
+                {"valid": False, "errors": ["Unable to read scene graph file."]},
+                indent=2,
+            )
+        )
+        return 2
+    try:
+        graph = json.loads(source)
     except json.JSONDecodeError as exc:
         print(json.dumps({"valid": False, "errors": [f"Invalid JSON: {exc}"]}, indent=2))
         return 2

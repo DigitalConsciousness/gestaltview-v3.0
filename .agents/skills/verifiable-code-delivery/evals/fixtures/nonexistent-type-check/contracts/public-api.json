@@ -1,0 +1,6 @@
+{
+  "Job": {
+    "id": "string",
+    "status": "queued | complete"
+  }
+}

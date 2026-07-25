@@ -1,0 +1,11 @@
+{
+  "paths": {
+    "/jobs/{id}": {
+      "get": {
+        "responses": {
+          "200": {"description": "Job including status"}
+        }
+      }
+    }
+  }
+}

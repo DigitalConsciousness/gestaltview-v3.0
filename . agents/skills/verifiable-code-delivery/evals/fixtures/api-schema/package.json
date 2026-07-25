@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "test": "vitest run",
+    "test:contracts": "vitest run tests/contracts"
+  }
+}
