@@ -1,7 +1,16 @@
 {
-    "mcpServers": {
-        "supabase": {
-              "httpUrl": "https://mcp.supabase.com/mcp"
-                  }
-                    }
-                    }
+  "mcp_servers": {
+    "supabase": {
+      "url": "https://mcp.supabase.com/mcp?project_ref=dzrxepbgetinldcknior&features=docs%2Caccount%2Cdatabase%2Cdebugging%2Cdevelopment%2Cfunctions%2Cbranching",
+      "tools": {
+        "execute_sql": {
+          "approval_mode": "approve"
+        }
+      }
+    }
+  },
+  "features": {
+    "rmcp_client": true
+  }
+}
+                
