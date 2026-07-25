@@ -1,3 +1,23 @@
+# CurrentState — Gen/render engine and verifiable delivery are canonical
+
+**Last updated:** 2026-07-25
+**Owner context:** GestaltView skills library (`.agents/skills/`)
+**Scope of this pass:** Promoted the complete `gestaltview-gen-render-engine` and `verifiable-code-delivery` skills into canonical discovery.
+
+## Executive snapshot
+
+| Area | Status | What changed in this pass | Why it matters |
+|---|---|---|---|
+| Gen/render routing | canonical | Added `gestaltview-gen-render-engine` to `INDEX.md`, `manifest.json`, highlighted core routing, and generated agent discovery. | Render jobs, durable artifacts, presentation gates, storage bytes, and Gallery projection now have a dedicated evidence-first entrypoint. |
+| Verifiable delivery routing | canonical | Added the restored `verifiable-code-delivery` skill, validators, evals, references, and tests to manifest-backed discovery. | Implementation handoffs now have a dedicated seven-gate evidence and reproducibility contract. |
+| Catalog counts | aligned | Refreshed canonical, highlighted, on-disk, reference, and asset counts from direct filesystem inspection. | Human and machine inventory surfaces describe the present tree accurately. |
+
+## Validation performed
+
+- `python3 -m json.tool .agents/skills/manifest.json`
+- Manifest membership, uniqueness, filesystem, highlighted-core, and category assertions
+- `git diff --check`
+
 # CurrentState — Supabase trainer start/import now resolves `training_runs` in the correct migration order
 
 **Last updated:** 2026-06-24

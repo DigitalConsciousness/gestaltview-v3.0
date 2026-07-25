@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-07-25T02:05:55.805808+00:00",
+    "generated_at": "2026-07-25T06:27:50.521778+00:00",
     "generator": "scripts/generate_repo_manifest.py",
     "repo": "gestaltview-v2",
     "version": "2.0",
@@ -74,16 +74,16 @@
     ]
   },
   "summary": {
-    "total_files": 1481,
-    "total_size_bytes": 15733638,
-    "total_size_kb": 15364.9,
+    "total_files": 1483,
+    "total_size_bytes": 15755985,
+    "total_size_kb": 15386.7,
     "files_by_category": {
       "doc": 146,
       "other": 22,
       "data": 16,
-      "source": 260,
+      "source": 261,
       "config": 16,
-      "test": 182,
+      "test": 183,
       "api": 210,
       "canonical": 11,
       "component": 253,
@@ -98,16 +98,16 @@
     "routes_count": 115,
     "api_endpoints_count": 204,
     "canonical_docs_count": 162,
-    "test_scripts_count": 187,
+    "test_scripts_count": 188,
     "git_branch": "main",
-    "git_commit": "cb641c993100",
+    "git_commit": "fa8363cebb13",
     "git_dirty_files": 0
   },
   "git": {
     "branch": "main",
-    "commit_sha": "cb641c9931002c4d16f0c0cd73c8fe0c265a5670",
-    "commit_message": "cb641c9 commit",
-    "commit_date": "2026-07-25T02:04:40Z",
+    "commit_sha": "fa8363cebb1302d358266f1e755528f44343fec9",
+    "commit_message": "fa8363c fix: remove 'verifiable-code-delivery' from the skills index",
+    "commit_date": "2026-07-25T06:26:54Z",
     "dirty_files": []
   },
   "dependencies": {
@@ -191,7 +191,7 @@
       "@types/three": "^0.183.1",
       "@types/ws": "^8.18.1",
       "@vercel/analytics": "^1.6.1",
-      "@vercel/node": "^5.8.25",
+      "@vercel/node": "^5.8.27",
       "@vercel/speed-insights": "^1.3.1",
       "@vitejs/plugin-react": "^6.0.3",
       "autoprefixer": "^10.5.4",
@@ -1819,6 +1819,7 @@
     "client/src/tests/creation-corner-freeform.test.ts",
     "client/src/tests/creation-corner-intake-controls.test.ts",
     "client/src/tests/creation-corner-orchestration.test.ts",
+    "client/src/tests/creation-corner-upload-intake.test.ts",
     "client/src/tests/dashboard-overview.test.ts",
     "client/src/tests/dom-capture-export.test.ts",
     "client/src/tests/dynamic-inner-world-downloads.test.ts",
@@ -2684,10 +2685,10 @@
     {
       "path": "docs/gestaltview-v2.manifest.md",
       "category": "doc",
-      "size_bytes": 45745,
-      "sha256": "be56396e762aa691d449f136afc95dcfa2ce740ea3cb2da61e139631b54a89bb",
-      "last_modified": "2026-07-16T15:53:27+00:00",
-      "word_count": 4664
+      "size_bytes": 45004,
+      "sha256": "119e17a40e8779d48d417f37c336fab53744153abd8d9cf7165a96ebaaf85f7c",
+      "last_modified": "2026-07-25T02:05:55.858958+00:00",
+      "word_count": 4631
     },
     {
       "path": "docs/license.md",
@@ -3342,16 +3343,16 @@
     {
       "path": "package-lock.json",
       "category": "data",
-      "size_bytes": 581423,
-      "sha256": "1f6b61b21094a0f6c3806e14dcf4b211b7f5f796f946ba45c9a54f0a02bde1c0",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 599058,
+      "sha256": "0fd2034137bc77935d961451903fead55f1e60e454974b14e06332876185b013",
+      "last_modified": "2026-07-25T02:49:22.696661+00:00"
     },
     {
       "path": "package.json",
       "category": "data",
       "size_bytes": 7520,
-      "sha256": "bc00e7e26e07f47168919f16b9a655654fae03458e01307943d155a75a3aac4b",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "sha256": "f964deca797be80480e9b4e1cbdb5fd8d44e45161ca75ed1a0a1feb85eccfb57",
+      "last_modified": "2026-07-25T02:49:22.111660+00:00"
     },
     {
       "path": "playwright.config.ts",
@@ -3364,8 +3365,8 @@
       "path": "pnpm-lock.yaml",
       "category": "config",
       "size_bytes": 400625,
-      "sha256": "2f1b0d5e9773c37d602f0165886ac400823199f1c5e6ea926ad23437a87f53f0",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "sha256": "d04ecc753874001b583bb5f0f53de9cd1a72b6e999324678f0683191c7b6e0ad",
+      "last_modified": "2026-07-25T05:33:25.340082+00:00"
     },
     {
       "path": "pnpm-workspace.yaml",
@@ -6240,9 +6241,9 @@
     {
       "path": "client/src/components/SessionRecapGenerator.tsx",
       "category": "component",
-      "size_bytes": 24072,
-      "sha256": "55bf0673852b2c2053f6faece5a201ba7c60ebe7c8ced22526f3f010edfafe9a",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 24326,
+      "sha256": "d4f6a54b4e4ece55c7ff68cfed76f041219f1c6f07862267f514edea1ba5a5d6",
+      "last_modified": "2026-07-25T05:43:14.058045+00:00"
     },
     {
       "path": "client/src/components/SubpageQuickNav.tsx",
@@ -7843,9 +7844,9 @@
     {
       "path": "client/src/lib/blackboardRecapArtifacts.ts",
       "category": "source",
-      "size_bytes": 2019,
-      "sha256": "82a1fb688b891a8a170c173cbe59281323907cc5c9a4edbee7d77bf45e83d02b",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 3429,
+      "sha256": "87d43f3e9abe5b349413d4bfa6bb46a94f82ba1a2c705e580cb398b0bcb1ef31",
+      "last_modified": "2026-07-25T05:43:13.564045+00:00"
     },
     {
       "path": "client/src/lib/bucketDrops.ts",
@@ -7895,6 +7896,13 @@
       "size_bytes": 5637,
       "sha256": "ce7d3c78e02b0ce9ba095e92ed84758f08d83d0fcfa3cc21d38b5f9510ea8a6e",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "client/src/lib/creationCornerIntake.ts",
+      "category": "source",
+      "size_bytes": 1263,
+      "sha256": "18c705117d95f555a662f983e2499d152051aaa99b5cf9005c5760030669772d",
+      "last_modified": "2026-07-25T05:43:13.806045+00:00"
     },
     {
       "path": "client/src/lib/dashboardOverview.ts",
@@ -9015,9 +9023,9 @@
     {
       "path": "client/src/pages/BlackboardRoomPage.tsx",
       "category": "page",
-      "size_bytes": 71419,
-      "sha256": "95f2823de0066d151eb3071814e355dd2b34bd01c742447f9bd63dcd571490cf",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 71232,
+      "sha256": "172bd8c397d4b0445d35580039c5a11926f0bdbf9c647a4b022a48e175d29f1a",
+      "last_modified": "2026-07-25T05:43:14.307045+00:00"
     },
     {
       "path": "client/src/pages/BrainSparksPage.tsx",
@@ -9071,9 +9079,9 @@
     {
       "path": "client/src/pages/CreationCornerPage.tsx",
       "category": "page",
-      "size_bytes": 46199,
-      "sha256": "ae32fd09fa70a05585f3f02c7793f632da269482f1c59392a22469c963974a4b",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 48482,
+      "sha256": "a57a09fda8ffd0a0e7a714d0c53c00ddf92b4a774b7049b593af0fd114a5e4cb",
+      "last_modified": "2026-07-25T05:43:51.689042+00:00"
     },
     {
       "path": "client/src/pages/DashboardPage.tsx",
@@ -9547,9 +9555,9 @@
     {
       "path": "client/src/tests/blackboard-recap-artifacts.test.ts",
       "category": "test",
-      "size_bytes": 3085,
-      "sha256": "28283de30ebab3c7633620d2beca9d2fc78a3c4cae13c465ca6797857f7d1052",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 3972,
+      "sha256": "1db190b9fbf030e1ab146e61fa6f270ec346035a3179c9ba5a1219f11846133d",
+      "last_modified": "2026-07-25T05:42:35.122047+00:00"
     },
     {
       "path": "client/src/tests/bucket-drops.test.ts",
@@ -9585,6 +9593,13 @@
       "size_bytes": 940,
       "sha256": "eab905447f0fa5264163f38cab0e8fac725b2c2cb6064ad3a0dea0d59916b2ee",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "client/src/tests/creation-corner-upload-intake.test.ts",
+      "category": "test",
+      "size_bytes": 971,
+      "sha256": "f8ec57b5a1384f8d22d662a56dfeba63e3238a8688e9fa7dceabf47f87570aa1",
+      "last_modified": "2026-07-25T05:42:35.382047+00:00"
     },
     {
       "path": "client/src/tests/dashboard-overview.test.ts",
@@ -12209,17 +12224,17 @@
     {
       "path": "docs/gestaltview-v2.manifest.json",
       "category": "data",
-      "size_bytes": 490987,
-      "sha256": "a58a775ba19a5b1d483500154221d5e5b2001ef3a3f558f0d25a1e6c3b4b5338",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 489559,
+      "sha256": "1160d033da576470e6e1ebfed9384f1603850a34fa0459d405a13dce1ae41817",
+      "last_modified": "2026-07-25T02:05:55.856958+00:00"
     },
     {
       "path": "docs/gestaltview-v2.manifest.md",
       "category": "doc",
-      "size_bytes": 45745,
-      "sha256": "be56396e762aa691d449f136afc95dcfa2ce740ea3cb2da61e139631b54a89bb",
-      "last_modified": "2026-07-16T15:53:27+00:00",
-      "word_count": 4664
+      "size_bytes": 45004,
+      "sha256": "119e17a40e8779d48d417f37c336fab53744153abd8d9cf7165a96ebaaf85f7c",
+      "last_modified": "2026-07-25T02:05:55.858958+00:00",
+      "word_count": 4631
     },
     {
       "path": "docs/license.md",

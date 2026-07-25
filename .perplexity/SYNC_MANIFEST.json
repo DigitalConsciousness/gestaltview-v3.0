@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T02:05:55.889Z",
+  "generatedAt": "2026-07-25T06:27:50.585Z",
   "sourceRoot": "/workspaces/gestaltview-v3.0",
   "generatedManifestRefreshed": true,
   "files": [
@@ -18,25 +18,25 @@
     {
       "source": "docs/gestaltview-v2.manifest.json",
       "target": ".perplexity/REPO_MANIFEST.json",
-      "sha256": "1160d033da576470e6e1ebfed9384f1603850a34fa0459d405a13dce1ae41817",
+      "sha256": "f2cf50d8e7ef995f7be788aa3cec7edf746c4e2546a76042d5cfd17d27396b2e",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.md",
       "target": ".perplexity/REPO_MANIFEST.md",
-      "sha256": "119e17a40e8779d48d417f37c336fab53744153abd8d9cf7165a96ebaaf85f7c",
+      "sha256": "632cea7bdb9c9746c39aa91519ecfba24922517979348b0df3dd2818c68e9a70",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.json",
       "target": ".perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.json",
-      "sha256": "1160d033da576470e6e1ebfed9384f1603850a34fa0459d405a13dce1ae41817",
+      "sha256": "f2cf50d8e7ef995f7be788aa3cec7edf746c4e2546a76042d5cfd17d27396b2e",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.md",
       "target": ".perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.md",
-      "sha256": "119e17a40e8779d48d417f37c336fab53744153abd8d9cf7165a96ebaaf85f7c",
+      "sha256": "632cea7bdb9c9746c39aa91519ecfba24922517979348b0df3dd2818c68e9a70",
       "inSync": true
     },
     {
@@ -72,13 +72,13 @@
     {
       "source": ".agents/skills/CurrentState.md",
       "target": ".perplexity/agents-skills-CurrentState.md",
-      "sha256": "d287136866b0ce5b5a6e341fa6a0a0b1c0063432ed93b9591ab1979e5f7a83a7",
+      "sha256": "efee0bc0b1dc5240bb24d340f0e0411156bb0b46f221d4b1632cef13a7096165",
       "inSync": true
     },
     {
       "source": ".agents/skills/manifest.json",
       "target": ".perplexity/agents-skills-manifest.json",
-      "sha256": "b26f704bb721a8f9bbe91f0403fb1dd74bd26e1fd29e0d41b422ffcbccf1f922",
+      "sha256": "0ef44e36e3864115ce197d3f7569ac8e4e2473f514fe312f287aec8149f43467",
       "inSync": true
     }
   ]

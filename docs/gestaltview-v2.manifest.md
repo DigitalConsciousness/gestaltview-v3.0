@@ -1,9 +1,9 @@
 # GestaltView v2 — Repository Manifest
 
-> Generated: `2026-07-25T02:05:55.805808+00:00`
+> Generated: `2026-07-25T06:27:50.521778+00:00`
 > Branch: `main`
-> Commit: `cb641c993100`
-> cb641c9 commit
+> Commit: `fa8363cebb13`
+> fa8363c fix: remove 'verifiable-code-delivery' from the skills index
 
 ---
 
@@ -11,12 +11,12 @@
 
 | Metric | Value |
 |---|---|
-| Total files | 1481 |
-| Total size | 15364.9 KB |
+| Total files | 1483 |
+| Total size | 15386.7 KB |
 | Routes | 115 |
 | API endpoints | 204 |
 | Canonical docs | 162 |
-| Test inventory | 187 |
+| Test inventory | 188 |
 | Uncommitted files | 0 |
 
 ### Files by Category
@@ -34,9 +34,9 @@
 - **route**: 2
 - **script**: 69
 - **shared**: 109
-- **source**: 260
+- **source**: 261
 - **style**: 6
-- **test**: 182
+- **test**: 183
 
 ---
 
@@ -492,6 +492,7 @@
 - `client/src/tests/creation-corner-freeform.test.ts`
 - `client/src/tests/creation-corner-intake-controls.test.ts`
 - `client/src/tests/creation-corner-orchestration.test.ts`
+- `client/src/tests/creation-corner-upload-intake.test.ts`
 - `client/src/tests/dashboard-overview.test.ts`
 - `client/src/tests/dom-capture-export.test.ts`
 - `client/src/tests/dynamic-inner-world-downloads.test.ts`
@@ -687,7 +688,7 @@
 | `docs/embodiment/EMBODIMENT_OPEN_QUESTIONS.md` | 216 | 1425 bytes |
 | `docs/embodiment/EMBODIMENT_RUNTIME_GAP_MATRIX.md` | 367 | 2192 bytes |
 | `docs/embodiment/PROFILE_DISTINCTIVENESS_MATRIX.md` | 311 | 1901 bytes |
-| `docs/gestaltview-v2.manifest.md` | 4664 | 45745 bytes |
+| `docs/gestaltview-v2.manifest.md` | 4631 | 45004 bytes |
 | `docs/license.md` | 793 | 5556 bytes |
 | `docs/md-refresh-status-2026-03-24.md` | 200 | 1899 bytes |
 | `docs/operation-render/CODEX_FULL_SWEEP_HANDOFF.md` | 251 | 2600 bytes |
