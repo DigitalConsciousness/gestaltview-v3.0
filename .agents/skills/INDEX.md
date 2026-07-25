@@ -223,7 +223,6 @@ These folders are still available on disk. They are excluded from canonical rout
 - `subagent-driven-development`
 - `systematic-debugging`
 - `test-driven-development`
-- `verifiable-code-delivery`
 - `verification-before-completion`
 - `writing-plans`
 
