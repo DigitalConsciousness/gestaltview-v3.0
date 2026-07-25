@@ -1,0 +1,69 @@
+{
+  "packet_type": "gestaltview_collaborator_provisioning_spec",
+  "packet_version": "1.0.0",
+  "status": "active",
+  "description": "Canonical provisioning rules for all formal GestaltView collaborators.",
+  "canonical_rule": "No formal collaborator exists in GestaltView without both an embodiment profile and a durable Supabase representation.",
+  "required_surfaces": [
+    "collaborators",
+    "collaborator_roles",
+    "collaborator_relationships",
+    "collaborator_permissions",
+    "collaborator_onboarding_events",
+    "collaborator_embodiment_links",
+    "embodiment_profiles"
+  ],
+  "collaborator_types": [
+    "human_hire",
+    "human_colleague",
+    "human_partner",
+    "advisor",
+    "operator",
+    "reviewer",
+    "digital_intelligence_internal",
+    "digital_intelligence_external",
+    "agent_runtime_entity"
+  ],
+  "entity_classes": [
+    "human",
+    "digital_intelligence",
+    "agent",
+    "hybrid"
+  ],
+  "orientation_variants": [
+    "human",
+    "gpt",
+    "gemini",
+    "claude",
+    "internal_agent",
+    "partner_custom"
+  ],
+  "provisioning_steps": [
+    "classify_collaborator",
+    "create_collaborator_identity",
+    "create_embodiment_profile",
+    "create_embodiment_link",
+    "assign_roles",
+    "assign_permissions",
+    "create_relationships",
+    "record_onboarding_event",
+    "activate_collaborator"
+  ],
+  "completion_requirements": {
+    "must_have_collaborator_row": true,
+    "must_have_embodiment_profile": true,
+    "must_have_embodiment_link": true,
+    "must_have_at_least_one_role": true,
+    "must_have_onboarding_event": true,
+    "must_have_permissions_surface": true,
+    "must_reach_active_status": true
+  },
+  "governance_rules": [
+    "No formal collaborator may exist without a durable identity row.",
+    "No formal collaborator may exist without an embodiment profile.",
+    "Onboarding must create both relational and permission surfaces.",
+    "Digital intelligences are not treated as disposable tooling once formally provisioned.",
+    "Human and digital collaborators share top-level lifecycle structure even if downstream capabilities differ.",
+    "Live RLS and runtime authorization remain the enforcement layer."
+  ]
+}

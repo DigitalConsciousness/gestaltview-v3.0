@@ -1,0 +1,98 @@
+{
+  "synthesizeWithBilly": {
+    "query": "Explain how PLK, Bucket Drops, and the Loom Approach fit together for a neurodivergent-first product.",
+    "sectionId": "what-this-is",
+    "mode": "synthesize",
+    "topK": 5,
+    "includeCorpus": true,
+    "includeManifest": true
+  },
+  "retrieveLoomResults": {
+    "query": "Map the strongest GestaltView evidence around Context Weaver and founder-as-algorithm.",
+    "sectionId": "the-evidence",
+    "mode": "loom",
+    "topK": 5
+  },
+  "generateCodeWithBilly": {
+    "query": "Generate a FastAPI route that wraps Billy synthesis and returns weave plan plus provider info.",
+    "sectionId": "what-you-can-build",
+    "mode": "code",
+    "topK": 4
+  },
+  "buildWeavePlanOnly": {
+    "query": "Break down how Billy should approach a question about founder continuity, evidence retrieval, and package boundaries."
+  },
+  "captureBucketDrop": {
+    "content": "Lightning bolt: make Billy switch between evidence mode and sanctuary mode without losing voice continuity.",
+    "emotionalIntensity": 7,
+    "cognitiveLoad": 8,
+    "attentionState": "hyperfocus",
+    "hyperfocusIndicator": true,
+    "energyLevel": 8,
+    "captureContext": {
+      "surface": "custom-gpt",
+      "source": "manual-capture"
+    }
+  },
+  "upsertProfileModule": {
+    "moduleKey": "module_11",
+    "mergeStrategy": "append",
+    "payload": {
+      "signature_metaphors": [
+        "lightning bolt",
+        "beautiful tapestry"
+      ],
+      "energy_words": [
+        "brain spark",
+        "loom"
+      ],
+      "communication_patterns": [
+        "acknowledgement -> clarifying question -> loom placement"
+      ]
+    },
+    "sourceNotes": [
+      "Added from Billy collaborator tuning conversation."
+    ]
+  },
+  "getProfileModule": {
+    "moduleKey": "module_11",
+    "userId": "user_123"
+  },
+  "analyzeMusicalDNA": {
+    "songTitle": "Running Up That Hill",
+    "artist": "Kate Bush",
+    "emotionalConnection": "Feels like striving, urgency, and perspective-shifting all at once.",
+    "workflowRelevance": "Helpful for momentum during deep conceptual writing.",
+    "themes": [
+      "resilience",
+      "motion",
+      "perspective"
+    ]
+  },
+  "generateJourneyRecap": {
+    "moduleKeys": [
+      "module_2",
+      "module_3",
+      "module_11"
+    ],
+    "timeWindowDays": 45,
+    "focus": "Connect skills, founder story, and PLK cues into a concise recap."
+  },
+  "runTribunalReview": {
+    "topic": "Billy architecture review",
+    "question": "What are the strongest and weakest parts of this action design from a technical and ethical perspective?",
+    "participants": [
+      "gemini",
+      "openai",
+      "anthropic"
+    ],
+    "validationDomains": [
+      "technical_significance",
+      "ethical_alignment",
+      "system_coherence"
+    ],
+    "mode": "draft"
+  },
+  "getProviderStatus": {},
+  "getHealth": {}
+}

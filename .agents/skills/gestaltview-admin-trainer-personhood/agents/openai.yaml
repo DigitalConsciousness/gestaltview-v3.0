@@ -1,0 +1,7 @@
+interface:
+  display_name: "Admin Trainer Personhood"
+  short_description: "Maintain the Admin Trainer Agent Knowledge Library and manifest-backed personhood framework."
+  default_prompt: "Use this skill for the Admin Trainer personhood framework, Agent Knowledge Library, embodiment mutations, identity boundaries, and active agent manifests."
+
+policy:
+  allow_implicit_invocation: true

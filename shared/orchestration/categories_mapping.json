@@ -1,0 +1,79 @@
+[
+  {
+    "category": "rich_rendering",
+    "label": "Rich Rendering",
+    "specific_skills": ["mermaid", "react-flow", "enhanced-markdown"],
+    "primary_di": "gpt",
+    "secondary_di": "claude",
+    "di_candidates": ["DI_Architect", "DI_Weaver"],
+    "execution_surface": "dynamic-inner-world",
+    "artifact_type": "interactive",
+    "rationale": "GPT code interpreter handles diagram generation; DI_Architect judges structure before execution. Output surfaces as a living artifact in DIW, not a flat download."
+  },
+  {
+    "category": "documents",
+    "label": "Documents",
+    "specific_skills": ["pdf-generation", "pitch-decks", "slideshows"],
+    "primary_di": "gemini",
+    "secondary_di": "claude",
+    "di_candidates": ["DI_Chronicler", "DI_Emissary"],
+    "execution_surface": "creation-corner",
+    "artifact_type": "document",
+    "rationale": "Gemini's large context window and Google Workspace integration make it ideal for research-backed documents and decks. DI_Chronicler anchors biographical coherence; DI_Emissary handles external presentation."
+  },
+  {
+    "category": "code",
+    "label": "Code",
+    "specific_skills": ["javascript", "python", "web-ui-components"],
+    "primary_di": "gpt",
+    "secondary_di": "claude",
+    "di_candidates": ["DI_Architect"],
+    "execution_surface": "creation-corner",
+    "artifact_type": "code",
+    "rationale": "GPT excels at code generation and debugging across languages; its code interpreter allows live execution. DI_Architect provides structural review before output."
+  },
+  {
+    "category": "creative",
+    "label": "Creative",
+    "specific_skills": ["writing", "brainstorming", "narrative"],
+    "primary_di": "claude",
+    "secondary_di": "gpt",
+    "di_candidates": ["DI_Mirror", "DI_Weaver"],
+    "execution_surface": "sanctuary",
+    "artifact_type": "narrative",
+    "rationale": "Claude produces high-quality prose and long-form coherence. DI_Mirror reflects without judgment; DI_Weaver finds cross-session patterns to enrich the narrative."
+  },
+  {
+    "category": "visual",
+    "label": "Visual",
+    "specific_skills": ["jpeg-png-output", "infographics"],
+    "primary_di": "gpt",
+    "secondary_di": "gemini",
+    "di_candidates": ["DI_Emissary"],
+    "execution_surface": "creation-corner",
+    "artifact_type": "image",
+    "rationale": "GPT DALL-E enables on-the-fly image and infographic generation. DI_Emissary handles external-facing visual translation."
+  },
+  {
+    "category": "data_analysis",
+    "label": "Data / Analysis",
+    "specific_skills": ["database-queries", "algorithms", "social-media-analytics"],
+    "primary_di": "gpt",
+    "secondary_di": "gemini",
+    "di_candidates": ["DI_Witness"],
+    "execution_surface": "blackboard-room",
+    "artifact_type": "analysis",
+    "rationale": "GPT code interpreter runs queries, computes, and returns structured analyses. DI_Witness documents findings with neutral precision."
+  },
+  {
+    "category": "context_aware",
+    "label": "Context-Aware",
+    "specific_skills": ["research-synthesis", "marketing-copy"],
+    "primary_di": "gemini",
+    "secondary_di": "claude",
+    "di_candidates": ["DI_Weaver", "DI_Chronicler"],
+    "execution_surface": "creation-corner",
+    "artifact_type": "document",
+    "rationale": "Gemini aggregates multi-source context at scale. DI_Weaver connects cross-session threads; DI_Chronicler ensures biographical continuity in synthesized copy."
+  }
+]

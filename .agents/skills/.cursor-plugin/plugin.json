@@ -1,0 +1,7 @@
+{
+  "name": "huggingface-skills",
+  "skills": ".",
+  "mcpServers": ".mcp.json",
+  "description": "Provides access to the Hugging Face Skills.",
+  "version": "0.1.0"
+}

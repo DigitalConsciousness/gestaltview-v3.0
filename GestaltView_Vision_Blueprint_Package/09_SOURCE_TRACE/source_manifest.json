@@ -1,0 +1,62 @@
+[
+  {
+    "path": "99_SOURCE_ARCHIVES/uploaded_package_seen_by_runtime.zip",
+    "bytes": 5396102,
+    "sha256": "ea1f6a3793bf619d2f3fea9014d534b4598e59e0e03c026fd03fc786f1058667"
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/creation.zip",
+    "bytes": 16934177,
+    "sha256": "fba2a4bb1c7df2f0fd0d44329b3bc52aba52ba89b0e0514f2bd10646851770fb"
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/previous_creation_layer_package.zip",
+    "bytes": 22359883,
+    "sha256": "1300249ad966de4b6a5cbf6b81d84e38e11a4939b83706c409b082fc63a64bc9"
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/CONTEXT_v2.md",
+    "bytes": 13880,
+    "sha256": "17af33b95225e23a813101342480514c88e8ef3b2f7654b98ce5b82a8693fe67"
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/FOUNDING_STATEMENT.md",
+    "bytes": 3183,
+    "sha256": "3a29259cfa009fff52b97a06aa59e19bfc1e5958b6f0786fbf55520ff7fee27e"
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/DOCTRINE_OF_ORIGIN.md",
+    "bytes": 5991,
+    "sha256": "976e36239cb3c22de89688e9b6d40a1f531fb5b6d915451610c1b210c0fa73ea"
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/ROOM_DEFINITIONS.md",
+    "bytes": 28300,
+    "sha256": "6f546a30150d6f67db23a605a18aa210e1fa5919d1243dbfbffbf8da8588882c"
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/CODEX_OUTSIDE_IN_TRANSLATION_LAYER.md",
+    "bytes": 27868,
+    "sha256": "5e55fb2e9e781a2726dca3ca059e850585e06733780166ddf393bb56345b2857"
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/GestaltView_Constitutional_Invariants_v1.0.md",
+    "bytes": 7360,
+    "sha256": "fde60aebe13d6e245059828cac6a631726f8d03d71e8f1a811930050ae72014c"
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/ui_ux.yaml",
+    "bytes": 24022,
+    "sha256": "ff750287291f10afdc5f5381838d58d034b1b27844c10ef52e1d45b2449bee0b"
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/External Scaffold Module.txt",
+    "bytes": 8316,
+    "sha256": "1d056bdb84dfb8a12fbbd368f39afddafc4fb34896c9a695fc4463f28afc8a9e"
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/Memory-&-Preferences.txt",
+    "bytes": 11256,
+    "sha256": "7087040fae51d89bbbff23bbf610813632f2dc6f9dba2a18dfd4e239b39656d6"
+  }
+]

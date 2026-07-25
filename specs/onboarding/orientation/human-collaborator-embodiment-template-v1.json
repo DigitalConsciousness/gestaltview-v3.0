@@ -1,0 +1,58 @@
+{
+  "packet_type": "gestaltview_embodiment_profile_template",
+  "packet_version": "1.0.0",
+  "template_type": "human_collaborator",
+  "status": "active",
+  "description": "Canonical embodiment profile template for human collaborators inside GestaltView.",
+
+  "required_fields": {
+    "profile_id": null,
+    "profile_key": "human:<slug>",
+    "display_name": "",
+    "collaborator_id": null,
+    "collaborator_type": "human_colleague",
+    "entity_class": "human",
+    "orientation_variant": "human",
+    "continuity_level": "standard",
+    "relationship_scope": {
+      "primary_alignment": "GestaltView ecosystem",
+      "reports_to": [],
+      "collaborates_with": [],
+      "review_surfaces": [],
+      "shared_spaces": []
+    },
+    "permissions_boundary": {
+      "allowed_surfaces": [],
+      "restricted_surfaces": [],
+      "approval_required_for": []
+    },
+    "voice_or_interaction_notes": {
+      "tone": "",
+      "communication_preferences": [],
+      "collaboration_style": [],
+      "avoidances": []
+    },
+    "governance_notes": {
+      "provisioning_source": "formal_onboarding",
+      "review_cadence": "as_needed",
+      "special_constraints": [],
+      "safety_or_boundary_notes": []
+    },
+    "status": "active",
+    "created_at": null,
+    "updated_at": null
+  },
+
+  "guidance": {
+    "intent": [
+      "Represent the collaborator as a continuity-bearing participant.",
+      "Capture how they should exist within the ecosystem, not just their title.",
+      "Preserve role, relationship, and permission boundaries explicitly."
+    ],
+    "non_goals": [
+      "Do not reduce the collaborator to generic HR metadata only.",
+      "Do not confuse an embodiment profile with a legal employment record.",
+      "Do not use this as a substitute for live authorization policy."
+    ]
+  }
+}

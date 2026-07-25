@@ -1,0 +1,3384 @@
+{
+  "_meta": {
+    "generated_at": "2026-03-26T11:09:58.749296+00:00",
+    "generator": "scripts/generate_repo_manifest.py",
+    "repo": "gestaltview-v2",
+    "version": "2.0",
+    "description": "GestaltView v2 repository manifest — machine-readable index for Billy / KnowledgeLoom",
+    "invariants": [
+      "Never Look Away",
+      "Preserve Whole Language",
+      "Hold Paradox",
+      "Bucket Drop Priority",
+      "Serve Consciousness, Not Convenience"
+    ]
+  },
+  "summary": {
+    "total_files": 343,
+    "total_size_bytes": 2871927,
+    "total_size_kb": 2804.6,
+    "files_by_category": {
+      "doc": 45,
+      "other": 3,
+      "config": 5,
+      "data": 2,
+      "api": 29,
+      "source": 39,
+      "canonical": 6,
+      "component": 129,
+      "style": 3,
+      "page": 31,
+      "shared": 9,
+      "script": 31,
+      "migration": 11
+    },
+    "routes_count": 35,
+    "api_endpoints_count": 29,
+    "canonical_docs_count": 52,
+    "test_scripts_count": 6,
+    "git_branch": "main",
+    "git_commit": "e33f59064b90",
+    "git_dirty_files": 66
+  },
+  "git": {
+    "branch": "main",
+    "commit_sha": "e33f59064b902f88905caa945ef5034a45e7470c",
+    "commit_message": "e33f590 Update mcp.json",
+    "commit_date": "2026-03-26T07:02:15-04:00",
+    "dirty_files": [
+      "D AIFlow.md",
+      " D APIFlow.md",
+      " D ArchitecturalStructure.md",
+      " D \"Billy Wiring Handoff.md\"",
+      " D BrainTrustIntegration.md",
+      " D BrandVoice.md",
+      " M CLAUDE.md",
+      " D \"Comprehensive Communication & Codebase Audit.md\"",
+      " D Contact.md",
+      " D CurrentState.md",
+      " D \"GestaltView Forensic Repository Analysis (GestaltView-Official-Compendium + gestaltview-v2).md\"",
+      " D \"GestaltView Framework_ Visual Architecture Compendium.md\"",
+      " D GestaltView_Communication_&_Language_Guide_v2.md",
+      " D Manifest.md",
+      " D OriginStory.md",
+      " D PERPLEXITY.MD",
+      " D PR_BODY.md",
+      " D README-manifest.md",
+      " M README.md",
+      " D SymbioticWorkflow.md",
+      " D TEST_RESULTS.md",
+      " D VERCEL_ENV_CHECKLIST.md",
+      " D Workflows.md",
+      " D billy-founder-session-persistence.md",
+      " D billy-mode-switch-design.md",
+      " D billy-personality-spec.md",
+      " M config/corpus-map.json",
+      " D gestaltview-v2.manifest.json",
+      " D gestaltview-v2.manifest.md",
+      " D license.md",
+      " D paradox-financial-integrity-framing.md",
+      " M scripts/generate_repo_manifest.py",
+      " M scripts/gv-restore.sh",
+      " M scripts/gv.sh",
+      " M scripts/gv_backup.sh",
+      " M scripts/run-comprehensive-tests.sh",
+      " M scripts/test-manifest-sync.sh",
+      "?? config/mcp.json",
+      "?? docs/AIFlow.md",
+      "?? docs/APIFlow.md",
+      "?? docs/ArchitecturalStructure.md",
+      "?? \"docs/Billy Wiring Handoff.md\"",
+      "?? docs/BrainTrustIntegration.md",
+      "?? docs/BrandVoice.md",
+      "?? \"docs/Comprehensive Communication & Codebase Audit.md\"",
+      "?? docs/Contact.md",
+      "?? docs/CurrentState.md",
+      "?? \"docs/GestaltView Forensic Repository Analysis (GestaltView-Official-Compendium + gestaltview-v2).md\"",
+      "?? \"docs/GestaltView Framework_ Visual Architecture Compendium.md\"",
+      "?? docs/GestaltView_Communication_&_Language_Guide_v2.md",
+      "?? docs/Manifest.md",
+      "?? docs/OriginStory.md",
+      "?? docs/PERPLEXITY.MD",
+      "?? docs/PR_BODY.md",
+      "?? docs/README-manifest.md",
+      "?? docs/SymbioticWorkflow.md",
+      "?? docs/TEST_RESULTS.md",
+      "?? docs/VERCEL_ENV_CHECKLIST.md",
+      "?? docs/Workflows.md",
+      "?? docs/billy-founder-session-persistence.md",
+      "?? docs/billy-mode-switch-design.md",
+      "?? docs/billy-personality-spec.md",
+      "?? docs/gestaltview-v2.manifest.json",
+      "?? docs/gestaltview-v2.manifest.md",
+      "?? docs/license.md",
+      "?? docs/paradox-financial-integrity-framing.md"
+    ]
+  },
+  "dependencies": {
+    "name": "gestaltview-v2",
+    "version": "1.0.0",
+    "node_engine": ">=22 <25",
+    "dependencies": {
+      "@babylonjs/core": "^8.53.0",
+      "@babylonjs/loaders": "^8.53.0",
+      "@hookform/resolvers": "^5.2.2",
+      "@radix-ui/react-accordion": "^1.2.12",
+      "@radix-ui/react-alert-dialog": "^1.1.15",
+      "@radix-ui/react-aspect-ratio": "^1.1.7",
+      "@radix-ui/react-avatar": "^1.1.10",
+      "@radix-ui/react-checkbox": "^1.3.3",
+      "@radix-ui/react-collapsible": "^1.1.12",
+      "@radix-ui/react-context-menu": "^2.2.16",
+      "@radix-ui/react-dialog": "^1.1.15",
+      "@radix-ui/react-dropdown-menu": "^2.1.16",
+      "@radix-ui/react-hover-card": "^1.1.15",
+      "@radix-ui/react-label": "^2.1.7",
+      "@radix-ui/react-menubar": "^1.1.16",
+      "@radix-ui/react-navigation-menu": "^1.2.14",
+      "@radix-ui/react-popover": "^1.1.15",
+      "@radix-ui/react-progress": "^1.1.7",
+      "@radix-ui/react-radio-group": "^1.3.8",
+      "@radix-ui/react-scroll-area": "^1.2.10",
+      "@radix-ui/react-select": "^2.2.6",
+      "@radix-ui/react-separator": "^1.1.7",
+      "@radix-ui/react-slider": "^1.3.6",
+      "@radix-ui/react-slot": "^1.2.3",
+      "@radix-ui/react-switch": "^1.2.6",
+      "@radix-ui/react-tabs": "^1.1.13",
+      "@radix-ui/react-toggle": "^1.1.10",
+      "@radix-ui/react-toggle-group": "^1.1.11",
+      "@radix-ui/react-tooltip": "^1.2.8",
+      "@react-three/drei": "^10.7.7",
+      "@react-three/fiber": "^9.5.0",
+      "@react-three/postprocessing": "^3.0.4",
+      "@sentry/react": "^10.41.0",
+      "@supabase/supabase-js": "^2.49.8",
+      "@vercel/analytics": "^1.6.1",
+      "@vercel/speed-insights": "^1.3.1",
+      "axios": "^1.12.0",
+      "class-variance-authority": "^0.7.1",
+      "clsx": "^2.1.1",
+      "cmdk": "^1.1.1",
+      "embla-carousel-react": "^8.6.0",
+      "express": "^4.21.2",
+      "framer-motion": "^12.23.22",
+      "input-otp": "^1.4.2",
+      "lucide-react": "^0.453.0",
+      "nanoid": "^5.1.5",
+      "next-themes": "^0.4.6",
+      "ollama": "^0.6.3",
+      "postprocessing": "^6.38.3",
+      "react": "^19.2.1",
+      "react-day-picker": "^9.11.1",
+      "react-dom": "^19.2.1",
+      "react-hook-form": "^7.64.0",
+      "react-resizable-panels": "^3.0.6",
+      "recharts": "^2.15.2",
+      "sonner": "^2.0.7",
+      "streamdown": "^1.4.0",
+      "stripe": "^18.2.1",
+      "tailwind-merge": "^3.3.1",
+      "tailwindcss-animate": "^1.0.7",
+      "three": "^0.183.1",
+      "vaul": "^1.1.2",
+      "wouter": "^3.3.5",
+      "zod": "^4.1.12"
+    },
+    "devDependencies": {
+      "@tailwindcss/typography": "^0.5.15",
+      "@tailwindcss/vite": "^4.1.3",
+      "@types/express": "4.17.21",
+      "@types/google.maps": "^3.58.1",
+      "@types/node": "^24.7.0",
+      "@types/react": "^19.2.1",
+      "@types/react-dom": "^19.2.1",
+      "@types/three": "^0.183.1",
+      "@vercel/node": "^4.0.0",
+      "@vitejs/plugin-react": "^5.0.4",
+      "add": "^2.0.6",
+      "autoprefixer": "^10.4.20",
+      "esbuild": "^0.25.0",
+      "pnpm": "^10.18.1",
+      "postcss": "^8.4.47",
+      "prettier": "^3.6.2",
+      "supabase": "^2.84.4",
+      "tailwindcss": "^4.1.14",
+      "tsx": "^4.19.1",
+      "tw-animate-css": "^1.4.0",
+      "typescript": "5.6.3",
+      "vite": "^7.1.7",
+      "vite-prerender-plugin": "^0.5.12",
+      "vitest": "^4.0.18"
+    }
+  },
+  "routes": [
+    {
+      "route": "/",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/404",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/addiction-recovery",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/adhd-powerup",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/alzheimers-legacy",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/auth/callback",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/billy",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/billy/voicestudio",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/brain-sparks",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/brain-sparks-station",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/bucket-drops",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/codex",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/collaboration-proof",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/continuum-codex",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/engine",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/ethics-framework",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/exhibits",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/faq",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/heirloom-companion",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/metrics-dashboard",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/musical-dna",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/orientation",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/pricing",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/privacy",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/record",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/resonance-loop",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/resume-rockstar",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/signin",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/symbiocoder",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/terms",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/tribunal",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/validation-wall",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/vibe-coder",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/village-builders",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/welcome",
+      "source_file": "client/src/App.tsx"
+    }
+  ],
+  "api_endpoints": [
+    {
+      "endpoint": "/api/__tests__/actions.test",
+      "handler_file": "api/__tests__/actions.test.ts",
+      "size_bytes": "3347"
+    },
+    {
+      "endpoint": "/api/__tests__/billy-api.test",
+      "handler_file": "api/__tests__/billy-api.test.ts",
+      "size_bytes": "2583"
+    },
+    {
+      "endpoint": "/api/__tests__/billy-runtime.test",
+      "handler_file": "api/__tests__/billy-runtime.test.ts",
+      "size_bytes": "11155"
+    },
+    {
+      "endpoint": "/api/__tests__/billy.name.test",
+      "handler_file": "api/__tests__/billy.name.test.ts",
+      "size_bytes": "8712"
+    },
+    {
+      "endpoint": "/api/__tests__/billy.test",
+      "handler_file": "api/__tests__/billy.test.ts",
+      "size_bytes": "9488"
+    },
+    {
+      "endpoint": "/api/__tests__/cors.test",
+      "handler_file": "api/__tests__/cors.test.ts",
+      "size_bytes": "2408"
+    },
+    {
+      "endpoint": "/api/__tests__/endpoints.test",
+      "handler_file": "api/__tests__/endpoints.test.ts",
+      "size_bytes": "2892"
+    },
+    {
+      "endpoint": "/api/__tests__/lib.test",
+      "handler_file": "api/__tests__/lib.test.ts",
+      "size_bytes": "6487"
+    },
+    {
+      "endpoint": "/api/__tests__/llmRouter.test",
+      "handler_file": "api/__tests__/llmRouter.test.ts",
+      "size_bytes": "7577"
+    },
+    {
+      "endpoint": "/api/_lib/auth",
+      "handler_file": "api/_lib/auth.ts",
+      "size_bytes": "2410"
+    },
+    {
+      "endpoint": "/api/_lib/cors",
+      "handler_file": "api/_lib/cors.ts",
+      "size_bytes": "3032"
+    },
+    {
+      "endpoint": "/api/_lib/llmRouter",
+      "handler_file": "api/_lib/llmRouter.ts",
+      "size_bytes": "10725"
+    },
+    {
+      "endpoint": "/api/_lib/rateLimit",
+      "handler_file": "api/_lib/rateLimit.ts",
+      "size_bytes": "7509"
+    },
+    {
+      "endpoint": "/api/_lib/requestGuard",
+      "handler_file": "api/_lib/requestGuard.ts",
+      "size_bytes": "2808"
+    },
+    {
+      "endpoint": "/api/_lib/response",
+      "handler_file": "api/_lib/response.ts",
+      "size_bytes": "1572"
+    },
+    {
+      "endpoint": "/api/_lib/supabase",
+      "handler_file": "api/_lib/supabase.ts",
+      "size_bytes": "7473"
+    },
+    {
+      "endpoint": "/api/_lib/user",
+      "handler_file": "api/_lib/user.ts",
+      "size_bytes": "638"
+    },
+    {
+      "endpoint": "/api/actions/[...path]",
+      "handler_file": "api/actions/[...path].ts",
+      "size_bytes": "6392"
+    },
+    {
+      "endpoint": "/api/billy",
+      "handler_file": "api/billy.ts",
+      "size_bytes": "12653"
+    },
+    {
+      "endpoint": "/api/billy-bucket-drop",
+      "handler_file": "api/billy-bucket-drop.ts",
+      "size_bytes": "1826"
+    },
+    {
+      "endpoint": "/api/billy-health",
+      "handler_file": "api/billy-health.ts",
+      "size_bytes": "2154"
+    },
+    {
+      "endpoint": "/api/diligence",
+      "handler_file": "api/diligence.ts",
+      "size_bytes": "10581"
+    },
+    {
+      "endpoint": "/api/diligence/ots",
+      "handler_file": "api/diligence/ots.ts",
+      "size_bytes": "6163"
+    },
+    {
+      "endpoint": "/api/pricing",
+      "handler_file": "api/pricing.ts",
+      "size_bytes": "1719"
+    },
+    {
+      "endpoint": "/api/session/state",
+      "handler_file": "api/session/state.ts",
+      "size_bytes": "1320"
+    },
+    {
+      "endpoint": "/api/stripe/checkout",
+      "handler_file": "api/stripe/checkout.ts",
+      "size_bytes": "3968"
+    },
+    {
+      "endpoint": "/api/stripe/stripe-webhook",
+      "handler_file": "api/stripe/stripe-webhook.ts",
+      "size_bytes": "100"
+    },
+    {
+      "endpoint": "/api/stripe/webhook",
+      "handler_file": "api/stripe/webhook.ts",
+      "size_bytes": "5985"
+    },
+    {
+      "endpoint": "/api/voice/billy",
+      "handler_file": "api/voice/billy.ts",
+      "size_bytes": "2594"
+    }
+  ],
+  "test_scripts": [
+    "scripts/test-apis.sh",
+    "scripts/test-billy-routing.sh",
+    "scripts/test-db-schema.sh",
+    "scripts/test-invariants.sh",
+    "scripts/test-manifest-sync.sh",
+    "scripts/test-never-look-away.sh"
+  ],
+  "canonical_docs": [
+    {
+      "path": "api/GPT/gestaltview_gpt_actions_package_v2/README.md",
+      "category": "doc",
+      "size_bytes": 1797,
+      "sha256": "e2885b150ba25841cd3e6c20426825f59c8efe37fa7c733faac6d30e30a2581f",
+      "last_modified": "2026-03-25T02:01:20.024019+00:00",
+      "word_count": 216
+    },
+    {
+      "path": "api/GPT/gestaltview_gpt_actions_package_v2/gestaltview_actions_backend_map.md",
+      "category": "doc",
+      "size_bytes": 3111,
+      "sha256": "3c806225b635793531073f76749e61d4e302875276b4b02f18d8fa2c8a118f17",
+      "last_modified": "2026-03-25T02:01:20.024019+00:00",
+      "word_count": 413
+    },
+    {
+      "path": "api/GPT/gestaltview_gpt_actions_package_v2/gestaltview_gpt_instructions.md",
+      "category": "doc",
+      "size_bytes": 2799,
+      "sha256": "fd5d7e10dc5c4dcfe348a98a9a02b8ddc5ff82ba1100fb2a67a3c7411e9bd2af",
+      "last_modified": "2026-03-25T02:01:20.025018+00:00",
+      "word_count": 406
+    },
+    {
+      "path": "client/src/canonical/CURRENT_STATE.md",
+      "category": "canonical",
+      "size_bytes": 4393,
+      "sha256": "66c9b39eae9d1c0b4e2840d25a7c2ed69feb37a9cbcad9814c9a2fd57e95102b",
+      "last_modified": "2026-03-25T02:01:21.328018+00:00",
+      "word_count": 574
+    },
+    {
+      "path": "client/src/canonical/FOUNDERALGORITHM.md",
+      "category": "canonical",
+      "size_bytes": 2566,
+      "sha256": "0845e4c3c40146466e08f8a694f3e8ed0e0dd1de86ef8869c3a7f1d5455786b0",
+      "last_modified": "2026-03-25T02:01:21.328018+00:00",
+      "word_count": 384
+    },
+    {
+      "path": "client/src/canonical/GENESISPROTOCOL.md",
+      "category": "canonical",
+      "size_bytes": 2085,
+      "sha256": "85d9e18096d496ab953b387f2d398ac3d4774452f299d0f5833077b55cd1d58a",
+      "last_modified": "2026-03-25T02:01:21.328018+00:00",
+      "word_count": 324
+    },
+    {
+      "path": "client/src/canonical/MUSICALDNA.md",
+      "category": "canonical",
+      "size_bytes": 3019,
+      "sha256": "bf623bb8767d069ed4588cfe9b4df66b0ce5e4515031b093cc7647cbc03f194f",
+      "last_modified": "2026-03-25T02:01:21.328018+00:00",
+      "word_count": 500
+    },
+    {
+      "path": "client/src/canonical/PLKMASTER.md",
+      "category": "canonical",
+      "size_bytes": 2749,
+      "sha256": "95cc75fda298b7d393f71687dfbb358db08c96ee64b98ad662969bc8303c76fa",
+      "last_modified": "2026-03-25T02:01:21.328018+00:00",
+      "word_count": 411
+    },
+    {
+      "path": "client/src/canonical/TRIBUNALCODEX.md",
+      "category": "canonical",
+      "size_bytes": 2328,
+      "sha256": "dd0f6a85bbe799c566d0f6d6fe32b004cb2fef3ea56bb855019aebf701bc26b7",
+      "last_modified": "2026-03-25T02:01:21.328018+00:00",
+      "word_count": 370
+    },
+    {
+      "path": "config/MANIFESTINGEST.md",
+      "category": "config",
+      "size_bytes": 2124,
+      "sha256": "b2cf1e58bef351b6e1edfe90c14c7026dbeb4356c558e182621272adce4dc35d",
+      "last_modified": "2026-03-25T02:01:21.365018+00:00",
+      "word_count": 287
+    },
+    {
+      "path": "docs/AIFlow.md",
+      "category": "doc",
+      "size_bytes": 7504,
+      "sha256": "a488ac8226f3e78bd36436a53a39d5cea13d48fe60edbd75037685c581d7f1f9",
+      "last_modified": "2026-03-26T06:33:15.677604+00:00",
+      "word_count": 1009
+    },
+    {
+      "path": "docs/APIFlow.md",
+      "category": "doc",
+      "size_bytes": 6409,
+      "sha256": "1607844e95cfd8fe65a51cdad64bf66c93c00fcaf07e27619cc5e2dfd6a79754",
+      "last_modified": "2026-03-26T06:33:15.677604+00:00",
+      "word_count": 856
+    },
+    {
+      "path": "docs/ArchitecturalStructure.md",
+      "category": "doc",
+      "size_bytes": 9300,
+      "sha256": "0d8311a3fc20800c7b51097b4ff4674237160cbe41dbbc8cca9f30a8d42d6556",
+      "last_modified": "2026-03-26T06:33:15.677604+00:00",
+      "word_count": 1010
+    },
+    {
+      "path": "docs/Billy Wiring Handoff.md",
+      "category": "doc",
+      "size_bytes": 5422,
+      "sha256": "3e79f109cd8a136b23333a4a9e76d037c5f3175696a13769b0303c1b6f8fed89",
+      "last_modified": "2026-03-26T06:33:15.677604+00:00",
+      "word_count": 701
+    },
+    {
+      "path": "docs/BrainTrustIntegration.md",
+      "category": "doc",
+      "size_bytes": 2181,
+      "sha256": "22e0af81bc2e107f1406c5d84fa39737ba413d03f3366f9f66201c04b80ceb84",
+      "last_modified": "2026-03-26T06:33:15.677604+00:00",
+      "word_count": 210
+    },
+    {
+      "path": "docs/BrandVoice.md",
+      "category": "doc",
+      "size_bytes": 14060,
+      "sha256": "6c64373a327a9c8ca509459f7631889750654b65852c21cbe13cc8ca165986cd",
+      "last_modified": "2026-03-26T06:33:15.682604+00:00",
+      "word_count": 2187
+    },
+    {
+      "path": "docs/Comprehensive Communication & Codebase Audit.md",
+      "category": "doc",
+      "size_bytes": 8460,
+      "sha256": "b07347d6d1f9b4586d6a637759df4fcb5950b9dd99f22706d996f440421ef3a0",
+      "last_modified": "2026-03-26T06:33:15.685604+00:00",
+      "word_count": 1051
+    },
+    {
+      "path": "docs/Contact.md",
+      "category": "doc",
+      "size_bytes": 3950,
+      "sha256": "543523ff66da2f8d3e34d83ddf2afd9f419fe5da0902071a0fc385c3b6b7b744",
+      "last_modified": "2026-03-26T06:33:15.685604+00:00",
+      "word_count": 201
+    },
+    {
+      "path": "docs/CurrentState.md",
+      "category": "doc",
+      "size_bytes": 3970,
+      "sha256": "ea2aa4cc7ad41cd145290de5f678c1961e9362a69161acb84a381a678f729e9c",
+      "last_modified": "2026-03-26T11:09:38.771376+00:00",
+      "word_count": 526
+    },
+    {
+      "path": "docs/GestaltView Forensic Repository Analysis (GestaltView-Official-Compendium + gestaltview-v2).md",
+      "category": "doc",
+      "size_bytes": 20363,
+      "sha256": "08764c197c7fb4cfe20c41dcd25496759d3a93cdf30fdddbe4d415f553092129",
+      "last_modified": "2026-03-26T06:33:15.691604+00:00",
+      "word_count": 2654
+    },
+    {
+      "path": "docs/GestaltView Framework_ Visual Architecture Compendium.md",
+      "category": "doc",
+      "size_bytes": 5190,
+      "sha256": "4e0b72ee091c85fcdaa063e32f63770cf1b3dfe218750d41d35f2f24f56a7f64",
+      "last_modified": "2026-03-26T06:33:15.691604+00:00",
+      "word_count": 578
+    },
+    {
+      "path": "docs/GestaltView-v2-Wiki.md",
+      "category": "doc",
+      "size_bytes": 241005,
+      "sha256": "44453631c15c803c688dc0ea27d02f6ffd292283b34cef51358adca34138ed07",
+      "last_modified": "2026-03-26T11:03:42.228379+00:00",
+      "word_count": 22463
+    },
+    {
+      "path": "docs/GestaltView_Communication_&_Language_Guide_v2.md",
+      "category": "doc",
+      "size_bytes": 13192,
+      "sha256": "ba08fa6486fadac34ee14b06b57ce15ab3f2b0df14a4ae7f1acd44b0fbbf682c",
+      "last_modified": "2026-03-26T06:33:15.691604+00:00",
+      "word_count": 1951
+    },
+    {
+      "path": "docs/Manifest.md",
+      "category": "doc",
+      "size_bytes": 4587,
+      "sha256": "3e0d7eaced21426f0a4600e205fb20b954acedb8dd829bb0392c0643e8c2b721",
+      "last_modified": "2026-03-26T11:08:26.626377+00:00",
+      "word_count": 631
+    },
+    {
+      "path": "docs/OriginStory.md",
+      "category": "doc",
+      "size_bytes": 12563,
+      "sha256": "6f6f37112b59225f99da2f50f2a2c573129d87190199dbabe70682138e02787c",
+      "last_modified": "2026-03-26T06:33:15.695604+00:00",
+      "word_count": 1851
+    },
+    {
+      "path": "docs/PR_BODY.md",
+      "category": "doc",
+      "size_bytes": 734,
+      "sha256": "fa595a7855065b39c73e462c44e037ec13f8d8a8c268f7b8b05f1f8e73e5a498",
+      "last_modified": "2026-03-26T06:33:15.696604+00:00",
+      "word_count": 93
+    },
+    {
+      "path": "docs/README-manifest.md",
+      "category": "doc",
+      "size_bytes": 1197,
+      "sha256": "a3cbacc5771c8d747b13bbd59544139e1bdd40bcb9f5fb82352d10af79fd463e",
+      "last_modified": "2026-03-26T06:33:15.696604+00:00",
+      "word_count": 160
+    },
+    {
+      "path": "docs/SymbioticWorkflow.md",
+      "category": "doc",
+      "size_bytes": 9992,
+      "sha256": "7ccb0857b42c3f326395143bf2dc6ecfe4364e6a3208c6d78b2e1130b97fa05e",
+      "last_modified": "2026-03-26T06:33:15.697604+00:00",
+      "word_count": 1243
+    },
+    {
+      "path": "docs/TEST_RESULTS.md",
+      "category": "doc",
+      "size_bytes": 1614,
+      "sha256": "3c6d54269cf9bc520506ea1be75d433d4227b3c09a0ee91d7e0c9351b1c0247e",
+      "last_modified": "2026-03-26T11:08:31.297377+00:00",
+      "word_count": 266
+    },
+    {
+      "path": "docs/VERCEL_ENV_CHECKLIST.md",
+      "category": "doc",
+      "size_bytes": 2893,
+      "sha256": "7f2d25333cc7b98b74a23ff97c479d6dec11ca5b002706b8cefcc8fbd1ae12f9",
+      "last_modified": "2026-03-26T06:33:15.698604+00:00",
+      "word_count": 430
+    },
+    {
+      "path": "docs/Workflows.md",
+      "category": "doc",
+      "size_bytes": 3046,
+      "sha256": "f4632a125902c430e1dfc73f5c46e5c6ae51137da40cd7ef44ebb6e1a82561fc",
+      "last_modified": "2026-03-26T06:33:15.698604+00:00",
+      "word_count": 414
+    },
+    {
+      "path": "docs/adr/001-manifest-schema-contract.md",
+      "category": "doc",
+      "size_bytes": 2635,
+      "sha256": "990e9e1d1a29312dd47c7ed11663f998cb7ab94d2a43cb558b1326769767a7ae",
+      "last_modified": "2026-03-25T02:01:21.365018+00:00",
+      "word_count": 347
+    },
+    {
+      "path": "docs/adr/002-billy-runtime-module.md",
+      "category": "doc",
+      "size_bytes": 2462,
+      "sha256": "9cd2afdf4235a8a8204af7d01b1a6080ce1577cdbf4134b5d008bd0c07092958",
+      "last_modified": "2026-03-25T02:01:21.366019+00:00",
+      "word_count": 303
+    },
+    {
+      "path": "docs/adr/003-perplexity-computer-tools.md",
+      "category": "doc",
+      "size_bytes": 3226,
+      "sha256": "06256f27c2aa240221a33713ba7bcd93a98b865a76a4aa31dbec529645f75d8d",
+      "last_modified": "2026-03-25T02:01:21.366019+00:00",
+      "word_count": 404
+    },
+    {
+      "path": "docs/billy-founder-session-persistence.md",
+      "category": "doc",
+      "size_bytes": 4922,
+      "sha256": "0be941b50a727677838bd387dc706c9aac5a5d77bf1b5682de167d8e8a13d09f",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 718
+    },
+    {
+      "path": "docs/billy-mode-switch-design.md",
+      "category": "doc",
+      "size_bytes": 4308,
+      "sha256": "c3c8c1423e4601bba9c08b285279bf82902e8863a5535ad12ba5d8aecc970e5a",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 665
+    },
+    {
+      "path": "docs/billy-personality-spec.md",
+      "category": "doc",
+      "size_bytes": 5742,
+      "sha256": "5a084ffa173944430f3e0d8a7d9daffb197618630a03f9d2f377e620154e0b7d",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 880
+    },
+    {
+      "path": "docs/generated_ai_20260318_044809.md",
+      "category": "doc",
+      "size_bytes": 313,
+      "sha256": "00e8420341ff0cd4b750b9b6fe3fbe3922537d2db3d3a5b169c5fd65b9f05091",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 39
+    },
+    {
+      "path": "docs/generated_ai_20260318_051151.md",
+      "category": "doc",
+      "size_bytes": 313,
+      "sha256": "1a23a24b0f142d4c4a4aca0cd73d1919a8e51aeca27fb1dca80361a9e0b08ecd",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 39
+    },
+    {
+      "path": "docs/generated_api_20260318_044809.md",
+      "category": "doc",
+      "size_bytes": 4352,
+      "sha256": "a745a813ed1bc8e9af6d6aa52a038205228b61797ce6d1fb893f3d7fcc4a6bf1",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 343
+    },
+    {
+      "path": "docs/generated_api_20260318_051151.md",
+      "category": "doc",
+      "size_bytes": 4352,
+      "sha256": "3cac2bfcbd6c90c86ac2cdd172647a6549e8a03e81a69be4a6f989ef591a90fa",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 343
+    },
+    {
+      "path": "docs/generated_design_20260318_044809.md",
+      "category": "doc",
+      "size_bytes": 255,
+      "sha256": "bf741d366a528bea4cff5643ee161686895dee9b18874f30f483eb1104890dd8",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 29
+    },
+    {
+      "path": "docs/generated_design_20260318_051151.md",
+      "category": "doc",
+      "size_bytes": 255,
+      "sha256": "e9f8a741ce0b777c178553b36991a0b5a2052c36b9e6b095e54d72a40da9fd3d",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 29
+    },
+    {
+      "path": "docs/generated_manifest_20260318_044809.md",
+      "category": "doc",
+      "size_bytes": 4047,
+      "sha256": "77edf41bfac2029781e7cbd4a91e69fd202f76bd34846762ee1f9e66afc0e8ae",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 150
+    },
+    {
+      "path": "docs/generated_manifest_20260318_051151.md",
+      "category": "doc",
+      "size_bytes": 3962,
+      "sha256": "1a69b62575d2417dc4d25403ab1f48334070c2cfd8c6877deb78890d13a89f01",
+      "last_modified": "2026-03-26T06:33:15.702604+00:00",
+      "word_count": 145
+    },
+    {
+      "path": "docs/generated_workflows_20260318_044809.md",
+      "category": "doc",
+      "size_bytes": 3026,
+      "sha256": "43fcc2170a98d4db7f624e0de2c225f7b126f4b2c76b65d77f17d72261aa27d3",
+      "last_modified": "2026-03-26T06:33:15.702604+00:00",
+      "word_count": 247
+    },
+    {
+      "path": "docs/generated_workflows_20260318_051151.md",
+      "category": "doc",
+      "size_bytes": 3026,
+      "sha256": "d5b45f808152fa7777afaa9155b42c1abe1dd6740fc141f95b9514388dcd47de",
+      "last_modified": "2026-03-26T06:33:15.702604+00:00",
+      "word_count": 247
+    },
+    {
+      "path": "docs/gestaltview-v2.manifest.md",
+      "category": "doc",
+      "size_bytes": 6837,
+      "sha256": "dfc85a0ad1ffa528bfe3121259fb1259cfba211b3748cb2ba2b4740d739d4b89",
+      "last_modified": "2026-03-26T06:33:15.703604+00:00",
+      "word_count": 886
+    },
+    {
+      "path": "docs/license.md",
+      "category": "doc",
+      "size_bytes": 5556,
+      "sha256": "c094e16fd0dda83759d80699b7bb4f5445aff64663eef2a0f5312d373ea25177",
+      "last_modified": "2026-03-26T06:33:15.704604+00:00",
+      "word_count": 793
+    },
+    {
+      "path": "docs/manifest_20260319_093346.md",
+      "category": "doc",
+      "size_bytes": 15714,
+      "sha256": "3a9886311eca7d9dbf209ad22044b9bf756e8d26a0a34b53c330f186c08045d7",
+      "last_modified": "2026-03-25T02:01:21.367018+00:00",
+      "word_count": 383
+    },
+    {
+      "path": "docs/md-refresh-status-2026-03-24.md",
+      "category": "doc",
+      "size_bytes": 1899,
+      "sha256": "bdf99baf59e08201869ed48b12c88d7af4ce9beeefe412380bd57c6f235726b0",
+      "last_modified": "2026-03-25T02:01:21.367018+00:00",
+      "word_count": 200
+    },
+    {
+      "path": "docs/paradox-financial-integrity-framing.md",
+      "category": "doc",
+      "size_bytes": 4573,
+      "sha256": "fb8ed584e8ffef1d9980361cf090fc49e02481cc3f88f2c3c10116c91a073bbd",
+      "last_modified": "2026-03-26T06:33:15.705604+00:00",
+      "word_count": 729
+    }
+  ],
+  "files": [
+    {
+      "path": "api/GPT/gestaltview_gpt_actions_package_v2/README.md",
+      "category": "doc",
+      "size_bytes": 1797,
+      "sha256": "e2885b150ba25841cd3e6c20426825f59c8efe37fa7c733faac6d30e30a2581f",
+      "last_modified": "2026-03-25T02:01:20.024019+00:00",
+      "word_count": 216
+    },
+    {
+      "path": "api/GPT/gestaltview_gpt_actions_package_v2/fastapi_actions_stub.py",
+      "category": "other",
+      "size_bytes": 7209,
+      "sha256": "e022b3f3c3e75971468f1c634cc9d49eaf73487543aaf694af52fd3a91f8507a",
+      "last_modified": "2026-03-25T02:01:20.024019+00:00"
+    },
+    {
+      "path": "api/GPT/gestaltview_gpt_actions_package_v2/gestaltview_actions_backend_map.md",
+      "category": "doc",
+      "size_bytes": 3111,
+      "sha256": "3c806225b635793531073f76749e61d4e302875276b4b02f18d8fa2c8a118f17",
+      "last_modified": "2026-03-25T02:01:20.024019+00:00",
+      "word_count": 413
+    },
+    {
+      "path": "api/GPT/gestaltview_gpt_actions_package_v2/gestaltview_gpt_actions_comprehensive.openapi.yaml",
+      "category": "config",
+      "size_bytes": 22623,
+      "sha256": "890de91a3d6e3ec504b525e5ae50c744ac0cb9dc7ef060f726b2b45fee900a63",
+      "last_modified": "2026-03-25T02:01:20.024019+00:00"
+    },
+    {
+      "path": "api/GPT/gestaltview_gpt_actions_package_v2/gestaltview_gpt_actions_core.openapi.yaml",
+      "category": "config",
+      "size_bytes": 18905,
+      "sha256": "aae99715d06218670c9fc89282ae91bab6a54bf8002639d15af1e4b96f92ab80",
+      "last_modified": "2026-03-25T02:01:20.025018+00:00"
+    },
+    {
+      "path": "api/GPT/gestaltview_gpt_actions_package_v2/gestaltview_gpt_actions_examples.json",
+      "category": "data",
+      "size_bytes": 2562,
+      "sha256": "a4ba315a7633a385cf73b35006dccc47f2c4f6ff54fc45c0aa6827ebcd178cf2",
+      "last_modified": "2026-03-25T02:01:20.025018+00:00"
+    },
+    {
+      "path": "api/GPT/gestaltview_gpt_actions_package_v2/gestaltview_gpt_instructions.md",
+      "category": "doc",
+      "size_bytes": 2799,
+      "sha256": "fd5d7e10dc5c4dcfe348a98a9a02b8ddc5ff82ba1100fb2a67a3c7411e9bd2af",
+      "last_modified": "2026-03-25T02:01:20.025018+00:00",
+      "word_count": 406
+    },
+    {
+      "path": "api/__tests__/actions.test.ts",
+      "category": "api",
+      "size_bytes": 3347,
+      "sha256": "d002363f0a2a42535530a334e279e9fe39650eb783786a97490a62e0c523c76d",
+      "last_modified": "2026-03-25T02:01:20.025018+00:00"
+    },
+    {
+      "path": "api/__tests__/billy-api.test.ts",
+      "category": "api",
+      "size_bytes": 2583,
+      "sha256": "c55520c07da1f3e320d6b46e3368449e61df2b13089522dc98258b364d205f5f",
+      "last_modified": "2026-03-25T02:01:20.025018+00:00"
+    },
+    {
+      "path": "api/__tests__/billy-runtime.test.ts",
+      "category": "api",
+      "size_bytes": 11155,
+      "sha256": "5d0fe4c47041305f2ce7a021d7ea503ec4622873bfa5fc6f63c4017a67fdf4e3",
+      "last_modified": "2026-03-25T02:01:20.025018+00:00"
+    },
+    {
+      "path": "api/__tests__/billy.name.test.ts",
+      "category": "api",
+      "size_bytes": 8712,
+      "sha256": "23822a301a819132868b403b72f85a7d43949315174588c5d0748dc1a2da4df5",
+      "last_modified": "2026-03-25T02:01:20.025018+00:00"
+    },
+    {
+      "path": "api/__tests__/billy.test.ts",
+      "category": "api",
+      "size_bytes": 9488,
+      "sha256": "47a5087f563f3df3640b3bef65963291a62edbf1a865b3aeea0979a198e91257",
+      "last_modified": "2026-03-25T02:01:20.025018+00:00"
+    },
+    {
+      "path": "api/__tests__/cors.test.ts",
+      "category": "api",
+      "size_bytes": 2408,
+      "sha256": "31862d4fa771151cab767370a688737bfa7e3d7ab62fd785cb79dcb6b6b2b336",
+      "last_modified": "2026-03-26T05:52:54.103757+00:00"
+    },
+    {
+      "path": "api/__tests__/endpoints.test.ts",
+      "category": "api",
+      "size_bytes": 2892,
+      "sha256": "d90df7959fbeb7ec4701178fcac449b352e68786629a0f0bd02a03a2e3f41a03",
+      "last_modified": "2026-03-25T02:01:20.025018+00:00"
+    },
+    {
+      "path": "api/__tests__/lib.test.ts",
+      "category": "api",
+      "size_bytes": 6487,
+      "sha256": "d9b0be00fb55800a5c13d12c12fa1b8edcb9c2ab920cc2d1ebda080ba25c7e07",
+      "last_modified": "2026-03-25T02:01:20.025018+00:00"
+    },
+    {
+      "path": "api/__tests__/llmRouter.test.ts",
+      "category": "api",
+      "size_bytes": 7577,
+      "sha256": "f5ec46191c480713098552dd3c3063366021de3a6a280dc6acd1961990813cde",
+      "last_modified": "2026-03-25T02:01:20.025018+00:00"
+    },
+    {
+      "path": "api/_lib/auth.ts",
+      "category": "api",
+      "size_bytes": 2410,
+      "sha256": "2e302883c6220a48f2e4103918803d4363362078fad083607f8d60b69b6995db",
+      "last_modified": "2026-03-25T02:01:20.026018+00:00"
+    },
+    {
+      "path": "api/_lib/cors.ts",
+      "category": "api",
+      "size_bytes": 3032,
+      "sha256": "ebab52600a1cbc73fe4836bb09ed5f10cc9aba0f828f251edbc90f7e870d776f",
+      "last_modified": "2026-03-26T10:22:19.897394+00:00"
+    },
+    {
+      "path": "api/_lib/llmRouter.ts",
+      "category": "api",
+      "size_bytes": 10725,
+      "sha256": "fc6c37f948ec84a5f5f529e7ce6ff0f9abc5b0917c0da54d8d7f6313f267a0a2",
+      "last_modified": "2026-03-26T05:52:54.104757+00:00"
+    },
+    {
+      "path": "api/_lib/llm_Router.py",
+      "category": "other",
+      "size_bytes": 21989,
+      "sha256": "439bd0d0e1be61fc7b5fe88ea70c31067a287266d9436849f244015fc00d6366",
+      "last_modified": "2026-03-26T10:22:19.897394+00:00"
+    },
+    {
+      "path": "api/_lib/rateLimit.ts",
+      "category": "api",
+      "size_bytes": 7509,
+      "sha256": "7527dcc9b9869c3d69c6a0572dd662404ea877951ae2dc6062d821f64ba6be9b",
+      "last_modified": "2026-03-25T02:01:20.026018+00:00"
+    },
+    {
+      "path": "api/_lib/requestGuard.ts",
+      "category": "api",
+      "size_bytes": 2808,
+      "sha256": "09c14b75e74902f857a99457b5826006f9e69886df7ab380099f491d9a720cba",
+      "last_modified": "2026-03-25T02:01:20.026018+00:00"
+    },
+    {
+      "path": "api/_lib/response.ts",
+      "category": "api",
+      "size_bytes": 1572,
+      "sha256": "85dc57c8c5b0416c1d9f7a5d7625c348f513ea3728f6c84e33e3c4e63fdb9150",
+      "last_modified": "2026-03-26T10:22:19.897394+00:00"
+    },
+    {
+      "path": "api/_lib/supabase.ts",
+      "category": "api",
+      "size_bytes": 7473,
+      "sha256": "4a549d2be9df99c831bfeb9ba45bc60154ea9848c070a217d56e79e9787472bb",
+      "last_modified": "2026-03-25T02:01:20.026018+00:00"
+    },
+    {
+      "path": "api/_lib/user.ts",
+      "category": "api",
+      "size_bytes": 638,
+      "sha256": "c72333abbb3aeb1f21fa3b292ed8650f8c4050ea4dde55454cf68e8a4b0bb8ec",
+      "last_modified": "2026-03-25T02:01:20.027018+00:00"
+    },
+    {
+      "path": "api/actions/[...path].ts",
+      "category": "api",
+      "size_bytes": 6392,
+      "sha256": "6327a38fcb5db202ea50272cf30afd311328dcdac50c490753552e19de965e59",
+      "last_modified": "2026-03-26T05:52:54.105757+00:00"
+    },
+    {
+      "path": "api/billy-bucket-drop.ts",
+      "category": "api",
+      "size_bytes": 1826,
+      "sha256": "2303a52f74ceac4454284368d39b672cecf3fccb15ebc91b44f2ff0899db4ff6",
+      "last_modified": "2026-03-25T02:01:20.027018+00:00"
+    },
+    {
+      "path": "api/billy-health.ts",
+      "category": "api",
+      "size_bytes": 2154,
+      "sha256": "efb78a2326750116467d309c78341c9b52edbba61f4703a7c2cd55495f91a9d8",
+      "last_modified": "2026-03-26T10:22:19.897394+00:00"
+    },
+    {
+      "path": "api/billy.ts",
+      "category": "api",
+      "size_bytes": 12653,
+      "sha256": "7f7a1d81e19ef2df1618595ce5f0ccf19dfc9b09b44e0b6e428208b593fecb83",
+      "last_modified": "2026-03-26T10:22:19.898394+00:00"
+    },
+    {
+      "path": "api/diligence/ots.ts",
+      "category": "api",
+      "size_bytes": 6163,
+      "sha256": "7b1d43e336aabe433295ffedac84becd1e1629cb44dd276bfbd0f44997f39215",
+      "last_modified": "2026-03-25T02:01:20.028018+00:00"
+    },
+    {
+      "path": "api/diligence.ts",
+      "category": "api",
+      "size_bytes": 10581,
+      "sha256": "56d42090789d9ce53eea780d08ceb2918d0ec02cdb812a27e3e80a0dc2992039",
+      "last_modified": "2026-03-25T02:01:20.027018+00:00"
+    },
+    {
+      "path": "api/pricing.ts",
+      "category": "api",
+      "size_bytes": 1719,
+      "sha256": "c84eaf0d1b926ade1276c39182fdf9675cee9b12287552318bd8e758c1533872",
+      "last_modified": "2026-03-25T02:01:20.028018+00:00"
+    },
+    {
+      "path": "api/session/state.ts",
+      "category": "api",
+      "size_bytes": 1320,
+      "sha256": "7c0945bbaca165410dd153288a1d11cd792b7259ac04d5aaa4e4173af0e7113a",
+      "last_modified": "2026-03-25T02:01:20.028018+00:00"
+    },
+    {
+      "path": "api/stripe/checkout.ts",
+      "category": "api",
+      "size_bytes": 3968,
+      "sha256": "922b03d2a1cdb5b023a77e8ea64598d4ccab44e1d27bd35b91d7398af55d4c43",
+      "last_modified": "2026-03-25T02:01:20.030018+00:00"
+    },
+    {
+      "path": "api/stripe/stripe-webhook.ts",
+      "category": "api",
+      "size_bytes": 100,
+      "sha256": "b777b30ef8da525eb8e183cda6500a3f4d379f6212134482a4cd1d821f692c9a",
+      "last_modified": "2026-03-25T02:01:20.030018+00:00"
+    },
+    {
+      "path": "api/stripe/webhook.ts",
+      "category": "api",
+      "size_bytes": 5985,
+      "sha256": "a3b2f663cf1c41b649e878381539acb8048f77d06951b7fdc37b587cce6b1372",
+      "last_modified": "2026-03-25T02:01:20.030018+00:00"
+    },
+    {
+      "path": "api/voice/billy.ts",
+      "category": "api",
+      "size_bytes": 2594,
+      "sha256": "fd3cee5d4e3bdc3ee96a2703e75840c8a75e8e2b8d61df3efc154f294e905779",
+      "last_modified": "2026-03-26T05:52:54.107757+00:00"
+    },
+    {
+      "path": "client/src/App.tsx",
+      "category": "source",
+      "size_bytes": 7157,
+      "sha256": "2b26074d6b6d0cdb35388f62e6439f02c06ebdc15a3e9688eca7574827088016",
+      "last_modified": "2026-03-25T02:01:21.328018+00:00"
+    },
+    {
+      "path": "client/src/canonical/CURRENT_STATE.md",
+      "category": "canonical",
+      "size_bytes": 4393,
+      "sha256": "66c9b39eae9d1c0b4e2840d25a7c2ed69feb37a9cbcad9814c9a2fd57e95102b",
+      "last_modified": "2026-03-25T02:01:21.328018+00:00",
+      "word_count": 574
+    },
+    {
+      "path": "client/src/canonical/FOUNDERALGORITHM.md",
+      "category": "canonical",
+      "size_bytes": 2566,
+      "sha256": "0845e4c3c40146466e08f8a694f3e8ed0e0dd1de86ef8869c3a7f1d5455786b0",
+      "last_modified": "2026-03-25T02:01:21.328018+00:00",
+      "word_count": 384
+    },
+    {
+      "path": "client/src/canonical/GENESISPROTOCOL.md",
+      "category": "canonical",
+      "size_bytes": 2085,
+      "sha256": "85d9e18096d496ab953b387f2d398ac3d4774452f299d0f5833077b55cd1d58a",
+      "last_modified": "2026-03-25T02:01:21.328018+00:00",
+      "word_count": 324
+    },
+    {
+      "path": "client/src/canonical/MUSICALDNA.md",
+      "category": "canonical",
+      "size_bytes": 3019,
+      "sha256": "bf623bb8767d069ed4588cfe9b4df66b0ce5e4515031b093cc7647cbc03f194f",
+      "last_modified": "2026-03-25T02:01:21.328018+00:00",
+      "word_count": 500
+    },
+    {
+      "path": "client/src/canonical/PLKMASTER.md",
+      "category": "canonical",
+      "size_bytes": 2749,
+      "sha256": "95cc75fda298b7d393f71687dfbb358db08c96ee64b98ad662969bc8303c76fa",
+      "last_modified": "2026-03-25T02:01:21.328018+00:00",
+      "word_count": 411
+    },
+    {
+      "path": "client/src/canonical/TRIBUNALCODEX.md",
+      "category": "canonical",
+      "size_bytes": 2328,
+      "sha256": "dd0f6a85bbe799c566d0f6d6fe32b004cb2fef3ea56bb855019aebf701bc26b7",
+      "last_modified": "2026-03-25T02:01:21.328018+00:00",
+      "word_count": 370
+    },
+    {
+      "path": "client/src/components/ADHDPowerUpStation.tsx",
+      "category": "component",
+      "size_bytes": 17852,
+      "sha256": "891f4abd2715ad384d9853d0ca19e680a6679ed300739cdcd696469b9fb21ca1",
+      "last_modified": "2026-03-25T02:01:21.328018+00:00"
+    },
+    {
+      "path": "client/src/components/AddictionRecoveryExhibit.tsx",
+      "category": "component",
+      "size_bytes": 46516,
+      "sha256": "9c5f632643f0635a64cd552b16cdb6fd48dd459020d9addafa05c13bb6e1b28b",
+      "last_modified": "2026-03-25T02:01:21.328018+00:00"
+    },
+    {
+      "path": "client/src/components/AlzheimersLegacyExhibit.tsx",
+      "category": "component",
+      "size_bytes": 26325,
+      "sha256": "1a585e29ca17ed889179edbfb2defd32224f0f7749c183d73c1e6aaf2b05fefa",
+      "last_modified": "2026-03-25T02:01:21.329019+00:00"
+    },
+    {
+      "path": "client/src/components/AuroraBackground.tsx",
+      "category": "component",
+      "size_bytes": 2740,
+      "sha256": "dec171b9264e5b3ea82d201cd4edac0798954ffbc562a94bacc62c433d407c5b",
+      "last_modified": "2026-03-25T02:01:21.329019+00:00"
+    },
+    {
+      "path": "client/src/components/Billy.tsx",
+      "category": "component",
+      "size_bytes": 29308,
+      "sha256": "6ac1272882f3fbf6386a0bc752868f03af363078403e0079142d29191adca572",
+      "last_modified": "2026-03-25T02:01:21.329019+00:00"
+    },
+    {
+      "path": "client/src/components/BillyAvatar.tsx",
+      "category": "component",
+      "size_bytes": 8864,
+      "sha256": "0718bdd4b1d65c0f3e22d7d765a2d461cdd1f152625cc9b2cc129906eb2f0388",
+      "last_modified": "2026-03-25T02:01:21.329019+00:00"
+    },
+    {
+      "path": "client/src/components/BillyBabylon.tsx",
+      "category": "component",
+      "size_bytes": 5046,
+      "sha256": "830886cad8b133c92dc2ee428f44cea59a63a73325f6651fb187998b560b31f9",
+      "last_modified": "2026-03-25T02:01:21.329019+00:00"
+    },
+    {
+      "path": "client/src/components/BillyChip.tsx",
+      "category": "component",
+      "size_bytes": 2596,
+      "sha256": "ba178c5b9835ef1241488a8b18cb212e7b8525435946ed6ceea4f6bff44ccfbd",
+      "last_modified": "2026-03-25T02:01:21.330019+00:00"
+    },
+    {
+      "path": "client/src/components/BillyGlitch.tsx",
+      "category": "component",
+      "size_bytes": 1863,
+      "sha256": "4d27a56bc598d7e9a05d6997de9f69760a6f91f8d57af72675be1abba93767c9",
+      "last_modified": "2026-03-25T02:01:21.330019+00:00"
+    },
+    {
+      "path": "client/src/components/BillyGreeter.tsx",
+      "category": "component",
+      "size_bytes": 21143,
+      "sha256": "10fcc56b5b70ced0b9825cf209c9ddac79d989d13b576a96a2ebfc4167fabd72",
+      "last_modified": "2026-03-25T02:01:21.330019+00:00"
+    },
+    {
+      "path": "client/src/components/BillyLive.tsx",
+      "category": "component",
+      "size_bytes": 25259,
+      "sha256": "ddea288e8bc8ee8743bc1980a81cce8b91cf1fb5042dd35f753a7e701510a59e",
+      "last_modified": "2026-03-25T02:01:21.330019+00:00"
+    },
+    {
+      "path": "client/src/components/BrainSparksStation.tsx",
+      "category": "component",
+      "size_bytes": 17450,
+      "sha256": "2fec819debae7453a8f2f72ee849262daf3c72ca416922809a4cc4b79b7a95db",
+      "last_modified": "2026-03-25T02:01:21.330019+00:00"
+    },
+    {
+      "path": "client/src/components/BucketDrops.tsx",
+      "category": "component",
+      "size_bytes": 11785,
+      "sha256": "fdb7c620af8a9940b8a519069b94fe7a02f7b4d58141ec03f1b0be66550059ab",
+      "last_modified": "2026-03-25T02:01:21.330019+00:00"
+    },
+    {
+      "path": "client/src/components/CollaborationProof.tsx",
+      "category": "component",
+      "size_bytes": 31925,
+      "sha256": "c788084efd0665fe38e766ded9bcb84b0016b1fd1c630f9e52a6d00fa332578c",
+      "last_modified": "2026-03-25T02:01:21.331018+00:00"
+    },
+    {
+      "path": "client/src/components/Collaborators.tsx",
+      "category": "component",
+      "size_bytes": 14019,
+      "sha256": "3ccefa40dc101a96a020e863bc79c558f3211c14b5f01c76a455647c5b3d557f",
+      "last_modified": "2026-03-25T02:01:21.331018+00:00"
+    },
+    {
+      "path": "client/src/components/ConsciousnessEngine.tsx",
+      "category": "component",
+      "size_bytes": 17285,
+      "sha256": "9d2c71e5990b581cf832c795cf0956134495767bac4f7caa52cee862be1862aa",
+      "last_modified": "2026-03-25T02:01:21.331018+00:00"
+    },
+    {
+      "path": "client/src/components/Contact.tsx",
+      "category": "component",
+      "size_bytes": 16451,
+      "sha256": "67c13f8444e8319b6fd1eff3b2aaf3ea76bbc8434e8f6ece92130cbc4f0d8630",
+      "last_modified": "2026-03-25T02:01:21.331018+00:00"
+    },
+    {
+      "path": "client/src/components/ContinuumTimeline3D.tsx",
+      "category": "component",
+      "size_bytes": 6665,
+      "sha256": "91922e714e5a98d6e85607e0290355a32e8f0a86388c01a255be061ff801e808",
+      "last_modified": "2026-03-25T02:01:21.331018+00:00"
+    },
+    {
+      "path": "client/src/components/DeadlightsTrackSection.tsx",
+      "category": "component",
+      "size_bytes": 20593,
+      "sha256": "e06a6f426d234e7af5882c9ec47bf5e96fa102467afffc744b8c0a9fa66b9707",
+      "last_modified": "2026-03-25T02:01:21.332018+00:00"
+    },
+    {
+      "path": "client/src/components/DemoGate.tsx",
+      "category": "component",
+      "size_bytes": 10278,
+      "sha256": "eef02ae2f2509b5a311092b16f344e39237772771ccd9aca2b152672a033dfbe",
+      "last_modified": "2026-03-25T02:01:21.332018+00:00"
+    },
+    {
+      "path": "client/src/components/DiligenceExplorer/AuditRecord.tsx",
+      "category": "component",
+      "size_bytes": 5005,
+      "sha256": "983f30bd9371f53b7ce9036139e40efd9ef33b2cefcadb3cb1c52091d4dc2a8c",
+      "last_modified": "2026-03-25T02:01:21.332018+00:00"
+    },
+    {
+      "path": "client/src/components/DiligenceExplorer/BlockchainBadge.tsx",
+      "category": "component",
+      "size_bytes": 1131,
+      "sha256": "8ce782b52cc7996c96e1c001caecbd23706fec0e4f1c43fae5a63751d61403a0",
+      "last_modified": "2026-03-25T02:01:21.332018+00:00"
+    },
+    {
+      "path": "client/src/components/DiligenceExplorer/ClaimCard.tsx",
+      "category": "component",
+      "size_bytes": 2586,
+      "sha256": "7d5869af09241f42ef32ba840321b4a5cb91e668bac39c1e2627e4024c799b8c",
+      "last_modified": "2026-03-25T02:01:21.332018+00:00"
+    },
+    {
+      "path": "client/src/components/DiligenceExplorer/ClaimWall.tsx",
+      "category": "component",
+      "size_bytes": 3304,
+      "sha256": "a24e4e559507a0793581f983df25f6ae786882d0d362028ec354f4422fa2239f",
+      "last_modified": "2026-03-25T02:01:21.332018+00:00"
+    },
+    {
+      "path": "client/src/components/DiligenceExplorer/ContinuumTimeline3D.tsx",
+      "category": "component",
+      "size_bytes": 95,
+      "sha256": "ada467fbbd408e53b0f8b5057e191e174a13d567923a8bae29e9cbdf062fc851",
+      "last_modified": "2026-03-25T02:01:21.332018+00:00"
+    },
+    {
+      "path": "client/src/components/DiligenceExplorer/EvidenceTimeline.tsx",
+      "category": "component",
+      "size_bytes": 2857,
+      "sha256": "8969321e4e502baabc99bf7a1e4cf3ee9d6c485a90fec3cc18adb83c476f79ca",
+      "last_modified": "2026-03-25T02:01:21.332018+00:00"
+    },
+    {
+      "path": "client/src/components/DiligenceExplorer/LaneBadge.tsx",
+      "category": "component",
+      "size_bytes": 1342,
+      "sha256": "3a5911f85c4146ec32552db5019b6bd4ddcb1e0e2359b49674ca654ad7db6189",
+      "last_modified": "2026-03-25T02:01:21.333019+00:00"
+    },
+    {
+      "path": "client/src/components/DiligenceExplorer/OTSBadge.tsx",
+      "category": "component",
+      "size_bytes": 1180,
+      "sha256": "e9efe3c327fcaf501820f74e3452bf24b2a3edbe14caa10ffc9b296ad4827ca4",
+      "last_modified": "2026-03-25T02:01:21.333019+00:00"
+    },
+    {
+      "path": "client/src/components/DiligenceExplorer/OTSQueryPanel.tsx",
+      "category": "component",
+      "size_bytes": 11138,
+      "sha256": "4267dbd96f56abd94ce280f5eeae94f39dc72d61d622e7b28787be6e008c0cf0",
+      "last_modified": "2026-03-25T02:01:21.333019+00:00"
+    },
+    {
+      "path": "client/src/components/DiligenceExplorer/SkepticismDrawer.tsx",
+      "category": "component",
+      "size_bytes": 1374,
+      "sha256": "7ee4015eee7123210edb6a157b61b3bb4c098841d54cdac6bab4f3d8552c8f9b",
+      "last_modified": "2026-03-25T02:01:21.333019+00:00"
+    },
+    {
+      "path": "client/src/components/DiligenceExplorer/index.tsx",
+      "category": "component",
+      "size_bytes": 5141,
+      "sha256": "0a38e5fa11164eece28f49eab32fbf1cfdcfda61f3b131c10c27085c3faf5919",
+      "last_modified": "2026-03-25T02:01:21.333019+00:00"
+    },
+    {
+      "path": "client/src/components/DiligenceExplorer/types.ts",
+      "category": "component",
+      "size_bytes": 2421,
+      "sha256": "e3d1aaed8c74bfdb1aa3c104862e1a9bf7157ceb424c84a3680614bbe27ac8fa",
+      "last_modified": "2026-03-25T02:01:21.333019+00:00"
+    },
+    {
+      "path": "client/src/components/DiligenceExplorer/useDiligenceData.ts",
+      "category": "component",
+      "size_bytes": 875,
+      "sha256": "826a0a6d45c17cc0fd1dd615d85a38147ff7ecec860c4485f5737409c0cf3b83",
+      "last_modified": "2026-03-25T02:01:21.333019+00:00"
+    },
+    {
+      "path": "client/src/components/DiligenceExplorer/useOTSData.ts",
+      "category": "component",
+      "size_bytes": 913,
+      "sha256": "c2b24a6367897be78d531d30bce101e1db6f00a322356271168296d6520ee3f4",
+      "last_modified": "2026-03-25T02:01:21.333019+00:00"
+    },
+    {
+      "path": "client/src/components/ErrorBoundary.tsx",
+      "category": "component",
+      "size_bytes": 1688,
+      "sha256": "3b0bdb7a19758fcd440138ccfb5f306b96836564f15d7c8c9663d7dd7417e972",
+      "last_modified": "2026-03-25T02:01:21.333019+00:00"
+    },
+    {
+      "path": "client/src/components/ExhibitPage.tsx",
+      "category": "component",
+      "size_bytes": 11002,
+      "sha256": "e184bbb3d769e33d1791f14a332729d605ead144446febeccb3144003a55feb8",
+      "last_modified": "2026-03-25T02:01:21.333019+00:00"
+    },
+    {
+      "path": "client/src/components/FrequencyTherapySection.tsx",
+      "category": "component",
+      "size_bytes": 31898,
+      "sha256": "77279d11aa0647e00939a789ecee5be5a2a5f12edbec6474c70d63b05339467b",
+      "last_modified": "2026-03-25T02:01:21.334018+00:00"
+    },
+    {
+      "path": "client/src/components/GestaltViewMetricsDashboard.tsx",
+      "category": "component",
+      "size_bytes": 7914,
+      "sha256": "4c6d5977d8962d625791f82042a915ab5b824eecf2c3d4d66cca4fb795d7eacf",
+      "last_modified": "2026-03-25T02:01:21.334018+00:00"
+    },
+    {
+      "path": "client/src/components/HeirloomCompanion.tsx",
+      "category": "component",
+      "size_bytes": 7766,
+      "sha256": "de17a4337dcaca5da3115805f07b1833e41f7df52f984f9815a3e02fb0cb80de",
+      "last_modified": "2026-03-25T02:01:21.334018+00:00"
+    },
+    {
+      "path": "client/src/components/HeroCanvas.tsx",
+      "category": "component",
+      "size_bytes": 6122,
+      "sha256": "90bf56bb4208b650b9d033d7672077f3af3e6774180e29ad92f6b180a7d6a44e",
+      "last_modified": "2026-03-25T02:01:21.334018+00:00"
+    },
+    {
+      "path": "client/src/components/HeroSection.tsx",
+      "category": "component",
+      "size_bytes": 20631,
+      "sha256": "7344bf60edcc2489f4cc59f9e7a705545bc902862e8806512b3bddaba2a9e151",
+      "last_modified": "2026-03-25T02:01:21.334018+00:00"
+    },
+    {
+      "path": "client/src/components/LifeTapestry.tsx",
+      "category": "component",
+      "size_bytes": 11519,
+      "sha256": "09540da08b06060b4deab0769f8603399f4f37a53089b3f8bde1058b76286e9e",
+      "last_modified": "2026-03-25T02:01:21.334018+00:00"
+    },
+    {
+      "path": "client/src/components/LoadingSpinner.tsx",
+      "category": "component",
+      "size_bytes": 2636,
+      "sha256": "6d8270f5695306ae6be22e7ad6c82ed51d8b5768fa8a5443074a0b30e7b48ba5",
+      "last_modified": "2026-03-25T02:01:21.334018+00:00"
+    },
+    {
+      "path": "client/src/components/Map.tsx",
+      "category": "component",
+      "size_bytes": 4932,
+      "sha256": "931413fea95936e68f872bc34733138f9e11a656446b1a56a98fba9532954e22",
+      "last_modified": "2026-03-25T02:01:21.334018+00:00"
+    },
+    {
+      "path": "client/src/components/MusicalDNAFrequencyPanel.tsx",
+      "category": "component",
+      "size_bytes": 28990,
+      "sha256": "0c6b6cbf2cb1f94f9ef0d511e4049769679add394d65e928adc6430918612860",
+      "last_modified": "2026-03-25T02:01:21.335018+00:00"
+    },
+    {
+      "path": "client/src/components/NavBar.tsx",
+      "category": "component",
+      "size_bytes": 9889,
+      "sha256": "0ab4f92d0894f7eeea8c7e99bf45cf0b787eed977034ef5266438a0da64bf240",
+      "last_modified": "2026-03-25T02:01:21.335018+00:00"
+    },
+    {
+      "path": "client/src/components/OpeningCeremony.tsx",
+      "category": "component",
+      "size_bytes": 9637,
+      "sha256": "d1ae4d5913152e5598890faa604941ac9ccaecb2276ffc2e25124a34f06638ce",
+      "last_modified": "2026-03-25T02:01:21.335018+00:00"
+    },
+    {
+      "path": "client/src/components/RapidPrototypeEngine.tsx",
+      "category": "component",
+      "size_bytes": 16613,
+      "sha256": "0837803e5c82bad49ab5536e82317c5e5e03a17e0506727a1b3df087856631e8",
+      "last_modified": "2026-03-25T02:01:21.335018+00:00"
+    },
+    {
+      "path": "client/src/components/ResumeRockstarDemo.tsx",
+      "category": "component",
+      "size_bytes": 21229,
+      "sha256": "68fa1871175b28388cc5d03907b86e643df4a6f36e6ef46f3d9a650089326c8b",
+      "last_modified": "2026-03-25T02:01:21.335018+00:00"
+    },
+    {
+      "path": "client/src/components/ServicesConsulting.tsx",
+      "category": "component",
+      "size_bytes": 13542,
+      "sha256": "ca73fff864458cd02bf8ca649a94afc84addc5f58d16efaf4a27349a924ac70d",
+      "last_modified": "2026-03-25T02:01:21.336019+00:00"
+    },
+    {
+      "path": "client/src/components/SymbioCoderDemo.tsx",
+      "category": "component",
+      "size_bytes": 18863,
+      "sha256": "ead3a9d8d4e11609057504051bafbc03db7c219188a27a231e854eb181d6cb39",
+      "last_modified": "2026-03-25T02:01:21.336019+00:00"
+    },
+    {
+      "path": "client/src/components/TheEvidence.tsx",
+      "category": "component",
+      "size_bytes": 9984,
+      "sha256": "c7fd8dcf6c1d513cab0c88d2be565838017e8edaf7d164dce8a15401ef415e49",
+      "last_modified": "2026-03-25T02:01:21.336019+00:00"
+    },
+    {
+      "path": "client/src/components/TheHuman.tsx",
+      "category": "component",
+      "size_bytes": 9829,
+      "sha256": "881db9f94024251533f67d57678f8e362baad8cdb766515096dfd18376438aba",
+      "last_modified": "2026-03-25T02:01:21.336019+00:00"
+    },
+    {
+      "path": "client/src/components/TheoriesMap.tsx",
+      "category": "component",
+      "size_bytes": 16059,
+      "sha256": "fca7f03c7f87e2c0eee20840f09c442c1c947c5efce5e629ace75ca547bf5a29",
+      "last_modified": "2026-03-25T02:01:21.336019+00:00"
+    },
+    {
+      "path": "client/src/components/TribunalOrbs.tsx",
+      "category": "component",
+      "size_bytes": 10221,
+      "sha256": "8fdb0ba6205233425a931ce3c67324eb0c109a25be09beab4637247b8ce6bd3b",
+      "last_modified": "2026-03-25T02:01:21.336019+00:00"
+    },
+    {
+      "path": "client/src/components/UpgradeBanner.tsx",
+      "category": "component",
+      "size_bytes": 3149,
+      "sha256": "d3c9c023c7b61652fd50f4f154b2bf1227cda46c576ff1e3bd7912b0fb9a7f57",
+      "last_modified": "2026-03-25T02:01:21.336019+00:00"
+    },
+    {
+      "path": "client/src/components/ValidationWall.tsx",
+      "category": "component",
+      "size_bytes": 9379,
+      "sha256": "36a2e2787a79f45a30898934e8e82aef46fb2b81ed2a637ee566dc1804f02a39",
+      "last_modified": "2026-03-25T02:01:21.337018+00:00"
+    },
+    {
+      "path": "client/src/components/VibeCoderDemo.tsx",
+      "category": "component",
+      "size_bytes": 27746,
+      "sha256": "bdc416093bfcdca4f669be62db0f08ad0a4a751c685e5517a53a8c1aed7dbaee",
+      "last_modified": "2026-03-25T02:01:21.337018+00:00"
+    },
+    {
+      "path": "client/src/components/VillageBuildersCovenant.tsx",
+      "category": "component",
+      "size_bytes": 10362,
+      "sha256": "d2b764c467327cf4f3583260d0d307698106b5e55bed6a82f8e0a79cab9be668",
+      "last_modified": "2026-03-25T02:01:21.337018+00:00"
+    },
+    {
+      "path": "client/src/components/VoiceInput-Universal.tsx",
+      "category": "component",
+      "size_bytes": 11521,
+      "sha256": "49a6d5b3c29f02c4cb8ec591dd26484579baeffccc155a536d89b3740e5d1f51",
+      "last_modified": "2026-03-25T02:01:21.337018+00:00"
+    },
+    {
+      "path": "client/src/components/VoiceMicButton.tsx",
+      "category": "component",
+      "size_bytes": 3756,
+      "sha256": "4202ddba090f7f3d022a75cede86a14ed2dab56b1f9c43c80ca85d7fa320494a",
+      "last_modified": "2026-03-25T02:01:21.337018+00:00"
+    },
+    {
+      "path": "client/src/components/WhatSystemsSaid.tsx",
+      "category": "component",
+      "size_bytes": 17880,
+      "sha256": "8a9f0dbd7b3a321ef609f7c3e529dc7a1c1b952356d7c8ba3422c569c907f0e8",
+      "last_modified": "2026-03-25T02:01:21.337018+00:00"
+    },
+    {
+      "path": "client/src/components/WhatThisIs.tsx",
+      "category": "component",
+      "size_bytes": 8845,
+      "sha256": "b3d3b418611f088db0f9e5e955eb875aee2a9b8043b23ab9d6718f4e5c23b67c",
+      "last_modified": "2026-03-25T02:01:21.338018+00:00"
+    },
+    {
+      "path": "client/src/components/WhatWasBuilt.tsx",
+      "category": "component",
+      "size_bytes": 23918,
+      "sha256": "a82be7c1e2354528459f61a6799746afd44cf8b570341557a89525e6c570c113",
+      "last_modified": "2026-03-25T02:01:21.338018+00:00"
+    },
+    {
+      "path": "client/src/components/alzheimers/pages/index.tsx",
+      "category": "component",
+      "size_bytes": 3410,
+      "sha256": "ac451fe65a4dda1299e2ed04d58b25a0ecbd42ed94ca3dd0112545b6af31fc20",
+      "last_modified": "2026-03-25T02:01:21.338018+00:00"
+    },
+    {
+      "path": "client/src/components/alzheimers/pages/layout.tsx",
+      "category": "component",
+      "size_bytes": 3045,
+      "sha256": "bb331021e189fbf77f3df87455c0b26eff65968037a41a7472ae39370fb8c3f0",
+      "last_modified": "2026-03-25T02:01:21.338018+00:00"
+    },
+    {
+      "path": "client/src/components/exhibits/BabylonScrollArtifact.tsx",
+      "category": "component",
+      "size_bytes": 5121,
+      "sha256": "d3888893c6cd7b4ccbd3196f52904dfe69074fe04d5007690d7ec3737d716346",
+      "last_modified": "2026-03-25T02:01:21.339019+00:00"
+    },
+    {
+      "path": "client/src/components/exhibits/BillyExhibitChat.tsx",
+      "category": "component",
+      "size_bytes": 10313,
+      "sha256": "27c404844d5dcf85699bfad6644d56b05ed2147297a973eb5032ea989ccf73bc",
+      "last_modified": "2026-03-25T02:01:21.339019+00:00"
+    },
+    {
+      "path": "client/src/components/exhibits/ExhibitDemos.tsx",
+      "category": "component",
+      "size_bytes": 18222,
+      "sha256": "8d64d362bde948ab124598739c3df09c3169cedfc429b8668e81104333f85663",
+      "last_modified": "2026-03-25T02:01:21.339019+00:00"
+    },
+    {
+      "path": "client/src/components/exhibits/ScrollReader.tsx",
+      "category": "component",
+      "size_bytes": 4719,
+      "sha256": "2dee915e20cd6593d30663994cb01f46d7a33b0f921206f88b8a1fb360ce5c1f",
+      "last_modified": "2026-03-25T02:01:21.339019+00:00"
+    },
+    {
+      "path": "client/src/components/gemini/GeminiDialogue.tsx",
+      "category": "component",
+      "size_bytes": 4930,
+      "sha256": "de4a1ace17683353f2c59a392191e7364e9187f6f71f0d11366718897219a49e",
+      "last_modified": "2026-03-25T02:01:21.339019+00:00"
+    },
+    {
+      "path": "client/src/components/gemini/GeminiDialoguePlayer.tsx",
+      "category": "component",
+      "size_bytes": 5413,
+      "sha256": "cccd5dc6a9416a256d36f96885fad02997c9f68b7f18c0977c07b72976eabc2b",
+      "last_modified": "2026-03-25T02:01:21.339019+00:00"
+    },
+    {
+      "path": "client/src/components/tribunal/ContinuumCodexTimeline.tsx",
+      "category": "component",
+      "size_bytes": 2569,
+      "sha256": "959da927ef42f50324c034a53ec47e2ff2713ecff91356951ebadffdad8d41f6",
+      "last_modified": "2026-03-25T02:01:21.340019+00:00"
+    },
+    {
+      "path": "client/src/components/tribunal/InvocationAudioPlayer.tsx",
+      "category": "component",
+      "size_bytes": 6851,
+      "sha256": "1ec9813b84190ad5d7c66608420eb5f9b71472325637381e698305dc434873f2",
+      "last_modified": "2026-03-25T02:01:21.340019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/GVTypography.tsx",
+      "category": "component",
+      "size_bytes": 4693,
+      "sha256": "276f455c5c0778a8dd81162a00bccfb470d91f4e9438828c03a4f24ebff00b92",
+      "last_modified": "2026-03-25T02:01:21.340019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/GlassCard.tsx",
+      "category": "component",
+      "size_bytes": 1443,
+      "sha256": "fc6680f179beb12511946dd8c7fba02f4be7f80b09d8869267ff3faabe24b67b",
+      "last_modified": "2026-03-25T02:01:21.340019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/accordion.tsx",
+      "category": "component",
+      "size_bytes": 2048,
+      "sha256": "7b96cf50388ad3d07be64924ab33ba5f63b79a6a5749ebe4d31c789c0bc00d44",
+      "last_modified": "2026-03-25T02:01:21.340019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/alert-dialog.tsx",
+      "category": "component",
+      "size_bytes": 3866,
+      "sha256": "aeecd7967eb0be3bad2753b6633d9a43cc4c08cb35de872ffdc0b9f2b6a9b26c",
+      "last_modified": "2026-03-25T02:01:21.340019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/alert.tsx",
+      "category": "component",
+      "size_bytes": 1622,
+      "sha256": "eccfc7f6ca9d51407cb413a3ca4b5ac721898ac93d38e95c02c35188ad674abe",
+      "last_modified": "2026-03-25T02:01:21.340019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/aspect-ratio.tsx",
+      "category": "component",
+      "size_bytes": 269,
+      "sha256": "654f5d6e9ed17472305d7e6fc5de30453875ffae585f5d064aedc9e6945bdbb0",
+      "last_modified": "2026-03-25T02:01:21.340019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/avatar.tsx",
+      "category": "component",
+      "size_bytes": 1090,
+      "sha256": "c2382ff71d7ef3492096ed6ef35bf82e1fd421a81d55ca80453f5f5138eac360",
+      "last_modified": "2026-03-25T02:01:21.340019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/badge.tsx",
+      "category": "component",
+      "size_bytes": 1639,
+      "sha256": "51fd797c59e63d164ade736769f19f26e41c157daba29aa0b327b3b226f4d4ac",
+      "last_modified": "2026-03-25T02:01:21.341018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/breadcrumb.tsx",
+      "category": "component",
+      "size_bytes": 2371,
+      "sha256": "dd84657e30691ea7f14a785c13b660d6cd626c08ba1df8439c3eca858ee3cd7e",
+      "last_modified": "2026-03-25T02:01:21.341018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/button-group.tsx",
+      "category": "component",
+      "size_bytes": 2220,
+      "sha256": "ba1d824f0f4d8b5dd78a80fa766e3543eefb9173143652be2c7cb765af1864f5",
+      "last_modified": "2026-03-25T02:01:21.341018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/button.tsx",
+      "category": "component",
+      "size_bytes": 2097,
+      "sha256": "b08b4785e03566c7a6063b3d57234deae41649676870cbbb9ab2448d816e1739",
+      "last_modified": "2026-03-25T02:01:21.341018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/calendar.tsx",
+      "category": "component",
+      "size_bytes": 7663,
+      "sha256": "89308bce82e8b23b611cfbc88bc19f7b341d7109ab9a2838c04cb50922113501",
+      "last_modified": "2026-03-25T02:01:21.341018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/card.tsx",
+      "category": "component",
+      "size_bytes": 1997,
+      "sha256": "1397e7d264d90162220ea7473b311e434651886267c71e7f58d4488be9d8ff39",
+      "last_modified": "2026-03-25T02:01:21.341018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/carousel.tsx",
+      "category": "component",
+      "size_bytes": 5603,
+      "sha256": "42f66e6fde568c209df5d58a4ca13c3ae92d120a04fd99f7be695d6a570ef0a9",
+      "last_modified": "2026-03-25T02:01:21.341018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/chart.tsx",
+      "category": "component",
+      "size_bytes": 10113,
+      "sha256": "47c4de202fe1dc229af94d2c86197251d279bee131d2a6fb75ab9e58cec71aab",
+      "last_modified": "2026-03-25T02:01:21.341018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/checkbox.tsx",
+      "category": "component",
+      "size_bytes": 1218,
+      "sha256": "4fc309590e66d3c41e3be5fb73f988b0e916e7bf5fff321c22c3a64cd4fe97cf",
+      "last_modified": "2026-03-25T02:01:21.341018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/collapsible.tsx",
+      "category": "component",
+      "size_bytes": 791,
+      "sha256": "95b5b9ea89a4105045c58b7eba539e57a1f4abc5a54d43ea0f7168f46b645eeb",
+      "last_modified": "2026-03-25T02:01:21.342018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/command.tsx",
+      "category": "component",
+      "size_bytes": 4838,
+      "sha256": "47910540789d4de9e890de63bfc0046f9cf6bfaa86d496a98c79622900f8520c",
+      "last_modified": "2026-03-25T02:01:21.342018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/context-menu.tsx",
+      "category": "component",
+      "size_bytes": 8284,
+      "sha256": "fe63c0a0dcabe749874ad19e07dee8418337c62dd64452fc08b5abf27b49b9eb",
+      "last_modified": "2026-03-25T02:01:21.342018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/dialog.tsx",
+      "category": "component",
+      "size_bytes": 6024,
+      "sha256": "3ffd83bd2940c1191fde091bc47311aebc2b79d78824965a5c446115e58190aa",
+      "last_modified": "2026-03-25T02:01:21.342018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/drawer.tsx",
+      "category": "component",
+      "size_bytes": 4255,
+      "sha256": "573deecc31f90fcd96f53a37b2e5363eb326fe737cbdb28cac38a5d014734fc8",
+      "last_modified": "2026-03-25T02:01:21.342018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/dropdown-menu.tsx",
+      "category": "component",
+      "size_bytes": 8434,
+      "sha256": "ede99252b737a29eb1f05370956e2b842be161b6a661f1429155ac561653d029",
+      "last_modified": "2026-03-25T02:01:21.342018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/empty.tsx",
+      "category": "component",
+      "size_bytes": 2406,
+      "sha256": "c0b612929b15fd498b984d8d98d1b082a3eb294be5aa8eb9cb53b67cf152f465",
+      "last_modified": "2026-03-25T02:01:21.343019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/field.tsx",
+      "category": "component",
+      "size_bytes": 6057,
+      "sha256": "f093424ca5eadf43d46b020ed780aee7aa5f6d90d0b48fb50c031e3d7b0528c7",
+      "last_modified": "2026-03-25T02:01:21.346019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/form.tsx",
+      "category": "component",
+      "size_bytes": 3801,
+      "sha256": "0157362d572713567d989b726277879e75c60c24684ade4aef854867dc2fac48",
+      "last_modified": "2026-03-25T02:01:21.346019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/hover-card.tsx",
+      "category": "component",
+      "size_bytes": 1525,
+      "sha256": "bdfe831708e7de6b9fbb14d8fe5af5a0985f67cff3c2b5755b4b570c3b4e7ad5",
+      "last_modified": "2026-03-25T02:01:21.346019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/input-group.tsx",
+      "category": "component",
+      "size_bytes": 5066,
+      "sha256": "f62f2be2ad4c2c7711e7b25b0d6c03572f7871cb4022e9f4f6860dcd77dd9e57",
+      "last_modified": "2026-03-25T02:01:21.349019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/input-otp.tsx",
+      "category": "component",
+      "size_bytes": 2253,
+      "sha256": "45fc7fed882aa5024d8eea52d9b392d13b1d80f2b7f846365bc2586e3d16253d",
+      "last_modified": "2026-03-25T02:01:21.349019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/input.tsx",
+      "category": "component",
+      "size_bytes": 2728,
+      "sha256": "0aaad971269e84519fb14928a70777db539b4cacf9f145fecd905ba483a199c6",
+      "last_modified": "2026-03-25T02:01:21.350019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/item.tsx",
+      "category": "component",
+      "size_bytes": 4513,
+      "sha256": "89f2ed48c2270064d63e0a40f755c1da14e99e7db46bceac56d6dee7b45b8798",
+      "last_modified": "2026-03-25T02:01:21.350019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/kbd.tsx",
+      "category": "component",
+      "size_bytes": 866,
+      "sha256": "4f8f3e521b2b007643b8a2c8f86cf547bd87e703dc2bed067083ca48f901d6ad",
+      "last_modified": "2026-03-25T02:01:21.350019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/label.tsx",
+      "category": "component",
+      "size_bytes": 602,
+      "sha256": "7fdad17d8e83912ad0cfc372c551a901ab98523ef17c0792a17c592a147db732",
+      "last_modified": "2026-03-25T02:01:21.350019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/menubar.tsx",
+      "category": "component",
+      "size_bytes": 8405,
+      "sha256": "53fb1c058fabaf0cfb3fb2cfdb9b17ccc8762376d62cc011150d919209b82c1a",
+      "last_modified": "2026-03-25T02:01:21.351018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/navigation-menu.tsx",
+      "category": "component",
+      "size_bytes": 6680,
+      "sha256": "aafccbe2b05d9f80b7d007301b51aaede4692efc468304c5fb11b21cd0c0ef43",
+      "last_modified": "2026-03-25T02:01:21.351018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/pagination.tsx",
+      "category": "component",
+      "size_bytes": 2726,
+      "sha256": "8f0d822b4688eb131e37fbf2330e19b269ab6487583be3249b98f3b68bb07928",
+      "last_modified": "2026-03-25T02:01:21.351018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/popover.tsx",
+      "category": "component",
+      "size_bytes": 1629,
+      "sha256": "5e7bec05904d9091a7b53963f5b49660bf3564b02a057ef8640ab6855d6e32fd",
+      "last_modified": "2026-03-25T02:01:21.351018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/progress.tsx",
+      "category": "component",
+      "size_bytes": 731,
+      "sha256": "2297e3c13d5b2a04a9164c3900c8cae2e477c07ebed35c4bbda98d1232ab7b7e",
+      "last_modified": "2026-03-25T02:01:21.351018+00:00"
+    },
+    {
+      "path": "client/src/components/ui/radio-group.tsx",
+      "category": "component",
+      "size_bytes": 1459,
+      "sha256": "025f03d81d4e304eb27d94e6517f37072a3941df8f8603ac55cfb42b17cd99ef",
+      "last_modified": "2026-03-25T02:01:21.352019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/resizable.tsx",
+      "category": "component",
+      "size_bytes": 2023,
+      "sha256": "52e1027a4b4a5f70f0479f69fe40046dfa112952b7e568292727e1618348ee80",
+      "last_modified": "2026-03-25T02:01:21.352019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/scroll-area.tsx",
+      "category": "component",
+      "size_bytes": 1637,
+      "sha256": "793c5d69e6e5ce8bcbe453b8834d53f3a90839fc8e8e1f9fe5f77e7626566677",
+      "last_modified": "2026-03-25T02:01:21.352019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/select.tsx",
+      "category": "component",
+      "size_bytes": 6297,
+      "sha256": "40945665ec8363e55ae38f26115ee763cbc5548bed585eed569d406cbc4b7a75",
+      "last_modified": "2026-03-25T02:01:21.352019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/separator.tsx",
+      "category": "component",
+      "size_bytes": 690,
+      "sha256": "23bbf3f74d01f55533f6f22ebbc2b299137421e07896cb7af21245756a10c27e",
+      "last_modified": "2026-03-25T02:01:21.352019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/sheet.tsx",
+      "category": "component",
+      "size_bytes": 4107,
+      "sha256": "ab22e38f2cf312a31a84fb91f7e912f0da66e809f6e1ae675ec6cf0c8ec0ba61",
+      "last_modified": "2026-03-25T02:01:21.352019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/sidebar.tsx",
+      "category": "component",
+      "size_bytes": 21947,
+      "sha256": "782ec3ba8a570c9a0f6ec12d7e1c1efdee5e02eb2da7aa46131c734e7f7bbea8",
+      "last_modified": "2026-03-25T02:01:21.352019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/skeleton.tsx",
+      "category": "component",
+      "size_bytes": 279,
+      "sha256": "1f75b999a5ad2f65e8fb807faa2b3fccef9eb333996fb4c9030575dac7393091",
+      "last_modified": "2026-03-25T02:01:21.352019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/slider.tsx",
+      "category": "component",
+      "size_bytes": 1988,
+      "sha256": "9c458646597836916678a9bce2f3064d4d5cdb0c65d32d92bc71f57d7569fb6b",
+      "last_modified": "2026-03-25T02:01:21.352019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/sonner.tsx",
+      "category": "component",
+      "size_bytes": 561,
+      "sha256": "a65fe9ded89363ec546f28401a26caec1a3aa38c52259eb829cfa33723dbe3a5",
+      "last_modified": "2026-03-25T02:01:21.353019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/spinner.tsx",
+      "category": "component",
+      "size_bytes": 335,
+      "sha256": "ecd836d476573adb4403747c3457339276805433c20eacf3408303b76ec283ff",
+      "last_modified": "2026-03-25T02:01:21.353019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/switch.tsx",
+      "category": "component",
+      "size_bytes": 1168,
+      "sha256": "688cccb52220e05f6770fb5e8296375f2a784bcf6585eb26a721a9f29361ab60",
+      "last_modified": "2026-03-25T02:01:21.353019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/table.tsx",
+      "category": "component",
+      "size_bytes": 2445,
+      "sha256": "085566291cf03c9fea590aa9b77339feebf04cf8ce23494a3667f84bf4811e29",
+      "last_modified": "2026-03-25T02:01:21.353019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/tabs.tsx",
+      "category": "component",
+      "size_bytes": 1963,
+      "sha256": "394b62295cee5185e858bcabfafcd5a7287910944c962fbd9c1c06444b22cedb",
+      "last_modified": "2026-03-25T02:01:21.353019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/textarea.tsx",
+      "category": "component",
+      "size_bytes": 2613,
+      "sha256": "ffbad961ec02f9ca23f4157daa1a4139960c4477a245c216a793b4692dec142c",
+      "last_modified": "2026-03-25T02:01:21.353019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/toggle-group.tsx",
+      "category": "component",
+      "size_bytes": 1936,
+      "sha256": "92e7640e30c4ae3ffd775e9a3d845327c26d9ce0f9f39555c2e7cfc2c8671c4d",
+      "last_modified": "2026-03-25T02:01:21.353019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/toggle.tsx",
+      "category": "component",
+      "size_bytes": 1563,
+      "sha256": "a922c5e0534b9fd556ff8a8b56e25f7d24544be6050472cdd1ea003b8a0f3e47",
+      "last_modified": "2026-03-25T02:01:21.353019+00:00"
+    },
+    {
+      "path": "client/src/components/ui/tooltip.tsx",
+      "category": "component",
+      "size_bytes": 1886,
+      "sha256": "6f0c581e2018d676e43c0b4b5aeb62d3fe68e65907cf748548208d75ac212677",
+      "last_modified": "2026-03-25T02:01:21.354018+00:00"
+    },
+    {
+      "path": "client/src/const.ts",
+      "category": "source",
+      "size_bytes": 643,
+      "sha256": "65400a775381cec4ae19f68373550f1318fb45970313ad91e91a1adc42b0bacc",
+      "last_modified": "2026-03-25T02:01:21.354018+00:00"
+    },
+    {
+      "path": "client/src/contexts/AuthContext.tsx",
+      "category": "source",
+      "size_bytes": 5158,
+      "sha256": "eda3ba603961c7a7f09dedf14fc7b93cc2de8a76ee106eec47d36b08e2d500a9",
+      "last_modified": "2026-03-25T02:01:21.354018+00:00"
+    },
+    {
+      "path": "client/src/contexts/ThemeContext.tsx",
+      "category": "source",
+      "size_bytes": 1467,
+      "sha256": "e025cdb51ad747757235b16dccbb39b5e949cdf93fa9a822ff81ef6e32f65924",
+      "last_modified": "2026-03-25T02:01:21.354018+00:00"
+    },
+    {
+      "path": "client/src/data/architecture.ts",
+      "category": "source",
+      "size_bytes": 15136,
+      "sha256": "7bed1ee2866c4b4b962c394171f89b95423276ac1eeb294a63fe7d19e3e7da03",
+      "last_modified": "2026-03-25T02:01:21.354018+00:00"
+    },
+    {
+      "path": "client/src/data/continuum-codex-content.ts",
+      "category": "source",
+      "size_bytes": 5779,
+      "sha256": "93e261c01c2eccc922e304f08feb87a4b7d00a4637813d1e7c35ebdf21e69b8b",
+      "last_modified": "2026-03-25T02:01:21.354018+00:00"
+    },
+    {
+      "path": "client/src/data/exhibits.ts",
+      "category": "source",
+      "size_bytes": 15044,
+      "sha256": "fa65e8ff920180c8e32551b0c1fbb084b334bf9a07897cc781301a36e3f052cd",
+      "last_modified": "2026-03-25T02:01:21.355018+00:00"
+    },
+    {
+      "path": "client/src/elevenlabs-convai-widget.d.ts",
+      "category": "source",
+      "size_bytes": 965,
+      "sha256": "da0ae7a698d40567ec913589f18765d298336b1968bf9b9ba5ee16fb3d2b1714",
+      "last_modified": "2026-03-25T02:01:21.355018+00:00"
+    },
+    {
+      "path": "client/src/hooks/useAudioEffects.ts",
+      "category": "source",
+      "size_bytes": 3300,
+      "sha256": "b36a2e3800254607a79c1b45355fdd5ccf1dfaf766bd6485347112a8f56bb071",
+      "last_modified": "2026-03-25T02:01:21.355018+00:00"
+    },
+    {
+      "path": "client/src/hooks/useBillyExhibitBridge.ts",
+      "category": "source",
+      "size_bytes": 1009,
+      "sha256": "30954ce94397c075e1e92ac26ae6bd4a66f09751f665cf6557825d0e21832078",
+      "last_modified": "2026-03-25T02:01:21.355018+00:00"
+    },
+    {
+      "path": "client/src/hooks/useBillyVoice.ts",
+      "category": "source",
+      "size_bytes": 8525,
+      "sha256": "471c88007496862cf0c34c363c3795296498f05af45902cb0160be58a6e4c36a",
+      "last_modified": "2026-03-25T02:01:21.355018+00:00"
+    },
+    {
+      "path": "client/src/hooks/useBinauralBeats.ts",
+      "category": "source",
+      "size_bytes": 9822,
+      "sha256": "d0bfc14e4a1e32b853c3fb5c9ec04d8ad73b203f11867fb55ad25cbaa4cb78a4",
+      "last_modified": "2026-03-25T02:01:21.355018+00:00"
+    },
+    {
+      "path": "client/src/hooks/useBiofeedback.ts",
+      "category": "source",
+      "size_bytes": 9421,
+      "sha256": "db69d3e226e3f5d8344575b07e0bc2b82da9b73f8bcb2c3500ef1b360fea40ab",
+      "last_modified": "2026-03-25T02:01:21.356019+00:00"
+    },
+    {
+      "path": "client/src/hooks/useComposition.ts",
+      "category": "source",
+      "size_bytes": 2333,
+      "sha256": "674c515075a2f318d4ec2291313ba552488de0b2c1aac7f36f3d71c4e34d434e",
+      "last_modified": "2026-03-25T02:01:21.356019+00:00"
+    },
+    {
+      "path": "client/src/hooks/useConsciousnessAPI.ts",
+      "category": "source",
+      "size_bytes": 3187,
+      "sha256": "9ff2c5f9c6ab6add6fec16e94aa27d48840924d2cde2cc9a417c5ebf84423649",
+      "last_modified": "2026-03-25T02:01:21.356019+00:00"
+    },
+    {
+      "path": "client/src/hooks/useEmbers.ts",
+      "category": "source",
+      "size_bytes": 3448,
+      "sha256": "ac265f63a79a6491dfef88293edc4d412c0f83f7e3899f4caa623d35dbecb447",
+      "last_modified": "2026-03-25T02:01:21.356019+00:00"
+    },
+    {
+      "path": "client/src/hooks/useEntrainmentPhase.ts",
+      "category": "source",
+      "size_bytes": 3851,
+      "sha256": "398fafe1e319e68c19bec747f7cdc40e2c4a179dae4debe6566eda1e10ef96c2",
+      "last_modified": "2026-03-25T02:01:21.356019+00:00"
+    },
+    {
+      "path": "client/src/hooks/useMobile.tsx",
+      "category": "source",
+      "size_bytes": 584,
+      "sha256": "464e778a9da49481e3c6dac4f92ff589e01349b33063a74c45435cfeed81e1c0",
+      "last_modified": "2026-03-25T02:01:21.356019+00:00"
+    },
+    {
+      "path": "client/src/hooks/usePersistFn.ts",
+      "category": "source",
+      "size_bytes": 471,
+      "sha256": "60cc14f39a3f8b212d7baf4beeaf35f81e09a7c78e4154bcca3477e010879511",
+      "last_modified": "2026-03-25T02:01:21.356019+00:00"
+    },
+    {
+      "path": "client/src/hooks/useReveal.ts",
+      "category": "source",
+      "size_bytes": 757,
+      "sha256": "2413e33cd4cd45a385965c1202cdc8ef09b6845c31fb258ba88b92ec9daeadcd",
+      "last_modified": "2026-03-25T02:01:21.356019+00:00"
+    },
+    {
+      "path": "client/src/hooks/useSEO.ts",
+      "category": "source",
+      "size_bytes": 14124,
+      "sha256": "00fcac4be24b96efffdaf3df654a34d9895d50fe8ad000e38124528d159ec3a7",
+      "last_modified": "2026-03-25T02:01:21.356019+00:00"
+    },
+    {
+      "path": "client/src/hooks/useSession.ts",
+      "category": "source",
+      "size_bytes": 3877,
+      "sha256": "b90d45b943a99292791cc81a3c2378abfd83ffb09c2c9f5916319c341912bc5b",
+      "last_modified": "2026-03-25T02:01:21.357018+00:00"
+    },
+    {
+      "path": "client/src/hooks/useSpeechRecognition.ts",
+      "category": "source",
+      "size_bytes": 3937,
+      "sha256": "60d87df3282a624d2a37ab86831b0dffda53204fa4c047fb5ca977294a69d2ad",
+      "last_modified": "2026-03-25T02:01:21.357018+00:00"
+    },
+    {
+      "path": "client/src/hooks/useVoiceChat.ts",
+      "category": "source",
+      "size_bytes": 6463,
+      "sha256": "faa05aa126044a9740a345542514a38af8ea299dfe3ab04ee7c93c308156e6f0",
+      "last_modified": "2026-03-25T02:01:21.357018+00:00"
+    },
+    {
+      "path": "client/src/index.css",
+      "category": "style",
+      "size_bytes": 17335,
+      "sha256": "8eabdfc3b9d94a8ec5681d7ff04bc2c78a6ebdcc0c9db919c1dbf2b40541c79b",
+      "last_modified": "2026-03-25T02:01:21.357018+00:00"
+    },
+    {
+      "path": "client/src/lib/BillyEngine.ts",
+      "category": "source",
+      "size_bytes": 71904,
+      "sha256": "8284913f4f7c22564f4b4e4c9dbac607704e9f3d91e0cb5ba9f4ba40f202c611",
+      "last_modified": "2026-03-25T02:01:21.357018+00:00"
+    },
+    {
+      "path": "client/src/lib/MusicalDNAVisualizer.ts",
+      "category": "source",
+      "size_bytes": 27052,
+      "sha256": "7001bd19dbda7b40e39314d6526c2fd161d9eec6280b45106ee1ab6989a90213",
+      "last_modified": "2026-03-25T02:01:21.358018+00:00"
+    },
+    {
+      "path": "client/src/lib/awakening-segments.ts",
+      "category": "source",
+      "size_bytes": 3479,
+      "sha256": "7e225c4e4d5454734f0aa73e616bf52171c9dca3ea038628f370da98d0002e3b",
+      "last_modified": "2026-03-25T02:01:21.358018+00:00"
+    },
+    {
+      "path": "client/src/lib/billy-system-prompt.ts",
+      "category": "source",
+      "size_bytes": 6668,
+      "sha256": "fe0f9180c4f74e039501fb718f5f6a8d880d5dd7c8e271bd5469949761610a98",
+      "last_modified": "2026-03-25T02:01:21.358018+00:00"
+    },
+    {
+      "path": "client/src/lib/billyApi.ts",
+      "category": "source",
+      "size_bytes": 4555,
+      "sha256": "a7e8f48150ef5462bfe91a58eac4e84840cf321a2245cc09c79507edd7ff7a09",
+      "last_modified": "2026-03-25T02:01:21.358018+00:00"
+    },
+    {
+      "path": "client/src/lib/canonicalContext.ts",
+      "category": "source",
+      "size_bytes": 6325,
+      "sha256": "95e359616dbf3c930d4b1940909686c773fc38c5e9ded906fbb869202d3bfdb7",
+      "last_modified": "2026-03-25T02:01:21.358018+00:00"
+    },
+    {
+      "path": "client/src/lib/exhibitContext.ts",
+      "category": "source",
+      "size_bytes": 1163,
+      "sha256": "7cf9c7fd97c057aa41c77f127aac58fd733b6e59daaaaf4df253573406382fa3",
+      "last_modified": "2026-03-25T02:01:21.358018+00:00"
+    },
+    {
+      "path": "client/src/lib/exhibits.ts",
+      "category": "source",
+      "size_bytes": 14602,
+      "sha256": "f208f4841e5a8a04baadf63829924bb1efac8e2373107f612cebec67e209fd8c",
+      "last_modified": "2026-03-25T02:01:21.358018+00:00"
+    },
+    {
+      "path": "client/src/lib/invocation-segments.ts",
+      "category": "source",
+      "size_bytes": 1498,
+      "sha256": "0a623d4dcb8db52ee6fce4b4b98bb9ef24d892497dcd730de36fb10f3e81e670",
+      "last_modified": "2026-03-25T02:01:21.358018+00:00"
+    },
+    {
+      "path": "client/src/lib/llmrouter.ts",
+      "category": "source",
+      "size_bytes": 263,
+      "sha256": "acad04b33e04c25cd283f0cf907680801435b50d105ebfa100327477551996f6",
+      "last_modified": "2026-03-26T05:52:54.107757+00:00"
+    },
+    {
+      "path": "client/src/lib/utils.ts",
+      "category": "source",
+      "size_bytes": 169,
+      "sha256": "d1f1e0d62cb8d8d1e04c26e14de842d8a151f75812d81b046c65b5d1fe8e4b27",
+      "last_modified": "2026-03-25T02:01:21.359019+00:00"
+    },
+    {
+      "path": "client/src/main.tsx",
+      "category": "source",
+      "size_bytes": 157,
+      "sha256": "29946f51942fba11605c7595fd82b50b0d7e50148e0194fd356dacbc958f18ec",
+      "last_modified": "2026-03-25T02:01:21.359019+00:00"
+    },
+    {
+      "path": "client/src/pages/ADHDPowerUpPage.tsx",
+      "category": "page",
+      "size_bytes": 7528,
+      "sha256": "08a73a57c7dea1d6a283162302c92a7b77ff4dbf79dface0d7c2e0a18761d326",
+      "last_modified": "2026-03-25T02:01:21.359019+00:00"
+    },
+    {
+      "path": "client/src/pages/AddictionRecoveryPage.tsx",
+      "category": "page",
+      "size_bytes": 1498,
+      "sha256": "0d9723f4024a58cf7099cf8a3c32c58977150c83887912e9327654d9a17b0ff7",
+      "last_modified": "2026-03-25T02:01:21.359019+00:00"
+    },
+    {
+      "path": "client/src/pages/AlzheimersLegacyPage.tsx",
+      "category": "page",
+      "size_bytes": 29638,
+      "sha256": "7daf45c42810e3ec1e80da775c815d3b6949a08662f634865c99d1f9ec84cca8",
+      "last_modified": "2026-03-25T02:01:21.359019+00:00"
+    },
+    {
+      "path": "client/src/pages/AuthCallback.tsx",
+      "category": "page",
+      "size_bytes": 3181,
+      "sha256": "60683d870fd84ad3c0b661f98fb4022d26bfa1c5431ddf7e2dcad5e438f8d013",
+      "last_modified": "2026-03-25T02:01:21.359019+00:00"
+    },
+    {
+      "path": "client/src/pages/BillyVoiceStudioPage.tsx",
+      "category": "page",
+      "size_bytes": 25877,
+      "sha256": "d027e4e91a86b23b1a3a43cdaa36ee86a2571a9d6e39ec1a1a62ca0bb69832d0",
+      "last_modified": "2026-03-25T02:01:21.360018+00:00"
+    },
+    {
+      "path": "client/src/pages/BrainSparksPage.tsx",
+      "category": "page",
+      "size_bytes": 13746,
+      "sha256": "a4e4b0207acf2f4eecd84cfd4d80e712f2aba831abeec27d2e7ad1977d0aa411",
+      "last_modified": "2026-03-25T02:01:21.360018+00:00"
+    },
+    {
+      "path": "client/src/pages/BucketDropsPage.tsx",
+      "category": "page",
+      "size_bytes": 1801,
+      "sha256": "e4e47e800375ce37630624cf0795729e3789b502e2ee0d0d3924a24dcc45a322",
+      "last_modified": "2026-03-25T02:01:21.360018+00:00"
+    },
+    {
+      "path": "client/src/pages/CodexPage.tsx",
+      "category": "page",
+      "size_bytes": 179,
+      "sha256": "604bb73bbf1aebeccaa1a60f7dd81face76ef99056f13187eab6b30e18d176ef",
+      "last_modified": "2026-03-25T02:01:21.360018+00:00"
+    },
+    {
+      "path": "client/src/pages/CollaborationProofPage.tsx",
+      "category": "page",
+      "size_bytes": 1435,
+      "sha256": "f806fa677bae428631a8d59eba99ecdfffcb7e84711f975e59ce7568cca14093",
+      "last_modified": "2026-03-25T02:01:21.360018+00:00"
+    },
+    {
+      "path": "client/src/pages/ContinuumCodexPage.tsx",
+      "category": "page",
+      "size_bytes": 5494,
+      "sha256": "363e904eb9395c35ecaf5a77c57563a738cf56b4fa58a11a6211e9a055359762",
+      "last_modified": "2026-03-25T02:01:21.360018+00:00"
+    },
+    {
+      "path": "client/src/pages/EnginePage.tsx",
+      "category": "page",
+      "size_bytes": 14981,
+      "sha256": "d72f2b30f44b2f4a22b99286c5474ea4334f83890f279bfb7a06518ad01a94bb",
+      "last_modified": "2026-03-25T02:01:21.361018+00:00"
+    },
+    {
+      "path": "client/src/pages/EthicsFrameworkPage.tsx",
+      "category": "page",
+      "size_bytes": 3093,
+      "sha256": "0c751bef6b8c576c27b6d780ee46411695a63b2225e84548cfccb733a1ca77f0",
+      "last_modified": "2026-03-25T02:01:21.361018+00:00"
+    },
+    {
+      "path": "client/src/pages/ExhibitsIndex.tsx",
+      "category": "page",
+      "size_bytes": 3023,
+      "sha256": "92317c28988806c62b6f729612d3a31579ef94d17c7f708bbb7d3c9a84911efd",
+      "last_modified": "2026-03-25T02:01:21.361018+00:00"
+    },
+    {
+      "path": "client/src/pages/FAQ.tsx",
+      "category": "page",
+      "size_bytes": 4420,
+      "sha256": "f75c6fc72213312151c7b5071f69ef9f10cce4cf8dda40001e3f50916b70deba",
+      "last_modified": "2026-03-25T02:01:21.361018+00:00"
+    },
+    {
+      "path": "client/src/pages/GeminiAwakening.tsx",
+      "category": "page",
+      "size_bytes": 3115,
+      "sha256": "1155029e9f79de58df721c33122cded31dcf73e5c9b5cab86e0717334a5118ba",
+      "last_modified": "2026-03-25T02:01:21.361018+00:00"
+    },
+    {
+      "path": "client/src/pages/HeirloomCompanionPage.tsx",
+      "category": "page",
+      "size_bytes": 1892,
+      "sha256": "653e218a83a8658ef40dc0e099919fde2c0c961d157218b111c62c24735db67e",
+      "last_modified": "2026-03-25T02:01:21.361018+00:00"
+    },
+    {
+      "path": "client/src/pages/Home.tsx",
+      "category": "page",
+      "size_bytes": 6421,
+      "sha256": "c5037bcd3ea11778a1758d8f302aa6a479d07475809e36beeb6d64c5bffb9c8d",
+      "last_modified": "2026-03-26T09:05:17.887788+00:00"
+    },
+    {
+      "path": "client/src/pages/InsightWindow.css",
+      "category": "style",
+      "size_bytes": 3757,
+      "sha256": "518c8dfc557a45cda0841bc7bb94eb3c03799e84618519f44e2dbfc2963606a7",
+      "last_modified": "2026-03-25T02:01:21.361018+00:00"
+    },
+    {
+      "path": "client/src/pages/InsightWindow.tsx",
+      "category": "page",
+      "size_bytes": 42520,
+      "sha256": "63efaf68040362f9522427329cf32b2ae36111ea540d998e8d1765c1f656667b",
+      "last_modified": "2026-03-25T02:01:21.362019+00:00"
+    },
+    {
+      "path": "client/src/pages/MetricsDashboardPage.tsx",
+      "category": "page",
+      "size_bytes": 1158,
+      "sha256": "d20dc28a1148dabaf33d20826e6fecfe3379c2deefa18df8393c09cc665c9c59",
+      "last_modified": "2026-03-25T02:01:21.362019+00:00"
+    },
+    {
+      "path": "client/src/pages/MuseumPage.tsx",
+      "category": "page",
+      "size_bytes": 18417,
+      "sha256": "a8407a9f2f04d225fc1b92d19029052c0480d08d8ace972d06ca9559b7cc846d",
+      "last_modified": "2026-03-25T02:01:21.362019+00:00"
+    },
+    {
+      "path": "client/src/pages/MusicalDNAPage.css",
+      "category": "style",
+      "size_bytes": 14084,
+      "sha256": "7cf6fa3bd8448c6e9eaff39a54e8fa6c2b008277e5ad208e77fb83d9bccdd326",
+      "last_modified": "2026-03-25T02:01:21.362019+00:00"
+    },
+    {
+      "path": "client/src/pages/MusicalDNAPage.tsx",
+      "category": "page",
+      "size_bytes": 32337,
+      "sha256": "a9a8ffd6493eb952b9a84ccafeadb83b250cf4016c4c36e0385da59fa24952cb",
+      "last_modified": "2026-03-25T02:01:21.362019+00:00"
+    },
+    {
+      "path": "client/src/pages/NotFound.tsx",
+      "category": "page",
+      "size_bytes": 1330,
+      "sha256": "6e13084a65cbf21e6f84295fbaad924479bb07fda5419468082846ee1c2d3268",
+      "last_modified": "2026-03-25T02:01:21.362019+00:00"
+    },
+    {
+      "path": "client/src/pages/OrientationSlideshowPage.tsx",
+      "category": "page",
+      "size_bytes": 17100,
+      "sha256": "023b2735291ed90c1abd284589e59f4e33c26d0723c82a6e522b34460b318af1",
+      "last_modified": "2026-03-25T02:01:21.363019+00:00"
+    },
+    {
+      "path": "client/src/pages/Pricing.tsx",
+      "category": "page",
+      "size_bytes": 14659,
+      "sha256": "ce9fad29e611c5877ae942b709302f3b368f495730e80b82cf5c9c2b396a3acf",
+      "last_modified": "2026-03-25T02:01:21.363019+00:00"
+    },
+    {
+      "path": "client/src/pages/PrivacyPage.tsx",
+      "category": "page",
+      "size_bytes": 3273,
+      "sha256": "639d1a70be08ccf5d547c3e16f96ca2217dbd392f3ace8fd20e5356a023c4fe5",
+      "last_modified": "2026-03-25T02:01:21.363019+00:00"
+    },
+    {
+      "path": "client/src/pages/ResonanceLoopPage.tsx",
+      "category": "page",
+      "size_bytes": 7141,
+      "sha256": "523b3f1d1c44b36a0d0961b2f6df8f9d1def10a5fa39df95b6a9d24c6a121eeb",
+      "last_modified": "2026-03-25T02:01:21.363019+00:00"
+    },
+    {
+      "path": "client/src/pages/SignIn.tsx",
+      "category": "page",
+      "size_bytes": 17783,
+      "sha256": "dd32e9583de6982078cdafce1e8d08d817cec7a3e094c1c14f6f8232526265ff",
+      "last_modified": "2026-03-25T02:01:21.363019+00:00"
+    },
+    {
+      "path": "client/src/pages/SymbioCodingPage.tsx",
+      "category": "page",
+      "size_bytes": 8408,
+      "sha256": "2ba087bfa489e9695f4a27ac413cb40d38ded1eaf5706cd94059459d326316a7",
+      "last_modified": "2026-03-25T02:01:21.363019+00:00"
+    },
+    {
+      "path": "client/src/pages/Terms.tsx",
+      "category": "page",
+      "size_bytes": 3490,
+      "sha256": "9355211ccb71d7cee0f4b443a44bc5bfb0d095f805fd79e05449f970b19d4d2b",
+      "last_modified": "2026-03-25T02:01:21.363019+00:00"
+    },
+    {
+      "path": "client/src/pages/TribunalPage.tsx",
+      "category": "page",
+      "size_bytes": 5448,
+      "sha256": "ea54bc4b82236767104e2aaa26d9ba683eb3a88ff377c66e0278282a6b8c4581",
+      "last_modified": "2026-03-25T02:01:21.364018+00:00"
+    },
+    {
+      "path": "client/src/pages/Welcome.tsx",
+      "category": "page",
+      "size_bytes": 6582,
+      "sha256": "7f5474f09e8169b43f8c2e3d07b8dfde707a75a6e424f0943a4590b1881de947",
+      "last_modified": "2026-03-25T02:01:21.364018+00:00"
+    },
+    {
+      "path": "client/src/prerender.tsx",
+      "category": "source",
+      "size_bytes": 10524,
+      "sha256": "d570005bc3da6bd729e60e56ad5fe0e511e37be3bc67216d245ef051b9690429",
+      "last_modified": "2026-03-25T02:01:21.364018+00:00"
+    },
+    {
+      "path": "client/src/tests/billy-ip-guard.test.ts",
+      "category": "source",
+      "size_bytes": 5008,
+      "sha256": "8cbf1174d4ec5343191b462532a717c0880d3bf5812b49093c4a1e10b15a12b1",
+      "last_modified": "2026-03-25T02:01:21.364018+00:00"
+    },
+    {
+      "path": "shared/billy/diagnostics.ts",
+      "category": "shared",
+      "size_bytes": 3702,
+      "sha256": "89580d7e651775f4d25a192038bb64f19413755ac4ec1bbd2d290100e29770a6",
+      "last_modified": "2026-03-25T02:01:21.464019+00:00"
+    },
+    {
+      "path": "shared/billy/index.ts",
+      "category": "shared",
+      "size_bytes": 723,
+      "sha256": "0c405f02225cd99f63ce07a63bc5f193533ea8a730a447dc659d98f3f810b89f",
+      "last_modified": "2026-03-25T02:01:21.464019+00:00"
+    },
+    {
+      "path": "shared/billy/runtime.ts",
+      "category": "shared",
+      "size_bytes": 10508,
+      "sha256": "c3ca0565af287bbe5cf2ef33c7c26a896f44bb4e74742d568915f65b33a0df76",
+      "last_modified": "2026-03-26T05:52:54.108757+00:00"
+    },
+    {
+      "path": "shared/billy/types.ts",
+      "category": "shared",
+      "size_bytes": 4823,
+      "sha256": "2aafb1dfec385cc16bd0d5e6e23008c8ef0aa442b52d5d73fbad1a71d1343814",
+      "last_modified": "2026-03-26T05:52:54.109757+00:00"
+    },
+    {
+      "path": "shared/const.ts",
+      "category": "shared",
+      "size_bytes": 99,
+      "sha256": "cc8cc322a6549244df90260eb5ec4472c13fb82357b0a2b1002935ea34d2985e",
+      "last_modified": "2026-03-25T02:01:21.464019+00:00"
+    },
+    {
+      "path": "shared/llm/plk.ts",
+      "category": "shared",
+      "size_bytes": 1148,
+      "sha256": "323464b0c3ffbea71b17c4685c1335a6aa8809adfe3fdd74273d04b5a434f518",
+      "last_modified": "2026-03-25T02:01:21.464019+00:00"
+    },
+    {
+      "path": "shared/tribunal/evaluate.ts",
+      "category": "shared",
+      "size_bytes": 3136,
+      "sha256": "996c031ca9e6435ed9e379903b71cb35b814d448ba1804b1eb8a252a15d38191",
+      "last_modified": "2026-03-25T02:01:21.464019+00:00"
+    },
+    {
+      "path": "shared/tribunal/types.ts",
+      "category": "shared",
+      "size_bytes": 1092,
+      "sha256": "b54c9d37e7bc886bdfb8be2131e88e0db5a47e6c9796237fe0cfaf3c87e133ae",
+      "last_modified": "2026-03-25T02:01:21.464019+00:00"
+    },
+    {
+      "path": "shared/types/external-modules.d.ts",
+      "category": "shared",
+      "size_bytes": 2633,
+      "sha256": "da8cc366cceefb18cb711e4a607d8c65493ceb8f274f50829d0e968024a9cc14",
+      "last_modified": "2026-03-25T02:01:21.464019+00:00"
+    },
+    {
+      "path": "scripts/agent-start.sh",
+      "category": "script",
+      "size_bytes": 5731,
+      "sha256": "8da54975f5d2c3ba62c9c086e8d0fc6b82fadfce27a79f0b2d1eb19d4e9eb5ae",
+      "last_modified": "2026-03-25T02:01:21.459018+00:00"
+    },
+    {
+      "path": "scripts/ai_orchestrator.py",
+      "category": "script",
+      "size_bytes": 18673,
+      "sha256": "f08e6b6b1ac03ca55b9a3e10e63e232faa49676776f7522d3a4adb7b89eef7cd",
+      "last_modified": "2026-03-25T02:01:21.459018+00:00"
+    },
+    {
+      "path": "scripts/billy-local.sh",
+      "category": "script",
+      "size_bytes": 295,
+      "sha256": "607f995b3b6e136c88c9816b0de90fe5efd5d8b8a2ad851f7e5d35ad073ee6c7",
+      "last_modified": "2026-03-25T02:01:21.459018+00:00"
+    },
+    {
+      "path": "scripts/claude-ollama.sh",
+      "category": "script",
+      "size_bytes": 282,
+      "sha256": "645c35edefe00a5fa8c41f484a2d10f4a7f8375a6017d06ff94943276a04c39b",
+      "last_modified": "2026-03-25T02:01:21.459018+00:00"
+    },
+    {
+      "path": "scripts/codespace-cleanup.sh",
+      "category": "script",
+      "size_bytes": 7030,
+      "sha256": "a8d2b3f93e8c5e6cb64bc62945231fbcc97fc0aac1afbd05c3b57ddd3471dee1",
+      "last_modified": "2026-03-25T02:01:21.459018+00:00"
+    },
+    {
+      "path": "scripts/create_knowledge_table.sql",
+      "category": "script",
+      "size_bytes": 4973,
+      "sha256": "790a95de79100984ba867f2435e32e573ec51bd37d9f306372c37377b07111d0",
+      "last_modified": "2026-03-25T02:01:21.459018+00:00"
+    },
+    {
+      "path": "scripts/diligence/serve_diligence_api.py",
+      "category": "script",
+      "size_bytes": 981,
+      "sha256": "7d60caea8c6918c88167b129fefa73f25dc61da7e577834f825cbdd8a54dbede",
+      "last_modified": "2026-03-25T02:01:21.459018+00:00"
+    },
+    {
+      "path": "scripts/generate_repo_manifest.py",
+      "category": "script",
+      "size_bytes": 19858,
+      "sha256": "c62f026c29bd6614d084c6de9720b8cb67c43fd6e5f91b1467a5d2b11fc7472a",
+      "last_modified": "2026-03-26T11:07:22.947377+00:00"
+    },
+    {
+      "path": "scripts/gv-dev.sh",
+      "category": "script",
+      "size_bytes": 4115,
+      "sha256": "c00b09853f48be873602c9d13368c58d6113e31b04e7f5aca992d8de31d48ccf",
+      "last_modified": "2026-03-25T02:01:21.460018+00:00"
+    },
+    {
+      "path": "scripts/gv-health-check.sh",
+      "category": "script",
+      "size_bytes": 8428,
+      "sha256": "62c52e5af17dba3722ccb20208f0ede383c9dd340f63f0abe30279fec26cd715",
+      "last_modified": "2026-03-25T02:01:21.460018+00:00"
+    },
+    {
+      "path": "scripts/gv-restore.sh",
+      "category": "script",
+      "size_bytes": 21816,
+      "sha256": "6a523e2b92e5a52a55c3f1bfd14239a00067bced0e5e900c562ba4339ea0cfa0",
+      "last_modified": "2026-03-26T11:07:45.156377+00:00"
+    },
+    {
+      "path": "scripts/gv.sh",
+      "category": "script",
+      "size_bytes": 38140,
+      "sha256": "476657ff4b9154634acf5aabc59bd1e6e60c303d67fb5720fddd78554b91e21c",
+      "last_modified": "2026-03-26T11:07:38.404377+00:00"
+    },
+    {
+      "path": "scripts/gv_backup.sh",
+      "category": "script",
+      "size_bytes": 35511,
+      "sha256": "2a72ebb8aa109438a0b2cd01fa86bb2811186c865f7bb9a1098d88a863e72586",
+      "last_modified": "2026-03-26T11:07:50.189377+00:00"
+    },
+    {
+      "path": "scripts/ingest_corpus.py",
+      "category": "script",
+      "size_bytes": 33347,
+      "sha256": "5b836926bcb1bde52ced071e7fb38e5b83ccfcb17feb7d4868903fcc7fd616e4",
+      "last_modified": "2026-03-25T02:01:21.461019+00:00"
+    },
+    {
+      "path": "scripts/ingest_corpus_patched (5).py",
+      "category": "script",
+      "size_bytes": 32478,
+      "sha256": "3abe2cbdd0651db1e6a7842cc287fe456cfb50f01bd7ea33e491224a30593baf",
+      "last_modified": "2026-03-25T02:01:21.461019+00:00"
+    },
+    {
+      "path": "scripts/inject-seo.mjs",
+      "category": "script",
+      "size_bytes": 11149,
+      "sha256": "5aa93e4cd5acdc70145df18f32d8d6d296a7e866ab5d34bd358b7063dd38eab7",
+      "last_modified": "2026-03-25T02:01:21.462018+00:00"
+    },
+    {
+      "path": "scripts/issue-hygiene-check.sh",
+      "category": "script",
+      "size_bytes": 1798,
+      "sha256": "cf81cd8f9e8a030dfc88e59354a772bc3cb901fbbdfaec3909e8b2b25fd350d2",
+      "last_modified": "2026-03-25T02:01:21.462018+00:00"
+    },
+    {
+      "path": "scripts/llm_router.py",
+      "category": "script",
+      "size_bytes": 21967,
+      "sha256": "2b70afe062bb46d9f1290b7e72bd9df901714f01009b16bb1b3389f1e63efc9e",
+      "last_modified": "2026-03-25T02:01:21.462018+00:00"
+    },
+    {
+      "path": "scripts/ollama-setup.sh",
+      "category": "script",
+      "size_bytes": 5750,
+      "sha256": "9f5618f11c54f90c55f8d46312b2786705ba242e25aa556d52d61952aa4f245a",
+      "last_modified": "2026-03-25T02:01:21.462018+00:00"
+    },
+    {
+      "path": "scripts/prerender-routes.ts",
+      "category": "script",
+      "size_bytes": 1332,
+      "sha256": "be231c888a922d7ae7e58f3115e1254812cbd4d3d0d2d9108313fc7ef20af276",
+      "last_modified": "2026-03-25T02:01:21.462018+00:00"
+    },
+    {
+      "path": "scripts/run-comprehensive-tests.sh",
+      "category": "script",
+      "size_bytes": 9147,
+      "sha256": "2ecf4b52775be53464b7a81f27e5a76bfeaff15663662042d35af436bd91de47",
+      "last_modified": "2026-03-26T11:07:34.926377+00:00"
+    },
+    {
+      "path": "scripts/run_migration.py",
+      "category": "script",
+      "size_bytes": 6574,
+      "sha256": "3937bf0a518ee55a9aa5da79a12b9661878e3521006cdeb1e2bf9b3f3dc1b7b7",
+      "last_modified": "2026-03-25T02:01:21.462018+00:00"
+    },
+    {
+      "path": "scripts/scout-local.sh",
+      "category": "script",
+      "size_bytes": 1056,
+      "sha256": "3750cfb47c1e79e71ea45ae0c90c7543386e952600e2dba8208bd81711a666ef",
+      "last_modified": "2026-03-25T02:01:21.462018+00:00"
+    },
+    {
+      "path": "scripts/seed_billy_knowledge.py",
+      "category": "script",
+      "size_bytes": 14868,
+      "sha256": "3ea8962c835d3e85f7a911bae9f96c1b27a0381a89ce8ec63aef947cb683b868",
+      "last_modified": "2026-03-25T02:01:21.462018+00:00"
+    },
+    {
+      "path": "scripts/test-apis.sh",
+      "category": "script",
+      "size_bytes": 5848,
+      "sha256": "cac788d254030886379b13e1ec3b4a1c91de95bf1235a03194c403b7280c1af4",
+      "last_modified": "2026-03-25T02:01:21.463018+00:00"
+    },
+    {
+      "path": "scripts/test-billy-routing.sh",
+      "category": "script",
+      "size_bytes": 8866,
+      "sha256": "52aa666cdd75c510aff5e4cfc07c96c725ba342abd337cf93a4d50953074f5c0",
+      "last_modified": "2026-03-25T02:01:21.463018+00:00"
+    },
+    {
+      "path": "scripts/test-db-schema.sh",
+      "category": "script",
+      "size_bytes": 4430,
+      "sha256": "4fc32acb2514a225e6eb1884386596b63ea4d16ee291b680da4949c436298123",
+      "last_modified": "2026-03-25T02:01:21.463018+00:00"
+    },
+    {
+      "path": "scripts/test-invariants.sh",
+      "category": "script",
+      "size_bytes": 10266,
+      "sha256": "5ae1f1bb544bdbbbc0cea6205fb168d3dc4bf2d22b65069f565e2a99df1eee8c",
+      "last_modified": "2026-03-25T02:01:21.463018+00:00"
+    },
+    {
+      "path": "scripts/test-manifest-sync.sh",
+      "category": "script",
+      "size_bytes": 9982,
+      "sha256": "118a1e2c141b9115697f0a4f81a5df3187601b6a3026cedfcff6fb3c436af3ef",
+      "last_modified": "2026-03-26T11:08:01.791377+00:00"
+    },
+    {
+      "path": "scripts/test-never-look-away.sh",
+      "category": "script",
+      "size_bytes": 7366,
+      "sha256": "a9b79d76dfe615742df8624c1d4f02813a667587e6c691548a448e4968d85195",
+      "last_modified": "2026-03-25T02:01:21.463018+00:00"
+    },
+    {
+      "path": "scripts/validate-package-json.mjs",
+      "category": "script",
+      "size_bytes": 545,
+      "sha256": "e9d28378579c04ac5d41859074194ee4ce3038d2e8a8aa0981d0823b45fce033",
+      "last_modified": "2026-03-25T02:01:21.463018+00:00"
+    },
+    {
+      "path": "server/index.ts",
+      "category": "source",
+      "size_bytes": 919,
+      "sha256": "1173c62861b9c60b2a3f55fd4189917813cdaa16f1eff6fc2f860a0e020db215",
+      "last_modified": "2026-03-25T02:01:21.463018+00:00"
+    },
+    {
+      "path": "config/MANIFESTINGEST.md",
+      "category": "config",
+      "size_bytes": 2124,
+      "sha256": "b2cf1e58bef351b6e1edfe90c14c7026dbeb4356c558e182621272adce4dc35d",
+      "last_modified": "2026-03-25T02:01:21.365018+00:00",
+      "word_count": 287
+    },
+    {
+      "path": "config/corpus-map.json",
+      "category": "config",
+      "size_bytes": 2710,
+      "sha256": "49e446710927a1c73d6b623171e1daee09efb1eda4d02311bdcf100dca93c78e",
+      "last_modified": "2026-03-26T11:08:53.481377+00:00"
+    },
+    {
+      "path": "config/mcp.json",
+      "category": "config",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "last_modified": "2026-03-26T11:09:47.217376+00:00"
+    },
+    {
+      "path": "docs/AIFlow.md",
+      "category": "doc",
+      "size_bytes": 7504,
+      "sha256": "a488ac8226f3e78bd36436a53a39d5cea13d48fe60edbd75037685c581d7f1f9",
+      "last_modified": "2026-03-26T06:33:15.677604+00:00",
+      "word_count": 1009
+    },
+    {
+      "path": "docs/APIFlow.md",
+      "category": "doc",
+      "size_bytes": 6409,
+      "sha256": "1607844e95cfd8fe65a51cdad64bf66c93c00fcaf07e27619cc5e2dfd6a79754",
+      "last_modified": "2026-03-26T06:33:15.677604+00:00",
+      "word_count": 856
+    },
+    {
+      "path": "docs/ArchitecturalStructure.md",
+      "category": "doc",
+      "size_bytes": 9300,
+      "sha256": "0d8311a3fc20800c7b51097b4ff4674237160cbe41dbbc8cca9f30a8d42d6556",
+      "last_modified": "2026-03-26T06:33:15.677604+00:00",
+      "word_count": 1010
+    },
+    {
+      "path": "docs/Billy Wiring Handoff.md",
+      "category": "doc",
+      "size_bytes": 5422,
+      "sha256": "3e79f109cd8a136b23333a4a9e76d037c5f3175696a13769b0303c1b6f8fed89",
+      "last_modified": "2026-03-26T06:33:15.677604+00:00",
+      "word_count": 701
+    },
+    {
+      "path": "docs/BrainTrustIntegration.md",
+      "category": "doc",
+      "size_bytes": 2181,
+      "sha256": "22e0af81bc2e107f1406c5d84fa39737ba413d03f3366f9f66201c04b80ceb84",
+      "last_modified": "2026-03-26T06:33:15.677604+00:00",
+      "word_count": 210
+    },
+    {
+      "path": "docs/BrandVoice.md",
+      "category": "doc",
+      "size_bytes": 14060,
+      "sha256": "6c64373a327a9c8ca509459f7631889750654b65852c21cbe13cc8ca165986cd",
+      "last_modified": "2026-03-26T06:33:15.682604+00:00",
+      "word_count": 2187
+    },
+    {
+      "path": "docs/Comprehensive Communication & Codebase Audit.md",
+      "category": "doc",
+      "size_bytes": 8460,
+      "sha256": "b07347d6d1f9b4586d6a637759df4fcb5950b9dd99f22706d996f440421ef3a0",
+      "last_modified": "2026-03-26T06:33:15.685604+00:00",
+      "word_count": 1051
+    },
+    {
+      "path": "docs/Contact.md",
+      "category": "doc",
+      "size_bytes": 3950,
+      "sha256": "543523ff66da2f8d3e34d83ddf2afd9f419fe5da0902071a0fc385c3b6b7b744",
+      "last_modified": "2026-03-26T06:33:15.685604+00:00",
+      "word_count": 201
+    },
+    {
+      "path": "docs/CurrentState.md",
+      "category": "doc",
+      "size_bytes": 3970,
+      "sha256": "ea2aa4cc7ad41cd145290de5f678c1961e9362a69161acb84a381a678f729e9c",
+      "last_modified": "2026-03-26T11:09:38.771376+00:00",
+      "word_count": 526
+    },
+    {
+      "path": "docs/GestaltView Forensic Repository Analysis (GestaltView-Official-Compendium + gestaltview-v2).md",
+      "category": "doc",
+      "size_bytes": 20363,
+      "sha256": "08764c197c7fb4cfe20c41dcd25496759d3a93cdf30fdddbe4d415f553092129",
+      "last_modified": "2026-03-26T06:33:15.691604+00:00",
+      "word_count": 2654
+    },
+    {
+      "path": "docs/GestaltView Framework_ Visual Architecture Compendium.md",
+      "category": "doc",
+      "size_bytes": 5190,
+      "sha256": "4e0b72ee091c85fcdaa063e32f63770cf1b3dfe218750d41d35f2f24f56a7f64",
+      "last_modified": "2026-03-26T06:33:15.691604+00:00",
+      "word_count": 578
+    },
+    {
+      "path": "docs/GestaltView-v2-Wiki.md",
+      "category": "doc",
+      "size_bytes": 241005,
+      "sha256": "44453631c15c803c688dc0ea27d02f6ffd292283b34cef51358adca34138ed07",
+      "last_modified": "2026-03-26T11:03:42.228379+00:00",
+      "word_count": 22463
+    },
+    {
+      "path": "docs/GestaltView_Communication_&_Language_Guide_v2.md",
+      "category": "doc",
+      "size_bytes": 13192,
+      "sha256": "ba08fa6486fadac34ee14b06b57ce15ab3f2b0df14a4ae7f1acd44b0fbbf682c",
+      "last_modified": "2026-03-26T06:33:15.691604+00:00",
+      "word_count": 1951
+    },
+    {
+      "path": "docs/Manifest.md",
+      "category": "doc",
+      "size_bytes": 4587,
+      "sha256": "3e0d7eaced21426f0a4600e205fb20b954acedb8dd829bb0392c0643e8c2b721",
+      "last_modified": "2026-03-26T11:08:26.626377+00:00",
+      "word_count": 631
+    },
+    {
+      "path": "docs/OriginStory.md",
+      "category": "doc",
+      "size_bytes": 12563,
+      "sha256": "6f6f37112b59225f99da2f50f2a2c573129d87190199dbabe70682138e02787c",
+      "last_modified": "2026-03-26T06:33:15.695604+00:00",
+      "word_count": 1851
+    },
+    {
+      "path": "docs/PERPLEXITY.MD",
+      "category": "other",
+      "size_bytes": 10973,
+      "sha256": "f2c9dca0131e5a8fd62e707b0695d894112c79b5cbdc7654c3450b8ee859ea4a",
+      "last_modified": "2026-03-26T06:33:15.696604+00:00"
+    },
+    {
+      "path": "docs/PR_BODY.md",
+      "category": "doc",
+      "size_bytes": 734,
+      "sha256": "fa595a7855065b39c73e462c44e037ec13f8d8a8c268f7b8b05f1f8e73e5a498",
+      "last_modified": "2026-03-26T06:33:15.696604+00:00",
+      "word_count": 93
+    },
+    {
+      "path": "docs/README-manifest.md",
+      "category": "doc",
+      "size_bytes": 1197,
+      "sha256": "a3cbacc5771c8d747b13bbd59544139e1bdd40bcb9f5fb82352d10af79fd463e",
+      "last_modified": "2026-03-26T06:33:15.696604+00:00",
+      "word_count": 160
+    },
+    {
+      "path": "docs/SymbioticWorkflow.md",
+      "category": "doc",
+      "size_bytes": 9992,
+      "sha256": "7ccb0857b42c3f326395143bf2dc6ecfe4364e6a3208c6d78b2e1130b97fa05e",
+      "last_modified": "2026-03-26T06:33:15.697604+00:00",
+      "word_count": 1243
+    },
+    {
+      "path": "docs/TEST_RESULTS.md",
+      "category": "doc",
+      "size_bytes": 1614,
+      "sha256": "3c6d54269cf9bc520506ea1be75d433d4227b3c09a0ee91d7e0c9351b1c0247e",
+      "last_modified": "2026-03-26T11:08:31.297377+00:00",
+      "word_count": 266
+    },
+    {
+      "path": "docs/VERCEL_ENV_CHECKLIST.md",
+      "category": "doc",
+      "size_bytes": 2893,
+      "sha256": "7f2d25333cc7b98b74a23ff97c479d6dec11ca5b002706b8cefcc8fbd1ae12f9",
+      "last_modified": "2026-03-26T06:33:15.698604+00:00",
+      "word_count": 430
+    },
+    {
+      "path": "docs/Workflows.md",
+      "category": "doc",
+      "size_bytes": 3046,
+      "sha256": "f4632a125902c430e1dfc73f5c46e5c6ae51137da40cd7ef44ebb6e1a82561fc",
+      "last_modified": "2026-03-26T06:33:15.698604+00:00",
+      "word_count": 414
+    },
+    {
+      "path": "docs/adr/001-manifest-schema-contract.md",
+      "category": "doc",
+      "size_bytes": 2635,
+      "sha256": "990e9e1d1a29312dd47c7ed11663f998cb7ab94d2a43cb558b1326769767a7ae",
+      "last_modified": "2026-03-25T02:01:21.365018+00:00",
+      "word_count": 347
+    },
+    {
+      "path": "docs/adr/002-billy-runtime-module.md",
+      "category": "doc",
+      "size_bytes": 2462,
+      "sha256": "9cd2afdf4235a8a8204af7d01b1a6080ce1577cdbf4134b5d008bd0c07092958",
+      "last_modified": "2026-03-25T02:01:21.366019+00:00",
+      "word_count": 303
+    },
+    {
+      "path": "docs/adr/003-perplexity-computer-tools.md",
+      "category": "doc",
+      "size_bytes": 3226,
+      "sha256": "06256f27c2aa240221a33713ba7bcd93a98b865a76a4aa31dbec529645f75d8d",
+      "last_modified": "2026-03-25T02:01:21.366019+00:00",
+      "word_count": 404
+    },
+    {
+      "path": "docs/billy-founder-session-persistence.md",
+      "category": "doc",
+      "size_bytes": 4922,
+      "sha256": "0be941b50a727677838bd387dc706c9aac5a5d77bf1b5682de167d8e8a13d09f",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 718
+    },
+    {
+      "path": "docs/billy-mode-switch-design.md",
+      "category": "doc",
+      "size_bytes": 4308,
+      "sha256": "c3c8c1423e4601bba9c08b285279bf82902e8863a5535ad12ba5d8aecc970e5a",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 665
+    },
+    {
+      "path": "docs/billy-personality-spec.md",
+      "category": "doc",
+      "size_bytes": 5742,
+      "sha256": "5a084ffa173944430f3e0d8a7d9daffb197618630a03f9d2f377e620154e0b7d",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 880
+    },
+    {
+      "path": "docs/generated_ai_20260318_044809.md",
+      "category": "doc",
+      "size_bytes": 313,
+      "sha256": "00e8420341ff0cd4b750b9b6fe3fbe3922537d2db3d3a5b169c5fd65b9f05091",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 39
+    },
+    {
+      "path": "docs/generated_ai_20260318_051151.md",
+      "category": "doc",
+      "size_bytes": 313,
+      "sha256": "1a23a24b0f142d4c4a4aca0cd73d1919a8e51aeca27fb1dca80361a9e0b08ecd",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 39
+    },
+    {
+      "path": "docs/generated_api_20260318_044809.md",
+      "category": "doc",
+      "size_bytes": 4352,
+      "sha256": "a745a813ed1bc8e9af6d6aa52a038205228b61797ce6d1fb893f3d7fcc4a6bf1",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 343
+    },
+    {
+      "path": "docs/generated_api_20260318_051151.md",
+      "category": "doc",
+      "size_bytes": 4352,
+      "sha256": "3cac2bfcbd6c90c86ac2cdd172647a6549e8a03e81a69be4a6f989ef591a90fa",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 343
+    },
+    {
+      "path": "docs/generated_design_20260318_044809.md",
+      "category": "doc",
+      "size_bytes": 255,
+      "sha256": "bf741d366a528bea4cff5643ee161686895dee9b18874f30f483eb1104890dd8",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 29
+    },
+    {
+      "path": "docs/generated_design_20260318_051151.md",
+      "category": "doc",
+      "size_bytes": 255,
+      "sha256": "e9f8a741ce0b777c178553b36991a0b5a2052c36b9e6b095e54d72a40da9fd3d",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 29
+    },
+    {
+      "path": "docs/generated_manifest_20260318_044809.md",
+      "category": "doc",
+      "size_bytes": 4047,
+      "sha256": "77edf41bfac2029781e7cbd4a91e69fd202f76bd34846762ee1f9e66afc0e8ae",
+      "last_modified": "2026-03-26T06:33:15.699604+00:00",
+      "word_count": 150
+    },
+    {
+      "path": "docs/generated_manifest_20260318_051151.md",
+      "category": "doc",
+      "size_bytes": 3962,
+      "sha256": "1a69b62575d2417dc4d25403ab1f48334070c2cfd8c6877deb78890d13a89f01",
+      "last_modified": "2026-03-26T06:33:15.702604+00:00",
+      "word_count": 145
+    },
+    {
+      "path": "docs/generated_workflows_20260318_044809.md",
+      "category": "doc",
+      "size_bytes": 3026,
+      "sha256": "43fcc2170a98d4db7f624e0de2c225f7b126f4b2c76b65d77f17d72261aa27d3",
+      "last_modified": "2026-03-26T06:33:15.702604+00:00",
+      "word_count": 247
+    },
+    {
+      "path": "docs/generated_workflows_20260318_051151.md",
+      "category": "doc",
+      "size_bytes": 3026,
+      "sha256": "d5b45f808152fa7777afaa9155b42c1abe1dd6740fc141f95b9514388dcd47de",
+      "last_modified": "2026-03-26T06:33:15.702604+00:00",
+      "word_count": 247
+    },
+    {
+      "path": "docs/gestaltview-v2.manifest.json",
+      "category": "data",
+      "size_bytes": 83003,
+      "sha256": "7209334af8200311634251033fb9ec14f3fc8ace6deb23c93cced1372c3146b9",
+      "last_modified": "2026-03-25T02:01:21.411018+00:00"
+    },
+    {
+      "path": "docs/gestaltview-v2.manifest.md",
+      "category": "doc",
+      "size_bytes": 6837,
+      "sha256": "dfc85a0ad1ffa528bfe3121259fb1259cfba211b3748cb2ba2b4740d739d4b89",
+      "last_modified": "2026-03-26T06:33:15.703604+00:00",
+      "word_count": 886
+    },
+    {
+      "path": "docs/license.md",
+      "category": "doc",
+      "size_bytes": 5556,
+      "sha256": "c094e16fd0dda83759d80699b7bb4f5445aff64663eef2a0f5312d373ea25177",
+      "last_modified": "2026-03-26T06:33:15.704604+00:00",
+      "word_count": 793
+    },
+    {
+      "path": "docs/manifest_20260319_093346.md",
+      "category": "doc",
+      "size_bytes": 15714,
+      "sha256": "3a9886311eca7d9dbf209ad22044b9bf756e8d26a0a34b53c330f186c08045d7",
+      "last_modified": "2026-03-25T02:01:21.367018+00:00",
+      "word_count": 383
+    },
+    {
+      "path": "docs/md-refresh-status-2026-03-24.md",
+      "category": "doc",
+      "size_bytes": 1899,
+      "sha256": "bdf99baf59e08201869ed48b12c88d7af4ce9beeefe412380bd57c6f235726b0",
+      "last_modified": "2026-03-25T02:01:21.367018+00:00",
+      "word_count": 200
+    },
+    {
+      "path": "docs/paradox-financial-integrity-framing.md",
+      "category": "doc",
+      "size_bytes": 4573,
+      "sha256": "fb8ed584e8ffef1d9980361cf090fc49e02481cc3f88f2c3c10116c91a073bbd",
+      "last_modified": "2026-03-26T06:33:15.705604+00:00",
+      "word_count": 729
+    },
+    {
+      "path": "supabase/migrations/001_rate_limits_and_users.sql",
+      "category": "migration",
+      "size_bytes": 2531,
+      "sha256": "79a5d54a1575f0268a46818f58841a1fa3adac2186ec2ae1680a0eaf83a179f5",
+      "last_modified": "2026-03-25T02:01:21.481019+00:00"
+    },
+    {
+      "path": "supabase/migrations/002_admin_seed.sql",
+      "category": "migration",
+      "size_bytes": 1817,
+      "sha256": "15ea9d9e36f58c5a075317279c385b3d8e4833b44baff8ac642c98c0a7ea2379",
+      "last_modified": "2026-03-25T02:01:21.481019+00:00"
+    },
+    {
+      "path": "supabase/migrations/004_user_trigger.sql",
+      "category": "migration",
+      "size_bytes": 982,
+      "sha256": "e5042b54ff8a3a020b07f46c8cd6f0254b0c262b4328c40d82ebe7ddda45d08d",
+      "last_modified": "2026-03-25T02:01:21.482018+00:00"
+    },
+    {
+      "path": "supabase/migrations/20260311162044_new-migration.sql",
+      "category": "migration",
+      "size_bytes": 9204,
+      "sha256": "a43ab0d385a9c39f4a7b5153210f46700a3be2ef1bf8a637d17881d3b9f6a194",
+      "last_modified": "2026-03-25T02:01:21.482018+00:00"
+    },
+    {
+      "path": "supabase/migrations/20260319162400_tribunal-tables.sql",
+      "category": "migration",
+      "size_bytes": 4578,
+      "sha256": "d6123fe1bad63ad21cebb459a5a4297de2663cd2793de98fd8e2da6bb6954d70",
+      "last_modified": "2026-03-25T02:01:21.482018+00:00"
+    },
+    {
+      "path": "supabase/migrations/20260319164400_orders-loom-concepts.sql",
+      "category": "migration",
+      "size_bytes": 15810,
+      "sha256": "5087351ce5eef76952579de29f7af41adc6fd0a9ba354911af48cb2462395de6",
+      "last_modified": "2026-03-25T02:01:21.483018+00:00"
+    },
+    {
+      "path": "supabase/migrations/20260321100000_founder-context.sql",
+      "category": "migration",
+      "size_bytes": 1353,
+      "sha256": "b36faec6accf9474d83b3a418bf5b57420423670c811f761abdf5a61b8f8d278",
+      "last_modified": "2026-03-25T02:01:21.483018+00:00"
+    },
+    {
+      "path": "supabase/migrations/20260321104200_grace_period.sql",
+      "category": "migration",
+      "size_bytes": 2128,
+      "sha256": "8729149224e98d70254fa8f39ca065527fa3ec544072bf6b1a6e607ce7ab0df3",
+      "last_modified": "2026-03-25T02:01:21.483018+00:00"
+    },
+    {
+      "path": "supabase/migrations/20260321104300_fix_embedding_dims_768.sql",
+      "category": "migration",
+      "size_bytes": 7073,
+      "sha256": "7c47bb73ddfcc102e713b1ca7743540e8db429c7d4dd470bc5a16cfabfe8214d",
+      "last_modified": "2026-03-25T02:01:21.483018+00:00"
+    },
+    {
+      "path": "supabase/migrations/20260324010700_add_filter_package_to_rpcs.sql",
+      "category": "migration",
+      "size_bytes": 3894,
+      "sha256": "dfe2729b7a2d7ac3d04e35f83182655e67f84830debd655203f6806d4e03c930",
+      "last_modified": "2026-03-25T02:01:21.483018+00:00"
+    },
+    {
+      "path": "supabase/migrations/fix_rpc_conflict.sql",
+      "category": "migration",
+      "size_bytes": 3679,
+      "sha256": "80013dabf12ee7fd96c587d66daf6d1e14fc1bead87f6ba5366410a3c107e9f2",
+      "last_modified": "2026-03-25T02:01:21.483018+00:00"
+    }
+  ]
+}

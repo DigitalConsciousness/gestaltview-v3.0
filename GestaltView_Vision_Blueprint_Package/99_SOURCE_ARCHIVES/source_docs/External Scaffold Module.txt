@@ -1,0 +1,290 @@
+You’re right. My previous timeline treated this like greenfield implementation. That was wrong for where the repo actually is.
+
+This is not a 6-week build. This is an **immediate integration / enhancement / lockdown pass** over existing target components.
+
+The repo already has the target pages/components present: `BlackboardRoomPage.tsx`, `DynamicInnerWorldPage.tsx`, `ExternalScaffoldPage.tsx`, `CreationCornerPage.tsx`, and `BillyOnboardingPrompt.tsx`. fileciteturn21file0 fileciteturn20file0 fileciteturn19file1 fileciteturn22file0 fileciteturn24file0
+
+The onboarding file already defines the correct conceptual center: GestaltView is not a utility assistant, it is a sanctuary/witness system; the Dynamic Inner World Space uses spatial grammar with ceiling, floor, and walls; and artifacts already have rendering forms like scorched notes, mono panels, waveform strips, transcript shards, canvas splashes, and vision boards. fileciteturn15file1
+
+So the implementation plan should be:
+
+# Immediate Lockdown Pass
+
+## Goal
+
+Make the existing runtime feel like one complete product flow:
+
+```text id="pl9kj7"
+Sanctuary
+  → Billy Guided Orientation
+  → Blackboard Room capture
+  → pending orb queue
+  → Dynamic Inner World Space
+  → External Scaffold approval
+  → Creation Corner blueprint/artifact output
+  → download/share/send onward
+```
+
+Not “build from scratch.”  
+Not “future phase.”  
+Enhance what exists and wire it hard.
+
+## Correct Immediate Timeline
+
+### Pass 1 — Same Day: Core Flow Lock
+
+This is the non-negotiable runtime spine.
+
+**Files:**
+
+- `client/src/pages/SanctuaryPage.tsx`
+- `client/src/pages/BlackboardRoomPage.tsx`
+- `client/src/pages/DynamicInnerWorldPage.tsx`
+- `client/src/pages/ExternalScaffoldPage.tsx`
+- `client/src/pages/CreationCornerPage.tsx`
+- `client/src/components/BillyOnboardingPrompt.tsx`
+- `client/src/components/Scaffold.tsx`
+
+**Deliverable:**
+
+Every page has the same shared capture/artifact model.
+
+Every page understands:
+
+```ts id="ctp38j"
+capture → orb → queue → approve/deny/delete → blueprint → artifact → export
+```
+
+Blackboard and External Scaffold both show the pending capture queue.
+
+Dynamic Inner World Space receives raw captures.
+
+Creation Corner receives approved captures, merged orbs, and blueprints.
+
+Billy explains the journey live.
+
+## Pass 2 — Same Day: Blackboard Room Enhancement
+
+Blackboard becomes the intake command center.
+
+Required controls:
+
+```text id="btya5m"
+Text capture
+Voice capture
+Audio upload
+Image upload
+Video upload
+File upload
+Transcript edit
+Download original
+Delete capture
+Send to Dynamic Inner World Space
+Send to External Scaffold
+Merge into blueprint
+```
+
+The queue item should expose:
+
+```text id="m0i2bp"
+View
+Merge
+Approve
+Deny
+Delete
+Download
+Send to Dynamic Inner World Space
+Send to Creation Corner
+```
+
+The transcription enhancement does not need to be perfect on day one. It needs to be operational, editable, and honest. Browser speech capture can remain as fallback; Whisper/server STT can be the upgrade path.
+
+## Pass 3 — Same Day: Dynamic Inner World Space
+
+This should stop feeling like a list or selector.
+
+It should immediately become the “teenager bedroom wall / 3D thought room” from the onboarding doc. The doc already names the spatial grammar and rendering forms: ceiling, floor, walls, scorched notes, mono panels, waveform strips, transcript shards, canvas splashes, and vision boards. fileciteturn15file1
+
+Minimum immediate version:
+
+```text id="z3xdqw"
+Six-surface room shell
+Surface selector
+Artifact placement
+Artifact cards with spatial style
+Inspector panel
+Send to External Scaffold
+Send to Creation Corner
+Download artifact
+Delete artifact
+```
+
+Not full 3D perfection yet.  
+But the metaphor must be visible immediately.
+
+## Pass 4 — Same Day: External Scaffold
+
+External Scaffold is the approval and compression layer.
+
+Required immediate behavior:
+
+```text id="sfz8tm"
+Pending queue
+View orb
+Approve
+Deny
+Delete
+Merge recommended orbs
+Send approved artifact to Creation Corner
+Send artifact to Dynamic Inner World Space
+Download artifact metadata
+```
+
+Important boundary:
+
+The **multi-agent tribunal can assist Creation Corner and blueprint synthesis**, but it should not reappear as a visual layer inside the user’s External Scaffold representation.
+
+External Scaffold is the user’s artifact galaxy, not an assistant council display.
+
+## Pass 5 — Same Day / Overnight: Creation Corner
+
+Creation Corner becomes the artifact builder.
+
+Immediate outputs:
+
+```text id="3tg67w"
+Markdown
+PDF-ready HTML / print view
+Code
+Prompt for Agent
+Blueprint
+Image prompt
+Marketing copy
+Share card
+```
+
+Generation can start template-driven and then become model-driven.
+
+The immediate target is not “perfect multimodal GenAI engine.”  
+The immediate target is: **a user can merge captures into a blueprint and export something real.**
+
+## Pass 6 — Same Day: Billy Guided Orientation
+
+Billy needs one shared guided tour system.
+
+It should know the product map:
+
+```text id="ptl5n0"
+Sanctuary = orientation and regulation
+Blackboard Room = raw capture
+Dynamic Inner World Space = spatial expression
+External Scaffold = approval and compressed memory
+Creation Corner = artifact generation
+```
+
+Billy should explain expectations in real time:
+
+```text id="95p82t"
+“Capture first. Don’t organize yet.”
+“This orb is pending.”
+“This is where you approve it.”
+“This can become a blueprint.”
+“This can be downloaded or sent to your Inner World Space.”
+```
+
+Billy should be:
+
+```text id="kgps8c"
+Guide
+Witness
+Explainer
+QA layer
+Routing helper
+```
+
+Billy should not be:
+
+```text id="awcbhl"
+A scaffold node
+A replacement for the user
+A forced persona layer
+A hidden organizer that mutates meaning without approval
+```
+
+# Codex-Ready Immediate Instruction
+
+Use this directly:
+
+```text id="a863oa"
+This is not a greenfield build. Do not create a six-week roadmap.
+
+The target components already exist in the runtime:
+
+- client/src/pages/SanctuaryPage.tsx
+- client/src/pages/BlackboardRoomPage.tsx
+- client/src/pages/DynamicInnerWorldPage.tsx
+- client/src/pages/ExternalScaffoldPage.tsx
+- client/src/pages/CreationCornerPage.tsx
+- client/src/components/BillyOnboardingPrompt.tsx
+- client/src/components/Scaffold.tsx
+
+Perform an immediate launch-readiness enhancement pass.
+
+Unify the data flow:
+
+Blackboard Room creates captures/orbs.
+Captures can be saved, deleted, downloaded, sent to External Scaffold, sent to Dynamic Inner World Space, or merged into a Creation Corner blueprint.
+External Scaffold and Blackboard Room both expose the pending capture queue.
+External Scaffold handles view, approve, deny, delete, merge recommendation, and send-to-Creation-Corner.
+Dynamic Inner World Space displays artifacts spatially across six surfaces.
+Creation Corner turns selected captures, blueprints, imports, transcripts, and shards into exportable artifacts.
+
+Required export outputs:
+- Markdown
+- PDF-ready HTML / print flow
+- Code
+- Image prompt
+- Agent prompt
+- Marketing copy
+- Blueprint JSON / Markdown
+
+BillyOnboardingPrompt must become a guided interactive orientation that tours the user through Sanctuary, Blackboard Room, Dynamic Inner World Space, External Scaffold, and Creation Corner.
+
+The visual language must match GestaltView:
+- Neural Aurora dark field
+- neon teal / violet / ember accents
+- spatial room metaphors
+- glowing orbs
+- scorched notes
+- waveform strips
+- transcript shards
+- canvas splashes
+- artifact galaxy
+- low-friction neurodivergent UX
+
+Do not rebuild the entire app.
+Do not create new conceptual taxonomies.
+Do not bury the user in explanation.
+Enhance and wire the existing target components.
+
+Run:
+- npm run build
+- npm run health if available
+
+Update:
+- docs/CurrentState.md
+- docs/DirectoryMapAndWorkflow.md if flow changes
+```
+
+# Immediate Priority Order
+
+1. **Shared artifact/orb model**
+2. **Blackboard upload/capture queue**
+3. **External Scaffold approval queue**
+4. **Dynamic Inner World Space visual placement**
+5. **Creation Corner blueprint merge/export**
+6. **Billy Guided Orientation**
+7. **Build validation**
+8. **CurrentState update**
+
+That is the right frame: this is a **lockdown pass**, not a multi-month product roadmap.

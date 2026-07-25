@@ -1,0 +1,446 @@
+[
+  {
+    "source_filename": "001_rate_limits_and_users.sql",
+    "canonical_filename": "20260301000100_rate_limits_and_users.sql",
+    "sha256": "79a5d54a1575f0268a46818f58841a1fa3adac2186ec2ae1680a0eaf83a179f5",
+    "bytes": 2531
+  },
+  {
+    "source_filename": "002_admin_seed.sql",
+    "canonical_filename": "20260301000200_admin_seed_original.sql",
+    "sha256": "15ea9d9e36f58c5a075317279c385b3d8e4833b44baff8ac642c98c0a7ea2379",
+    "bytes": 1817
+  },
+  {
+    "source_filename": "004_user_trigger.sql",
+    "canonical_filename": "20260301000400_user_trigger.sql",
+    "sha256": "e5042b54ff8a3a020b07f46c8cd6f0254b0c262b4328c40d82ebe7ddda45d08d",
+    "bytes": 982
+  },
+  {
+    "source_filename": "20260311162044_new-migration.sql",
+    "canonical_filename": "20260311162044_new-migration.sql",
+    "sha256": "a43ab0d385a9c39f4a7b5153210f46700a3be2ef1bf8a637d17881d3b9f6a194",
+    "bytes": 9204
+  },
+  {
+    "source_filename": "20260319162400_tribunal-tables.sql",
+    "canonical_filename": "20260319162400_tribunal-tables.sql",
+    "sha256": "d6123fe1bad63ad21cebb459a5a4297de2663cd2793de98fd8e2da6bb6954d70",
+    "bytes": 4578
+  },
+  {
+    "source_filename": "20260319164400_orders-loom-concepts.sql",
+    "canonical_filename": "20260319164400_orders-loom-concepts.sql",
+    "sha256": "5087351ce5eef76952579de29f7af41adc6fd0a9ba354911af48cb2462395de6",
+    "bytes": 15810
+  },
+  {
+    "source_filename": "20260321100000_founder-context.sql",
+    "canonical_filename": "20260321100000_founder-context.sql",
+    "sha256": "b36faec6accf9474d83b3a418bf5b57420423670c811f761abdf5a61b8f8d278",
+    "bytes": 1353
+  },
+  {
+    "source_filename": "20260321104200_grace_period.sql",
+    "canonical_filename": "20260321104200_grace_period.sql",
+    "sha256": "8729149224e98d70254fa8f39ca065527fa3ec544072bf6b1a6e607ce7ab0df3",
+    "bytes": 2128
+  },
+  {
+    "source_filename": "20260321104300_fix_embedding_dims_768.sql",
+    "canonical_filename": "20260321104300_fix_embedding_dims_768.sql",
+    "sha256": "7c47bb73ddfcc102e713b1ca7743540e8db429c7d4dd470bc5a16cfabfe8214d",
+    "bytes": 7073
+  },
+  {
+    "source_filename": "20260324010700_add_filter_package_to_rpcs.sql",
+    "canonical_filename": "20260324010700_add_filter_package_to_rpcs.sql",
+    "sha256": "dfe2729b7a2d7ac3d04e35f83182655e67f84830debd655203f6806d4e03c930",
+    "bytes": 3894
+  },
+  {
+    "source_filename": "fix_rpc_conflict.sql",
+    "canonical_filename": "20260324010800_fix_rpc_conflict.sql",
+    "sha256": "80013dabf12ee7fd96c587d66daf6d1e14fc1bead87f6ba5366410a3c107e9f2",
+    "bytes": 3679
+  },
+  {
+    "source_filename": "20260325000000_create_skill_tables.sql",
+    "canonical_filename": "20260325000000_create_skill_tables.sql",
+    "sha256": "5ce722b61e704d3f5d8176dda94e78212b0b790ade24730fc92c6807f79b3f96",
+    "bytes": 1405
+  },
+  {
+    "source_filename": "20260327094500_align_fragment_embeddings_to_768.sql",
+    "canonical_filename": "20260327094500_align_fragment_embeddings_to_768.sql",
+    "sha256": "9931bb1575933713cc8e537d350263cc7274199bfbe5d0e4bd2acabef4888d53",
+    "bytes": 4128
+  },
+  {
+    "source_filename": "20260327_fix_vector_dims.sql",
+    "canonical_filename": "20260327094600_fix_vector_dims.sql",
+    "sha256": "8d09d5de4fc5c3f03c9abc33087a62f0d3608490eeb737ec6f2ffab3aea53def",
+    "bytes": 3917
+  },
+  {
+    "source_filename": "20260330115505_trainer_security_hardening.sql",
+    "canonical_filename": "20260330115505_trainer_security_hardening.sql",
+    "sha256": "3443cbbdace736d2aed74cef287a79a6745a226c6cd4c5ebeb63301c8e8fc5fd",
+    "bytes": 1607
+  },
+  {
+    "source_filename": "20260330120000_trainer_core.sql",
+    "canonical_filename": "20260330120000_trainer_core.sql",
+    "sha256": "b22ec0abb0f68b9e85cb1c3f0fdc44cd23d379c1a2c5ac1b04c71ff7cd6c3a62",
+    "bytes": 11962
+  },
+  {
+    "source_filename": "20260330120830_trainer_rls_policies.sql",
+    "canonical_filename": "20260330120830_trainer_rls_policies.sql",
+    "sha256": "ae754d21019d801ac9d1ef9a7409380e08d9189a3c1846da2d3647eee659055f",
+    "bytes": 912
+  },
+  {
+    "source_filename": "20260330170000_founder_admin_bootstrap.sql",
+    "canonical_filename": "20260330170000_founder_admin_bootstrap.sql",
+    "sha256": "94d3fc41154df44299b794907fe4f5c1781efb71f6c12c77d6cba49ea65943d2",
+    "bytes": 2919
+  },
+  {
+    "source_filename": "20260330193000_persistent_memory_entries.sql",
+    "canonical_filename": "20260330193000_persistent_memory_entries.sql",
+    "sha256": "bc4393a9aeccd8bb8dc65100181e3dc17e57520858ce5525a50bcc913d7ea6e7",
+    "bytes": 5120
+  },
+  {
+    "source_filename": "20260331110000_trainer_study_sources_rpc.sql",
+    "canonical_filename": "20260331110000_trainer_study_sources_rpc.sql",
+    "sha256": "c321655898a0958b899892054c636c8ab12cf52031f58dd3c2dff5e0cde94c7a",
+    "bytes": 1355
+  },
+  {
+    "source_filename": "vector_sim_source.sql",
+    "canonical_filename": "20260331110001_vector_sim_source.sql",
+    "sha256": "3964ae850ae23107a3235a3d647555c3fb83d20e2417c34210fd81a4e52e2251",
+    "bytes": 1505
+  },
+  {
+    "source_filename": "20260406171500_create_gate_package_builder_tables.sql",
+    "canonical_filename": "20260406171500_create_gate_package_builder_tables.sql",
+    "sha256": "02a573ca3b2ca81dc7a15f558c4b1272e9bc8ed90a30aa13f1f64a9135915f8d",
+    "bytes": 5662
+  },
+  {
+    "source_filename": "20260406193500_add_gate_draft_contact_fields.sql",
+    "canonical_filename": "20260406193500_add_gate_draft_contact_fields.sql",
+    "sha256": "c2c8000f2a1cd9397439fbd46d4d1f92711d3cb6f38689e3f405b69e8d4febd9",
+    "bytes": 494
+  },
+  {
+    "source_filename": "20260407120000_extend_orders_for_gate_checkout.sql",
+    "canonical_filename": "20260407120000_extend_orders_for_gate_checkout.sql",
+    "sha256": "99db9f45714faa1e8e175e816a6f97beab3c4ab0ab4cc0611ae82f071080aab4",
+    "bytes": 1357
+  },
+  {
+    "source_filename": "20260408113000_isolate_gate_persistence.sql",
+    "canonical_filename": "20260408113000_isolate_gate_persistence.sql",
+    "sha256": "fa649642c1be0dcb3d81e7b2a04303b79ad4a0feb13d7c0fe534794dd88d3781",
+    "bytes": 20740
+  },
+  {
+    "source_filename": "20260408143000_gate_artifact_download_keys.sql",
+    "canonical_filename": "20260408143000_gate_artifact_download_keys.sql",
+    "sha256": "7f7d6806e469bfac0a77f7d47eeda397f643d1e1470333e3b983c159a4e79530",
+    "bytes": 219
+  },
+  {
+    "source_filename": "20260410190000_agent_personhood_framework.sql",
+    "canonical_filename": "20260410190000_agent_personhood_framework.sql",
+    "sha256": "922939e422cd920fc29ecf9b1e868714adc07437bafb33ad1bdea7109b8fd81a",
+    "bytes": 19009
+  },
+  {
+    "source_filename": "20260410_200000_resolve_legacy_tables_rls.sql",
+    "canonical_filename": "20260410200000_resolve_legacy_tables_rls.sql",
+    "sha256": "461e9cef7ca321bc6cdede503c04c25faaaadd2f6c13e5cd50251e5aa46e6034",
+    "bytes": 14605
+  },
+  {
+    "source_filename": "20260410213000_workbook_and_experiment_governance.sql",
+    "canonical_filename": "20260410213000_workbook_and_experiment_governance.sql",
+    "sha256": "116894ef694ba0f903f76fd452d4f37bcf4b99504168552457be57e874d5f6fb",
+    "bytes": 7732
+  },
+  {
+    "source_filename": "20260411083000_add_gate_sidekick_state.sql",
+    "canonical_filename": "20260411083000_add_gate_sidekick_state.sql",
+    "sha256": "84287e33b7d42cd695050d23683e35f1f2d299dd42d9b951d838928f195d65c9",
+    "bytes": 731
+  },
+  {
+    "source_filename": "20260411110000_integrate_agent_identity_governance.sql",
+    "canonical_filename": "20260411110000_integrate_agent_identity_governance.sql",
+    "sha256": "b0ccece89c868f7c61c450cdf8c071c5de5318ae16cb5ba28ec3d96d1c705067",
+    "bytes": 31295
+  },
+  {
+    "source_filename": "20260412093000_trainer_control_plane_stabilization.sql",
+    "canonical_filename": "20260412093000_trainer_control_plane_stabilization.sql",
+    "sha256": "ab89a6b4c178d50a00174c3d586163d616c516fed44117a8d42a597067a3e0bf",
+    "bytes": 13515
+  },
+  {
+    "source_filename": "20260412101500_fix_trgm_search_path_for_trainer_search.sql",
+    "canonical_filename": "20260412101500_fix_trgm_search_path_for_trainer_search.sql",
+    "sha256": "d2c907ecb9409ed82f324f9fdc87c301a97d5889c424fb0acab23c3c6d6a7747",
+    "bytes": 2308
+  },
+  {
+    "source_filename": "20260413120000_add_temporal_metadata_to_corpus_tables.sql",
+    "canonical_filename": "20260413120000_add_temporal_metadata_to_corpus_tables.sql",
+    "sha256": "32ad462755bccbc642e775d14388eba227487d640661121f8d879cc65113f88e",
+    "bytes": 1742
+  },
+  {
+    "source_filename": "temporal_backfill.sql",
+    "canonical_filename": "20260413121000_temporal_backfill.sql",
+    "sha256": "34a4bfa25cac6a4d4232ae4471595fead0f77062b71cc312901b5b613026d1a4",
+    "bytes": 4977
+  },
+  {
+    "source_filename": "20260413190000_add_collaborator_system.sql",
+    "canonical_filename": "20260413190000_add_collaborator_system.sql",
+    "sha256": "947c1f6a4b8f10cc54301a1225130fff78f24de109507180ad560616da5f2c6a",
+    "bytes": 9439
+  },
+  {
+    "source_filename": "20260413193000_backfill_collaborators.sql",
+    "canonical_filename": "20260413193000_backfill_collaborators.sql",
+    "sha256": "1ce5bad67e214c4abe84ab105091827fb79dacf192fb6949a87d9d746cf15de6",
+    "bytes": 6630
+  },
+  {
+    "source_filename": "20260419090700_runtime_alignment_carryover.sql",
+    "canonical_filename": "20260419090700_runtime_alignment_carryover.sql",
+    "sha256": "6f473697aae8abb45df141fff63fa4133151d8d14f8c6e35bc38e16b07bc7b23",
+    "bytes": 3381
+  },
+  {
+    "source_filename": "20260420150000_human_continuity_schema.sql",
+    "canonical_filename": "20260420150000_human_continuity_schema.sql",
+    "sha256": "ef9ff998676c53b96a59faaf68e0a0cd30418e820ca628ded9c1f22f30f63b86",
+    "bytes": 15820
+  },
+  {
+    "source_filename": "20260427100000_trainer_hyperagent_integration.sql",
+    "canonical_filename": "20260427100000_trainer_hyperagent_integration.sql",
+    "sha256": "36af8a97fb3a1685e44ac58470f500230ad0ecc7bfacb87bfb2e7d57b951fa40",
+    "bytes": 4703
+  },
+  {
+    "source_filename": "20260428000000_trainer_list_indexes.sql",
+    "canonical_filename": "20260428000000_trainer_list_indexes.sql",
+    "sha256": "4f4e03833eac1da74053fde648e598464419e64169db9c242edef0dee4ee540a",
+    "bytes": 1282
+  },
+  {
+    "source_filename": "20260429120000_gestaltview_module_registry.sql",
+    "canonical_filename": "20260429120000_gestaltview_module_registry.sql",
+    "sha256": "5e0454438b6d491013248a22303d14464ad84072b6367bd3e117ac18b3580697",
+    "bytes": 14694
+  },
+  {
+    "source_filename": "20260430143000_workspaces_documents_persistence.sql",
+    "canonical_filename": "20260430143000_workspaces_documents_persistence.sql",
+    "sha256": "39112a786e5958b66a34e6c2044171fbae2246c14330d7f0aa25c6f6f2e19970",
+    "bytes": 3607
+  },
+  {
+    "source_filename": "20260509000000_embodiment_governance_persistence.sql",
+    "canonical_filename": "20260509000000_embodiment_governance_persistence.sql",
+    "sha256": "17a28d508ac23c61f587c9aab8d853546c5cf324941301da3ea9428b825ee6cb",
+    "bytes": 6873
+  },
+  {
+    "source_filename": "20260515000000_inner_world_files.sql",
+    "canonical_filename": "20260515000000_inner_world_files.sql",
+    "sha256": "5bf57f2cc0fe91c005848617739b061b0a09bfbfe222391680438a15f3ebaf56",
+    "bytes": 4974
+  },
+  {
+    "source_filename": "20260515_embodiment_profiles.sql",
+    "canonical_filename": "20260515000100_embodiment_profiles.sql",
+    "sha256": "5f39dd1d2d4b4ed80e912f2c54ae3cba3955b6fd524cfbd4791faf894730ee10",
+    "bytes": 1736
+  },
+  {
+    "source_filename": "20260515134500_manhattan_mornings_inner_world_schema.sql",
+    "canonical_filename": "20260515134500_manhattan_mornings_inner_world_schema.sql",
+    "sha256": "e2c76de4cc6098411cfce662e3a9fccf0fb85025ce75513522566d28eab6961e",
+    "bytes": 1305
+  },
+  {
+    "source_filename": "20260518000000_backfill_embodiment_profile_history.sql",
+    "canonical_filename": "20260518000000_backfill_embodiment_profile_history.sql",
+    "sha256": "e0100d5d68fe322d373b2e71ca93ca81fd7fa2c7d5398823d07ddf43bc491b87",
+    "bytes": 1077
+  },
+  {
+    "source_filename": "20260518001000_backfill_embodiment_profile_governance.sql",
+    "canonical_filename": "20260518001000_backfill_embodiment_profile_governance.sql",
+    "sha256": "520a8430a1b3a3e04cbcf6bac12b66864f042bb9e7e0c66894beee4bbdef821a",
+    "bytes": 1734
+  },
+  {
+    "source_filename": "20260519000000_add_user_content_tables.sql",
+    "canonical_filename": "20260519000000_add_user_content_tables.sql",
+    "sha256": "34145556cffcd6287434d7ca9d30e9f879663396df998f483b43cba039d4e46e",
+    "bytes": 7100
+  },
+  {
+    "source_filename": "20260519010000_fix_blueprints_schema.sql",
+    "canonical_filename": "20260519010000_fix_blueprints_schema.sql",
+    "sha256": "20cc4215e416570e7de8c79ed1e8d193b16fa3b30c9b71df5a54693b76b9f931",
+    "bytes": 1558
+  },
+  {
+    "source_filename": "20260519020000_add_source_refs_to_inner_world_and_insights.sql",
+    "canonical_filename": "20260519020000_add_source_refs_to_inner_world_and_insights.sql",
+    "sha256": "95581684453bdd80eaf0a109483190b105d88ac7c28dd54ebbdfe18e54f9223e",
+    "bytes": 2447
+  },
+  {
+    "source_filename": "20260525000000_di_runtime.sql",
+    "canonical_filename": "20260525000000_di_runtime.sql",
+    "sha256": "003d68a712397779b958ed74547a67333c0a5b773b32dbea5c9a0bcd8ccb031f",
+    "bytes": 2427
+  },
+  {
+    "source_filename": "20260526000000_add_profile_preference_fields.sql",
+    "canonical_filename": "20260526000000_add_profile_preference_fields.sql",
+    "sha256": "7f7eed918b975ccc1f2c6dfd6a81a7516b103eac49bae766a406b8c5c1700016",
+    "bytes": 387
+  },
+  {
+    "source_filename": "20260526001000_add_sanctuary_source_refs.sql",
+    "canonical_filename": "20260526001000_add_sanctuary_source_refs.sql",
+    "sha256": "5a17db1abc49704ee5691c9419230fee06b2fcac4ecdcc1fb3079b351a81233b",
+    "bytes": 1195
+  },
+  {
+    "source_filename": "20260528000000_profile_ingestion_and_route_embodiments.sql",
+    "canonical_filename": "20260528000000_profile_ingestion_and_route_embodiments.sql",
+    "sha256": "d924ae780328ad42a02795f43cd4dc8eacf50c2f789412bd52d070515f44414b",
+    "bytes": 4598
+  },
+  {
+    "source_filename": "20260531013000_masterclass_module_setup_and_progress_tracking.sql",
+    "canonical_filename": "20260531013000_masterclass_module_setup_and_progress_tracking.sql",
+    "sha256": "2e9be59d5c15237b639311f886039048e173568e896c05dbd01f0288bb1b7ca6",
+    "bytes": 4437
+  },
+  {
+    "source_filename": "20260531020000_vector_search_and_indexes.sql",
+    "canonical_filename": "20260531020000_vector_search_and_indexes.sql",
+    "sha256": "81a538f7dc4729db75cbc852ae7b235383dd2b72393baa5a1dab2e8b7b8b649d",
+    "bytes": 3767
+  },
+  {
+    "source_filename": "20260601000100_profile_pipeline_v1_core.sql",
+    "canonical_filename": "20260601000100_profile_pipeline_v1_core.sql",
+    "sha256": "4f50f3296bfb3812412c5c8a43c3369771f87de4da7cc5ebf3e6f0ee1a3e5650",
+    "bytes": 8148
+  },
+  {
+    "source_filename": "20260601000200_profile_pipeline_v1_rls.sql",
+    "canonical_filename": "20260601000200_profile_pipeline_v1_rls.sql",
+    "sha256": "ee1260887e6e1beae9e60acedf6f367dcb9340473451d68e354eba49afe68ead",
+    "bytes": 3875
+  },
+  {
+    "source_filename": "20260601000300_profile_pipeline_v1_backfill.sql",
+    "canonical_filename": "20260601000300_profile_pipeline_v1_backfill.sql",
+    "sha256": "2fe7c10f31b3f76acc254447b90cd0039952d3e7402b15518d0b97851c1d6b47",
+    "bytes": 6063
+  },
+  {
+    "source_filename": "20260601000400_profile_pipeline_v1_rpc_helpers.sql",
+    "canonical_filename": "20260601000400_profile_pipeline_v1_rpc_helpers.sql",
+    "sha256": "f90e75993db4f5d1bceeea3df0ac0a98a43a6501121c25563697ecd7b4e61791",
+    "bytes": 5685
+  },
+  {
+    "source_filename": "20260601000500_model_homes_v1.sql",
+    "canonical_filename": "20260601000500_model_homes_v1.sql",
+    "sha256": "e9d59f363c9be62d084ea7752638e1e9b1d32097afffea5f2d4e566c5d9fe6a1",
+    "bytes": 7258
+  },
+  {
+    "source_filename": "20260601000600_resonance_event_bus_v1.sql",
+    "canonical_filename": "20260601000600_resonance_event_bus_v1.sql",
+    "sha256": "2c1dca3ba053f93a1b8d8f0d3e9e317ff5af694797c64d35dc756a986268f607",
+    "bytes": 2560
+  },
+  {
+    "source_filename": "20260601000700_route_embodiment_alignment.sql",
+    "canonical_filename": "20260601000700_route_embodiment_alignment.sql",
+    "sha256": "2f03d78b5f04457c9ff5aad3a805368d3c125ee331379a27951f806bf0bfe148",
+    "bytes": 2110
+  },
+  {
+    "source_filename": "20260602000100_codex_artifacts.sql",
+    "canonical_filename": "20260602000100_codex_artifacts.sql",
+    "sha256": "f379c748141620305f4995d8e204ceb34eb672898a2f39e1c2c06d045354d3cb",
+    "bytes": 3344
+  },
+  {
+    "source_filename": "20260604_codex_artifact_tables.sql",
+    "canonical_filename": "20260604000100_codex_artifact_tables.sql",
+    "sha256": "5dd43a561873ccf6af71cf3f36b5d7303a4338d5a61f4864cdc96d4f2db34993",
+    "bytes": 1511
+  },
+  {
+    "source_filename": "20260609000100_transcriptory_captures.sql",
+    "canonical_filename": "20260609000100_transcriptory_captures.sql",
+    "sha256": "ef34678fd3aac9fd5ad5d533b499f8b51d00040037c484cc53a923e1b3226250",
+    "bytes": 1883
+  },
+  {
+    "source_filename": "20260609000200_transcriptory_audio_bucket.sql",
+    "canonical_filename": "20260609000200_transcriptory_audio_bucket.sql",
+    "sha256": "32ac3dbdfd90f6b123ff50e0bc1eb091c4ad9899a5250483094406481386f547",
+    "bytes": 1952
+  },
+  {
+    "source_filename": "20260609000300_artifact_query_indexes.sql",
+    "canonical_filename": "20260609000300_artifact_query_indexes.sql",
+    "sha256": "34ddbdff1f112c18960c3f2b2819e0015d9cc82c8a9e3f347a61b9951cbef39e",
+    "bytes": 559
+  },
+  {
+    "source_filename": "20260610000100_transcriptory_sessions_and_sources.sql",
+    "canonical_filename": "20260610000100_transcriptory_sessions_and_sources.sql",
+    "sha256": "5ca75e187887b317d01a7fd073f2ff1f13908d1e97fb7dc202cc9044ce78df20",
+    "bytes": 3375
+  },
+  {
+    "source_filename": "20260610000200_transcriptory_search_and_triggers.sql",
+    "canonical_filename": "20260610000200_transcriptory_search_and_triggers.sql",
+    "sha256": "4e00e429b9415cb32c0fb1819381e614f2ab650b1ea1c6951bfa87df5ed0c395",
+    "bytes": 4057
+  },
+  {
+    "source_filename": "20260610000300_transcriptory_processing_state.sql",
+    "canonical_filename": "20260610000300_transcriptory_processing_state.sql",
+    "sha256": "70c658ee00d3ade84036a6b7c183a556b37e2c4cb70d4e252e756ab087e3aa3e",
+    "bytes": 906
+  },
+  {
+    "source_filename": "20260611000100_codex_job_claim_rpc.sql",
+    "canonical_filename": "20260611000100_codex_job_claim_rpc.sql",
+    "sha256": "cfaf04bf7183663a14ad0da348408797e6d9c41e1fddc84299480e554b35cba6",
+    "bytes": 833
+  }
+]

@@ -1,0 +1,32 @@
+# GestaltView runtime robots.txt
+# © 2026 Keith Soyka / GestaltView
+# Canonical deployment: https://gestaltview-v2-0-nine.vercel.app
+
+User-agent: *
+Allow: /
+
+# Utility, API, auth, and private workspace targets
+Disallow: /api/
+Disallow: /auth/
+Disallow: /auth/callback
+Disallow: /signin
+Disallow: /login
+Disallow: /welcome
+Disallow: /app
+Disallow: /dashboard
+Disallow: /settings
+Disallow: /profile
+Disallow: /workspaces
+Disallow: /documents
+Disallow: /voice
+Disallow: /analytics
+Disallow: /agent-trainer/control-plane
+Disallow: /agent-trainer/orders/
+Disallow: /404
+
+# Canonical sitemap set
+Sitemap: https://gestaltview-v2-0-nine.vercel.app/sitemap.xml
+Sitemap: https://gestaltview-v2-0-nine.vercel.app/sitemap.txt
+Sitemap: https://gestaltview-v2-0-nine.vercel.app/sitemap.html
+Sitemap: https://gestaltview-v2-0-nine.vercel.app/gestaltview_sitemap.txt
+Sitemap: https://gestaltview-v2-0-nine.vercel.app/gestaltview_sitemap.html

@@ -1,0 +1,4 @@
+interface:
+  display_name: "CurrentState Maintenance"
+  short_description: "Keep CurrentState and sibling orientation docs synchronized."
+  default_prompt: "Update CurrentState.md with concrete repo changes, rationale, risks, and next steps."

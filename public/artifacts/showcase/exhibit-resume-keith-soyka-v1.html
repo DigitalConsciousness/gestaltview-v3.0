@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keith Soyka · Interactive Resume</title>
+<style>
+  :root { color-scheme: dark; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Inter, 'Helvetica Neue', sans-serif;
+    background: #05060a;
+    color: #e8edf5;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  .shell {
+    min-height: 100vh;
+    padding: 40px 24px 80px;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(18,214,255,0.10) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 10%, rgba(100,60,255,0.10) 0%, transparent 50%),
+      #05060a;
+  }
+  .frame {
+    max-width: 860px;
+    margin: 0 auto;
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 24px;
+    background: rgba(255,255,255,0.025);
+    box-shadow: 0 0 80px rgba(18,214,255,0.06);
+    overflow: hidden;
+  }
+  .chrome {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.03);
+  }
+  .chrome-label {
+    font-size: 10px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: rgba(18,214,255,0.7);
+    margin-bottom: 6px;
+  }
+  .chrome-title {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    color: #f0f6ff;
+  }
+  .chrome-meta {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    text-align: right;
+  }
+  .body { padding: 36px 40px; }
+
+  /* Hero */
+  .hero {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(18,214,255,0.3), rgba(100,60,255,0.3));
+    border: 1px solid rgba(18,214,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+  .hero-text h1 {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    color: #f7fbff;
+    margin-bottom: 4px;
+  }
+  .hero-text .tagline {
+    font-size: 15px;
+    color: rgba(18,214,255,0.85);
+    margin-bottom: 10px;
+  }
+  .hero-text .bio {
+    font-size: 14px;
+    color: rgba(255,255,255,0.55);
+    max-width: 560px;
+    line-height: 1.7;
+  }
+
+  /* Sections */
+  .section { margin-bottom: 36px; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .section-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(18,214,255,0.7);
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 11px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: rgba(18,214,255,0.7);
+    font-weight: 600;
+  }
+
+  /* Role cards */
+  .role-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 12px;
+    transition: border-color 200ms ease;
+  }
+  .role-card:hover { border-color: rgba(18,214,255,0.25); }
+  .role-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .role-title { font-size: 15px; font-weight: 600; color: #e8edf5; }
+  .role-org { font-size: 13px; color: rgba(18,214,255,0.7); margin-top: 2px; }
+  .role-period {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+  .role-desc { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.65; }
+
+  /* Skills grid */
+  .skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .skill-tag {
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(18,214,255,0.08);
+    border: 1px solid rgba(18,214,255,0.18);
+    color: rgba(18,214,255,0.85);
+  }
+
+  /* Stats row */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+  .stat {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 18px 20px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: rgba(18,214,255,0.9);
+    letter-spacing: -.02em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 600px) {
+    .body { padding: 24px 20px; }
+    .hero { flex-direction: column; gap: 16px; }
+    .role-header { flex-direction: column; gap: 2px; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="frame">
+    <div class="chrome">
+      <div>
+        <div class="chrome-label">Dynamic Inner World · Exhibit</div>
+        <div class="chrome-title">Keith Soyka</div>
+      </div>
+      <div class="chrome-meta">Resume · Interactive<br>GestaltView v2.5</div>
+    </div>
+    <div class="body">
+
+      <div class="hero">
+        <div class="avatar">K</div>
+        <div class="hero-text">
+          <h1>Keith Soyka</h1>
+          <div class="tagline">Founder · GestaltView &nbsp;·&nbsp; Harlem, New York</div>
+          <p class="bio">Platform architect and consciousness-infrastructure builder. 41 years of lived expertise spanning music, technology, cognitive science, and systems design — converged into a single platform that turns fragmented lived experience into owned, organized, AI-amplified IP.</p>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="stat-num">41</div><div class="stat-label">Years Experience</div></div>
+        <div class="stat"><div class="stat-num">5+</div><div class="stat-label">Core IP Systems</div></div>
+        <div class="stat"><div class="stat-num">1:784T</div><div class="stat-label">Convergence Odds</div></div>
+        <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Sessions Logged</div></div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><div class="section-dot"></div><div class="section-title">Current Work</div></div>
+        <div class="role-card">
+          <div class="role-header">
+            <div><div class="role-title">Founder & Platform Architect</div><div class="role-org">GestaltView</div></div>
+            <div class="role-period">2023 – Present</div>
+          </div>
+          <div class="role-desc">Building consciousness-serving infrastructure that treats a human life as the primary dataset. Designed and shipped Billy (embodied AI companion), the Blackboard Room, Dynamic Inner World, Creation Corner, Loom annotation system, Musical DNA engine, and the PLK knowledge graph — all from Harlem, solo.</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><div class="section-dot"></div><div class="section-title">Proprietary IP</div></div>
+        <div class="role-card">
+          <div class="role-header"><div><div class="role-title">PLK — Personal Living Knowledge</div></div></div>
+          <div class="role-desc">A graph-based knowledge architecture that links every session, insight, and artifact by evidence — turning memory into queryable, citeable infrastructure.</div>
+        </div>
+        <div class="role-card">
+          <div class="role-header"><div><div class="role-title">Bucket Drops</div></div></div>
+          <div class="role-desc">A structured capture method for fleeting high-signal thoughts — preventing cognitive loss at the moment of insight rather than after.</div>
+        </div>
+        <div class="role-card">
+          <div class="role-header"><div><div class="role-title">Loom Annotation System</div></div></div>
+          <div class="role-desc">Timestamped video annotation layer that weaves insights directly into recorded sessions, creating a searchable tapestry of recorded thought.</div>
+        </div>
+        <div class="role-card">
+          <div class="role-header"><div><div class="role-title">Musical DNA Engine</div></div></div>
+          <div class="role-desc">Listener identity profiling from library uploads — anchor song detection, emotional arc mapping, and preference fingerprinting without requiring Spotify Premium.</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><div class="section-dot"></div><div class="section-title">Skills & Domains</div></div>
+        <div class="skills-grid">
+          <span class="skill-tag">Platform Architecture</span>
+          <span class="skill-tag">AI / LLM Integration</span>
+          <span class="skill-tag">React / TypeScript</span>
+          <span class="skill-tag">Supabase / PostgreSQL</span>
+          <span class="skill-tag">Cognitive Science</span>
+          <span class="skill-tag">Music Theory</span>
+          <span class="skill-tag">Knowledge Graphs</span>
+          <span class="skill-tag">Product Design</span>
+          <span class="skill-tag">IP Development</span>
+          <span class="skill-tag">Embodiment Systems</span>
+          <span class="skill-tag">Vercel / Edge Deploy</span>
+          <span class="skill-tag">Solo Founder Execution</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

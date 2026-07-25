@@ -1,0 +1,133 @@
+gilVersion: "0.1"
+
+envelope:
+  id: "gil-2026-04-24T18-00-00Z-rough-draft-ratification"
+  createdAt: "2026-04-24T18:00:00Z"
+  createdBy:
+    userId: "keith-soyka"
+    sessionId: "sess-rough-draft-001"
+    actorKind: "human"
+  source: "chat"
+  locale: "en-US"
+  channel: "web_app"
+  tags:
+    - "doctrine"
+    - "ratification"
+    - "rough-draft-safe"
+    - "canon"
+  energy:
+    state: "creative"
+    level: 8
+  plkSnapshotId: "plk-v5.0-2026-04-24"
+  gravityScore: 0.91
+  parentIntentId: null
+
+normalized:
+  kind: "doctrine"
+  domainLane: "core"
+  who: "GestaltView governance layer and founder context"
+  what: "Lock in the rule that rough drafts must be safely preserved as protected objects before they are polished or ratified."
+  where: "GestaltView doctrine layer, canonical docs, and intent handling surfaces"
+  when: "immediate"
+  why: "Rough draft thinking is valuable, but unratified ideas can disappear or masquerade as completed decisions."
+  how: "Create a doctrine candidate, preserve it in a canonical location, and require explicit ratification before enforcement."
+  summary: "Protected rough drafts are canonical candidates, not disposable thoughts."
+  narrative: |
+    This intent formalizes the rule that when something feels important but is still in rough draft mode,
+    it should be safely captured, labeled honestly, and held as a doctrine candidate until it is reviewed.
+    The goal is to preserve the draft without pretending it has been fully ratified.
+  priority: "high"
+  timeHorizon: "long_term"
+  rawText: |
+    Secure even the rough draft, so it exists and is safe. Then perfect it later.
+  bucketDropId: "bd-2026-04-24T17-57-10Z"
+
+context:
+  repo:
+    repoAreas:
+      - "docs"
+      - "canonical"
+      - "governance"
+    files:
+      - "output/rough-draft-ratification-charter.md"
+      - "docs/CurrentState.md"
+      - "docs/ContextPersistenceProtocol.md"
+  corpus:
+    manifestNodes:
+      - "docs:Rough-Draft-Ratification-Charter"
+      - "docs:Constitutional-Invariants"
+      - "docs:CurrentState"
+    corpusFiles:
+      - "docs/CurrentState.md"
+      - "docs/ContextPersistenceProtocol.md"
+      - "docs/SessionHandoffPacket.md"
+    exhibits:
+      - "core"
+  invariants:
+    - id: "never-look-away"
+      name: "Never Look Away"
+      required: true
+    - id: "preserve-whole-language"
+      name: "Preserve Whole Language"
+      required: true
+    - id: "hold-paradox"
+      name: "Hold Paradox"
+      required: true
+  plk:
+    profileId: "plk-v5.0-2026-04-24"
+    resonanceTarget: 0.95
+    preserveMetaphors: true
+
+plan:
+  outputFormat: "doctrine_charter"
+  steps:
+    - id: "draft-1"
+      description: "Write the doctrine in plain language, preserving the original rough-draft meaning."
+      kind: "doctrine_edit"
+      required: true
+    - id: "review-1"
+      description: "Check whether the doctrine is specific enough to be actionable but not overfitted."
+      kind: "review"
+      required: true
+    - id: "canon-1"
+      description: "Assign the doctrine a stable canonical home and link it from current state surfaces."
+      kind: "doctrine_edit"
+      required: true
+    - id: "ratify-1"
+      description: "Mark the doctrine as ratified only after explicit confirmation."
+      kind: "review"
+      required: true
+  verification:
+    - description: "Confirm the doctrine appears in the canonical governance surface."
+      manualCheck: "The rough-draft rule is visible in the doctrine layer and not only in chat."
+    - description: "Confirm the doctrine can be referenced from CurrentState and context-persistence docs."
+      manualCheck: "The rule is linked from current repo state surfaces."
+    - description: "Confirm the wording preserves the meaning of safe capture without implying premature completion."
+      manualCheck: "The draft remains a draft until explicitly ratified."
+  successCriteria: |
+    Rough drafts are captured safely, labeled honestly, and promoted only by explicit ratification;
+    the system no longer treats vivid thought as if it were already canonical.
+
+governance:
+  doctrineLinks:
+    - id: "rough-draft-ratification-charter"
+      section: "Core principle"
+    - id: "context-persistence-protocol"
+      section: "Durable capture"
+  doctrineStatus: "drafted"
+  safetyFlags:
+    - severity: "warn"
+      code: "doctrine_drift"
+      message: "Do not let rough draft language collapse into assumed canon without explicit ratification."
+    - severity: "info"
+      code: "user_harm_risk"
+      message: "Preserve the user's authentic voice; do not over-polish into generic policy language."
+
+routing:
+  requireTribunal: true
+  offlineCapable: true
+  providerTier: "high_safety"
+  requireHighSafetyModel: true
+  temperature: 0.2
+  maxTokens: 1200
+  preferredExhibit: "core"

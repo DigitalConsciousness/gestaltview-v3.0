@@ -1,0 +1,26 @@
+version: "1.0"
+
+defaults:
+  gil_protocol: "gil/rough-draft-ratification.yaml"
+  batch_size: 2
+  dry_run: false
+  max_fragments: null
+
+results_dir: "targeted_summaries/mixed"
+
+runs:
+  - label: "mixed-docs-10m"
+    source_prefix: "docs"
+    package: "core-docs"
+    time_budget_minutes: 10
+    manifest_out: "targeted_summaries/mixed/mixed-docs-10m.json"
+
+  - label: "mixed-agent-trainer-20m"
+    source_prefix: "agent_trainer"
+    package: "agent_trainer"
+    time_budget_minutes: 20
+    manifest_out: "targeted_summaries/mixed/mixed-agent-trainer-20m.json"
+
+  - label: "mixed-corpus-30m"
+    time_budget_minutes: 30
+    manifest_out: "targeted_summaries/mixed/mixed-corpus-30m.json"

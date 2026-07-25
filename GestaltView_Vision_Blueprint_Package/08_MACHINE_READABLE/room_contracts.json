@@ -1,0 +1,67 @@
+{
+  "Sanctuary": {
+    "mode": "active_reflective_private",
+    "default_privacy": "private",
+    "must_not": [
+      "auto_emit_to_scaffold",
+      "show_productivity_metrics"
+    ]
+  },
+  "BlackboardRoom": {
+    "mode": "active_contextual",
+    "inputs": [
+      "text",
+      "voice",
+      "file",
+      "code",
+      "media"
+    ],
+    "outputs": [
+      "raw_captures",
+      "session_artifacts",
+      "recap_artifacts"
+    ]
+  },
+  "DynamicInnerWorld": {
+    "mode": "spatial_raw_and_reflective",
+    "surfaces": [
+      "forward",
+      "back",
+      "left",
+      "right",
+      "ceiling",
+      "floor"
+    ],
+    "must_not": [
+      "stateless_list",
+      "auto_identity_claims"
+    ]
+  },
+  "ExternalScaffold": {
+    "mode": "accumulated_structural",
+    "contains": "approved_compressed_artifacts",
+    "must_not": [
+      "billy_nodes",
+      "tribunal_persona_visuals",
+      "auto_connections_without_evidence"
+    ]
+  },
+  "CreationCorner": {
+    "mode": "productive_and_ambient",
+    "outputs": [
+      "markdown",
+      "pdf_html",
+      "code",
+      "agent_prompt",
+      "image_prompt",
+      "marketing_copy",
+      "share_card",
+      "blueprint_json",
+      "interactive_html"
+    ],
+    "must_not": [
+      "publish_without_consent",
+      "collapse_ambient_mode_into_task_queue"
+    ]
+  }
+}

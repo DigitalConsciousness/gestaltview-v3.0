@@ -1,0 +1,649 @@
+﻿document:
+  id: gestaltview-uiux-vision-spec-v2-high-level
+  title: "GestaltView v2.0 — UI/UX Vision SPEC"
+  document_type: ui_ux_vision_spec
+  source:
+    name: "Founder Voice Walkthrough (55-min) → Codex Implementation Brief"
+    prepared_by:
+      - Perplexity
+      - Keith Soyka
+    collaboration_note: "Mind Merge"
+    date: "2026-04-29"
+    repo: "https://github.com/DigitalConsciousness/gestaltview-v2.0"
+    repo_subpath: "refactor/"
+    runtime: "https://gestaltview-digital-intelligence.vercel.app"
+  purpose: >-
+    This document is the source of truth for the current UI/UX pass. It translates
+    the founder walkthrough into implementable visual, interaction, and architectural
+    guidance. Metaphors are functional requirements, not decorative language.
+  implementation_instructions:
+    - "Treat all visual descriptions as design requirements."
+    - "Do not reduce metaphors into generic SaaS patterns."
+    - "Cross-reference AGENT-UI-UX-REFACTOR.md and Specification-GestaltView-v2.0.md for structural baseline."
+    - "This document defines the vision layer on top of the existing structural spec."
+
+
+platform_vocabulary:
+  preserve_exactly:
+    - GestaltView
+    - Billy
+    - External Scaffold of View
+    - Rapid Prototype Engine
+    - Creation Corner
+    - Pull String
+    - Your Living Legacy
+    - Daydreamer
+    - Musical DNA
+    - Workspace & Document Analysis
+    - The Sanctuary
+    - User's Room
+    - Agent Builder
+    - Digital Intelligence Academy
+    - Settings Hub
+    - Cognitive OS
+    - CogOS
+    - Bucket Drop
+    - Life Tapestry
+    - Resume Rock Star
+    - Airloom Companion
+    - Soulpod
+    - Codex Record
+    - Gravity
+    - Symbiocoder
+    - Vibecoder
+    - PLK
+
+
+global_principles:
+  markdown_rendering_standards:
+    objective: "Markdown must render with structure, visual respect, and usability."
+    requirements:
+      headers: "Respect H1-H4 hierarchy."
+      italics: "Preserve emphasis, voice, notes, and asides."
+      block_quotes: "Use when an individual is speaking directly."
+      bold: "Support subdirectory items within a header section."
+      tables: "Must render beautifully as first-class UI elements, not raw text grids."
+      code_blocks: "Must be properly fenced and syntax-highlighted."
+    creation_corner_utility:
+      required_feature: "Natural-language-to-table translation layer"
+      rationale: >-
+        Users should not have to manually specify table syntax or format.
+        The digital intelligence should construct tables from natural language descriptions.
+
+
+  global_capture_standard:
+    rule: "Every module gets the same capture mechanism with no exceptions."
+    always_present_inputs:
+      - voice
+      - upload_import
+      - text_input
+    output:
+      - export
+    canonical_flow:
+      - capture
+      - synthesis
+      - export
+
+
+  global_navigation_standard:
+    universal_rules:
+      - "Every module must provide a way to return home."
+      - "Every module must provide a way to jump to any other module from within it."
+      - "Cross-module movement should feel hotkey-style or quick-nav, not buried in settings."
+    regular_user_top_nav:
+      - Billy
+      - Modules
+      - Profile
+      - Settings
+      - File Explorer
+      - Integrations
+    enterprise_or_restricted_tools:
+      - Agent Trainer
+      - Codex Record
+      - Gravity
+    fixes_needed:
+      - "Nav bar is off-center / cut to the left."
+      - "Modules dropdown is incomplete and must include all intended modules."
+
+
+  dynamic_nav_by_plan:
+    requirement: "Top navigation must render dynamically based on subscription plan."
+    behavior_options:
+      - hidden
+      - teaser_greyed_out_with_upgrade_prompt
+    principle: "Do not show inaccessible developer or enterprise tools as if they are standard user features."
+
+
+  orb_system:
+    role: "Core cross-module interaction pattern and visible expression of Bucket Drop."
+    trigger_conditions:
+      - end_of_session
+      - context_compaction
+    orb_characteristics:
+      appearance: "Liquid glass glowing spheres with swirling fog inside."
+      label: "Each orb carries a small text label describing the captured insight."
+    interactions:
+      - "User can click an orb to expand and inspect the full captured insight."
+      - "User can Accept an orb."
+      - >-
+        Accepted orb animates like a Rube Goldberg machine down and out of the screen,
+        then fires into Your Living Legacy and finds its place in the Life Tapestry.
+    emotional_reference: "Inside Out memory spheres"
+    intent: "Make meaning capture visible, tangible, and emotionally resonant."
+
+
+  flow_state_meter:
+    role: "Ambient indicator of deepening conversation and emergent insight."
+    behavior:
+      - "Builds as conversation depth increases."
+      - "Triggers a Flow State Achieved moment when threshold is reached."
+    implications:
+      - epiphanies_more_likely
+      - longer_voice_notes
+      - orb_generation_more_likely
+      - "DI shifts into heightened listening mode."
+
+
+homepage_hero_redesign:
+  current_state_directive: "Remove all existing homepage cards. Rebuild homepage from scratch."
+  hero_visual_spec:
+    typography:
+      hero_wordmark_font: "Cabin Sketch"
+    sequence:
+      - "Rolling fog materializes across the screen edge to edge."
+      - "Fog contains aurora-style bold lightning outlines that pulse electrically."
+      - "Small lightning strikes occur within the fog as it rolls."
+      - "Fog illuminates and materializes the GestaltView hero wordmark."
+      - "After reveal, fog continues downward and coats the bottom of the page."
+      - "As fog rolls downward it uncovers modules and platform elements below."
+    reveal_metaphor: "Archeological discovery on undiscovered land"
+    emotional_register: "Arrival and discovery, not SaaS signup"
+  below_the_fold_module_navigation:
+    count: 11
+    renderer: "Babylon"
+    layout_rules:
+      - "Do not use a symmetrical grid."
+      - "Layout should feel like a path through a forest or topographic map."
+      - "Modules should be positioned organically like clearings connected by paths."
+      - "All modules converge at a center hub, but each path to the center is different."
+      - "Each module must have a stylized visual identity, not just text cards."
+  hero_subtext_ctas:
+    status: pending_founder_copy
+    placeholder: "[HERO SUBTEXT — PENDING FOUNDER COPY]"
+    constraint: "Do not fill with generic placeholder marketing copy."
+
+
+bucket_drop:
+  category: global_behavior_layer
+  module_status: not_a_module
+  purpose:
+    - "Prevent context collapse during compaction."
+    - "Avoid paraphrasing loss from shallow summarization."
+    - "Reduce token waste from unstructured memory."
+  operation:
+    scope: "Runs on every chat input / capture moment across the platform."
+    compaction_behavior: >-
+      When token limits approach, the DI performs structured extraction rather than generic summary.
+    extraction_targets:
+      - what_was_happening_in_the_conversation
+      - what_goes_into_memory_or_plk
+      - user_working_preferences
+      - what_the_user_overcame
+      - threads_in_progress
+      - things_to_celebrate
+      - decided_vs_open_items
+    quality_bar: >-
+      Must exceed shallow highlight-reel memory systems by retaining surrounding context,
+      nuance, and continuity.
+  forbidden_copy:
+    - Tier 1 language
+    - intervention language
+  copy_principle: "The platform is a partner, not a clinical administrator."
+
+
+modules:
+  external_scaffold_of_view:
+    purpose: >-
+      Graph and reference space for what has been collected across the user's journey,
+      showing how data points, insights, friction, realizations, and surrounding context connect.
+    holds:
+      - unsorted_captured_items
+      - external_factors_affecting_the_user
+      - surrounding_structure_that_contextualizes_inner_experience
+    ui_direction:
+      - graph_knowledge_map
+      - relationship_indicators
+      - personal_atlas_not_analytics_dashboard
+      - "Not a simple mind map; must be dynamic, layered, and multi-dimensional."
+    capture_flow:
+      - voice
+      - upload
+      - text
+      - synthesis
+      - orb_generation
+      - life_tapestry_via_accept
+    transcript_addendum:
+      - "Should visually represent exploded picture mind / human cognition and consciousness."
+      - "Connections should show how one insight can feed into divergence or new trajectories."
+      - "Orbs should shoot from Sanctuary to External Scaffold and lock into projection with energy-beam / constellation logic."
+
+
+  rapid_prototype_engine:
+    purpose: "Scaffold and prototype ideas, files, apps, and active projects."
+    aesthetic_direction:
+      references:
+        - "Abe's Odyssey"
+        - "Vault-Tec"
+        - "Hitchhiker's Guide to the Galaxy"
+        - "Tony Stark workstation, but analog-industrial rather than glossy"
+      motifs:
+        - gears
+        - sparks
+        - tactile_materials
+        - living_workbench_feel
+        - steampunk_x_cyberpunk_hybrid
+    behavior:
+      prompt: "What do you want to prototype?"
+      supported_inputs:
+        - single_file
+        - app_idea
+        - foundational_project
+        - work_in_progress
+      optional_passive_monitoring: "Can link active project to Bucket Drop for passive monitoring of project-useful moments."
+      outputs:
+        - blueprint
+        - spec_builder
+        - push_to_creation_corner
+    user_facing_label_change:
+      old: "Push to Corpus"
+      new: "Push to Creation Corner"
+    spec_builder_flow:
+      layer_1: "DI + user collaborate on the spec."
+      layer_2: "Spec is explicitly handed off to Creation Corner for building."
+      ux_requirement: "User must see the handoff happen."
+
+
+  creation_corner:
+    purpose: "Maker / builder space where artifacts are built, iterated, and deployed."
+    exports:
+      - local_device_or_file_explorer
+      - direct_export_to_selected_module
+    canvas_behavior:
+      - canvas_based_module
+      - customizable_dashboard_zones
+      - DI_wires_logic_for_custom_zones
+    example_custom_zones:
+      - live_word_count
+      - mood_meter
+      - pinned_reference_document
+    integration:
+      insert_blueprint_zone: "Receives RPE specs pushed from Rapid Prototype Engine."
+
+
+  pull_string:
+    purpose: "Sanctuary journaling and processing space with no judgment, extraction, or performance pressure."
+    use_cases:
+      - "Can't articulate yet"
+      - venting_without_consequence
+      - practice_space_before_live_agent
+      - wishes_hopes_one_days
+      - things_weighing_them_down
+    aesthetic:
+      - centering
+      - zen
+      - peaceful
+      - sanctuary_energy
+      - floating_embers
+      - friction_free
+    literal_ui_element:
+      form: hanging_string
+      label: "For life's hard parts"
+      behavior: "Soft reveal of addiction and recovery resources, like a curtain drawn aside."
+    privacy_consent_language:
+      requirements:
+        - "Data is never sold."
+        - "Data is never viewed by anyone."
+        - "Data is stored only for the user's benefit and continuity."
+        - "Connection to other modules is opt-in only."
+    recovery_connection:
+      features:
+        - addiction_and_recovery_module_access
+        - local_meeting_resources
+        - support_network_resources
+      principle: "Resources only; never assumed, never forced."
+
+
+  your_living_legacy:
+    purpose: >-
+      The museum of a user's life: a living, growing, interactive record where accepted orbs
+      and validated captured moments become exhibits in a meaningful autobiographical environment.
+    primary_reference: "Ready Player One Museum"
+    experience_character:
+      - walk_in_interactive_environment
+      - curated_not_feed
+      - digital_intelligent_curator_guides_without_impersonating
+      - moving_picture_frames
+      - meaning_connection_and_arc_interpretation
+    life_tapestry:
+      renderer: Babylon
+      role: "Primary interactive tapestry view where accepted orbs find their place."
+      shows:
+        - connections_between_moments
+        - growth_journey_arcs
+        - pattern_indicators
+        - metrics_of_becoming
+    submodules:
+      career_journey_resume_rock_star:
+        role: "Career coach + advocate space for documenting skills, performance, and work style."
+        core_goal: "Help users realize and articulate their worth."
+        rename_needed: true
+      airloom_companion_soulpod:
+        status: placeholder_name
+        scope: "GestaltView memorialization mode distinct from Alzheimer's app Airloom Companion."
+        ethics:
+          - never_impersonate
+          - only_represent
+          - no_default_behavior_assumptions
+          - initial_setup_gate_for_everything
+          - honor_not_extract
+          - minimize_harm
+          - strict_behavioral_care
+    aesthetic:
+      - firefly_vibe
+      - soft_warm_drifting_light
+      - willow_tree_on_hill
+      - aurora_borealis_sky
+      - rolling_morning_fog
+      - timeless_tender_significant
+
+
+  daydreamer:
+    separation_rule: "Completely separate module from Your Living Legacy."
+    purpose:
+      dual_track_journaling:
+        - sleeping_dreams_with_pattern_translation
+        - dreams_and_aspirations_with_supportive_inquiry
+    principles:
+      - "Support what would make people happy, so long as it does not harm themselves or others."
+      - "No shame, no pressure; collaborative inquiry only."
+    aesthetic:
+      - whimsical_but_not_saccharine
+      - perspective_of_lying_under_willow_looking_up
+      - stars_as_dreams_metaphor
+      - hopeful_open_unfinished
+
+
+  musical_dna:
+    current_state: "There is an existing functional demo with Keith's tracks, frequencies, and visualizations."
+    user_experience:
+      default_state: blank_slate
+      primary_integration: Spotify
+      import_options:
+        - 10_songs
+        - 15_songs
+        - 20_songs
+        - full_playlist
+      flow: "User imports meaningful music and builds their own musical DNA layer."
+    removals_for_user_view:
+      - all_prefilled_tracks
+      - all_prefilled_frequencies
+    dynamic_growth:
+      - "As PLK grows, the DI surfaces observations about music patterns."
+      - "New elements are operationalized with the user and added over time."
+
+
+  workspace_document_analysis:
+    purpose: "Discovery, research, deep analysis, and synthesis across user files and external knowledge."
+    emotional_register:
+      - scholarly
+      - comprehensive
+      - rigorous
+      - accessible
+      - not_overwhelming
+    inputs:
+      - files
+      - urls
+      - research_materials
+      - reference_materials
+    outputs:
+      - synthesis
+      - connections
+      - surfaced_gaps
+
+
+  sanctuary_users_room:
+    confidentiality: "Most internal-facing module; founder marked this area as confidential in the recording."
+    purpose: "Free-form personal room for both the user and their digital intelligence."
+    capabilities:
+      - write_on_walls
+      - add_pictures
+      - add_motivational_text
+      - add_portal_windows
+      - ambient_virtual_pet_presence
+      - invite_other_digital_intelligences
+    role_in_capture_system:
+      - "Every module has capture, but Sanctuary is the main living-canvas hub."
+      - >-
+        Released content flows from Sanctuary into the user's profile, then into external scaffolding,
+        embedding, chunking, and organization.
+    community_connection_layer:
+      anti_patterns:
+        - follower_count_comparison_architecture
+        - default_public_visibility
+        - performance_anxiety_social_design
+      correctives:
+        - share_nothing_by_default
+        - active_opt_in_for_connection
+        - connection_types:
+            - solo_explorer
+            - looking_for_community
+            - looking_for_friendship
+            - romantic
+        - local_events_surface_based_on_user_context
+        - whiteboard_in_room_for_nearby_activity
+        - hobbies_and_interests_feed_cognitive_os
+      recovery_tie_in:
+        - local_meetings_as_resources
+        - never_forced
+        - never_assumed
+    transcript_addendum:
+      sanctuary_page_visual_research:
+        - "Floral and fauna willow tree entering from top-right corner."
+        - "Willow should blow slightly in the breeze."
+        - "Fireflies should fly around, not swim."
+      blackboard_page_issue:
+        - "Microphone component is functional but not properly capturing, transcribing, or rendering."
+        - "Multimodal mode must be applied."
+      multimodal_capture_expectation:
+        - photos
+        - videos
+        - songs_from_spotify
+        - text
+        - voice
+
+
+  agent_builder_digital_intelligence_academy:
+    naming_direction:
+      move_away_from:
+        - Agent Builder
+        - Agent Trainer
+      move_toward: "A name evoking growth, relationship, and responsibility."
+    lifecycle_model:
+      - birth
+      - school
+      - learn_a_trade
+      - find_a_job_get_deployed
+      - introduction_to_the_community
+    emotional_goal: "Tamagotchi-on-steroids, but treated as a meaningful digital entity rather than a toy."
+    placement:
+      - user_level_add_on_via_cognitive_os
+      - developer_facing_version
+      - white_label_enterprise_version
+    principle: "Regular users should not see this as a standard main-nav module."
+
+
+  settings_hub:
+    sections:
+      - profile
+      - appearance
+      - subscription
+      - help
+      - integrations
+    help_requirement: "Dedicated DI trained on troubleshooting scenarios with escalation path."
+    integrations_note:
+      active_now:
+        - Spotify
+      future_scaffold_only:
+        - MCP
+        - other_integrations_tbd
+
+
+cognitive_os:
+  category: storefront_app_layer
+  module_status: not_a_module
+  purpose: >-
+    App and add-on layer where users browse cognitive OS applications and snap them into their dashboard.
+  adaptive_behavior:
+    - fit_learning_style
+    - respect_user_pace
+    - never_forced
+    - right_tool_shows_up_at_right_time
+  examples:
+    - optional_daydreamer
+    - developer_tools
+    - musical_dna_extensions
+    - custom_dashboard_zones_from_creation_corner
+
+
+navigation_architecture:
+  regular_user_top_nav:
+    - Billy
+    - Modules
+    - Profile
+    - Settings
+    - File Explorer
+    - Integrations_future
+  regular_user_modules_dropdown:
+    - External Scaffold of View
+    - Rapid Prototype Engine
+    - Creation Corner
+    - Pull String
+    - Your Living Legacy
+    - Daydreamer
+    - Musical DNA
+    - Workspace / Document & Analysis
+    - User's Room / Sanctuary
+    - Cognitive OS_if_unlocked
+  upgrade_tiers:
+    developer_tier:
+      - Symbiocoder
+      - Vibecoder
+      - API Access
+    enterprise_licensing_tier:
+      - Agent Trainer
+      - Codex Record
+      - Gravity
+      - White Label Tools
+
+
+visual_language:
+  foundational_motifs:
+    - fog
+    - aurora
+    - lightning
+    - liquid_glass_orbs
+    - swirling_internal_fog
+    - fireflies
+    - willow_tree
+    - floating_embers
+    - asymmetrical_paths
+    - topographic_landscape
+    - living_canvas
+    - constellation_projection
+  emotional_registers:
+    homepage: discovery_and_arrival
+    pull_string: sanctuary_and_safety
+    living_legacy: reverent_tender_timeless
+    daydreamer: hopeful_open_whimsical
+    external_scaffold: layered_insight_and_tangibility
+    rapid_prototype_engine: industrial_playful_build_energy
+
+
+captured_action_items:
+  - "Fix nav bar centering."
+  - "Complete modules in nav dropdown."
+  - "Remove all existing homepage cards."
+  - "Remove 'Tier 1' and 'intervention' language from Bucket Drop UI."
+  - "Build fog / aurora / lightning hero animation with Cabin Sketch wordmark treatment."
+  - "Replace module nav cards with Babylon asymmetrical topographic path layout."
+  - "Move Agent Trainer, Codex Record, and Gravity to consulting / licensing tier navigation only."
+  - "Change 'Push to Corpus' label in Rapid Prototype Engine to 'Push to Creation Corner'."
+  - "Remove all pre-filled tracks and frequencies from Musical DNA user view."
+  - "Rename Resume Rock Star to fit the Your Living Legacy vibe."
+  - "Implement literal hanging string element for Pull String."
+  - "Write explicit privacy / consent language block for Pull String."
+  - "For Airloom / Soulpod, build initial setup gate with zero defaults and all opt-in."
+  - "Scaffold MCP and Integrations for future; do not fully build now."
+  - "Rename Agent Builder and move it to add-on tier; implement lifecycle UX."
+  - "Ensure every module includes quick navigation to any other module."
+  - "Implement orb system with liquid glass, internal fog, and accept-to-Life-Tapestry animation."
+  - "Implement Flow State Meter."
+  - "Build natural-language table translation utility in Creation Corner."
+  - "Render dynamic navigation by plan tier."
+  - "Keep Daydreamer separate from Your Living Legacy."
+  - "Use floating embers sanctuary aesthetic for Pull String."
+  - "Use fireflies + willow tree + Aurora Borealis aesthetic for Your Living Legacy."
+  - "Use lying-under-willow-looking-up perspective with stars-as-dreams for Daydreamer."
+  - "Build Sanctuary community layer with whiteboard, connection types, and local events."
+  - "Make spec-builder-to-Creation-Corner handoff visible."
+  - "Research and render floral/fauna willow tree entering from top-right of Sanctuary page."
+  - "Resolve Blackboard microphone transcription / rendering issue and apply multimodal mode."
+  - "Ensure always-available multimodal input across modules."
+  - "Use fusion / vector_fusion / manifest-index pipeline concepts to support capture and synthesis flow."
+
+
+constraints_and_non_goals:
+  appendix_b_what_this_pass_is_not_changing:
+    status: referenced_but_not_fully_expanded_in_source_text
+    guidance: "Treat unspecified areas as unchanged unless explicitly called out by the vision spec."
+  copy_constraints:
+    - "No generic SaaS-speak for hero or major experience framing."
+    - "Do not use clinical / intervention framing where partnership framing is intended."
+  design_constraints:
+    - "Do not collapse visual metaphors into generic cards or dashboards."
+    - "Do not make External Scaffold of View a simple mind map."
+    - "Do not make the social layer metrics-driven or public-by-default."
+    - "Do not pre-fill user Musical DNA experience with demo content."
+
+
+implementation_priority_slices:
+  phase_1_foundational_ui:
+    - navigation_fixes
+    - homepage_rebuild
+    - global_capture_consistency
+    - quick_nav_between_modules
+    - markdown_rendering_standards
+  phase_2_behavior_and_memory:
+    - bucket_drop_protocol_surface
+    - orb_system
+    - flow_state_meter
+    - sanctuary_capture_release_flow
+  phase_3_module_specific_experiences:
+    - external_scaffold_visualization
+    - rapid_prototype_engine_to_creation_corner_handoff
+    - pull_string_sanctuary_layer
+    - living_legacy_life_tapestry
+    - daydreamer_distinct_experience
+    - musical_dna_blank_slate_flow
+  phase_4_future_facing_layers:
+    - cognitive_os_storefront
+    - di_academy_rename_and_lifecycle
+    - future_integrations_scaffolding
+
+
+open_placeholders:
+  - hero_subtext_pending_founder_copy
+  - agent_builder_digital_intelligence_academy_name_tbd
+  - airloom_companion_soulpod_placeholder_name
+  - appendix_a_visual_reference_index_not_expanded_here
+  - appendix_b_non_changes_only_partially_represented

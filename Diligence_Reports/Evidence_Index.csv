@@ -1,0 +1,18 @@
+assertion_theme,evidence_file,package,artifact_type,primary_or_secondary,relevance,quality_note
+Project overview,Keith_Soyka_Code_&_Context/README.md,Keith_Soyka_Code_&_Context,Markdown,Primary,High,Best concise technical overview in code package.
+Backend implementation,Keith_Soyka_Code_&_Context/main.py,Keith_Soyka_Code_&_Context,Python,Primary,High,Direct implementation evidence.
+Retrieval architecture,Keith_Soyka_Code_&_Context/context_weaver.py,Keith_Soyka_Code_&_Context,Python,Primary,High,Shows meaningful retrieval/context logic.
+Model orchestration,Keith_Soyka_Code_&_Context/llmrouter_enhanced.py,Keith_Soyka_Code_&_Context,Python,Primary,High,Shows multi-provider routing.
+Data model,Keith_Soyka_Code_&_Context/enhanced_database_service.py,Keith_Soyka_Code_&_Context,Python,Primary,High,Maps concept vocabulary into storage.
+Schema translation,Keith_Soyka_Code_&_Context/Prisma_Schema.txt,Keith_Soyka_Code_&_Context,Schema,Primary,High,Structured system definition.
+Late-stage canonical map,Wiki & Repos/GESTALTVIEW_v6.23_March_6th_2026.md,Wiki & Repos,Markdown,Secondary,High,Useful for mature framing; later than raw code.
+Repo snapshot,Wiki & Repos/snapshot-2026-03-08T13_51_52_514Z.md,Wiki & Repos,Markdown,Secondary,Medium,Good chronology support.
+Forensic synthesis,GestaltView_#3_of_#3_12_29_25/GestaltView-Complete-Forensic-Record.md,GestaltView_#3_of_#3_12_29_25,Markdown,Secondary,Medium,"Interpretive and persuasive, not neutral on every claim."
+Compendium synthesis,GestaltView Dynamic Corpus Compendium December 30th 2025/GestaltView_Amalgamation_12_30_25.txt,GestaltView Dynamic Corpus Compendium December 30th 2025,Text,Secondary,Medium,High-density narrative archive.
+Early formation,May_August_GestaltView_Create/...,May_August_GestaltView_Create,Mixed,Primary,Medium,Origin-layer evidence; needs exact pathing.
+Claim-governance framework,GestaltView_Communication_&_Language_Guide_v2.md,Standalone,Markdown,Primary,High,Best available claim-taxonomy doc.
+"Pepperdine, Founders Network, Tribunal anchors",Screenshots #4.pdf,Screenshot Corpus,PDF screenshots,Primary,High,"Covers CL-001, CL-003, CL-004: Pepperdine email, FN forum, OTS receipt."
+Blockchain timestamp verification,Misc_Screenshots_2025_GestaltView.pdf,Screenshot Corpus,PDF screenshots,Primary,High,Covers CL-002 with BlockChained IP directory and Bitcoin block numbers.
+Blockchain + symbiosis evidence,August To September 2025 Screenshots.pdf,Screenshot Corpus,PDF screenshots,Primary,High,Covers CL-002 and CL-005: OTS receipts and Gemini show-thinking stream.
+Schema timestamp confirmations,July 22nd 2025 Screenshots.pdf,Screenshot Corpus,PDF screenshots,Primary,High,Covers CL-002 with OTS confirmations and schema timestamp evidence.
+Primary narrative transcript,Seven-Month-Emergence-Of-GestaltView.pdf,Audio Transcript,PDF transcript,Primary,High,Covers CL-001 through CL-005 with method origins and timeline references.

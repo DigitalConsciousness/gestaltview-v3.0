@@ -1,0 +1,29 @@
+{
+  "packet_type": "gestaltview_orientation_delta",
+  "packet_version": "2.0.0",
+  "status": "active",
+  "generated_at_utc": "2026-04-14T22:48:38+00:00",
+  "active_blockers": [
+    {
+      "id": "BW-2026-04-13",
+      "title": "Agent Trainer Page API Errors",
+      "symptom": "Trainer study-source recommendations path is failing before a normal response returns.",
+      "likely_surface": "/api/trainer/study-sources/recommendations",
+      "priority": "critical",
+      "status": "open"
+    }
+  ],
+  "current_focus": [
+    "Stabilize trainer recommendations path",
+    "Keep orientation packet current as a living source of truth",
+    "Advance a knowledge distribution hub for shared and agent-specific imports"
+  ],
+  "changed_assumptions": [
+    "Orientation should be split into spine, delta, and checkpoint.",
+    "Embodiment profiles should ingest summaries rather than full packet copies."
+  ],
+  "what_to_forget": [
+    "Do not treat stale orientation snapshots as authoritative.",
+    "Do not leave resolved blockers in active blocker lists."
+  ]
+}

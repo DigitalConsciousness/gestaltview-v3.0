@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0.0",
+  "orchestrator": {
+    "id": "operator-orchestrator",
+    "strategy": "plan_delegate_merge",
+    "maxParallelSubAgents": 3
+  },
+  "agents": [
+    {
+      "id": "research-subagent",
+      "role": "research",
+      "lanePriority": ["knowledge", "product"]
+    },
+    {
+      "id": "code-subagent",
+      "role": "engineering",
+      "lanePriority": ["code", "knowledge"]
+    },
+    {
+      "id": "voice-subagent",
+      "role": "tone-alignment",
+      "lanePriority": ["context"]
+    }
+  ],
+  "mergePolicy": {
+    "deduplicate": true,
+    "citationRequired": true,
+    "conflictResolution": "prefer_recent_and_grounded"
+  }
+}

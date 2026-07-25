@@ -1,0 +1,384 @@
+project:
+  name: "GestaltView v2"
+  description: "The production-facing GestaltView runtime covering the public app, Billy, authenticated control surfaces, diligence, package generation, and operator tooling."
+  repo_base_url: "https://github.com/faagestalt-web/gestaltview-v2/blob"
+  ref_commit_hash: "46a35cdd664bd3549ef8d41b793a1d21a51657d9"
+  updated_at: "2026-04-09"
+
+pages:
+  - id: gestaltview_v2_01_overview
+    title: "Overview"
+    filename: "01_overview.md"
+    description: "Platform scope, runtime boundaries, and documentation rules."
+    source_files:
+      - "README.md"
+      - "docs/CurrentState.md"
+      - "package.json"
+    sections:
+      - id: gestaltview_v2_01_overview_scope
+        title: "Platform Scope"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_01_overview_runtime-map
+        title: "Runtime Map"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_01_overview_doc-rule
+        title: "Documentation And Maintenance Rule"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+    related_pages:
+      - gestaltview_v2_02_development-environment
+      - gestaltview_v2_03_frontend-auth-routing
+      - gestaltview_v2_11_deployment-infrastructure
+
+  - id: gestaltview_v2_02_development-environment
+    title: "Development Environment"
+    filename: "02_development-environment.md"
+    description: "Local setup, toolchain, and development-time runtime behavior."
+    source_files:
+      - "README.md"
+      - "package.json"
+      - ".devcontainer/setup.sh"
+      - "scripts/gv.sh"
+      - "vite.config.ts"
+    sections:
+      - id: gestaltview_v2_02_development-environment_bootstrap
+        title: "Bootstrap And Toolchain"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_02_development-environment_commands
+        title: "Local Commands And Repo CLI"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_02_development-environment_proxy
+        title: "Local Proxy And Working Assumptions"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+    related_pages:
+      - gestaltview_v2_01_overview
+      - gestaltview_v2_10_operations-manifest-skills
+      - gestaltview_v2_11_deployment-infrastructure
+
+  - id: gestaltview_v2_03_frontend-auth-routing
+    title: "Frontend, Auth, And Routing"
+    filename: "03_frontend-auth-routing.md"
+    description: "SPA shell, page inventory, auth state, and route protection."
+    source_files:
+      - "client/src/App.tsx"
+      - "client/src/contexts/AuthContext.tsx"
+      - "client/src/pages/SignIn.tsx"
+      - "README.md"
+    sections:
+      - id: gestaltview_v2_03_frontend-auth-routing_shell
+        title: "Application Shell And Route Inventory"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_03_frontend-auth-routing_auth
+        title: "Auth State And Redirect Memory"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_03_frontend-auth-routing_control
+        title: "Control Surfaces And Product Lanes"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+    related_pages:
+      - gestaltview_v2_01_overview
+      - gestaltview_v2_04_billy-runtime
+      - gestaltview_v2_08_agent-trainer
+
+  - id: gestaltview_v2_04_billy-runtime
+    title: "Billy Runtime"
+    filename: "04_billy-runtime.md"
+    description: "Prompting, provider routing, and Billy API orchestration."
+    source_files:
+      - "shared/billy/runtime.ts"
+      - "shared/llm/plk.ts"
+      - "api/_lib/llmRouter.ts"
+      - "api/billy.ts"
+    sections:
+      - id: gestaltview_v2_04_billy-runtime_prompting
+        title: "Prompting And Embodiment Layer"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_04_billy-runtime_routing
+        title: "Provider Cascade And Message Assembly"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_04_billy-runtime_api
+        title: "Billy API Turn Lifecycle"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+    related_pages:
+      - gestaltview_v2_03_frontend-auth-routing
+      - gestaltview_v2_05_data-memory-retrieval
+      - gestaltview_v2_06_voice-runtime
+
+  - id: gestaltview_v2_05_data-memory-retrieval
+    title: "Data, Memory, And Retrieval"
+    filename: "05_data-memory-retrieval.md"
+    description: "Supabase helpers, founder continuity, and persistent memory behavior."
+    source_files:
+      - "api/_lib/supabase.ts"
+      - "api/_lib/auth.ts"
+      - "api/_lib/memory.ts"
+      - "api/session/memory.ts"
+      - "api/session/dashboard.ts"
+      - "docs/CurrentState.md"
+    sections:
+      - id: gestaltview_v2_05_data-memory-retrieval_supabase
+        title: "Supabase Access Layer"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_05_data-memory-retrieval_memory
+        title: "Persistent Memory Capture And Recall"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_05_data-memory-retrieval_session
+        title: "Session APIs And Founder Continuity"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+    related_pages:
+      - gestaltview_v2_04_billy-runtime
+      - gestaltview_v2_03_frontend-auth-routing
+      - gestaltview_v2_12_current-state-and-glossary
+
+  - id: gestaltview_v2_06_voice-runtime
+    title: "Voice Runtime"
+    filename: "06_voice-runtime.md"
+    description: "LiveKit worker, CosyVoice path, and ElevenLabs proxy."
+    source_files:
+      - "billy_voice/app.py"
+      - "billy_voice/cosyvoice_tts.py"
+      - "api/voice/billy.ts"
+      - "api/session/dashboard.ts"
+    sections:
+      - id: gestaltview_v2_06_voice-runtime_pipeline
+        title: "Voice Pipeline"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_06_voice-runtime_tts
+        title: "Speech Synthesis Paths"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_06_voice-runtime_requirements
+        title: "Runtime Requirements And Mode Flags"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+    related_pages:
+      - gestaltview_v2_04_billy-runtime
+      - gestaltview_v2_05_data-memory-retrieval
+      - gestaltview_v2_11_deployment-infrastructure
+
+  - id: gestaltview_v2_07_gate-package-builder
+    title: "GATE Package Builder"
+    filename: "07_gate-package-builder.md"
+    description: "Package draft contracts, wizard UX, checkout, and build jobs."
+    source_files:
+      - "shared/gate/schemas.ts"
+      - "shared/gate/engine.ts"
+      - "client/src/components/GATEEntrypointWizard.tsx"
+      - "client/src/lib/gateApi.ts"
+      - "server/gate/service.ts"
+      - "docs/CurrentState.md"
+    sections:
+      - id: gestaltview_v2_07_gate-package-builder_contract
+        title: "Draft Contract And Recommendation Engine"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_07_gate-package-builder_wizard
+        title: "Wizard UX And Draft Persistence"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_07_gate-package-builder_checkout
+        title: "Checkout, Orders, And Build Jobs"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+    related_pages:
+      - gestaltview_v2_03_frontend-auth-routing
+      - gestaltview_v2_10_operations-manifest-skills
+      - gestaltview_v2_12_current-state-and-glossary
+
+  - id: gestaltview_v2_08_agent-trainer
+    title: "Agent Trainer"
+    filename: "08_agent-trainer.md"
+    description: "Trainer schemas, embodiment logic, orchestration, and control plane."
+    source_files:
+      - "shared/agent-trainer/schemas.ts"
+      - "shared/agent-trainer/embodiment.ts"
+      - "shared/agent-trainer/compiler.ts"
+      - "server/agent-trainer/orchestrator.ts"
+      - "server/agent-trainer/study-sources.ts"
+      - "api/trainer/_helpers.ts"
+      - "api/trainer/runs/index.ts"
+      - "worker/trainer/main.ts"
+      - "client/src/features/agent-trainer/AgentTrainerPage.tsx"
+    sections:
+      - id: gestaltview_v2_08_agent-trainer_contract
+        title: "Training Contract And Embodiment Defaults"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_08_agent-trainer_pipeline
+        title: "Orchestration And Study Pack Assembly"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_08_agent-trainer_control-plane
+        title: "Control Plane, APIs, And Worker Loop"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+    related_pages:
+      - gestaltview_v2_03_frontend-auth-routing
+      - gestaltview_v2_05_data-memory-retrieval
+      - gestaltview_v2_10_operations-manifest-skills
+
+  - id: gestaltview_v2_09_diligence-tribunal
+    title: "Diligence And Tribunal"
+    filename: "09_diligence-tribunal.md"
+    description: "Evidence dataset loading, diligence UI, and tribunal scoring types."
+    source_files:
+      - "api/diligence.ts"
+      - "client/src/components/DiligenceExplorer/index.tsx"
+      - "client/src/components/DiligenceExplorer/useDiligenceData.ts"
+      - "shared/tribunal/types.ts"
+      - "README.md"
+    sections:
+      - id: gestaltview_v2_09_diligence-tribunal_data
+        title: "Diligence Data Loading"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_09_diligence-tribunal_ui
+        title: "Explorer UI Surface"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_09_diligence-tribunal_tribunal
+        title: "Tribunal Scoring Model"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+    related_pages:
+      - gestaltview_v2_03_frontend-auth-routing
+      - gestaltview_v2_04_billy-runtime
+      - gestaltview_v2_12_current-state-and-glossary
+
+  - id: gestaltview_v2_10_operations-manifest-skills
+    title: "Operations, Manifest, And Skills"
+    filename: "10_operations-manifest-skills.md"
+    description: "Repo CLI, health checks, manifest generation, and skills-aware operator context."
+    source_files:
+      - "scripts/gv.sh"
+      - "scripts/gv-health-check.sh"
+      - "scripts/generate_repo_manifest.py"
+      - "README.md"
+    sections:
+      - id: gestaltview_v2_10_operations-manifest-skills_cli
+        title: "Repo CLI And Context Refresh"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_10_operations-manifest-skills_health
+        title: "Health Checks And Readiness Gates"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_10_operations-manifest-skills_manifest
+        title: "Manifest Generation And Inventory"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+    related_pages:
+      - gestaltview_v2_02_development-environment
+      - gestaltview_v2_08_agent-trainer
+      - gestaltview_v2_11_deployment-infrastructure
+
+  - id: gestaltview_v2_11_deployment-infrastructure
+    title: "Deployment And Infrastructure"
+    filename: "11_deployment-infrastructure.md"
+    description: "Vite build config, Vercel deployment contract, and devcontainer bootstrap."
+    source_files:
+      - "vite.config.ts"
+      - "vercel.json"
+      - ".devcontainer/setup.sh"
+      - "package.json"
+      - "README.md"
+    sections:
+      - id: gestaltview_v2_11_deployment-infrastructure_build
+        title: "Build And Hosting Contract"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_11_deployment-infrastructure_proxy
+        title: "Aliases, Proxying, And Function Routing"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_11_deployment-infrastructure_bootstrap
+        title: "Devcontainer Bootstrap"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+    related_pages:
+      - gestaltview_v2_01_overview
+      - gestaltview_v2_02_development-environment
+      - gestaltview_v2_06_voice-runtime
+
+  - id: gestaltview_v2_12_current-state-and-glossary
+    title: "Current State And Glossary"
+    filename: "12_current-state-and-glossary.md"
+    description: "Recent operational deltas, ecosystem boundary, and repo-specific terminology."
+    source_files:
+      - "docs/CurrentState.md"
+      - "README.md"
+      - "shared/billy/runtime.ts"
+      - "shared/gate/schemas.ts"
+      - "shared/agent-trainer/schemas.ts"
+    sections:
+      - id: gestaltview_v2_12_current-state-and-glossary_recent
+        title: "Recent Operational Deltas"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_12_current-state-and-glossary_boundary
+        title: "Ecosystem Boundary"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+      - id: gestaltview_v2_12_current-state-and-glossary_terms
+        title: "Repo Vocabulary"
+        autogen: true
+        diagrams_needed: false
+        diagram_types: []
+    related_pages:
+      - gestaltview_v2_01_overview
+      - gestaltview_v2_05_data-memory-retrieval
+      - gestaltview_v2_07_gate-package-builder
+      - gestaltview_v2_08_agent-trainer
+
+notes:
+  - "This TOC is grounded in the live repo structure on commit 46a35cdd664bd3549ef8d41b793a1d21a51657d9."
+  - "Existing docs/wikis sibling-repo snapshots remain reference material and are not treated as source-of-truth for this repo."

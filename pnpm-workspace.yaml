@@ -1,0 +1,14 @@
+overrides:
+  follow-redirects: 1.16.0
+  '@hono/node-server': 1.19.13
+  '@opentelemetry/core': 2.8.0
+  minimatch: 10.2.5
+  undici: 6.27.0
+  form-data: 4.0.6
+  ajv: 8.20.0
+  smol-toml: 1.7.0
+  js-yaml: 5.2.1
+  path-to-regexp: 6.3.0
+
+ignoredBuiltDependencies:
+  - puppeteer

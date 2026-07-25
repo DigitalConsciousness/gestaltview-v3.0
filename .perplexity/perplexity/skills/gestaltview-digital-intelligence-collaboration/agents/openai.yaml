@@ -1,0 +1,4 @@
+interface:
+  display_name: "Digital Intelligence Collaboration"
+  short_description: "Operationalize Resonance Loop and Tribunal collaboration."
+  default_prompt: "Use this skill for multi-AI collaboration, Resonance Loop, Tribunal, and Bridgekeeper workflows."

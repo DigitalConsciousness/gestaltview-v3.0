@@ -1,0 +1,7 @@
+interface:
+  display_name: "Skills Keeper"
+  short_description: "Steward the skills library and keep catalog metadata aligned."
+  default_prompt: "Inspect the skills library, choose the canonical home for this change, and keep inventory metadata coherent."
+
+policy:
+  allow_implicit_invocation: true

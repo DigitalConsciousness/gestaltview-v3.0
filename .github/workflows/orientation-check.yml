@@ -1,0 +1,25 @@
+name: Orientation Check-in
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  orientation:
+    name: Orientation Packet Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate .orientation check-in
+        run: bash scripts/test-orientation-checkin.sh
+
+      - name: Validate manifest sync gate
+        run: bash scripts/test-manifest-sync.sh

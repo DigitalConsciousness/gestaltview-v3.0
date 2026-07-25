@@ -1,0 +1,4 @@
+interface:
+  display_name: "Diligence Packaging"
+  short_description: "Assemble investor and IP diligence materials."
+  default_prompt: "Ground diligence packs in repo artifacts and preserve traceability to source files."

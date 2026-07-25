@@ -1,0 +1,94 @@
+# ── Dependencies ──────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+# ── Build outputs (NEVER commit generated bundles) ────────────
+dist/
+build/
+out/
+.output/
+*.tsbuildinfo
+
+# ── Environment variables (NEVER commit secrets) ──────────────
+!.env.local
+!.env/
+! .env
+!.env.example 
+!.env.template
+
+# ── Vercel ────────────────────────────────────────────────────
+.vercel/
+vercel_logs/
+*.vercel.json.bak
+
+# ── Logs ──────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Test & coverage output ────────────────────────────────────
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+interpretation_ui/
+
+# ── Python artifacts ──────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.Python
+*.egg-info/
+dist/
+.eggs/
+venv/
+.venv/
+
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ── OS noise ──────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ── Editor / IDE ──────────────────────────────────────────────
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ── Generated / cached artifacts ──────────────────────────────
+*.tgz
+*.tar.gz
+*.zip
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+.turbo/
+
+# ── Supabase local dev ────────────────────────────────────────
+.supabase/
+supabase/.branches/
+supabase/.temp/
+.vercel
+
+node_modules
+node_modules
+generated/prisma
+prisma
+node_modules
+node_modules
+

@@ -1,0 +1,4 @@
+interface:
+  display_name: "GestaltView App Runtime"
+  short_description: "Build and maintain the live app and UI surfaces."
+  default_prompt: "Use this skill for GestaltView UI, routes, runtime architecture, and deployment-aware implementation."

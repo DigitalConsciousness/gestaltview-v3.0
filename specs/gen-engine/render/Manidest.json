@@ -1,0 +1,20 @@
+{
+  "name": "gestaltview-rendering-v0",
+  "description": "Initial rendering pipeline for GestaltView including stub renderers and API integration.",
+  "version": "0.1.0",
+  "files": [
+    "SPEC_Rendering_Integration.md",
+    "CODEX_APPLY_PROMPT.md",
+    "README.md",
+    "shared/rendering/types.ts",
+    "shared/rendering/markdown.ts",
+    "shared/rendering/pdf.ts",
+    "shared/rendering/slides.ts",
+    "shared/rendering/audio.ts",
+    "shared/rendering/mindmap.ts",
+    "shared/rendering/index.ts",
+    "api/render/decide.ts",
+    "client/src/lib/renderingClient.ts",
+    "tests/rendering/decide.test.ts"
+  ]
+}

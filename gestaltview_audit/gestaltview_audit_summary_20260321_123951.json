@@ -1,0 +1,39 @@
+{
+  "crawl_timestamp": "20260321_123951",
+  "base_url": "https://gestaltview-v2-indol.vercel.app",
+  "pages_crawled": 19,
+  "pages_with_issues": 0,
+  "total_issues_found": 0,
+  "issue_breakdown": {
+    "seo": 0,
+    "aria_accessibility": 0,
+    "readability": 0,
+    "motion": 0,
+    "gv_terms": 0,
+    "http_errors": 0
+  },
+  "all_issues": [],
+  "pages_without_structured_data": [],
+  "pages_missing_h1": [
+    "https://gestaltview-v2-indol.vercel.app",
+    "https://gestaltview-v2-indol.vercel.app/app/engine",
+    "https://gestaltview-v2-indol.vercel.app/app/orientation",
+    "https://gestaltview-v2-indol.vercel.app/app/brain-sparks",
+    "https://gestaltview-v2-indol.vercel.app/app/adhd-power-up",
+    "https://gestaltview-v2-indol.vercel.app/app/symbiocoder",
+    "https://gestaltview-v2-indol.vercel.app/app/musical-dna",
+    "https://gestaltview-v2-indol.vercel.app/app/museum",
+    "https://gestaltview-v2-indol.vercel.app/app/addiction-recovery",
+    "https://gestaltview-v2-indol.vercel.app/app/alzheimers-legacy",
+    "https://gestaltview-v2-indol.vercel.app/app/ethics-framework",
+    "https://gestaltview-v2-indol.vercel.app/app/collaboration-proof",
+    "https://gestaltview-v2-indol.vercel.app/app/orientation-slideshow",
+    "https://gestaltview-v2-indol.vercel.app/resonance-loop",
+    "https://gestaltview-v2-indol.vercel.app/musical-dna",
+    "https://gestaltview-v2-indol.vercel.app/the-human",
+    "https://gestaltview-v2-indol.vercel.app/contact",
+    "https://gestaltview-v2-indol.vercel.app/services",
+    "https://gestaltview-v2-indol.vercel.app/evidence"
+  ],
+  "pages_missing_canonical": []
+}

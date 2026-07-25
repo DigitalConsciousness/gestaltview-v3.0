@@ -1,0 +1,19 @@
+{
+  "template_version": "1.0",
+  "collaborator_type": "human",
+  "name": "",
+  "role": "",
+  "scope": [],
+  "source_of_truth_read": [],
+  "working_preferences": {
+    "communication": "",
+    "handoff_style": "",
+    "evidence_threshold": ""
+  },
+  "current_assignment": {
+    "objective": "",
+    "known_facts": [],
+    "open_questions": [],
+    "risks": []
+  }
+}

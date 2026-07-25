@@ -1,0 +1,71 @@
+:root {
+  --gv-bg-void: #05070a;
+  --gv-panel-base: rgba(7, 10, 15, 0.84);
+  --gv-panel-strong: rgba(10, 13, 20, 0.92);
+  --gv-panel-artifact: rgba(4, 7, 12, 0.94);
+  --gv-panel-critical: rgba(34, 7, 19, 0.88);
+  --gv-glow-cyan: 0 0 25px rgba(0, 229, 255, 0.25);
+  --gv-glow-purple: 0 0 25px rgba(176, 38, 255, 0.25);
+  --gv-glow-rose: 0 0 25px rgba(255, 0, 127, 0.22);
+  --gv-border-glass: rgba(255, 255, 255, 0.12);
+  --gv-border-active: rgba(0, 229, 255, 0.32);
+  --gv-border-artifact: rgba(176, 38, 255, 0.32);
+  --gv-motion-fast: 180ms;
+  --gv-motion-medium: 360ms;
+  --gv-motion-slow: 800ms;
+}
+
+.operation-render-shell {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(0, 229, 255, 0.12), transparent 30rem),
+    radial-gradient(circle at 86% 18%, rgba(176, 38, 255, 0.12), transparent 28rem),
+    linear-gradient(180deg, #05070a 0%, #07101a 48%, #05070a 100%);
+}
+
+.operation-render-surface {
+  border: 1px solid var(--gv-border-glass);
+  background: var(--gv-panel-base);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.14), 0 24px 80px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(18px);
+}
+
+.operation-render-surface-active {
+  border-color: var(--gv-border-active);
+  background: var(--gv-panel-strong);
+  box-shadow: var(--gv-glow-cyan), inset 0 1px 1px rgba(255, 255, 255, 0.16);
+}
+
+.operation-render-surface-artifact {
+  border-color: var(--gv-border-artifact);
+  background: var(--gv-panel-artifact);
+  box-shadow: var(--gv-glow-purple), inset 0 0 32px rgba(176, 38, 255, 0.08);
+}
+
+.operation-render-surface-critical {
+  border-color: rgba(255, 45, 85, 0.42);
+  background: var(--gv-panel-critical);
+  box-shadow: var(--gv-glow-rose), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+}
+
+.operation-render-focus:focus-visible {
+  outline: 2px solid rgba(0, 229, 255, 0.92);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(0, 229, 255, 0.12);
+}
+
+.operation-render-equation-field {
+  background-image:
+    linear-gradient(90deg, rgba(0, 229, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(rgba(176, 38, 255, 0.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(circle at center, black, transparent 76%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

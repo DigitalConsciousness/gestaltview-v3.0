@@ -1,0 +1,4 @@
+interface:
+  display_name: "Timeline & Evidence"
+  short_description: "Ground claims in dates, proof, and audit trails."
+  default_prompt: "Use this skill for timelines, proof chains, blockchain evidence, and diligence narratives."

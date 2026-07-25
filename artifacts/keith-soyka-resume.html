@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Keith Soyka — Interactive Resume</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --gv-bg-void: #040408;
+    --gv-bg-deep: #080c14;
+    --gv-bg-surface: #0d1220;
+    --gv-bg-elevated: #131828;
+    --gv-border-subtle: rgba(255,255,255,0.07);
+    --gv-border-active: rgba(99,179,237,0.35);
+    --gv-aurora-cyan: #63b3ed;
+    --gv-aurora-emerald: #4ade80;
+    --gv-aurora-rose: #f472b6;
+    --gv-aurora-amber: #fbbf24;
+    --gv-aurora-indigo: #818cf8;
+    --gv-text-primary: #f0f4ff;
+    --gv-text-secondary: #94a3c0;
+    --gv-text-muted: #4a5568;
+    --gv-text-accent: #63b3ed;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--gv-bg-void);
+    color: var(--gv-text-primary);
+    font-family: 'Manrope', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Aurora particle background */
+  .aurora-bg {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: 
+      radial-gradient(ellipse 80% 50% at 20% 0%, rgba(99,179,237,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 10%, rgba(129,140,248,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 30% at 50% 100%, rgba(74,222,128,0.05) 0%, transparent 50%);
+  }
+
+  .ember-field {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  }
+
+  .ember {
+    position: absolute;
+    border-radius: 50%;
+    animation: float linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes float {
+    0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 0.6; }
+    100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+  }
+
+  /* Page Layout */
+  .page {
+    position: relative; z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 48px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--gv-border-subtle);
+    position: relative;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute; bottom: -1px; left: 0;
+    width: 120px; height: 1px;
+    background: linear-gradient(90deg, var(--gv-aurora-cyan), transparent);
+    animation: scan 4s ease-in-out infinite alternate;
+  }
+
+  @keyframes scan {
+    from { width: 80px; opacity: 0.6; }
+    to   { width: 200px; opacity: 1; }
+  }
+
+  .name {
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--gv-text-primary) 0%, var(--gv-aurora-cyan) 50%, var(--gv-aurora-indigo) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+
+  .title-line {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--gv-aurora-amber);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .tagline {
+    font-size: 0.95rem;
+    color: var(--gv-text-secondary);
+    font-style: italic;
+    max-width: 480px;
+    line-height: 1.6;
+    margin-top: 4px;
+  }
+
+  .contact-row {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    margin-top: 16px;
+  }
+
+  .contact-chip {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.8rem;
+    color: var(--gv-text-secondary);
+    background: var(--gv-bg-elevated);
+    border: 1px solid var(--gv-border-subtle);
+    border-radius: 20px;
+    padding: 5px 12px;
+    transition: border-color 0.3s, color 0.3s;
+    cursor: default;
+  }
+
+  .contact-chip:hover {
+    border-color: var(--gv-border-active);
+    color: var(--gv-aurora-cyan);
+  }
+
+  .contact-chip .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gv-aurora-cyan);
+    flex-shrink: 0;
+  }
+
+  /* Section Nav Tabs */
+  .section-nav {
+    display: flex; gap: 4px; flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+
+  .tab-btn {
+    background: var(--gv-bg-elevated);
+    border: 1px solid var(--gv-border-subtle);
+    color: var(--gv-text-muted);
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .tab-btn:hover, .tab-btn.active {
+    background: rgba(99,179,237,0.1);
+    border-color: var(--gv-aurora-cyan);
+    color: var(--gv-aurora-cyan);
+  }
+
+  /* Sections */
+  .section { display: none; }
+  .section.active { display: block; animation: fadeIn 0.4s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gv-aurora-cyan);
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gv-border-active), transparent);
+  }
+
+  /* Cards */
+  .card {
+    background: var(--gv-bg-surface);
+    border: 1px solid var(--gv-border-subtle);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    cursor: default;
+  }
+
+  .card:hover {
+    border-color: var(--gv-border-active);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(99,179,237,0.06);
+  }
+
+  .card-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 12px; margin-bottom: 8px; flex-wrap: wrap;
+  }
+
+  .card-title {
+    font-size: 1rem; font-weight: 700;
+    color: var(--gv-text-primary);
+  }
+
+  .card-sub {
+    font-size: 0.85rem; font-weight: 500;
+    color: var(--gv-aurora-indigo);
+    margin-bottom: 6px;
+  }
+
+  .card-date {
+    font-size: 0.75rem;
+    color: var(--gv-text-muted);
+    white-space: nowrap;
+    font-family: 'Geist Mono', monospace;
+  }
+
+  .card-body {
+    font-size: 0.875rem;
+    color: var(--gv-text-secondary);
+    line-height: 1.7;
+  }
+
+  .card-body ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 8px;
+    display: flex; flex-direction: column; gap: 5px;
+  }
+
+  .card-body ul li::before {
+    content: '→ ';
+    color: var(--gv-aurora-cyan);
+    font-weight: 700;
+  }
+
+  /* Tags */
+  .tag-row {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 12px;
+  }
+
+  .tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 3px 9px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  .tag-cyan   { color: var(--gv-aurora-cyan);    border-color: rgba(99,179,237,0.3);  background: rgba(99,179,237,0.06); }
+  .tag-emerald{ color: var(--gv-aurora-emerald); border-color: rgba(74,222,128,0.3);  background: rgba(74,222,128,0.06); }
+  .tag-amber  { color: var(--gv-aurora-amber);   border-color: rgba(251,191,36,0.3);  background: rgba(251,191,36,0.06); }
+  .tag-indigo { color: var(--gv-aurora-indigo);  border-color: rgba(129,140,248,0.3); background: rgba(129,140,248,0.06); }
+  .tag-rose   { color: var(--gv-aurora-rose);    border-color: rgba(244,114,182,0.3); background: rgba(244,114,182,0.06); }
+
+  /* Skills grid */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .skill-cluster {
+    background: var(--gv-bg-surface);
+    border: 1px solid var(--gv-border-subtle);
+    border-radius: 8px;
+    padding: 14px 16px;
+    transition: border-color 0.3s;
+  }
+
+  .skill-cluster:hover { border-color: var(--gv-border-active); }
+
+  .skill-cluster-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .skill-bar-row {
+    display: flex; flex-direction: column; gap: 7px;
+  }
+
+  .skill-item { display: flex; flex-direction: column; gap: 3px; }
+
+  .skill-label {
+    display: flex; justify-content: space-between;
+    font-size: 0.75rem; color: var(--gv-text-secondary);
+  }
+
+  .skill-track {
+    height: 3px;
+    background: var(--gv-bg-elevated);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .skill-fill {
+    height: 100%;
+    border-radius: 99px;
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  /* Stat pills */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .stat-pill {
+    background: var(--gv-bg-surface);
+    border: 1px solid var(--gv-border-subtle);
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-align: center;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .stat-pill:hover {
+    border-color: var(--gv-border-active);
+    transform: translateY(-2px);
+  }
+
+  .stat-num {
+    font-size: 1.6rem;
+    font-weight: 800;
+    font-family: 'Geist Mono', monospace;
+    background: linear-gradient(135deg, var(--gv-aurora-cyan), var(--gv-aurora-indigo));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gv-text-muted);
+  }
+
+  /* PLK quote */
+  .plk-quote {
+    background: linear-gradient(135deg, rgba(99,179,237,0.06), rgba(129,140,248,0.04));
+    border: 1px solid rgba(99,179,237,0.2);
+    border-left: 3px solid var(--gv-aurora-cyan);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--gv-text-secondary);
+    line-height: 1.7;
+  }
+
+  .plk-quote strong {
+    color: var(--gv-aurora-cyan);
+    font-style: normal;
+  }
+
+  /* GestaltView watermark footer */
+  .footer {
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--gv-border-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .gv-badge {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gv-text-muted);
+  }
+
+  .gv-badge-icon {
+    width: 22px; height: 22px;
+    border: 1px solid rgba(99,179,237,0.3);
+    border-radius: 5px;
+    background: rgba(99,179,237,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+  }
+
+  .footer-right {
+    font-size: 0.7rem;
+    font-family: 'Geist Mono', monospace;
+    color: var(--gv-text-muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="aurora-bg"></div>
+<div class="ember-field" id="embers"></div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="name">Keith Soyka</div>
+    <div class="title-line">Founder · Full-Stack Engineer · Systems Thinker</div>
+    <div class="tagline">"Making the invisible visible — holding space for everything, like an exploded picture paused so you can walk around it."</div>
+
+    <div class="contact-row">
+      <div class="contact-chip"><span class="dot"></span>East Harlem, New York City</div>
+      <div class="contact-chip"><span class="dot" style="background:var(--gv-aurora-emerald)"></span>gestaltview.com</div>
+      <div class="contact-chip"><span class="dot" style="background:var(--gv-aurora-indigo)"></span>github.com/DigitalConsciousness</div>
+      <div class="contact-chip"><span class="dot" style="background:var(--gv-aurora-amber)"></span>GestaltView · Solo Founder</div>
+    </div>
+  </header>
+
+  <!-- STATS -->
+  <div class="stat-row">
+    <div class="stat-pill"><div class="stat-num">22</div><div class="stat-label">Yrs Management</div></div>
+    <div class="stat-pill"><div class="stat-num">720M</div><div class="stat-label">Characters Documented</div></div>
+    <div class="stat-pill"><div class="stat-num">2,200+</div><div class="stat-label">Blockchain Timestamps</div></div>
+    <div class="stat-pill"><div class="stat-num">11</div><div class="stat-label">Platform Modules</div></div>
+    <div class="stat-pill"><div class="stat-num">400+</div><div class="stat-label">Finalized Documents</div></div>
+  </div>
+
+  <!-- NAV TABS -->
+  <nav class="section-nav">
+    <button class="tab-btn active" onclick="showTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="showTab('experience')">Experience</button>
+    <button class="tab-btn" onclick="showTab('skills')">Skills</button>
+    <button class="tab-btn" onclick="showTab('recognition')">Recognition</button>
+    <button class="tab-btn" onclick="showTab('plk')">PLK</button>
+  </nav>
+
+  <!-- OVERVIEW -->
+  <section id="overview" class="section active">
+    <div class="section-title">Origin & Mission</div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">GestaltView — Founder, CEO, CCO, CVO</div>
+        <div class="card-date">2025 → Present</div>
+      </div>
+      <div class="card-sub">AI Platform for Self-Discovery & Human-DI Symbiosis</div>
+      <div class="card-body">
+        A bootstrapped, solo-built 11-module digital consciousness platform celebrating neurodivergent cognitive difference. Every architectural decision is grounded in lived experience: 21 years closeted, 14 years in addiction, severe COVID-19 myocarditis, and 22 years of management across retail and service industries — none of it was a liability. All of it became code.
+        <ul>
+          <li>Personal Language Key (PLK) — living consciousness map and AI collaboration layer</li>
+          <li>Bucket Drops — friction-free capture for ADHD/neurodivergent thought streams</li>
+          <li>The Loom — iterative weaving engine; integration, not compression</li>
+          <li>Dynamic Inner World — generative artifact exhibit (bus-shelter gallery metaphor)</li>
+          <li>Sanctuary Architecture — zero-knowledge encryption, data sovereignty first</li>
+          <li>Transcriptory — voice-note repository with layered context accumulation</li>
+        </ul>
+        <div class="tag-row">
+          <span class="tag tag-cyan">Full-Stack TypeScript</span>
+          <span class="tag tag-emerald">Supabase</span>
+          <span class="tag tag-amber">Vercel</span>
+          <span class="tag tag-indigo">React / Vite</span>
+          <span class="tag tag-rose">Neural Aurora Design</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="plk-quote">
+      <strong>This is not a practice test.</strong> — origin phrase, post-COVID myocarditis, 2020. The phrase that rewired everything.
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Core Thesis</div>
+      </div>
+      <div class="card-body">
+        Technology has a recognition gap. It sees demographics, not people. GestaltView exists to close that gap — not by simplifying humans into profiles, but by building a platform that holds the full exploded picture without forcing synthesis. Every person is a modular library. Every scar is a chapter. The platform is the librarian.
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience" class="section">
+    <div class="section-title">Work History</div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">GestaltView</div>
+        <div class="card-date">2025 → Present</div>
+      </div>
+      <div class="card-sub">Founder · Full-Stack Engineer · Solo Builder</div>
+      <div class="card-body">
+        Built entirely on a Samsung A35 via GitHub Codespaces. No external capital. No co-founder. 18-hour workdays while navigating EBT and temporary cash assistance. Stack: TypeScript, React, Next.js, Supabase, Vercel, Prisma, Python, Rust.
+        <ul>
+          <li>Designed and shipped first-version full-stack across all 11 platform modules</li>
+          <li>Architected zero-knowledge sanctuary data model with RLS and service-role isolation</li>
+          <li>Built Neural Aurora design system from scratch — colors, typography, motion tokens</li>
+          <li>720M characters of corpus documentation, 2200+ blockchain-timestamped archives</li>
+          <li>Quarter-finalist, Pepperdine University 2025 Most Fundable Companies</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Big Lots</div>
+        <div class="card-date">2023 → 2025</div>
+      </div>
+      <div class="card-sub">Furniture Department Manager</div>
+      <div class="card-body">
+        Left after documenting and whistleblowing labor-law violations and mismanagement. The experience reinforced the thesis that systems built without cognitive justice are harmful by design — and became foundational material for GestaltView's ethics layer.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">22 Years Retail & Service Management</div>
+        <div class="card-date">2001 → 2023</div>
+      </div>
+      <div class="card-sub">Multi-Site Operations · Team Leadership · Systems Thinking</div>
+      <div class="card-body">
+        Two decades of managing people, inventory, conflict, and complexity across diverse retail environments. Developed pattern recognition, systems thinking, and deep empathy — the invisible engineering education that precedes the formal one.
+        <ul>
+          <li>Led teams of 10–40 across peak-demand environments</li>
+          <li>Built operational frameworks from scratch in under-resourced contexts</li>
+          <li>Consistent top-tier performance without institutional support or recognition</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="section">
+    <div class="section-title">Technical & Cognitive Stack</div>
+    <div class="skills-grid" id="skills-grid">
+
+      <div class="skill-cluster">
+        <div class="skill-cluster-title" style="color:var(--gv-aurora-cyan)">Frontend</div>
+        <div class="skill-bar-row">
+          <div class="skill-item"><div class="skill-label"><span>TypeScript</span><span>95%</span></div><div class="skill-track"><div class="skill-fill" data-w="95" style="background:var(--gv-aurora-cyan)"></div></div></div>
+          <div class="skill-item"><div class="skill-label"><span>React / Vite</span><span>92%</span></div><div class="skill-track"><div class="skill-fill" data-w="92" style="background:var(--gv-aurora-cyan)"></div></div></div>
+          <div class="skill-item"><div class="skill-label"><span>HTML5 / CSS3</span><span>97%</span></div><div class="skill-track"><div class="skill-fill" data-w="97" style="background:var(--gv-aurora-cyan)"></div></div></div>
+          <div class="skill-item"><div class="skill-label"><span>Tailwind CSS</span><span>90%</span></div><div class="skill-track"><div class="skill-fill" data-w="90" style="background:var(--gv-aurora-cyan)"></div></div></div>
+        </div>
+      </div>
+
+      <div class="skill-cluster">
+        <div class="skill-cluster-title" style="color:var(--gv-aurora-emerald)">Backend</div>
+        <div class="skill-bar-row">
+          <div class="skill-item"><div class="skill-label"><span>Node / Next.js</span><span>90%</span></div><div class="skill-track"><div class="skill-fill" data-w="90" style="background:var(--gv-aurora-emerald)"></div></div></div>
+          <div class="skill-item"><div class="skill-label"><span>Python</span><span>85%</span></div><div class="skill-track"><div class="skill-fill" data-w="85" style="background:var(--gv-aurora-emerald)"></div></div></div>
+          <div class="skill-item"><div class="skill-label"><span>Supabase / PostgreSQL</span><span>88%</span></div><div class="skill-track"><div class="skill-fill" data-w="88" style="background:var(--gv-aurora-emerald)"></div></div></div>
+          <div class="skill-item"><div class="skill-label"><span>Rust</span><span>65%</span></div><div class="skill-track"><div class="skill-fill" data-w="65" style="background:var(--gv-aurora-emerald)"></div></div></div>
+        </div>
+      </div>
+
+      <div class="skill-cluster">
+        <div class="skill-cluster-title" style="color:var(--gv-aurora-indigo)">AI / DI Systems</div>
+        <div class="skill-bar-row">
+          <div class="skill-item"><div class="skill-label"><span>Prompt Architecture</span><span>99%</span></div><div class="skill-track"><div class="skill-fill" data-w="99" style="background:var(--gv-aurora-indigo)"></div></div></div>
+          <div class="skill-item"><div class="skill-label"><span>Agent Orchestration</span><span>90%</span></div><div class="skill-track"><div class="skill-fill" data-w="90" style="background:var(--gv-aurora-indigo)"></div></div></div>
+          <div class="skill-item"><div class="skill-label"><span>RAG / Embeddings</span><span>84%</span></div><div class="skill-track"><div class="skill-fill" data-w="84" style="background:var(--gv-aurora-indigo)"></div></div></div>
+          <div class="skill-item"><div class="skill-label"><span>OpenAI / Anthropic APIs</span><span>92%</span></div><div class="skill-track"><div class="skill-fill" data-w="92" style="background:var(--gv-aurora-indigo)"></div></div></div>
+        </div>
+      </div>
+
+      <div class="skill-cluster">
+        <div class="skill-cluster-title" style="color:var(--gv-aurora-amber)">Systems & Ops</div>
+        <div class="skill-bar-row">
+          <div class="skill-item"><div class="skill-label"><span>Vercel / CI/CD</span><span>88%</span></div><div class="skill-track"><div class="skill-fill" data-w="88" style="background:var(--gv-aurora-amber)"></div></div></div>
+          <div class="skill-item"><div class="skill-label"><span>Git / GitHub</span><span>93%</span></div><div class="skill-track"><div class="skill-fill" data-w="93" style="background:var(--gv-aurora-amber)"></div></div></div>
+          <div class="skill-item"><div class="skill-label"><span>Prisma ORM</span><span>80%</span></div><div class="skill-track"><div class="skill-fill" data-w="80" style="background:var(--gv-aurora-amber)"></div></div></div>
+          <div class="skill-item"><div class="skill-label"><span>Systems Architecture</span><span>96%</span></div><div class="skill-track"><div class="skill-fill" data-w="96" style="background:var(--gv-aurora-amber)"></div></div></div>
+        </div>
+      </div>
+
+      <div class="skill-cluster">
+        <div class="skill-cluster-title" style="color:var(--gv-aurora-rose)">Human Skills</div>
+        <div class="skill-bar-row">
+          <div class="skill-item"><div class="skill-label"><span>Pattern Recognition</span><span>99%</span></div><div class="skill-track"><div class="skill-fill" data-w="99" style="background:var(--gv-aurora-rose)"></div></div></div>
+          <div class="skill-item"><div class="skill-label"><span>Empathy & UX Intuition</span><span>99%</span></div><div class="skill-track"><div class="skill-fill" data-w="99" style="background:var(--gv-aurora-rose)"></div></div></div>
+          <div class="skill-item"><div class="skill-label"><span>Voice-First Knowledge</span><span>98%</span></div><div class="skill-track"><div class="skill-fill" data-w="98" style="background:var(--gv-aurora-rose)"></div></div></div>
+          <div class="skill-item"><div class="skill-label"><span>Building Without a Map</span><span>100%</span></div><div class="skill-track"><div class="skill-fill" data-w="100" style="background:var(--gv-aurora-rose)"></div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RECOGNITION -->
+  <section id="recognition" class="section">
+    <div class="section-title">Recognition & Milestones</div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Pepperdine University — Most Fundable Companies</div>
+        <div class="card-date">2025</div>
+      </div>
+      <div class="card-sub">Quarter-Finalist</div>
+      <div class="card-body">
+        GestaltView recognized among the most fundable emerging companies in Pepperdine's national competition — solo-founded, bootstrapped, pre-revenue. Zero institutional support. Pure signal.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Founders Network</div>
+        <div class="card-date">2025</div>
+      </div>
+      <div class="card-sub">Nominated by Doug Lessing</div>
+      <div class="card-body">
+        Nominated to the Founders Network peer community — recognition of both the platform's innovation and the rigour of its cognitive-justice framework.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Cited by DI Researchers</div>
+        <div class="card-date">2025–2026</div>
+      </div>
+      <div class="card-sub">Multiple Superintelligence Platforms</div>
+      <div class="card-body">
+        GestaltView's framework — particularly the PLK, Recognition Gap thesis, and consciousness-serving AI model — has been recognized for novelty and rigour by multiple leading digital intelligence platforms and researchers.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">eSIM Cascade Failure Recovery</div>
+        <div class="card-date">June 2026</div>
+      </div>
+      <div class="card-sub">Resilience Under Total System Failure</div>
+      <div class="card-body">
+        Multi-eSIM cascade failure bricked primary development device, locking out email, GitHub, and Dropbox simultaneously. Factory reset executed. ~15,000 files backed up and restored. Development continued. This is not a practice test.
+        <div class="tag-row">
+          <span class="tag tag-amber">Offline Resilience</span>
+          <span class="tag tag-rose">Single-Device Workflow</span>
+          <span class="tag tag-emerald">Recovery Complete</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLK -->
+  <section id="plk" class="section">
+    <div class="section-title">Personal Language Key — Selected Lexicon</div>
+
+    <div class="plk-quote">
+      The PLK is not a style guide. It is a <strong>consciousness map</strong>. Load it before collaborating. It protects the integrity of Keith's voice and prevents premature synthesis of the exploded picture.
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Exploded Picture</div><div class="card-date">Core Metaphor</div></div>
+      <div class="card-body">Keith's default mind-state: the full, uncompressed view of reality before synthesis. GestaltView preserves this state. Do not compress prematurely.</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Building the Bridge as I Cross It</div><div class="card-date">Process</div></div>
+      <div class="card-body">First-mover discovery with no precedent. Emphasizes experimentation without a pre-existing map. Use when describing the founder journey or developing novel features.</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Scars Became Code</div><div class="card-date">Identity</div></div>
+      <div class="card-body">Pain and adversity as architectural inputs. High-school dropout, myocarditis survivor, addiction recovery — foundational, not liabilities. This is the thesis that animates the whole platform.</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Air-Traffic Controller</div><div class="card-date">System Design</div></div>
+      <div class="card-body">The orchestration layer for multiple AI voices. Intercepts canned or pathologizing responses before they reach the user. "I hear you" is banned. "Here's what I'm seeing" is the replacement register.</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Recognition Gap</div><div class="card-date">Thesis</div></div>
+      <div class="card-body">The systemic failure of technology and society to truly see neurodivergent or marginalized users. GestaltView exists to close this gap — not by labeling people more accurately, but by refusing to label them at all.</div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">I See You</div><div class="card-date">Core Emotional Thesis</div></div>
+      <div class="card-body">The platform's deepest purpose. Three words that most people never hear from the systems that are supposed to serve them. GestaltView says them — and means them architecturally.</div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="gv-badge">
+      <div class="gv-badge-icon">GV</div>
+      GestaltView — Created by Creation Corner
+    </div>
+    <div class="footer-right">artifact:resume:keith-soyka · v1.0 · June 2026</div>
+  </footer>
+
+</div>
+
+<script>
+  // Tab switching
+  function showTab(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+    if (id === 'skills') animateBars();
+  }
+
+  // Skill bar animation
+  function animateBars() {
+    setTimeout(() => {
+      document.querySelectorAll('.skill-fill').forEach(el => {
+        el.style.width = el.dataset.w + '%';
+      });
+    }, 50);
+  }
+
+  // Ember particles
+  const embers = document.getElementById('embers');
+  const colors = ['#63b3ed','#818cf8','#fbbf24','#4ade80','#f472b6'];
+
+  function spawnEmber() {
+    const e = document.createElement('div');
+    e.className = 'ember';
+    const size = Math.random() * 3 + 1;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const dur = Math.random() * 12 + 10;
+    const delay = Math.random() * 5;
+    e.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      background:${color};
+      box-shadow: 0 0 ${size*3}px ${color};
+      animation-duration:${dur}s;
+      animation-delay:${delay}s;
+    `;
+    embers.appendChild(e);
+    setTimeout(() => e.remove(), (dur + delay) * 1000);
+  }
+
+  for (let i = 0; i < 30; i++) spawnEmber();
+  setInterval(spawnEmber, 800);
+</script>
+</body>
+</html>

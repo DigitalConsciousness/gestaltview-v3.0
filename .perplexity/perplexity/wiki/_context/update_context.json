@@ -1,0 +1,146 @@
+{
+  "update_mode": "incremental",
+  "base_commit": "46a35cdd664bd3549ef8d41b793a1d21a51657d9",
+  "target_commit": "46a35cdd664bd3549ef8d41b793a1d21a51657d9",
+  "commit_range": "46a35cd..46a35cd",
+  "toc_file": "/workspaces/gestaltview-v2/docs/wiki/toc.yaml",
+  "toc_updated_at": "2026-04-09",
+  "changed_files": [],
+  "sections_to_update": [],
+  "new_source_files": [],
+  "deleted_source_files": [],
+  "docs_metadata": {
+    "04_billy-runtime.md": {
+      "file": "04_billy-runtime.md",
+      "path": "/workspaces/gestaltview-v2/docs/wiki/04_billy-runtime.md",
+      "autogen_sections": [
+        "gestaltview_v2_04_billy-runtime_prompting",
+        "gestaltview_v2_04_billy-runtime_routing",
+        "gestaltview_v2_04_billy-runtime_api"
+      ],
+      "exists": true
+    },
+    "08_agent-trainer.md": {
+      "file": "08_agent-trainer.md",
+      "path": "/workspaces/gestaltview-v2/docs/wiki/08_agent-trainer.md",
+      "autogen_sections": [
+        "gestaltview_v2_08_agent-trainer_contract",
+        "gestaltview_v2_08_agent-trainer_pipeline",
+        "gestaltview_v2_08_agent-trainer_control-plane"
+      ],
+      "exists": true
+    },
+    "02_development-environment.md": {
+      "file": "02_development-environment.md",
+      "path": "/workspaces/gestaltview-v2/docs/wiki/02_development-environment.md",
+      "autogen_sections": [
+        "gestaltview_v2_02_development-environment_bootstrap",
+        "gestaltview_v2_02_development-environment_commands",
+        "gestaltview_v2_02_development-environment_proxy"
+      ],
+      "exists": true
+    },
+    "05_data-memory-retrieval.md": {
+      "file": "05_data-memory-retrieval.md",
+      "path": "/workspaces/gestaltview-v2/docs/wiki/05_data-memory-retrieval.md",
+      "autogen_sections": [
+        "gestaltview_v2_05_data-memory-retrieval_supabase",
+        "gestaltview_v2_05_data-memory-retrieval_memory",
+        "gestaltview_v2_05_data-memory-retrieval_session"
+      ],
+      "exists": true
+    },
+    "01_overview.md": {
+      "file": "01_overview.md",
+      "path": "/workspaces/gestaltview-v2/docs/wiki/01_overview.md",
+      "autogen_sections": [
+        "gestaltview_v2_01_overview_scope",
+        "gestaltview_v2_01_overview_runtime-map",
+        "gestaltview_v2_01_overview_doc-rule"
+      ],
+      "exists": true
+    },
+    "11_deployment-infrastructure.md": {
+      "file": "11_deployment-infrastructure.md",
+      "path": "/workspaces/gestaltview-v2/docs/wiki/11_deployment-infrastructure.md",
+      "autogen_sections": [
+        "gestaltview_v2_11_deployment-infrastructure_build",
+        "gestaltview_v2_11_deployment-infrastructure_proxy",
+        "gestaltview_v2_11_deployment-infrastructure_bootstrap"
+      ],
+      "exists": true
+    },
+    "06_voice-runtime.md": {
+      "file": "06_voice-runtime.md",
+      "path": "/workspaces/gestaltview-v2/docs/wiki/06_voice-runtime.md",
+      "autogen_sections": [
+        "gestaltview_v2_06_voice-runtime_pipeline",
+        "gestaltview_v2_06_voice-runtime_tts",
+        "gestaltview_v2_06_voice-runtime_requirements"
+      ],
+      "exists": true
+    },
+    "12_current-state-and-glossary.md": {
+      "file": "12_current-state-and-glossary.md",
+      "path": "/workspaces/gestaltview-v2/docs/wiki/12_current-state-and-glossary.md",
+      "autogen_sections": [
+        "gestaltview_v2_12_current-state-and-glossary_recent",
+        "gestaltview_v2_12_current-state-and-glossary_boundary",
+        "gestaltview_v2_12_current-state-and-glossary_terms"
+      ],
+      "exists": true
+    },
+    "10_operations-manifest-skills.md": {
+      "file": "10_operations-manifest-skills.md",
+      "path": "/workspaces/gestaltview-v2/docs/wiki/10_operations-manifest-skills.md",
+      "autogen_sections": [
+        "gestaltview_v2_10_operations-manifest-skills_cli",
+        "gestaltview_v2_10_operations-manifest-skills_health",
+        "gestaltview_v2_10_operations-manifest-skills_manifest"
+      ],
+      "exists": true
+    },
+    "03_frontend-auth-routing.md": {
+      "file": "03_frontend-auth-routing.md",
+      "path": "/workspaces/gestaltview-v2/docs/wiki/03_frontend-auth-routing.md",
+      "autogen_sections": [
+        "gestaltview_v2_03_frontend-auth-routing_shell",
+        "gestaltview_v2_03_frontend-auth-routing_auth",
+        "gestaltview_v2_03_frontend-auth-routing_control"
+      ],
+      "exists": true
+    },
+    "09_diligence-tribunal.md": {
+      "file": "09_diligence-tribunal.md",
+      "path": "/workspaces/gestaltview-v2/docs/wiki/09_diligence-tribunal.md",
+      "autogen_sections": [
+        "gestaltview_v2_09_diligence-tribunal_data",
+        "gestaltview_v2_09_diligence-tribunal_ui",
+        "gestaltview_v2_09_diligence-tribunal_tribunal"
+      ],
+      "exists": true
+    },
+    "07_gate-package-builder.md": {
+      "file": "07_gate-package-builder.md",
+      "path": "/workspaces/gestaltview-v2/docs/wiki/07_gate-package-builder.md",
+      "autogen_sections": [
+        "gestaltview_v2_07_gate-package-builder_contract",
+        "gestaltview_v2_07_gate-package-builder_wizard",
+        "gestaltview_v2_07_gate-package-builder_checkout"
+      ],
+      "exists": true
+    }
+  },
+  "metadata": {
+    "total_changed_files": 0,
+    "total_new_files": 0,
+    "total_modified_files": 0,
+    "total_deleted_files": 0,
+    "total_renamed_files": 0,
+    "total_sections_to_update": 0,
+    "total_new_source_files": 0,
+    "total_deleted_source_files": 0,
+    "docs_analyzed": 12,
+    "requires_full_generation": false
+  }
+}

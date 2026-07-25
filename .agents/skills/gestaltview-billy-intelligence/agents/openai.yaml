@@ -1,0 +1,4 @@
+interface:
+  display_name: "Billy Intelligence"
+  short_description: "Work on Billy, routing, PLK, and retrieval."
+  default_prompt: "Use this skill for Billy system behavior, LLM routing, PLK preservation, and retrieval flows."

@@ -1,0 +1,218 @@
+[
+  {
+    "path": "00_READ_FIRST/AUTHENTICITY_AND_CLAIMS_BOUNDARY.md",
+    "bytes": 2275
+  },
+  {
+    "path": "00_READ_FIRST/ONE_PAGE_NORTH_STAR.md",
+    "bytes": 1614
+  },
+  {
+    "path": "00_READ_FIRST/README.md",
+    "bytes": 1549
+  },
+  {
+    "path": "01_VISION/CONTEXTUAL_LENS_SYNTHESIS.md",
+    "bytes": 2692
+  },
+  {
+    "path": "01_VISION/FOUNDATIONAL_PROMISE.md",
+    "bytes": 1586
+  },
+  {
+    "path": "01_VISION/MASTER_VISION_BLUEPRINT.md",
+    "bytes": 3690
+  },
+  {
+    "path": "01_VISION/WHAT_GESTALTVIEW_IS_NOT.md",
+    "bytes": 840
+  },
+  {
+    "path": "02_PRODUCT_OS/BILLY_ARC_READER_SPEC.md",
+    "bytes": 2040
+  },
+  {
+    "path": "02_PRODUCT_OS/BUCKET_DROP_LOOM_PLK_PROTOCOL.md",
+    "bytes": 1304
+  },
+  {
+    "path": "02_PRODUCT_OS/EVIDENCE_AND_PROVENANCE_MODEL.md",
+    "bytes": 1471
+  },
+  {
+    "path": "02_PRODUCT_OS/ROOM_BASED_OS_BLUEPRINT.md",
+    "bytes": 2126
+  },
+  {
+    "path": "02_PRODUCT_OS/ROOM_CONTRACTS.md",
+    "bytes": 3702
+  },
+  {
+    "path": "03_CREATION_LAYER/ART_TEACHER_AND_LIVE_DI_PRESENCE.md",
+    "bytes": 1486
+  },
+  {
+    "path": "03_CREATION_LAYER/CREATION_LAYER_MASTER_SPEC.md",
+    "bytes": 2644
+  },
+  {
+    "path": "03_CREATION_LAYER/MULTIMODAL_CREATION_ENGINE_SPEC.md",
+    "bytes": 2129
+  },
+  {
+    "path": "03_CREATION_LAYER/RAPID_PROTOTYPE_TO_CREATION_CORNER_HANDOFF.md",
+    "bytes": 1155
+  },
+  {
+    "path": "04_UI_UX/MODULE_BLUEPRINTS.md",
+    "bytes": 1693
+  },
+  {
+    "path": "04_UI_UX/SIGNATURE_ATMOSPHERE_BLUEPRINT.md",
+    "bytes": 1777
+  },
+  {
+    "path": "05_IMPLEMENTATION/ACCEPTANCE_CHECKLIST.md",
+    "bytes": 1274
+  },
+  {
+    "path": "05_IMPLEMENTATION/CODEX_MASTER_IMPLEMENTATION_SPEC.md",
+    "bytes": 2381
+  },
+  {
+    "path": "05_IMPLEMENTATION/IMPLEMENTATION_SLICES.md",
+    "bytes": 2011
+  },
+  {
+    "path": "06_GOVERNANCE/GOVERNANCE_AND_BOUNDARIES.md",
+    "bytes": 1174
+  },
+  {
+    "path": "07_PROMPTS/CODEX_MASTER_PROMPT.md",
+    "bytes": 1777
+  },
+  {
+    "path": "07_PROMPTS/HUMAN_COLLABORATOR_BRIEF.md",
+    "bytes": 832
+  },
+  {
+    "path": "07_PROMPTS/PERPLEXITY_RESEARCH_BRIEF.md",
+    "bytes": 830
+  },
+  {
+    "path": "08_MACHINE_READABLE/claims_boundary.json",
+    "bytes": 307
+  },
+  {
+    "path": "08_MACHINE_READABLE/event_lifecycle.json",
+    "bytes": 500
+  },
+  {
+    "path": "08_MACHINE_READABLE/implementation_slices.json",
+    "bytes": 1233
+  },
+  {
+    "path": "08_MACHINE_READABLE/room_contracts.json",
+    "bytes": 1320
+  },
+  {
+    "path": "08_MACHINE_READABLE/vision_manifest.json",
+    "bytes": 736
+  },
+  {
+    "path": "09_SOURCE_TRACE/NESTED_ZIP_FINDINGS.md",
+    "bytes": 1213
+  },
+  {
+    "path": "09_SOURCE_TRACE/SOURCE_TRACEABILITY_MAP.md",
+    "bytes": 1251
+  },
+  {
+    "path": "09_SOURCE_TRACE/archive_inventory.csv",
+    "bytes": 41409
+  },
+  {
+    "path": "09_SOURCE_TRACE/source_manifest.json",
+    "bytes": 2156
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/contextual_framing/GestaltView-Contextual-Anchoring-Checkpoint.md",
+    "bytes": 12711
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/creation.zip",
+    "bytes": 16934177
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/previous_creation_layer_package.zip",
+    "bytes": 22359883
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/CODEX_OUTSIDE_IN_TRANSLATION_LAYER.md",
+    "bytes": 27868
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/CONTEXT_v2.md",
+    "bytes": 13880
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/DOCTRINE_OF_ORIGIN.md",
+    "bytes": 5991
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/External Scaffold Module.txt",
+    "bytes": 8316
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/FOUNDING_STATEMENT.md",
+    "bytes": 3183
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/GestaltView_Constitutional_Invariants_v1.0.md",
+    "bytes": 7360
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/Memory-&-Preferences.txt",
+    "bytes": 11256
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/ROOM_DEFINITIONS.md",
+    "bytes": 28300
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/source_docs/ui_ux.yaml",
+    "bytes": 24022
+  },
+  {
+    "path": "99_SOURCE_ARCHIVES/uploaded_package_seen_by_runtime.zip",
+    "bytes": 5396102
+  },
+  {
+    "path": "CHANGELOG.md",
+    "bytes": 532
+  },
+  {
+    "path": "assets/design/asset_manifest.csv",
+    "bytes": 5830
+  },
+  {
+    "path": "assets/design/design_tokens.json",
+    "bytes": 955
+  },
+  {
+    "path": "assets/design/moodboard_neon.png",
+    "bytes": 1978566
+  },
+  {
+    "path": "assets/design/moodboard_parchment.png",
+    "bytes": 2514781
+  },
+  {
+    "path": "assets/design/moodboard_ui_systems.png",
+    "bytes": 870523
+  },
+  {
+    "path": "assets/design/theme_tokens.css",
+    "bytes": 1269
+  }
+]

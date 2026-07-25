@@ -1,0 +1,4 @@
+interface:
+  display_name: "Executive Summary"
+  short_description: "Create founder, investor, and partner briefings."
+  default_prompt: "Use this skill for executive summaries, investor briefs, partner overviews, and concise strategic narratives."

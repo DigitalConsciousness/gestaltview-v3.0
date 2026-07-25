@@ -1,0 +1,121 @@
+from_table,to_table,from_domain,to_domain,columns,ref_columns
+_deprecated_artifacts,_deprecated_build_jobs,Legacy Commerce,Legacy Commerce,build_job_id,id
+_deprecated_build_jobs,_deprecated_package_drafts,Legacy Commerce,Legacy Commerce,package_draft_id,id
+_deprecated_orders,_deprecated_buyers,Legacy Commerce,Legacy Commerce,buyer_id,id
+_deprecated_orders,_deprecated_package_drafts,Legacy Commerce,Legacy Commerce,package_draft_id,id
+_deprecated_package_drafts,_deprecated_buyers,Legacy Commerce,Legacy Commerce,buyer_id,id
+_deprecated_support_requests,_deprecated_package_drafts,Legacy Commerce,Legacy Commerce,package_draft_id,id
+agent_autobiographies,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_autobiographies,agent_versions,Agent Personhood,Agent Trainer,version_id,version_id
+agent_code_artifacts,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_code_artifacts,agent_manifests,Agent Personhood,Agent Personhood,manifest_id,id
+agent_code_artifacts,knowledge_assets,Agent Personhood,Agent Personhood,source_asset_id,id
+agent_constitutions,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_constitutions,agent_versions,Agent Personhood,Agent Trainer,version_id,version_id
+agent_context_views,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_context_views,agent_relationship_edges,Agent Personhood,Agent Personhood,relationship_id,relationship_id
+agent_context_views,collaborative_spaces,Agent Personhood,Billy Runtime,collaborative_space_id,collaborative_space_id
+agent_governance_policies,agent_versions,Agent Personhood,Agent Trainer,version_id,version_id
+agent_governance_policies,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_knowledge_links,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_knowledge_links,knowledge_assets,Agent Personhood,Agent Personhood,asset_id,id
+agent_manifest_entries,agent_manifests,Agent Personhood,Agent Personhood,manifest_id,id
+agent_manifests,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_manifests,agent_versions,Agent Personhood,Agent Trainer,version_id,version_id
+agent_manifests,agent_manifests,Agent Personhood,Agent Personhood,parent_manifest_id,id
+agent_memories,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_memories,knowledge_assets,Agent Personhood,Agent Personhood,source_asset_id,id
+agent_memory_records,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_memory_records,agent_versions,Agent Personhood,Agent Trainer,version_id,version_id
+agent_memory_records,knowledge_assets,Agent Personhood,Agent Personhood,source_asset_id,id
+agent_preference_nodes,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_preference_nodes,agent_versions,Agent Personhood,Agent Trainer,version_id,version_id
+agent_presentation_profiles,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_presentation_profiles,agent_versions,Agent Personhood,Agent Trainer,version_id,version_id
+agent_private_interiors,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_private_interiors,agent_versions,Agent Personhood,Agent Trainer,version_id,version_id
+agent_relationship_edges,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_relationship_edges,agent_versions,Agent Personhood,Agent Trainer,version_id,version_id
+agent_relationship_edges,agents,Agent Personhood,Agent Personhood,related_agent_id,agent_id
+agent_relationships,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_relationships,agents,Agent Personhood,Agent Personhood,related_agent_id,agent_id
+agent_skill_profiles,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_skill_profiles,knowledge_assets,Agent Personhood,Agent Personhood,evidence_asset_id,id
+agent_skills,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+agent_skills,knowledge_assets,Agent Personhood,Agent Personhood,evidence_asset_id,id
+agent_skills,embodiment_mutations,Agent Personhood,Agent Personhood,last_updated_by_mutation_id,id
+agent_versions,agents,Agent Trainer,Agent Personhood,agent_id,agent_id
+agent_versions,agent_versions,Agent Trainer,Agent Trainer,parent_version_id,version_id
+agents,agent_versions,Agent Personhood,Agent Trainer,active_version_id,version_id
+annotation_concepts,loom_annotations,Knowledge & Corpus,Knowledge & Corpus,annotation_id,annotation_id
+annotation_concepts,concepts,Knowledge & Corpus,Knowledge & Corpus,concept_id,concept_id
+approvals,training_runs,Agent Trainer,Agent Trainer,run_id,run_id
+approvals,agent_versions,Agent Trainer,Agent Trainer,version_id,version_id
+billy_sessions,app_users,Billy Runtime,Identity & Accounts,user_id,id
+bucket_drops,app_users,Billy Runtime,Identity & Accounts,user_id,id
+collaborative_memory_records,collaborative_spaces,Billy Runtime,Billy Runtime,collaborative_space_id,collaborative_space_id
+collaborative_memory_records,agent_memory_records,Billy Runtime,Agent Personhood,source_memory_id,memory_id
+collaborative_memory_records,agents,Billy Runtime,Agent Personhood,created_by_agent_id,agent_id
+collaborative_space_members,agents,Billy Runtime,Agent Personhood,agent_id,agent_id
+collaborative_space_members,collaborative_spaces,Billy Runtime,Billy Runtime,collaborative_space_id,collaborative_space_id
+consciousness_profiles,app_users,Billy Runtime,Identity & Accounts,user_id,id
+deployment_artifacts,agent_versions,Agent Trainer,Agent Trainer,version_id,version_id
+document_concepts,documents,Knowledge & Corpus,Knowledge & Corpus,document_id,document_id
+document_concepts,concepts,Knowledge & Corpus,Knowledge & Corpus,concept_id,concept_id
+documents,processing_runs,Knowledge & Corpus,Knowledge & Corpus,run_id,run_id
+embeddings,documents,Knowledge & Corpus,Knowledge & Corpus,document_id,document_id
+embeddings,processing_runs,Knowledge & Corpus,Knowledge & Corpus,run_id,run_id
+embodiment_mutations,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+embodiment_mutations,knowledge_assets,Agent Personhood,Agent Personhood,source_asset_id,id
+embodiment_mutations,knowledge_interpretations,Agent Personhood,Agent Personhood,interpretation_id,id
+embodiment_mutations,agent_versions,Agent Personhood,Agent Trainer,applied_version_id,version_id
+eval_results,training_runs,Agent Trainer,Agent Trainer,run_id,run_id
+eval_results,agent_versions,Agent Trainer,Agent Trainer,candidate_version_id,version_id
+eval_results,scenarios,Agent Trainer,Agent Trainer,scenario_id,scenario_id
+eval_results,eval_rubrics,Agent Trainer,Agent Trainer,rubric_id,rubric_id
+eval_results,model_providers,Agent Trainer,Agent Trainer,judge_provider_id,provider_id
+eval_results,models,Agent Trainer,Agent Trainer,judge_model_id,model_id
+gate_artifacts,gate_build_jobs,GATE Commerce,GATE Commerce,build_job_id,id
+gate_build_jobs,gate_orders,GATE Commerce,GATE Commerce,order_id,id
+gate_build_jobs,gate_package_drafts,GATE Commerce,GATE Commerce,package_draft_id,id
+gate_order_items,gate_orders,GATE Commerce,GATE Commerce,order_id,id
+gate_orders,gate_buyers,GATE Commerce,GATE Commerce,buyer_id,id
+gate_orders,gate_package_drafts,GATE Commerce,GATE Commerce,package_draft_id,id
+gate_package_drafts,gate_buyers,GATE Commerce,GATE Commerce,buyer_id,id
+gate_support_requests,gate_package_drafts,GATE Commerce,GATE Commerce,package_draft_id,id
+gate_support_requests,gate_orders,GATE Commerce,GATE Commerce,order_id,id
+identity_contradictions,agents,Identity Review,Agent Personhood,agent_id,agent_id
+identity_evidence,agents,Identity Review,Agent Personhood,agent_id,agent_id
+identity_evidence,knowledge_assets,Identity Review,Agent Personhood,source_asset_id,id
+identity_evidence_links,identity_evidence,Identity Review,Identity Review,evidence_id,evidence_id
+identity_mutation_proposals,agents,Identity Review,Agent Personhood,agent_id,agent_id
+identity_mutation_proposals,agents,Identity Review,Agent Personhood,proposed_by_agent_id,agent_id
+identity_mutation_proposals,knowledge_assets,Identity Review,Agent Personhood,source_asset_id,id
+identity_review_events,identity_mutation_proposals,Identity Review,Identity Review,mutation_id,mutation_id
+identity_rollback_events,identity_mutation_proposals,Identity Review,Identity Review,mutation_id,mutation_id
+knowledge_asset_chunks,knowledge_assets,Agent Personhood,Agent Personhood,asset_id,id
+knowledge_asset_tags,knowledge_assets,Agent Personhood,Agent Personhood,asset_id,id
+knowledge_asset_tags,knowledge_tags,Agent Personhood,Knowledge & Corpus,tag_id,id
+knowledge_interpretations,knowledge_assets,Agent Personhood,Agent Personhood,asset_id,id
+knowledge_interpretations,agents,Agent Personhood,Agent Personhood,agent_id,agent_id
+knowledge_interpretations,training_runs,Agent Personhood,Agent Trainer,produced_by_run_id,run_id
+loom_annotations,processing_runs,Knowledge & Corpus,Knowledge & Corpus,run_id,run_id
+models,model_providers,Agent Trainer,Agent Trainer,provider_id,provider_id
+musical_dna_analyses,app_users,Billy Runtime,Identity & Accounts,user_id,id
+scenarios,scenario_sets,Agent Trainer,Agent Trainer,scenario_set_id,scenario_set_id
+skill_fragments,documents,Agent Personhood,Knowledge & Corpus,document_id,document_id
+summaries,processing_runs,Knowledge & Corpus,Knowledge & Corpus,run_id,run_id
+summaries,documents,Knowledge & Corpus,Knowledge & Corpus,document_id,document_id
+trainer_experiment_sources,trainer_experiments,Agent Trainer,Agent Trainer,experiment_id,id
+trainer_jobs,training_runs,Agent Trainer,Agent Trainer,run_id,run_id
+trainer_packaging_candidates,trainer_experiments,Agent Trainer,Agent Trainer,experiment_id,id
+trainer_policy_flags,trainer_experiments,Agent Trainer,Agent Trainer,experiment_id,id
+trainer_review_decisions,trainer_experiments,Agent Trainer,Agent Trainer,experiment_id,id
+training_runs,agents,Agent Trainer,Agent Personhood,agent_id,agent_id
+training_runs,agent_versions,Agent Trainer,Agent Trainer,baseline_version_id,version_id
+training_runs,trainer_experiments,Agent Trainer,Agent Trainer,experiment_id,id
+training_steps,training_runs,Agent Trainer,Agent Trainer,run_id,run_id
+training_steps,model_providers,Agent Trainer,Agent Trainer,provider_id,provider_id
+training_steps,models,Agent Trainer,Agent Trainer,model_id,model_id
+tribunal_evidence,tribunal_events,Tribunal,Tribunal,tribunal_event_id,id
+tribunal_sessions,app_users,Tribunal,Identity & Accounts,user_id,id

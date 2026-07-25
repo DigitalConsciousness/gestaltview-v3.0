@@ -1,0 +1,91 @@
+# GestaltView Corpus Ingest Config v2
+# Run sections individually:
+#   python scripts/ingest_corpus.py --section philosophy
+#   python scripts/ingest_corpus.py --section schema --limit 5  (test run)
+#   python scripts/ingest_corpus.py --dry-run                    (scan only)
+
+meta:
+  version: "2.0"
+  script: scripts/ingest_corpus_v2.py
+  corpus_map: config/corpus_map_v2.json
+  model: Snowflake/snowflake-arctic-embed-m
+  embedding_dim: 768
+  device: cpu
+
+# ── Python dependencies (CPU-only, NO torch[cuda], NO nvidia packages) ──
+dependencies:
+  core:
+    - supabase>=2.3.0
+    - python-dotenv>=1.0.0
+  embedding:
+    # Install torch CPU-only FIRST before sentence-transformers
+    # to prevent it pulling in CUDA binaries
+    - torch==2.2.2+cpu --index-url https://download.pytorch.org/whl/cpu
+    - sentence-transformers>=2.7.0
+    - transformers>=4.40.0
+    - huggingface_hub>=0.22.0
+
+install_sequence:
+  # Run these in order to guarantee CPU-only torch
+  - pip install torch==2.2.2+cpu --index-url https://download.pytorch.org/whl/cpu
+  - pip install sentence-transformers transformers huggingface_hub
+  - pip install supabase python-dotenv
+
+# ── Required environment variables ──────────────────────────────────────────
+env:
+  required:
+    - SUPABASE_URL
+    - SUPABASE_SERVICE_KEY
+    - HF_TOKEN              # Hugging Face token for authenticated model download
+  optional:
+    - TENANT_ID             # defaults to 00000000-0000-0000-0000-000000000001
+
+# ── Section run order (recommended dependency sequence) ─────────────────────
+# Start with smallest / most structural, validate, then move up in volume
+run_order:
+  1_first:
+    - invariants            # ~smallest, most load-bearing semantically
+    - schema                # structural reference, low volume
+  2_core_identity:
+    - philosophy            # GV worldview and principles
+    - protocols             # behavioral contracts
+    - embodiment_profiles   # agent identity docs
+  3_knowledge:
+    - skills                # agent capability definitions
+    - analysis              # research and reasoning docs
+  4_evidence:
+    - diligence             # due diligence and audit material
+    - products              # code + app documentation
+  5_sessions:
+    - transcripts           # highest volume, run last
+
+# ── Per-section settings (override corpus_map.json defaults if needed) ───────
+section_overrides:
+  transcripts:
+    chunk_size: 256       # transcripts are conversational, shorter chunks
+    chunk_overlap: 32
+  products:
+    chunk_size: 384       # code files benefit from slightly smaller chunks
+    chunk_overlap: 48
+  schema:
+    chunk_size: 384       # SQL files are dense
+    chunk_overlap: 32
+
+# ── Verification queries (run in Supabase SQL after each section) ────────────
+verification:
+  check_fragment_count: |
+    SELECT document_type, COUNT(*) as fragment_count, AVG(char_count) as avg_chars
+    FROM knowledge_fragments
+    GROUP BY document_type
+    ORDER BY fragment_count DESC;
+
+  check_no_orphans: |
+    SELECT COUNT(*) as orphaned_fragments
+    FROM knowledge_fragments kf
+    LEFT JOIN documents d ON d.document_id = kf.document_id
+    WHERE kf.document_id IS NOT NULL AND d.document_id IS NULL;
+
+  check_embeddings_populated: |
+    SELECT COUNT(*) as missing_embeddings
+    FROM knowledge_fragments
+    WHERE embedding IS NULL;

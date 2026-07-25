@@ -1,0 +1,42 @@
+{
+  "packet_type": "gestaltview_orientation_checkpoint",
+  "packet_version": "2.0.0",
+  "checkpoint_id": "orientation-checkpoint-latest",
+  "generated_at_utc": "2026-06-06T20:31:26+00:00",
+  "spine_ref": "orientation/orientation_spine.v2.json",
+  "delta_ref": "orientation/orientation_delta.current.json",
+  "priority_changes": [
+    "Active blocker: Agent Trainer Page API Errors",
+    "Changed assumption: Orientation should be split into spine, delta, and checkpoint rather than rewritten as one giant file.",
+    "Changed assumption: Embodiment profiles should carry checkpoint summaries for fast absorption rather than full raw packet copies."
+  ],
+  "resolved_items_removed": [
+    "DI invariants are now manifest-backed and generator-synced"
+  ],
+  "load_first": [
+    "source_of_truth",
+    "constitutional_layers",
+    "active_blockers",
+    "trainer_dashboard_workflows",
+    "table_boundary_guidance",
+    "knowledge_distribution_hub_v1"
+  ],
+  "absorption_guidance": {
+    "read_mode": "delta-first",
+    "when_stale": "If the checkpoint timestamp is older than the latest BugWalkBoard or CurrentState update, re-absorb before acting.",
+    "goal": "Fast current-state orientation without requiring a full reread of the entire packet."
+  },
+  "embodiment_profile_shape": {
+    "orientation_state": {
+      "last_absorbed_checkpoint_id": "orientation-checkpoint-latest",
+      "checkpoint_ref": "orientation/orientation_checkpoint.latest.json",
+      "absorption_status": "current",
+      "needs_reorientation": false,
+      "orientation_confidence": 0.92,
+      "priority_changes_last_seen": [
+        "Active blocker: Agent Trainer Page API Errors",
+        "Changed assumption: Orientation should be split into spine, delta, and checkpoint rather than rewritten as one giant file."
+      ]
+    }
+  }
+}

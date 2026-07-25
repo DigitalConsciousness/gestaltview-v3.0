@@ -1,0 +1,4 @@
+interface:
+  display_name: "GestaltView Codex"
+  short_description: "Deep repo analysis and workflow."
+  default_prompt: "Use $gestaltview-codex to map the current GestaltView runtime, identify the owning layer, and choose the right next action with a durable handoff."

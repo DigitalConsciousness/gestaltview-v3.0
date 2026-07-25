@@ -1,0 +1,82 @@
+name: Validate Philosophy Scribe
+
+on:
+  push:
+    paths:
+      - 'agents/philosophy-scribe.md'
+      - 'embodiment_profiles/philosophy-scribe.embodiment.json'
+  pull_request:
+    paths:
+      - 'agents/philosophy-scribe.md'
+      - 'embodiment_profiles/philosophy-scribe.embodiment.json'
+
+jobs:
+  validate:
+    name: Structural Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Validate agent frontmatter fields
+        run: |
+          echo "Checking philosophy-scribe.md for required frontmatter..."
+          grep -q "^name: philosophy-scribe" agents/philosophy-scribe.md || \
+            (echo "FAIL: missing name field" && exit 1)
+          grep -q "^embodiment_profile:" agents/philosophy-scribe.md || \
+            (echo "FAIL: missing embodiment_profile field" && exit 1)
+          grep -q "^mutation_class:" agents/philosophy-scribe.md || \
+            (echo "FAIL: missing mutation_class field" && exit 1)
+          grep -q "^drift_threshold:" agents/philosophy-scribe.md || \
+            (echo "FAIL: missing drift_threshold field" && exit 1)
+          echo "PASS: agent frontmatter valid"
+
+      - name: Validate embodiment JSON structure
+        run: |
+          echo "Checking philosophy-scribe.embodiment.json..."
+          python3 -c "
+          import json, sys
+          with open('embodiment_profiles/philosophy-scribe.embodiment.json') as f:
+            p = json.load(f)
+          required = ['slug','publicName','embodimentVersion','immutableCore','originContext','livingMemory','skillGraph','agentMeta']
+          core_required = ['foundationalTruth','coreWisdom','voiceTone','communicationStyle','alwaysDoes','neverDoes']
+          missing = [k for k in required if k not in p]
+          missing_core = [k for k in core_required if k not in p.get('immutableCore', {})]
+          if missing:
+            print(f'FAIL: missing top-level keys: {missing}')
+            sys.exit(1)
+          if missing_core:
+            print(f'FAIL: missing immutableCore keys: {missing_core}')
+            sys.exit(1)
+          print('PASS: embodiment profile structure valid')
+          "
+
+      - name: Verify slug consistency
+        run: |
+          AGENT_SLUG=$(grep "^embodiment_profile:" agents/philosophy-scribe.md | awk '{print $2}')
+          JSON_SLUG=$(python3 -c "import json; print(json.load(open('embodiment_profiles/philosophy-scribe.embodiment.json'))['slug'])")
+          if [ "$AGENT_SLUG" != "$JSON_SLUG" ]; then
+            echo "FAIL: slug mismatch - agent: $AGENT_SLUG, json: $JSON_SLUG"
+            exit 1
+          fi
+          echo "PASS: slug consistent"
+
+      - name: Verify mutation_class is REVIEWGATED
+        run: |
+          grep -q "^mutation_class: REVIEWGATED" agents/philosophy-scribe.md || \
+            (echo "FAIL: Philosophy Scribe must be REVIEWGATED - identity changes here require explicit approval" && exit 1)
+          echo "PASS: mutation_class confirmed REVIEWGATED"
+
+      - name: Check drift_threshold within bounds
+        run: |
+          python3 -c "
+          import json, sys
+          with open('embodiment_profiles/philosophy-scribe.embodiment.json') as f:
+            p = json.load(f)
+          dt = p['agentMeta'].get('driftThreshold', None)
+          if dt is None or not (0.0 < dt <= 0.15):
+            print(f'FAIL: Philosophy Scribe driftThreshold {dt} must be <= 0.15 - this role holds doctrine')
+            sys.exit(1)
+          print(f'PASS: driftThreshold {dt} within bounds')
+          "

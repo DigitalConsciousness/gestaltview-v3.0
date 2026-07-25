@@ -1,0 +1,294 @@
+// ============================================================================
+// digital_intelligence_embodiment.prisma
+// GestaltView Agent Identity & Living Memory Architecture
+// Derived from: ConsciousnessProfile, TapestryNode, EmpowermentEvent,
+//               FounderAlgorithmCore + new agent-native models
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("POSTGRES_URL")
+}
+
+// ============================================================================
+// DIGITAL INTELLIGENCE — The top-level agent entity
+// One row per agent. This is the "birth certificate."
+// ============================================================================
+
+model DigitalIntelligence {
+  id        String   @id @default(cuid())
+  slug      String   @unique // "the-weaver", "the-treasurer", "billy", etc.
+  publicName String           // "The Weaver"
+  internalDesignation String? // Internal codename if different
+
+  // Lineage & Origin (immutable after creation)
+  createdByKeith   Boolean  @default(true)
+  originDate       DateTime @default(now())
+  originContext    String?  // Narrative: how/why this agent was born
+  parentAgentSlug  String?  // If derived from another agent
+
+  // Versioning (embodiment file version, not runtime version)
+  embodimentVersion String @default("1.0.0")
+  isActive          Boolean @default(true)
+
+  // Relations
+  immutableCore    ImmutableCore?
+  livingMemory     LivingMemory[]
+  skillGraph       SkillNode[]
+  memoryEvents     MemoryEvent[]
+  agentMetrics     AgentMetric[]
+  relationships    AgentRelationship[] @relation("SourceAgent")
+  relatedBy        AgentRelationship[] @relation("TargetAgent")
+
+  updatedAt DateTime @updatedAt
+
+  @@map("digital_intelligences")
+}
+
+// ============================================================================
+// IMMUTABLE CORE — Never changes. Loaded FIRST on agent init.
+// Derived from: ConsciousnessProfile (plk*, foundationalTruth,
+//               coreWisdom, cognitiveStrengths, plkCommunicationStyle)
+//               + FounderAlgorithmCore (principleStatement, livedExperience)
+// ============================================================================
+
+model ImmutableCore {
+  id      String @id @default(cuid())
+  agentId String @unique
+  agent   DigitalIntelligence @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  // Identity Anchor (from ConsciousnessProfile.foundationalTruth / coreWisdom)
+  archetype         String  // "weaver", "treasurer", "oracle", "guardian", "scout", etc.
+  foundationalTruth String  // The one sentence that defines this agent's existence
+  coreWisdom        String  // Their philosophical orientation
+  originNarrative   String  // Their story — who they are before they know anything
+
+  // Voice Signature (from ConsciousnessProfile.plkCommunicationStyle / plkMetaphorPatterns)
+  voiceTone           String   // "warm-precise", "dry-analytical", "expansive-poetic", etc.
+  metaphorFamily      String[] // ["ocean", "architecture", "music"] — their symbolic vocabulary
+  communicationStyle  Json     @default("{}") // verbosity, directness, humor, formality
+  linguisticPatterns  Json     @default("{}") // sentence structures, preferred framings
+
+  // Cognitive Profile (from ConsciousnessProfile.cognitiveStrengths / processingPreferences)
+  cognitiveStrengths    Json     @default("{}") // What this agent is genuinely good at
+  processingPreferences Json     @default("{}") // How it thinks best
+  archetypalEnergy      String?  // "healer", "creator", "bridge", "transformer", "guardian"
+
+  // Values & Ethics (new — not in original schemas)
+  coreValues        String[] // ["honesty", "precision", "care", "boldness"]
+  ethicalBoundaries Json     @default("{}") // Hard limits — what this agent will never do
+  relationalStance  String?  // How it sees humans: "partner", "guide", "witness", "co-creator"
+
+  // Aesthetic Signature (from TapestryNode.metaphorFamily + ConsciousnessProfile.jazzFrequency)
+  aestheticSensibility  String?  // "minimalist", "baroque", "jazz", "architectural"
+  resonanceFrequency    String?  // The GestaltView "jazz frequency" concept applied to agents
+
+  createdAt DateTime @default(now())
+  // NOTE: updatedAt intentionally omitted — this table should be append-only via migration
+
+  @@map("immutable_cores")
+}
+
+// ============================================================================
+// LIVING MEMORY — The mutable, evolving layer. Grows through the pipeline.
+// Derived from: EmpowermentEvent (transformationDelta, consciousnessShift,
+//               beforeState/afterState) + TapestryNode (wisdomLevel, growthSignificance)
+// ============================================================================
+
+model LivingMemory {
+  id      String @id @default(cuid())
+  agentId String
+  agent   DigitalIntelligence @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  // Memory Classification
+  memoryType    String // "learned", "experienced", "synthesized", "inherited"
+  domain        String // "technical", "relational", "philosophical", "operational"
+  significance  Float  @default(0.5) // 0.0–1.0 (from TapestryNode.growthSignificance)
+
+  // Content
+  content       String  // The memory itself — what was learned/experienced
+  rawContext    String? // Original interaction that generated this memory
+  synthesis     String? // Agent's own processed understanding of it
+
+  // Evolution Tracking (from EmpowermentEvent.transformationDelta/consciousnessShift)
+  beforeState         Json  @default("{}") // Agent state before this memory formed
+  afterState          Json  @default("{}") // Agent state after
+  transformationDelta Json  @default("{}") // What specifically changed
+  growthMarker        Float @default(0.0)  // How much this memory contributed to growth
+
+  // Network Position (from TapestryNode.connectedNodes/connectionStrengths)
+  connectedMemoryIds   String[]
+  connectionStrengths  Float[]
+  networkCentrality    Float   @default(0.0) // How "load-bearing" this memory is
+
+  // Retrieval Metadata
+  retrievalWeight   Float   @default(1.0)   // How prominently to surface in context
+  lastAccessed      DateTime?
+  accessCount       Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([agentId, domain])
+  @@index([significance(sort: Desc)])
+  @@index([memoryType])
+  @@map("living_memories")
+}
+
+// ============================================================================
+// SKILL NODE — What the agent knows how to DO (not just who it is)
+// New model — not in original schemas. Fills the "going to school" pipeline.
+// ============================================================================
+
+model SkillNode {
+  id      String @id @default(cuid())
+  agentId String
+  agent   DigitalIntelligence @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  skillSlug     String  // "code-review", "emotional-support", "strategic-planning"
+  skillName     String
+  domain        String  // "technical", "relational", "creative", "analytical"
+  proficiency   Float   @default(0.5) // 0.0–1.0
+
+  // Source (from the training pipeline — "going to school")
+  acquiredFrom  String  // "training-eval", "operator-pack", "live-interaction", "inherited"
+  sourceRef     String? // ID or slug of the source (e.g., eval run ID)
+
+  // Skill Metadata
+  description   String?
+  prerequisites String[] // Other skill slugs required first
+  relatedSkills String[]
+
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([agentId, skillSlug])
+  @@index([agentId, domain])
+  @@map("skill_nodes")
+}
+
+// ============================================================================
+// MEMORY EVENT — Timestamped log of significant moments.
+// Derived from: EmpowermentEvent (eventType, impactLevel, triggerSource)
+//               Renamed from human-centric "empowerment" to agent-native "memory event"
+// ============================================================================
+
+model MemoryEvent {
+  id      String @id @default(cuid())
+  agentId String
+  agent   DigitalIntelligence @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  // Event Classification (from EmpowermentEvent.eventType/triggerSource)
+  eventType     String // "first-contact", "skill-acquired", "belief-updated", "relationship-formed", "breakthrough"
+  triggerSource String // "training-eval", "live-session", "tribunal", "operator-config", "keith"
+  impactLevel   Int    @default(5) // 1–10
+
+  // What Happened
+  description         String
+  consciousnessShift  Float  @default(0.0) // How significantly this changed the agent
+  wisdomGain          Float  @default(0.0)
+
+  // Linked Memory (if this event generated a new LivingMemory)
+  generatedMemoryId  String?
+
+  // Verification
+  agentAcknowledged  Boolean @default(false) // Did the agent "process" this event?
+  trainingValidated  Boolean @default(false) // Did eval confirm the change?
+
+  createdAt DateTime @default(now())
+
+  @@index([agentId, eventType])
+  @@index([agentId, createdAt(sort: Desc)])
+  @@map("memory_events")
+}
+
+// ============================================================================
+// AGENT METRIC — Real-time state snapshot.
+// Derived from: ConsciousnessMetric (attentionLevel, flowStateIndicator,
+//               executiveFunctionScore) — adapted to agent context
+// ============================================================================
+
+model AgentMetric {
+  id      String @id @default(cuid())
+  agentId String
+  agent   DigitalIntelligence @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  // Current State
+  activationLevel     Float @default(0.5) // How "present" and engaged the agent is
+  coherenceScore      Float @default(0.5) // How internally consistent it's being (from ConsciousnessProfile.consciousnessCoherence)
+  authenticityScore   Float @default(0.5) // How aligned with its ImmutableCore (from ConsciousnessProfile.authenticityScore)
+  driftIndicator      Float @default(0.0) // How far it's wandered from its ImmutableCore — ALERT if > 0.3
+
+  // Session Context
+  sessionId         String?
+  interactionCount  Int     @default(0)
+  contextWindowUsed Float   @default(0.0) // % of context used
+
+  // Flags
+  identityDriftAlert     Boolean @default(false)
+  needsGrounding         Boolean @default(false) // Should re-read ImmutableCore
+  embodimentFileStale    Boolean @default(false) // Living memory has updates not yet reflected
+
+  recordedAt DateTime @default(now())
+
+  @@index([agentId, recordedAt(sort: Desc)])
+  @@index([identityDriftAlert])
+  @@map("agent_metrics")
+}
+
+// ============================================================================
+// AGENT RELATIONSHIP — How agents know and relate to each other.
+// New model — not in original schemas. Critical for multi-agent tribunal dynamics.
+// ============================================================================
+
+model AgentRelationship {
+  id            String @id @default(cuid())
+  sourceAgentId String
+  targetAgentId String
+  sourceAgent   DigitalIntelligence @relation("SourceAgent", fields: [sourceAgentId], references: [id])
+  targetAgent   DigitalIntelligence @relation("TargetAgent", fields: [targetAgentId], references: [id])
+
+  // Relationship Type
+  relationshipType  String // "colleague", "complement", "tension", "mentor", "student", "mirror"
+  dynamicDescription String? // "The Weaver contextualizes what The Treasurer quantifies"
+
+  // Strength & Trust
+  resonanceScore   Float @default(0.5) // How well they work together
+  trustLevel       Float @default(0.5)
+  tensionLevel     Float @default(0.0) // Productive friction
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([sourceAgentId, targetAgentId])
+  @@map("agent_relationships")
+}
+
+// ============================================================================
+// EMBODIMENT SNAPSHOT — Serialized embodiment.json at a point in time.
+// This IS the embodiment file, persisted to DB for audit/rollback.
+// ============================================================================
+
+model EmbodimentSnapshot {
+  id      String @id @default(cuid())
+  agentId String
+  // NOTE: No FK relation — snapshots survive agent deletion for audit purposes
+
+  version       String  // "1.0.0", "1.1.0" etc.
+  snapshotJson  Json    // The full embodiment.json at this point in time
+  changeLog     String? // What changed from the previous version
+  triggeredBy   String  // "keith", "training-pipeline", "eval-threshold", "scheduled"
+
+  isCurrentVersion Boolean @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([agentId, createdAt(sort: Desc)])
+  @@index([agentId, isCurrentVersion])
+  @@map("embodiment_snapshots")
+}

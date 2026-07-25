@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Routing"
+  short_description: "Maintain AI flow and provider routing patterns."
+  default_prompt: "Trace AI request flow, retrieval, and provider routing before changing code or docs."

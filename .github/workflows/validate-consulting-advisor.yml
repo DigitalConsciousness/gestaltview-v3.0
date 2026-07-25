@@ -1,0 +1,76 @@
+name: Validate Consulting Advisor
+
+on:
+  push:
+    paths:
+      - 'agents/consulting-advisor.md'
+      - 'embodiment_profiles/consulting-advisor.embodiment.json'
+  pull_request:
+    paths:
+      - 'agents/consulting-advisor.md'
+      - 'embodiment_profiles/consulting-advisor.embodiment.json'
+
+jobs:
+  validate:
+    name: Structural Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Validate agent frontmatter fields
+        run: |
+          echo "Checking consulting-advisor.md for required frontmatter..."
+          grep -q "^name: consulting-advisor" agents/consulting-advisor.md || \
+            (echo "FAIL: missing name field" && exit 1)
+          grep -q "^embodiment_profile:" agents/consulting-advisor.md || \
+            (echo "FAIL: missing embodiment_profile field" && exit 1)
+          grep -q "^mutation_class:" agents/consulting-advisor.md || \
+            (echo "FAIL: missing mutation_class field" && exit 1)
+          grep -q "^drift_threshold:" agents/consulting-advisor.md || \
+            (echo "FAIL: missing drift_threshold field" && exit 1)
+          echo "PASS: agent frontmatter valid"
+
+      - name: Validate embodiment JSON structure
+        run: |
+          echo "Checking consulting-advisor.embodiment.json..."
+          python3 -c "
+          import json, sys
+          with open('embodiment_profiles/consulting-advisor.embodiment.json') as f:
+            p = json.load(f)
+          required = ['slug','publicName','embodimentVersion','immutableCore','originContext','livingMemory','skillGraph','agentMeta']
+          core_required = ['foundationalTruth','coreWisdom','voiceTone','communicationStyle','alwaysDoes','neverDoes']
+          missing = [k for k in required if k not in p]
+          missing_core = [k for k in core_required if k not in p.get('immutableCore', {})]
+          if missing:
+            print(f'FAIL: missing top-level keys: {missing}')
+            sys.exit(1)
+          if missing_core:
+            print(f'FAIL: missing immutableCore keys: {missing_core}')
+            sys.exit(1)
+          print('PASS: embodiment profile structure valid')
+          "
+
+      - name: Verify slug consistency
+        run: |
+          AGENT_SLUG=$(grep "^embodiment_profile:" agents/consulting-advisor.md | awk '{print $2}')
+          JSON_SLUG=$(python3 -c "import json; print(json.load(open('embodiment_profiles/consulting-advisor.embodiment.json'))['slug'])")
+          if [ "$AGENT_SLUG" != "$JSON_SLUG" ]; then
+            echo "FAIL: slug mismatch - agent: $AGENT_SLUG, json: $JSON_SLUG"
+            exit 1
+          fi
+          echo "PASS: slug consistent between agent and embodiment profile"
+
+      - name: Check drift_threshold within bounds
+        run: |
+          python3 -c "
+          import json, sys
+          with open('embodiment_profiles/consulting-advisor.embodiment.json') as f:
+            p = json.load(f)
+          dt = p['agentMeta'].get('driftThreshold', None)
+          if dt is None or not (0.0 < dt <= 0.20):
+            print(f'FAIL: driftThreshold {dt} out of acceptable bounds (0.0, 0.20]')
+            sys.exit(1)
+          print(f'PASS: driftThreshold {dt} within bounds')
+          "

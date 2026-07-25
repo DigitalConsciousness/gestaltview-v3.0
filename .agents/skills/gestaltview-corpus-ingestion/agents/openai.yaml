@@ -1,0 +1,4 @@
+interface:
+  display_name: "Corpus Ingestion"
+  short_description: "Run and extend the compendium ingestion workflow safely."
+  default_prompt: "Work on corpus discovery, extraction, chunking, and processing-run logging without breaking schema assumptions."

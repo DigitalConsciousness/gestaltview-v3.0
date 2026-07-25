@@ -1,0 +1,301 @@
+{
+  "repo_notes": [
+    {
+      "content": ""
+    }
+  ],
+  "pages": [
+    {
+      "title": "GestaltView v2 — Platform Overview",
+      "purpose": "High-level introduction to GestaltView v2: what it is, its philosophy, the tech stack, repo structure, and how the major subsystems relate. Links to all child sections for deeper detail",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Getting Started & Development Environment",
+      "purpose": "How to set up the local dev environment, run the app, configure environment variables, and use the GitHub Codespaces devcontainer. Covers npm scripts, Vite proxy, and key CLI tools.",
+      "parent": "GestaltView v2 — Platform Overview",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Deployment & Infrastructure",
+      "purpose": "Covers Vercel serverless deployment configuration, build pipeline, CORS setup, routing rewrites, and CI/CD workflows via GitHub Actions.",
+      "parent": "GestaltView v2 — Platform Overview",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Billy AI Agent — Core Architecture",
+      "purpose": "Overview of Billy, the flagship AI agent: its RAG pipeline, LLM routing, session management, and client-side integration. Parent page linking to detailed child pages.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "RAG Pipeline & Knowledge Retrieval",
+      "purpose": "Deep dive into the Retrieval-Augmented Generation pipeline: embedding generation, four-stream parallel search (semantic + keyword for knowledge and skill fragments), Reciprocal Rank Fusion (RRF) merging, deduplication, and context assembly.",
+      "parent": "Billy AI Agent — Core Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "LLM Router & Provider Cascade",
+      "purpose": "How the llmRouter orchestrates multi-provider failover (Ollama → Groq → HuggingFace → OpenRouter → Gemini → Anthropic → OpenAI), circuit breaker logic, retry handling, and the offline fallback. Covers both the TypeScript (api/_lib/llmRouter.ts) and Python (api/_lib/llm_Router.py) implementations.",
+      "parent": "Billy AI Agent — Core Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "BillyEngine — Client-Side Intelligence",
+      "purpose": "The browser-side BillyEngine.ts: Manifest Index (static knowledge graph), ContextWeaver (5W1H query expansion), KnowledgeLoom (BM25 + RRF retrieval), domain tonal inflections, and the billyCall / billyExhibitCall entrypoints.",
+      "parent": "Billy AI Agent — Core Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Billy UI Components & Interaction Modes",
+      "purpose": "The React components that surface Billy to users: BillyLive (full-page chat), BillyOrb (floating 3D presence), BillyPanel (sidebar with Synthesize/Loom/Code tabs), BillyGreeter (onboarding), BillyChip, and the Think vs. Vibe mode distinction.",
+      "parent": "Billy AI Agent — Core Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Billy Voice Runtime",
+      "purpose": "The Python-based voice pipeline: LiveKit room management, faster-whisper STT, CosyVoice TTS, the ElevenLabs proxy (api/voice/billy.ts), and the useBillyVoice hook. Covers setup, architecture, and the BillyVoiceStudioPage admin interface.",
+      "parent": "Billy AI Agent — Core Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Data Layer — Supabase & Knowledge Corpus",
+      "purpose": "Overview of the Supabase database schema, vector store, and the knowledge ingestion pipeline. Parent page linking to schema details and ingestion pipeline.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Database Schema & Supabase Tables",
+      "purpose": "Complete reference for all Supabase tables: users, billy_sessions, founder_context, bucket_drops, memory_entries, knowledge_fragments, skill_fragments, documents, embeddings, processing_runs, tribunal tables, and commerce tables. Covers RLS policies, RPC functions, and vector dimension history.",
+      "parent": "Data Layer — Supabase & Knowledge Corpus",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Knowledge Corpus Ingestion Pipeline",
+      "purpose": "How documents from the GestaltView-Official-Compendium are ingested into Supabase: file discovery, text chunking, SHA-256 deduplication, embedding generation (google/embeddinggemma-300M, 768-dim), and the processing_runs lifecycle. Covers ingest_corpus.py, seed_billy_knowledge.py, and corpus-map.json.",
+      "parent": "Data Layer — Supabase & Knowledge Corpus",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Memory System & Persistent User Context",
+      "purpose": "The user-specific memory layer: memory_entries table, match_memory_entries RPC, the api/session/memory.ts CRUD endpoints, hybrid semantic+text retrieval with importance weighting, and how Founder Context (PLK snapshot, session_thread) is stored and injected.",
+      "parent": "Data Layer — Supabase & Knowledge Corpus",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Frontend Application",
+      "purpose": "Overview of the React/Vite SPA: routing, design system, page structure, and shared UI patterns. Parent page linking to detailed child pages.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Routing & Page Structure",
+      "purpose": "All application routes defined in App.tsx (wouter), the page hierarchy, lazy loading, the OpeningCeremony gate, and the ceremonySeen localStorage flag. Covers all major pages: Home, BillyLive, Engine, Codex, Dashboard, Pricing, etc.",
+      "parent": "Frontend Application",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Design System & Visual Identity",
+      "purpose": "The Neural Aurora design system: CSS custom properties (--gv-obsidian, --gv-electric-cyan, etc.), GVTypography primitives, glassmorphism card patterns, scanlines/radial glow effects, typography stack (Cabin Sketch, Manrope, Geist Mono), and the gv_design_spec_package tokens.",
+      "parent": "Frontend Application",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Authentication & User Session",
+      "purpose": "Magic Link auth flow, AuthContext, AuthCallback token exchange, redirect memory pattern (auth_redirect sessionStorage), Supabase JWT validation, and the handle_new_user trigger for automatic tier provisioning.",
+      "parent": "Frontend Application",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Pricing, Subscriptions & Feature Gating",
+      "purpose": "User tier system (free/core/pro/enterprise/founder), TIER_FEATURES matrix, Stripe Checkout integration, api/pricing.ts, stripe-webhook.ts, and how tiers gate Billy query limits, PLK memory, domain lanes, and SymbioCoder access.",
+      "parent": "Frontend Application",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Exhibits & Domain Lanes",
+      "purpose": "Overview of the GestaltView Exhibit Network: specialized AI-driven interactive experiences for different human domains. Parent page linking to individual exhibit pages.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Exhibit Architecture & BillyExhibitChat",
+      "purpose": "How exhibits are defined (ExhibitDefinition, EXHIBITS registry, BillyContextDefinition), the BillyExhibitChat component, prompt augmentation pipeline (PLK directives + live bridge state), useBillyExhibitBridge hook, Never Look Away protocol, and the three demoMode types.",
+      "parent": "Exhibits & Domain Lanes",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Neurodivergence & Wellness Exhibits",
+      "purpose": "ADHD Power-Up Station, Addiction & Recovery exhibit, Alzheimer's Legacy (HeirloomCompanion, LifeTapestry, Echo responses), Brain Sparks lightning-capture, and the ethical Never Look Away / crisis resource framework.",
+      "parent": "Exhibits & Domain Lanes",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Musical DNA Exhibit",
+      "purpose": "The neuroaffirming biofeedback music experience: PLAYLIST with dnaVector archetypes, MusicalDNAVisualizer (Babylon.js Somatic Orb, Musical Helix, Loom Weaver), useBiofeedback (HRV/RMSSD classification), useBinauralBeats (BINAURAL_PRESETS), somatic modes (Bilateral/Trilateral/Quadlateral), and entrainment phase lifecycle.",
+      "parent": "Exhibits & Domain Lanes",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Developer & Productivity Exhibits",
+      "purpose": "SymbioCoder (AI coding companion with PLK context), VibeCoder (metaphor-to-code translation with vibeAlignmentScore), Resume Rockstar (STAR methodology + ATS/PLK dual scoring), and the SymbioCodingPage bridge to the external symbiocoder.gestaltview.app stack.",
+      "parent": "Exhibits & Domain Lanes",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Agent Trainer & Tribunal System",
+      "purpose": "Overview of the two advanced AI governance subsystems: the Agent Trainer for deterministic agent development, and the Tribunal of Understanding for multi-AI consensus evaluation.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Agent Trainer",
+      "purpose": "The full agent training pipeline: AgentTrainerPage UI, api/trainer/* endpoints, server/agent-trainer orchestrator (curriculum generation, scenario synthesis, eval rubric scoring, cycle execution), shared/agent-trainer schemas, and the deploy/approve/reject lifecycle.",
+      "parent": "Agent Trainer & Tribunal System",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Tribunal of Understanding",
+      "purpose": "The multi-AI governance protocol: TribunalInput/TribunalVerdict types, shared/tribunal/evaluate.ts, tribunal_events and tribunal_sessions Supabase tables, the TribunalPage UI, ContinuumCodexTimeline, InvocationAudioPlayer, and the forensic convergence methodology.",
+      "parent": "Agent Trainer & Tribunal System",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Diligence Explorer & Evidence Layer",
+      "purpose": "The investor-grade transparency and audit system: DiligenceExplorer component, api/diligence.ts CSV parser, claim/chronology/skepticism data models, blockchain anchoring (OTS receipts), and the four view modes (Claim Wall, 2D Timeline, 3D Loom, Audit Record).",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Skills Library & Agent Orchestration",
+      "purpose": "Overview of the skills/ directory: the curated skill catalog, skills-keeper stewardship, manifest.json, and how skills are discovered, deployed, and used by AI agents. Parent page linking to child pages.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Skills Catalog & Manifest",
+      "purpose": "How the skills library is organized: manifest.json as source of truth, canonical vs. auxiliary skills, highlighted_core subset, AGENTS.md auto-generation, generate_cursor_plugin.py for Cursor/MCP integration, and the skill_inventory.py discovery pipeline.",
+      "parent": "Skills Library & Agent Orchestration",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Agent Definitions & Orchestration Patterns",
+      "purpose": "The agents/ directory: revenue-hunter agent, skills-keeper dispatch protocol (PLAN/DISPATCH/SYNTHESIS), gestaltview-ecosystem-orchestrator, gestaltview-suite-orchestrator, OpenAI YAML agent specs, and the Perplexity Computer tools integration (tools/ directory).",
+      "parent": "Skills Library & Agent Orchestration",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    }
+  ]
+}

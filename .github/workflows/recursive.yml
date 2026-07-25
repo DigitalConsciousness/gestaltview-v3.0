@@ -1,0 +1,597 @@
+name: Recursive Builder Lockdown Pass
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_prompt:
+        description: "What The Recursive Builder should complete this run"
+        required: false
+        default: "SPEC-2 immediate lockdown pass: wire one bounded capture/orb/queue/approval/blueprint/export slice across the selected target files."
+      mode:
+        description: "pending_only writes specs only; implementation_branch may write bounded runtime files on a review PR"
+        required: false
+        type: choice
+        default: "implementation_branch"
+        options:
+          - "implementation_branch"
+          - "pending_only"
+      target_environment:
+        description: "GitHub Environment containing live secrets"
+        required: false
+        default: "Production"
+        type: environment
+      model:
+        description: "Groq model id"
+        required: false
+        default: "llama-3.3-70b-versatile"
+      target_files:
+        description: "Comma/newline-separated repo files for this slice. Keep this to 1-2 files on Groq on-demand."
+        required: false
+        default: "client/src/pages/BlackboardRoomPage.tsx,client/src/lib/gestaltArtifactFlow.ts"
+  schedule:
+    - cron: "17 11 * * 1"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: recursive-builder-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  recursive-builder:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.target_environment || 'Production' }}
+    env:
+      TASK_PROMPT: "${{ github.event.inputs.task_prompt || 'SPEC-2 immediate lockdown pass: wire one bounded capture/orb/queue/approval/blueprint/export slice across the selected target files.' }}"
+      MODE: "${{ github.event.inputs.mode || 'implementation_branch' }}"
+      TARGET_FILES: "${{ github.event.inputs.target_files || 'client/src/pages/BlackboardRoomPage.tsx,client/src/lib/gestaltArtifactFlow.ts' }}"
+      GROQ_MODEL: "${{ github.event.inputs.model || 'llama-3.3-70b-versatile' }}"
+      GROQ_API_KEY: "${{ secrets.GROQ_API_KEY || secrets.VITE_GROQ_API_KEY || secrets.VITE_GROK_API_KEY }}"
+      VITE_GROQ_API_KEY: "${{ secrets.VITE_GROQ_API_KEY }}"
+      VITE_GROK_API_KEY: "${{ secrets.VITE_GROK_API_KEY }}"
+      GOOGLE_API_KEY: "${{ secrets.GOOGLE_API_KEY || secrets.GEMINI_API_KEY || secrets.VITE_GEMINI_API_KEY }}"
+      GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}"
+      VITE_GEMINI_API_KEY: "${{ secrets.VITE_GEMINI_API_KEY }}"
+      OPENAI_API_KEY: "${{ secrets.OPENAI_API_KEY }}"
+      SUPABASE_URL: "${{ secrets.SUPABASE_URL || secrets.VITE_SUPABASE_URL }}"
+      VITE_SUPABASE_URL: "${{ secrets.VITE_SUPABASE_URL }}"
+      SUPABASE_ANON_KEY: "${{ secrets.SUPABASE_ANON_KEY || secrets.VITE_SUPABASE_ANON_KEY }}"
+      VITE_SUPABASE_ANON_KEY: "${{ secrets.VITE_SUPABASE_ANON_KEY }}"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node for repo validation
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Prepare Recursive Builder directories
+        run: |
+          mkdir -p pending/gap-reports pending/enhancement-specs pending/integration-scouting
+          mkdir -p pending/constitutional-audits pending/sprint-ready pending/validation-logs pending/runs
+
+      - name: Run pre-generation validation snapshot
+        shell: bash
+        run: |
+          set +e
+          LOG="pending/validation-logs/$(date -u +%F)_${GITHUB_RUN_ID}_pre-generation.log"
+          {
+            echo "# Recursive Builder pre-generation validation"
+            echo "UTC: $(date -u +%FT%TZ)"
+            echo "Mode: ${MODE}"
+            echo "Model: ${GROQ_MODEL}"
+            echo "Target files: ${TARGET_FILES}"
+            echo
+            if [ -f package.json ]; then
+              echo "## node/npm"
+              node --version
+              npm --version
+              echo
+
+              echo "## npm install"
+              if [ -f package-lock.json ]; then
+                npm ci --include=dev --legacy-peer-deps
+              else
+                npm install --include=dev --legacy-peer-deps
+              fi
+              echo
+
+              if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.build ? 0 : 1)"; then
+                echo "## npm run build"
+                npm run build
+                echo "build_status=$?"
+              else
+                echo "build_status=skipped_missing_script"
+              fi
+              echo
+
+              if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.health ? 0 : 1)"; then
+                echo "## npm run health"
+                npm run health
+                echo "health_status=$?"
+              else
+                echo "health_status=skipped_missing_script"
+              fi
+              echo
+
+              if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.test ? 0 : 1)"; then
+                echo "## npm test -- --run"
+                npm test -- --run
+                echo "test_status=$?"
+              else
+                echo "test_status=skipped_missing_script"
+              fi
+            else
+              echo "No package.json found; skipped node validation."
+            fi
+          } 2>&1 | tee "$LOG"
+          exit 0
+
+      - name: Generate Recursive Builder outputs with Groq
+        shell: bash
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          from pathlib import Path
+          import base64
+          import datetime as dt
+          import json
+          import os
+          import re
+          import subprocess
+          import sys
+          import time
+          import urllib.error
+          import urllib.request
+
+          root = Path.cwd()
+          today = dt.datetime.utcnow().strftime("%Y-%m-%d")
+          run_id = os.environ.get("GITHUB_RUN_ID", "local")
+          stamp = f"{today}_{run_id}"
+          mode = os.environ.get("MODE", "implementation_branch").strip() or "implementation_branch"
+          task_prompt = os.environ.get("TASK_PROMPT", "SPEC-2 immediate lockdown pass")
+          model = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
+          api_key = (
+            os.environ.get("GROQ_API_KEY", "")
+            or os.environ.get("VITE_GROQ_API_KEY", "")
+            or os.environ.get("VITE_GROK_API_KEY", "")
+          )
+
+          # Groq on-demand rejected earlier runs at:
+          #   Limit 12000 TPM, Requested 76714.
+          # Keep request + response below that practical ceiling.
+          APPROX_CHARS_PER_TOKEN = 4
+          SAFE_TOTAL_TOKENS = 10500
+          MAX_OUTPUT_TOKENS = 2600
+          MAX_USER_CHARS = (SAFE_TOTAL_TOKENS - MAX_OUTPUT_TOKENS) * APPROX_CHARS_PER_TOKEN
+          MAX_TARGET_FILES = 2
+
+          default_targets = [
+            "client/src/pages/BlackboardRoomPage.tsx",
+            "client/src/lib/gestaltArtifactFlow.ts",
+          ]
+          raw_targets = os.environ.get("TARGET_FILES", "")
+          parsed_targets = [p.strip() for p in re.split(r"[,\n]+", raw_targets) if p.strip()]
+          requested_target_files = parsed_targets or default_targets
+          target_files = requested_target_files[:MAX_TARGET_FILES]
+
+          run_dir = root / "pending" / "runs" / stamp
+          run_dir.mkdir(parents=True, exist_ok=True)
+          status_path = run_dir / "recursive-builder-run.md"
+
+          def utc_now() -> str:
+            return dt.datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+
+          def clip_middle(text: str, limit: int, label: str = "content") -> str:
+            if len(text) <= limit:
+              return text
+            if limit < 1000:
+              return text[:limit]
+            head_len = int(limit * 0.72)
+            tail_len = max(0, limit - head_len - 160)
+            return (
+              text[:head_len]
+              + f"\n\n[...{label} clipped for Groq token budget: "
+              + f"{len(text)} chars -> {limit} chars...]\n\n"
+              + (text[-tail_len:] if tail_len else "")
+            )
+
+          def read(path: str, limit: int = 6000) -> str:
+            p = root / path
+            if not p.exists() or not p.is_file():
+              return f"[missing: {path}]"
+            text = p.read_text(encoding="utf-8", errors="replace")
+            return clip_middle(text, limit, path)
+
+          def sh(cmd: str, limit: int = 6000) -> str:
+            try:
+              out = subprocess.check_output(cmd, shell=True, text=True, stderr=subprocess.STDOUT)
+              return clip_middle(out, limit, cmd)
+            except subprocess.CalledProcessError as e:
+              return clip_middle(e.output or str(e), limit, cmd)
+
+          def append_status(extra: str) -> None:
+            status_path.write_text(
+              status_path.read_text(encoding="utf-8") + extra,
+              encoding="utf-8",
+            )
+
+          status_path.write_text(
+            f"# Recursive Builder Run\n\n"
+            f"**UTC:** {utc_now()}\n\n"
+            f"**Run ID:** `{run_id}`\n\n"
+            f"**Mode:** `{mode}`\n\n"
+            f"**Model:** `{model}`\n\n"
+            f"**Task:** {task_prompt}\n\n"
+            f"**Requested target files:** `{', '.join(requested_target_files)}`\n\n"
+            f"**Active target files for this Groq-bounded slice:** `{', '.join(target_files)}`\n\n"
+            f"**Token budget:** approx {SAFE_TOTAL_TOKENS} total tokens; "
+            f"{MAX_OUTPUT_TOKENS} max output tokens.\n\n"
+            "This file is intentionally unique per run so the workflow cannot silently finish with no diff.\n",
+            encoding="utf-8",
+          )
+
+          def write_gap(reason: str, detail: str = "") -> Path:
+            p = root / "pending" / "gap-reports" / f"{stamp}_recursive-builder-run-gap-report.md"
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text(
+              "# Recursive Builder Run Gap Report\n\n"
+              f"**UTC:** {utc_now()}\n\n"
+              f"**Run ID:** `{run_id}`\n\n"
+              f"**Mode:** `{mode}`\n\n"
+              f"**Reason:** {reason}\n\n"
+              f"**Active target files:** `{', '.join(target_files)}`\n\n"
+              + (f"## Detail\n\n```text\n{clip_middle(detail, 12000, 'error detail')}\n```\n\n" if detail else "")
+              + "## Next concrete step\n\n"
+              "Keep the run sliced to 1-2 files, use base64 JSON output, and rerun `.github/workflows/recursive.yml`.\n",
+              encoding="utf-8",
+            )
+            return p
+
+          validation_files = sorted((root / "pending" / "validation-logs").glob(f"{today}_{run_id}_*.log"))
+          validation_text = "\n\n".join(
+            f"## {p.name}\n" + clip_middle(p.read_text(encoding="utf-8", errors="replace"), 4500, p.name)
+            for p in validation_files
+          )
+
+          # Read target files with a higher per-file budget, but only for the small active slice.
+          target_context = {path: read(path, 9500) for path in target_files}
+
+          context = {
+            "openai_yaml": read("openai.yaml", 2500),
+            "pending_readme": read("pending/README.md", 2500),
+            "active_spec_excerpt": read("GestaltView_Codex_SPEC.md", 5000),
+            "ui_ux_excerpt": read("ui_ux.yaml", 4500),
+            "current_state_excerpt": read("docs/CurrentState.md", 3500),
+            "target_files": target_context,
+            "inventory": sh("find client/src -maxdepth 3 -type f | sort | head -180", 4500),
+            "git_status": sh("git status --short", 2000),
+            "validation": validation_text,
+            "slice_note": (
+              "This workflow intentionally sends only 1-2 active target files to Groq. "
+              "Run additional slices by changing target_files rather than sending the whole runtime."
+            ),
+          }
+
+          if not api_key:
+            write_gap("Missing Groq secret. Set `GROQ_API_KEY` in the selected GitHub Environment.")
+            sys.exit(0)
+
+          if mode == "pending_only":
+            allowed_description = "pending/** only"
+            requested_output = f"""
+            Produce only pending markdown files. Required: one sprint-ready brief and one classified
+            gap/enhancement report. Use unique paths containing `{stamp}`.
+            """
+          else:
+            allowed_description = (
+              "pending/**, selected target files, client/src/lib/**, "
+              "docs/CurrentState.md, docs/DirectoryMapAndWorkflow.md"
+            )
+            requested_output = f"""
+            Produce a bounded implementation branch for the active slice only.
+            You may write complete replacements for selected target files, create/update
+            client/src/lib helpers, and write pending run documentation.
+            Prefer one coherent slice over many shallow edits.
+            Use unique pending paths containing `{stamp}`.
+            """
+
+          system = (
+            "You are The Recursive Builder for GestaltView. Operate as a recursive auditor-builder. "
+            "Evidence first, inference second. In implementation_branch mode, produce bounded founder-review PR files, "
+            "not live self-merges. When editing runtime code, output complete file contents, not prose patches. "
+            "Do not claim commands passed unless validation text shows that. Return strict JSON only. "
+            "CRITICAL: file contents MUST be base64 encoded in content_b64. Never put raw code in JSON strings."
+          )
+
+          def build_user(context_obj: dict) -> str:
+            return f"""
+            Task: {task_prompt}
+            UTC date: {today}
+            Run stamp: {stamp}
+            Mode: {mode}
+            Allowed write scope: {allowed_description}
+            Active target files: {', '.join(target_files)}
+
+            Active SPEC floor:
+            - SPEC-2 immediate runtime enhancement / lockdown pass.
+            - Canonical flow: Sanctuary -> Billy orientation -> Blackboard capture -> pending orb queue -> Dynamic Inner World -> External Scaffold approval -> Creation Corner artifact/export.
+            - Required chain: capture -> orb -> queue -> approve/deny/delete -> blueprint -> artifact -> export.
+            - Do not create a generic six-week roadmap.
+            - Do not self-merge. This workflow opens a founder-review PR only.
+
+            Output instructions:
+            {requested_output}
+
+            Produce ONLY parseable JSON. Do not wrap in Markdown fences.
+            Required shape:
+            {{
+              "summary": "short run summary",
+              "files": [
+                {{
+                  "path": "repo-relative allowed path",
+                  "encoding": "base64",
+                  "content_b64": "base64 encoded complete file content"
+                }}
+              ]
+            }}
+
+            File content encoding rules:
+            - content_b64 must be valid base64 of the complete final file content.
+            - Do not include a raw "content" field for source files.
+            - For Markdown files, base64 encode the Markdown too.
+            - For TS/TSX files, base64 encode complete file contents and preserve existing exported component names unless changing matching imports too.
+            - Never write placeholders such as "... rest of the code remains the same ...".
+            - Every run must include at least one pending markdown file using `{stamp}` in the filename or directory.
+            - Classify findings as GAP, DRIFT, RISK, or OPPORTUNITY.
+            - Anchor claims to files, command output, or explicit absence.
+            - Keep output bounded to the active slice. Do not attempt to rewrite all GestaltView rooms in one response.
+
+            Repo context JSON:
+            {json.dumps(context_obj, ensure_ascii=False)}
+            """
+
+          user = build_user(context)
+          estimated_tokens = int((len(system) + len(user)) / APPROX_CHARS_PER_TOKEN) + MAX_OUTPUT_TOKENS
+          if len(user) > MAX_USER_CHARS:
+            user = clip_middle(user, MAX_USER_CHARS, "assembled prompt")
+            estimated_tokens = int((len(system) + len(user)) / APPROX_CHARS_PER_TOKEN) + MAX_OUTPUT_TOKENS
+
+          append_status(
+            "\n## Prompt Budget\n\n"
+            f"- Assembled user prompt chars: `{len(user)}`\n"
+            f"- Estimated requested tokens: `{estimated_tokens}`\n"
+            f"- Safe total token target: `{SAFE_TOTAL_TOKENS}`\n"
+            "- Output format: `content_b64` base64 JSON to avoid invalid control characters.\n"
+          )
+
+          def groq_call(user_text: str, max_tokens: int) -> str:
+            payload = {
+              "model": model,
+              "temperature": 0.12,
+              "max_tokens": max_tokens,
+              "response_format": {"type": "json_object"},
+              "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user_text},
+              ],
+            }
+            req = urllib.request.Request(
+              "https://api.groq.com/openai/v1/chat/completions",
+              data=json.dumps(payload).encode("utf-8"),
+              headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                # Python urllib's default User-Agent may trigger Cloudflare 403/1010.
+                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 GestaltViewRecursiveBuilder/1.2",
+              },
+            )
+            with urllib.request.urlopen(req, timeout=180) as res:
+              raw = json.loads(res.read().decode("utf-8"))
+            return raw["choices"][0]["message"]["content"]
+
+          try:
+            content = groq_call(user, MAX_OUTPUT_TOKENS)
+          except urllib.error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", errors="replace") if hasattr(exc, "read") else str(exc)
+            # Retry once with a smaller prompt/output if Groq still reports payload/TPM pressure.
+            if exc.code in (413, 429):
+              smaller_user = clip_middle(user, 18000, "retry prompt")
+              try:
+                append_status("\n## Retry\n\nInitial Groq call hit size/rate pressure; retrying with smaller prompt.\n")
+                time.sleep(3)
+                content = groq_call(smaller_user, 1800)
+              except urllib.error.HTTPError as retry_exc:
+                retry_detail = retry_exc.read().decode("utf-8", errors="replace") if hasattr(retry_exc, "read") else str(retry_exc)
+                write_gap(
+                  f"Groq HTTP call failed after compact retry: {retry_exc}",
+                  f"Initial error:\n{detail}\n\nRetry error:\n{retry_detail}",
+                )
+                sys.exit(0)
+              except Exception as retry_exc:
+                write_gap(f"Groq compact retry failed: {retry_exc}", detail)
+                sys.exit(0)
+            else:
+              write_gap(f"Groq HTTP call failed: {exc}", detail)
+              sys.exit(0)
+          except Exception as exc:
+            write_gap(f"Groq call failed: {exc}")
+            sys.exit(0)
+
+          raw_path = run_dir / "model-response.raw.txt"
+          raw_path.write_text(content, encoding="utf-8")
+
+          cleaned = content.strip()
+          cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", cleaned, flags=re.I | re.S)
+          if not cleaned.startswith("{"):
+            start = cleaned.find("{")
+            end = cleaned.rfind("}")
+            if start != -1 and end != -1 and end > start:
+              cleaned = cleaned[start:end + 1]
+
+          try:
+            data = json.loads(cleaned)
+          except json.JSONDecodeError as exc:
+            write_gap("Model did not return parseable JSON. Raw response saved under pending/runs/.", str(exc))
+            sys.exit(0)
+
+          pending_prefixes = (
+            "pending/gap-reports/",
+            "pending/enhancement-specs/",
+            "pending/integration-scouting/",
+            "pending/constitutional-audits/",
+            "pending/sprint-ready/",
+            "pending/runs/",
+          )
+          exact_allowed = set(target_files + ["docs/CurrentState.md", "docs/DirectoryMapAndWorkflow.md"])
+
+          def is_allowed(rel: str) -> bool:
+            rel = rel.replace("\\", "/")
+            if rel.startswith("/") or ".." in rel or rel.endswith("/"):
+              return False
+            if rel.startswith(pending_prefixes):
+              return rel.endswith((".md", ".json", ".txt"))
+            if mode == "pending_only":
+              return False
+            if rel in exact_allowed:
+              return True
+            if rel.startswith("client/src/lib/") and rel.endswith((".ts", ".tsx")):
+              return True
+            return False
+
+          def decode_item_body(item: dict) -> str:
+            if item.get("encoding") == "base64" or item.get("content_b64"):
+              b64 = str(item.get("content_b64", "")).strip()
+              try:
+                return base64.b64decode(b64, validate=True).decode("utf-8")
+              except Exception as exc:
+                raise ValueError(f"Invalid base64 content for {item.get('path')}: {exc}") from exc
+
+            # Backward-compatible fallback for pending markdown only.
+            # Source files must use content_b64 to prevent invalid JSON strings.
+            body = item.get("content")
+            if body is None:
+              raise ValueError(f"Missing content_b64 for {item.get('path')}")
+            return str(body)
+
+          def looks_like_placeholder(rel: str, body: str) -> bool:
+            if not rel.endswith((".ts", ".tsx")):
+              return False
+            bad_phrases = [
+              "... rest of the code remains the same ...",
+              "rest of the code remains the same",
+              "... implement the gestalt artifact flow logic here ...",
+              "TODO: implement",
+            ]
+            return any(phrase in body for phrase in bad_phrases)
+
+          wrote = 0
+          rejected = []
+          decode_errors = []
+
+          for item in data.get("files", []):
+            rel = str(item.get("path", "")).replace("\\", "/")
+            if not is_allowed(rel):
+              rejected.append(rel)
+              continue
+            try:
+              body = decode_item_body(item)
+            except Exception as exc:
+              decode_errors.append(str(exc))
+              continue
+            if looks_like_placeholder(rel, body):
+              rejected.append(f"{rel} (placeholder source content rejected)")
+              continue
+            out = root / rel
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text(body.rstrip() + "\n", encoding="utf-8")
+            wrote += 1
+
+          if rejected:
+            append_status("\n## Rejected model paths/content\n\n" + "\n".join(f"- `{p}`" for p in rejected) + "\n")
+          if decode_errors:
+            append_status("\n## Decode errors\n\n" + "\n".join(f"- `{e}`" for e in decode_errors) + "\n")
+
+          if wrote == 0:
+            write_gap(
+              "Model returned JSON but no allowed files were written.",
+              json.dumps({"summary": data.get("summary"), "rejected": rejected, "decode_errors": decode_errors}, ensure_ascii=False)[:12000],
+            )
+          else:
+            append_status(
+              f"\n## Result\n\nWrote `{wrote}` model-generated file(s).\n\n"
+              f"Summary: {data.get('summary', 'No summary returned.')}\n"
+            )
+          PY
+
+      - name: Run post-generation validation snapshot
+        shell: bash
+        run: |
+          set +e
+          LOG="pending/validation-logs/$(date -u +%F)_${GITHUB_RUN_ID}_post-generation.log"
+          {
+            echo "# Recursive Builder post-generation validation"
+            echo "UTC: $(date -u +%FT%TZ)"
+            echo
+            echo "## git diff summary"
+            git status --short
+            echo
+            if [ -f package.json ]; then
+              if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.build ? 0 : 1)"; then
+                echo "## npm run build"
+                npm run build
+                echo "build_status=$?"
+              else
+                echo "build_status=skipped_missing_script"
+              fi
+            fi
+          } 2>&1 | tee "$LOG"
+          exit 0
+
+      - name: Create founder-review pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: recursive-builder/${{ github.run_id }}
+          commit-message: "chore(recursive-builder): run bounded lockdown pass"
+          title: "Recursive Builder bounded lockdown pass"
+          body: |
+            Generated by The Recursive Builder using Groq.
+
+            Task: `${{ env.TASK_PROMPT }}`
+            Mode: `${{ env.MODE }}`
+            Model: `${{ env.GROQ_MODEL }}`
+            Target files: `${{ env.TARGET_FILES }}`
+
+            This PR is founder-review only. It must not be treated as live deployment authorization.
+
+            Guardrails:
+            - Sends only the active 1-2 file slice to Groq.
+            - Caps output tokens.
+            - Retries once with a compact prompt on 413/429.
+            - Requires base64-encoded `content_b64` file payloads so multiline code cannot break JSON parsing.
+            - Rejects placeholder TS/TSX output.
+          add-paths: |
+            pending/**
+            client/src/pages/SanctuaryPage.tsx
+            client/src/pages/BlackboardRoomPage.tsx
+            client/src/pages/DynamicInnerWorldPage.tsx
+            client/src/pages/ExternalScaffoldPage.tsx
+            client/src/pages/CreationCornerPage.tsx
+            client/src/components/BillyOnboardingPrompt.tsx
+            client/src/components/Scaffold.tsx
+            client/src/lib/**
+            docs/CurrentState.md
+            docs/DirectoryMapAndWorkflow.md

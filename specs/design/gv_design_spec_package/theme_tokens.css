@@ -1,0 +1,44 @@
+:root {
+  --gv-obsidian: #05070B;
+  --gv-void-navy: #0A1020;
+  --gv-electric-cyan: #12D6FF;
+  --gv-signal-blue: #4AA8FF;
+  --gv-ultraviolet: #8A5CFF;
+  --gv-neon-magenta: #FF3CAC;
+  --gv-soft-parchment: #F5E9CF;
+  --gv-warm-ink: #5E4B3C;
+  --gv-ember-gold: #F7B267;
+  --gv-success-mint: #6EE7B7;
+  --gv-radius-sm: 8px;
+  --gv-radius-md: 16px;
+  --gv-radius-lg: 24px;
+  --gv-space-xs: 4px;
+  --gv-space-sm: 8px;
+  --gv-space-md: 16px;
+  --gv-space-lg: 24px;
+  --gv-space-xl: 32px;
+  --gv-space-xxl: 48px;
+  --gv-font-logo: 'Cabin Sketch', cursive;
+  --gv-font-body: 'Manrope', 'Aptos', 'Segoe UI', sans-serif;
+  --gv-font-mono: 'Geist Mono', ui-monospace, monospace;
+}
+
+.gv-banner {
+  background: radial-gradient(circle at 30% 50%, rgba(18,214,255,.18), transparent 28%),
+              linear-gradient(90deg, var(--gv-void-navy) 0%, var(--gv-obsidian) 100%);
+  border: 1px solid rgba(74,168,255,.35);
+  border-radius: var(--gv-radius-lg);
+  box-shadow: 0 0 30px rgba(138,92,255,.18);
+}
+
+.gv-glow-text {
+  color: white;
+  text-shadow: 0 0 10px rgba(18,214,255,.35), 0 0 20px rgba(255,60,172,.22);
+}
+
+.gv-parchment-panel {
+  background: var(--gv-soft-parchment);
+  color: var(--gv-warm-ink);
+  border: 1px solid rgba(94,75,60,.22);
+  border-radius: var(--gv-radius-md);
+}

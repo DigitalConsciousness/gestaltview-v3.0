@@ -1,0 +1,140 @@
+name: Ingest Agent Trainer Files
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Run discovery and chunking without writing to Supabase"
+        required: true
+        default: true
+        type: boolean
+      no_embed:
+        description: "Skip embedding generation and write text fragments only"
+        required: true
+        default: true
+        type: boolean
+      include_marketing:
+        description: "Include root marketing calendar, email, and social files"
+        required: true
+        default: false
+        type: boolean
+      root:
+        description: "Relative Agent Trainer corpus root"
+        required: true
+        default: "agent_trainer"
+        type: string
+      package:
+        description: "Package tag for retrieval filtering"
+        required: true
+        default: "agent-trainer-package"
+        type: string
+      source_prefix:
+        description: "Prefix stored in knowledge_fragments.source_file"
+        required: true
+        default: "agent_trainer"
+        type: string
+      target_environment:
+        description: "GitHub Environment containing live ingest secrets (must match Settings > Environments exactly — case-sensitive)"
+        required: true
+        default: "Production"
+        type: environment
+
+jobs:
+  ingest:
+    name: Ingest Agent Trainer Files
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_environment }}
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    env:
+      GESTALTVIEW_EMBED_MODEL: google/embeddinggemma-300M
+      GESTALTVIEW_EMBED_DIMS: "768"
+      GESTALTVIEW_EMBED_BATCH_SIZE: "32"
+      GESTALTVIEW_EMBED_DEVICE: cpu
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SERVICE_KEY }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN || secrets.HUGGINGFACE_TOKEN || secrets.HUGGINGFACE_API_KEY }}
+      HUGGING_FACE_HUB_TOKEN: ${{ secrets.HF_TOKEN || secrets.HUGGINGFACE_TOKEN || secrets.HUGGINGFACE_API_KEY }}
+      HF_HOME: /home/runner/.cache/huggingface
+      TRANSFORMERS_CACHE: /home/runner/.cache/huggingface/hub
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache Python dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.cache/huggingface/hub
+          key: agent-trainer-ingest-${{ runner.os }}-${{ github.workflow }}-${{ hashFiles('scripts/ingest_agent_trainer_corpus.py') }}
+          restore-keys: |
+            agent-trainer-ingest-${{ runner.os }}-${{ github.workflow }}-
+            agent-trainer-ingest-${{ runner.os }}-
+
+      - name: Install base ingestion dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install requests pdfplumber python-dotenv
+
+      - name: Install CPU embedding dependencies
+        if: ${{ inputs.no_embed == false }}
+        run: |
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install sentence-transformers
+          python -c "import torch; print(f'PyTorch {torch.__version__}, CUDA={torch.version.cuda or \"cpu-only\"}')"
+
+      - name: Preflight Hugging Face gated model token
+        if: ${{ inputs.no_embed == false }}
+        run: |
+          if [[ -z "${HF_TOKEN:-}" ]]; then
+            echo "::error::Embedding mode requires HF_TOKEN, HUGGINGFACE_TOKEN, or HUGGINGFACE_API_KEY in the selected GitHub Environment."
+            exit 1
+          fi
+
+      - name: Authenticate and prewarm Hugging Face gated model
+        if: ${{ inputs.no_embed == false }}
+        run: |
+          python -c "import os; from huggingface_hub import login; login(token=os.environ['HF_TOKEN'], add_to_git_credential=False)"
+          python -c "import os; from sentence_transformers import SentenceTransformer; model = SentenceTransformer(os.environ['GESTALTVIEW_EMBED_MODEL']); print(f'Loaded {os.environ[\"GESTALTVIEW_EMBED_MODEL\"]} with dim {model.get_sentence_embedding_dimension()}')"
+
+      - name: Preflight live ingest secrets
+        if: ${{ inputs.dry_run == false }}
+        run: |
+          if [[ -z "${SUPABASE_URL:-${VITE_SUPABASE_URL:-}}" || -z "${SUPABASE_SERVICE_ROLE_KEY:-${SUPABASE_SERVICE_KEY:-}}" ]]; then
+            echo "::error::Live ingest requires SUPABASE_URL or VITE_SUPABASE_URL plus SUPABASE_SERVICE_ROLE_KEY or SUPABASE_SERVICE_KEY in the selected GitHub Environment."
+            exit 1
+          fi
+
+      - name: Run Agent Trainer ingest
+        run: |
+          args=(
+            --root "${{ inputs.root }}"
+            --package "${{ inputs.package }}"
+            --source-prefix "${{ inputs.source_prefix }}"
+          )
+
+          if [[ "${{ inputs.dry_run }}" == "true" ]]; then
+            args+=(--dry-run)
+          fi
+
+          if [[ "${{ inputs.no_embed }}" == "true" ]]; then
+            args+=(--no-embed)
+          fi
+
+          if [[ "${{ inputs.include_marketing }}" == "true" ]]; then
+            args+=(--include-marketing)
+          fi
+
+          python scripts/ingest_agent_trainer_corpus.py "${args[@]}"

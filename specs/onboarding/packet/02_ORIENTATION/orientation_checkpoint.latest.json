@@ -1,0 +1,20 @@
+{
+  "packet_type": "gestaltview_orientation_checkpoint",
+  "packet_version": "2.0.0",
+  "checkpoint_id": "orientation-checkpoint-latest",
+  "generated_at_utc": "2026-04-14T22:48:38+00:00",
+  "spine_ref": "02_ORIENTATION/orientation_spine.v2.json",
+  "delta_ref": "02_ORIENTATION/orientation_delta.current.json",
+  "priority_changes": [
+    "Top blocker is the trainer recommendations endpoint failure.",
+    "Orientation is split into spine, delta, and checkpoint.",
+    "Embodiment summaries should absorb checkpoint deltas instead of raw packet dumps."
+  ],
+  "load_first": [
+    "source_of_truth",
+    "constitutional_layers",
+    "active_blockers",
+    "memory_model",
+    "system_domains"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-06-13T10:59:00.000Z",
+  "artifacts": [
+    {
+      "id": "exhibit-resume-keith-soyka-v1",
+      "userId": "system",
+      "title": "Keith Soyka · Interactive Resume",
+      "summary": "41 years of lived expertise across music, technology, cognitive science, and platform architecture — rendered as a living document.",
+      "sourceFileId": null,
+      "thumbnailUrl": null,
+      "createdAt": "2026-06-13T10:59:00.000Z",
+      "updatedAt": "2026-06-13T10:59:00.000Z",
+      "originRoom": "dynamic_inner_world",
+      "evidenceNodeIds": [],
+      "tags": ["resume", "biography", "showcase", "exhibit"],
+      "status": "active",
+      "filePath": "artifacts/showcase/exhibit-resume-keith-soyka-v1.html"
+    },
+    {
+      "id": "exhibit-wiki-gestaltview-v1",
+      "userId": "system",
+      "title": "GestaltView · Platform Wiki",
+      "summary": "The canonical reference for GestaltView's architecture, IP, and vision — from the Sanctuary to Billy's embodiment layer.",
+      "sourceFileId": null,
+      "thumbnailUrl": null,
+      "createdAt": "2026-06-13T10:59:00.000Z",
+      "updatedAt": "2026-06-13T10:59:00.000Z",
+      "originRoom": "dynamic_inner_world",
+      "evidenceNodeIds": [],
+      "tags": ["wiki", "gestaltview", "platform", "showcase", "exhibit"],
+      "status": "active",
+      "filePath": "artifacts/showcase/exhibit-wiki-gestaltview-v1.html"
+    },
+    {
+      "id": "exhibit-audio-analysis-v1",
+      "userId": "system",
+      "title": "Musical DNA · Audio Analysis",
+      "summary": "A demonstration of GestaltView's Musical DNA engine — anchor song detection, emotional arc mapping, and listener identity from your library.",
+      "sourceFileId": null,
+      "thumbnailUrl": null,
+      "createdAt": "2026-06-13T10:59:00.000Z",
+      "updatedAt": "2026-06-13T10:59:00.000Z",
+      "originRoom": "dynamic_inner_world",
+      "evidenceNodeIds": [],
+      "tags": ["musical-dna", "audio", "analysis", "showcase", "exhibit"],
+      "status": "active",
+      "filePath": "artifacts/showcase/exhibit-audio-analysis-v1.html"
+    }
+  ]
+}

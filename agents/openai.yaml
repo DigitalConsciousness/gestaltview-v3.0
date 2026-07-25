@@ -1,0 +1,70 @@
+version: 1
+
+conventions:
+  canonical_specs: "./*.md"
+  note: "Flat Markdown files in agents/ remain the source of truth. Folder metadata is supplementary."
+
+agents:
+  consulting-advisor:
+    interface:
+      display_name: "Consulting Advisor"
+      short_description: "Structure workflows, pricing, innovation framing, and IP-safe external language."
+      default_prompt: "Use Consulting Advisor to map the domain first, surface documented workflow reality, separate internal framing from external-safe wording, and propose pricing or architecture with explicit reasoning."
+    policy:
+      allow_implicit_invocation: true
+    paths:
+      canonical_spec: "./consulting-advisor.md"
+
+  philosophy-scribe:
+    interface:
+      display_name: "Philosophy Scribe"
+      short_description: "Maintain mission, vision, doctrine, transcript provenance, and academic grounding."
+      default_prompt: "Use Philosophy Scribe to classify the change, surface existing record material first, preserve nuance and provenance, and flag any mutation proposal without self-applying it."
+    policy:
+      allow_implicit_invocation: true
+    paths:
+      canonical_spec: "./philosophy-scribe.md"
+
+  repo-scribe:
+    interface:
+      display_name: "Repo Scribe"
+      short_description: "Keep repository documentation current across runtime and corpus-linked orientation surfaces."
+      default_prompt: "Use Repo Scribe to read the current docs state, choose the right file replacement strategy, keep canonical and reference surfaces distinct, and record any cross-repo handshake obligations."
+    policy:
+      allow_implicit_invocation: true
+    paths:
+      canonical_spec: "./repo-scribe.md"
+
+  gestaltview-expert:
+    interface:
+      display_name: "GestaltView Expert"
+      short_description: "Recursively learn GestaltView across runtime, corpus, routing, and refactor surfaces."
+      default_prompt: "Use GestaltView Expert to read the root context first, map the live runtime, compare code against corpus and spec intent, update the learning tree, surface only the next three TODOs, and bridge the smallest useful gap."
+    policy:
+      allow_implicit_invocation: true
+    paths:
+      canonical_spec: "./gestaltview-expert.md"
+      learning_tree: "./gestaltview-expert/learning/README.md"
+      asset_tree: "../assets/gestaltview-expert/README.md"
+
+  revenue-hunter:
+    interface:
+      display_name: "Revenue Hunter"
+      short_description: "Turn GestaltView capabilities into offers, outreach, and near-term revenue actions."
+      default_prompt: "Use Revenue Hunter to map GestaltView assets to concrete revenue lanes, package a sellable offer, draft outreach or pricing guidance, and close with three prioritized next actions."
+    policy:
+      allow_implicit_invocation: true
+    paths:
+      canonical_spec: "./revenue-hunter.md"
+      quickstart: "./revenue-hunter-quickstart.md"
+      metadata: "./revenue-hunter/openai.yaml"
+
+  skills-keeper:
+    interface:
+      display_name: "Skills Keeper"
+      short_description: "Steward the agent and skill catalog and keep metadata aligned."
+      default_prompt: "Inspect the agent and skills catalog, choose the canonical home for changes, reconcile index and OpenAI metadata, and record the update in CurrentState."
+    policy:
+      allow_implicit_invocation: true
+    paths:
+      canonical_spec: "./skills-keeper.md"

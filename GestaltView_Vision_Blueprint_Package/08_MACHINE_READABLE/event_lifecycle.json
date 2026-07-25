@@ -1,0 +1,25 @@
+{
+  "CaptureEvent": [
+    "created",
+    "held_raw",
+    "placed_inner_world",
+    "queued_scaffold",
+    "approved_scaffold",
+    "converted_to_blueprint",
+    "created_artifact",
+    "exported"
+  ],
+  "ApprovalGates": [
+    "scaffold_approval",
+    "identity_claim_approval",
+    "private_material_use",
+    "share_export",
+    "gate_package"
+  ],
+  "PreservationRules": [
+    "preserve_original_words",
+    "preserve_timestamp",
+    "never_silent_delete",
+    "release_requires_user_action"
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Billy Voice"
+  short_description: "Work on Billy's spoken runtime, style planner, and LiveKit/Whisper/CosyVoice stack."
+  default_prompt: "Use this skill for billy_voice/, the voice session loop, faster-whisper STT, StylePlanner behavior, CosyVoice TTS, and spoken-runtime setup or debugging."

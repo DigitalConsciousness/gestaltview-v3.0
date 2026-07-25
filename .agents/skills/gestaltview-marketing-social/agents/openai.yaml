@@ -1,0 +1,4 @@
+interface:
+  display_name: "Marketing & Social"
+  short_description: "Shape messaging, campaigns, and channel strategy."
+  default_prompt: "Use this skill for GestaltView messaging, social content, channel strategy, and go-to-market execution."

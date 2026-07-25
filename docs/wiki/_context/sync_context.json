@@ -1,0 +1,37 @@
+{
+  "new_pages": [],
+  "pages_to_update": {},
+  "unchanged_pages": [
+    "gestaltview_v2_11_deployment-infrastructure",
+    "gestaltview_v2_07_gate-package-builder",
+    "gestaltview_v2_12_current-state-and-glossary",
+    "gestaltview_v2_03_frontend-auth-routing",
+    "gestaltview_v2_10_operations-manifest-skills",
+    "gestaltview_v2_08_agent-trainer",
+    "gestaltview_v2_05_data-memory-retrieval",
+    "gestaltview_v2_06_voice-runtime",
+    "gestaltview_v2_02_development-environment",
+    "gestaltview_v2_01_overview",
+    "gestaltview_v2_09_diligence-tribunal",
+    "gestaltview_v2_04_billy-runtime"
+  ],
+  "toc_project": {
+    "name": "GestaltView v2",
+    "description": "The production-facing GestaltView runtime covering the public app, Billy, authenticated control surfaces, diligence, package generation, and operator tooling.",
+    "repo_base_url": "https://github.com/faagestalt-web/gestaltview-v2/blob",
+    "ref_commit_hash": "46a35cdd664bd3549ef8d41b793a1d21a51657d9",
+    "updated_at": "2026-04-09"
+  },
+  "metadata": {
+    "toc_file": "/workspaces/gestaltview-v2/docs/wiki/toc.yaml",
+    "doc_dir": "/workspaces/gestaltview-v2/docs/wiki",
+    "total_toc_pages": 12,
+    "total_existing_docs": 12,
+    "total_new_pages": 0,
+    "total_pages_to_update": 0,
+    "total_unchanged_pages": 12,
+    "total_new_sections": 0,
+    "total_deleted_sections": 0,
+    "total_empty_sections_detected": 0
+  }
+}

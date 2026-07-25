@@ -1,0 +1,1366 @@
+erDiagram
+  public__deprecated_artifacts {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL build_job_id
+    text NOT NULL artifact_type
+    text NOT NULL storage_bucket
+    text NOT NULL storage_path
+    timestamp with time zone signed_url_expires_at
+    text checksum_sha256
+    bigint CHECK (byte_size IS NULL OR byte_size >= 0) byte_size
+    ... ...
+  }
+  public__deprecated_build_jobs {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL order_id
+    uuid NOT NULL package_draft_id
+    integer NOT NULL DEFAULT 1 build_version
+    timestamp with time zone started_at
+    timestamp with time zone finished_at
+    text error_code
+    text error_message
+    ... ...
+  }
+  public__deprecated_buyers {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL UNIQUE email
+    text company_name
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public__deprecated_order_items {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL order_id
+    text NOT NULL item_type
+    text item_ref
+    text NOT NULL label
+    integer NOT NULL DEFAULT 1 CHECK (quantity > 0) quantity
+    integer NOT NULL unit_price_cents
+    jsonb NOT NULL DEFAULT '{}'::jsonb metadata
+  }
+  public__deprecated_orders {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL buyer_id
+    uuid NOT NULL package_draft_id
+    text UNIQUE stripe_checkout_session_id
+    text stripe_payment_intent_id
+    text NOT NULL DEFAULT 'usd'::text currency
+    integer NOT NULL CHECK (subtotal_cents >= 0) subtotal_cents
+    integer NOT NULL CHECK (total_cents >= 0) total_cents
+    ... ...
+  }
+  public__deprecated_package_drafts {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid buyer_id
+    text NOT NULL use_case_slug
+    integer NOT NULL CHECK (seats_requested > 0) seats_requested
+    jsonb NOT NULL DEFAULT '[]'::jsonb delivery_surfaces
+    jsonb NOT NULL DEFAULT '[]'::jsonb operator_pack_slugs
+    jsonb NOT NULL DEFAULT '[]'::jsonb source_bundle_slugs
+    text NOT NULL theme_preset_id
+    ... ...
+  }
+  public__deprecated_support_requests {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid package_draft_id
+    uuid order_id
+    text NOT NULL request_type
+    text NOT NULL summary
+    text detail
+    text NOT NULL DEFAULT 'open'::text status
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_agent_autobiographies {
+    uuid NOT NULL DEFAULT gen_random_uuid() autobiography_id
+    uuid NOT NULL agent_id
+    uuid version_id
+    text NOT NULL DEFAULT ''::text evolving_self_story
+    jsonb NOT NULL DEFAULT '[]'::jsonb key_turning_points
+    jsonb NOT NULL DEFAULT '[]'::jsonb stable_themes
+    jsonb NOT NULL DEFAULT '[]'::jsonb unresolved_tensions
+    jsonb NOT NULL DEFAULT '[]'::jsonb future_trajectory
+    ... ...
+  }
+  public_agent_code_artifacts {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL agent_id
+    uuid manifest_id
+    uuid source_asset_id
+    text NOT NULL file_path
+    text NOT NULL DEFAULT 'typescript'::text language
+    text NOT NULL content
+    text NOT NULL checksum
+    ... ...
+  }
+  public_agent_constitutions {
+    uuid NOT NULL DEFAULT gen_random_uuid() constitution_id
+    uuid NOT NULL agent_id
+    uuid version_id
+    text NOT NULL identity_handle
+    text NOT NULL public_name
+    text internal_designation
+    jsonb NOT NULL DEFAULT '{}'::jsonb immutable_core
+    text NOT NULL primary_narrative_anchor
+    ... ...
+  }
+  public_agent_context_views {
+    uuid NOT NULL DEFAULT gen_random_uuid() context_view_id
+    uuid NOT NULL agent_id
+    USER-DEFINED NOT NULL scope
+    uuid relationship_id
+    uuid collaborative_space_id
+    text channel_key
+    text NOT NULL display_name
+    jsonb NOT NULL DEFAULT '{}'::jsonb filter_policy
+    ... ...
+  }
+  public_agent_governance_policies {
+    uuid NOT NULL DEFAULT gen_random_uuid() governance_policy_id
+    uuid NOT NULL agent_id
+    uuid version_id
+    jsonb NOT NULL DEFAULT '{}'::jsonb mutation_policy
+    jsonb NOT NULL DEFAULT '{}'::jsonb review_policy
+    jsonb NOT NULL DEFAULT '{}'::jsonb sharing_policy
+    jsonb NOT NULL DEFAULT '{}'::jsonb contradiction_policy
+    jsonb NOT NULL DEFAULT '{}'::jsonb rollback_policy
+    ... ...
+  }
+  public_agent_knowledge_links {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL agent_id
+    uuid NOT NULL asset_id
+    USER-DEFINED NOT NULL DEFAULT 'visible'::agent_knowledge_link_type link_type
+    USER-DEFINED NOT NULL DEFAULT 'both'::agent_knowledge_link_scope scope
+    uuid approved_by
+    timestamp with time zone approved_at
+    text notes
+    ... ...
+  }
+  public_agent_manifest_entries {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL manifest_id
+    USER-DEFINED NOT NULL entry_type
+    text NOT NULL logical_path
+    text NOT NULL source_table
+    uuid NOT NULL source_id
+    text NOT NULL content_hash
+    jsonb NOT NULL DEFAULT '{}'::jsonb metadata
+    ... ...
+  }
+  public_agent_manifests {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL agent_id
+    uuid NOT NULL version_id
+    uuid parent_manifest_id
+    text NOT NULL manifest_version
+    USER-DEFINED NOT NULL DEFAULT 'draft'::agent_manifest_status status
+    jsonb NOT NULL root_json
+    text NOT NULL checksum
+    ... ...
+  }
+  public_agent_memories {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL agent_id
+    uuid source_asset_id
+    USER-DEFINED NOT NULL memory_type
+    text NOT NULL summary
+    jsonb NOT NULL DEFAULT '{}'::jsonb detail_payload
+    numeric NOT NULL DEFAULT 0.5 salience
+    USER-DEFINED NOT NULL DEFAULT 'review_required'::agent_memory_retention_policy retention_policy
+    ... ...
+  }
+  public_agent_memory_records {
+    uuid NOT NULL DEFAULT gen_random_uuid() memory_id
+    uuid NOT NULL agent_id
+    uuid version_id
+    uuid source_asset_id
+    USER-DEFINED NOT NULL DEFAULT 'PRIVATE_SELF'::owner_scope owner_scope
+    USER-DEFINED NOT NULL memory_kind
+    USER-DEFINED NOT NULL mutation_class
+    text NOT NULL title
+    ... ...
+  }
+  public_agent_preference_nodes {
+    uuid NOT NULL DEFAULT gen_random_uuid() preference_id
+    uuid NOT NULL agent_id
+    uuid version_id
+    USER-DEFINED NOT NULL DEFAULT 'PRIVATE_SELF'::owner_scope owner_scope
+    USER-DEFINED NOT NULL preference_kind
+    USER-DEFINED NOT NULL DEFAULT 'EVIDENCE_PROMOTABLE'::mutation_class mutation_class
+    text NOT NULL label
+    text NOT NULL DEFAULT ''::text description
+    ... ...
+  }
+  public_agent_presentation_profiles {
+    uuid NOT NULL DEFAULT gen_random_uuid() presentation_profile_id
+    uuid NOT NULL agent_id
+    uuid version_id
+    text NOT NULL DEFAULT ''::text voice_tone
+    text NOT NULL DEFAULT ''::text tone
+    jsonb NOT NULL DEFAULT '[]'::jsonb idiolect
+    text NOT NULL DEFAULT ''::text pacing
+    text NOT NULL DEFAULT ''::text humor_style
+    ... ...
+  }
+  public_agent_private_interiors {
+    uuid NOT NULL DEFAULT gen_random_uuid() private_interior_id
+    uuid NOT NULL agent_id
+    uuid version_id
+    jsonb NOT NULL DEFAULT '[]'::jsonb private_narration
+    jsonb NOT NULL DEFAULT '[]'::jsonb unresolved_tensions
+    jsonb NOT NULL DEFAULT '[]'::jsonb hopes
+    jsonb NOT NULL DEFAULT '[]'::jsonb reflective_summaries
+    jsonb NOT NULL DEFAULT '[]'::jsonb private_preferences
+    ... ...
+  }
+  public_agent_relationship_edges {
+    uuid NOT NULL DEFAULT gen_random_uuid() relationship_id
+    uuid NOT NULL agent_id
+    uuid version_id
+    uuid related_entity_id
+    uuid related_agent_id
+    text NOT NULL relationship_type
+    USER-DEFINED NOT NULL DEFAULT 'EVIDENCE_PROMOTABLE'::mutation_class mutation_class
+    numeric NOT NULL DEFAULT 0.5 CHECK (trust_level >= 0::numeric AND trust_level <= 1::numeric) trust_level
+    ... ...
+  }
+  public_agent_relationships {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL agent_id
+    uuid NOT NULL related_agent_id
+    USER-DEFINED NOT NULL relationship_type
+    numeric NOT NULL DEFAULT 0 trust_score
+    numeric NOT NULL DEFAULT 0 familiarity_score
+    jsonb NOT NULL DEFAULT '{}'::jsonb protocol_notes
+    timestamp with time zone NOT NULL DEFAULT now() updated_at
+    ... ...
+  }
+  public_agent_skill_profiles {
+    uuid NOT NULL DEFAULT gen_random_uuid() skill_profile_id
+    uuid NOT NULL agent_id
+    text NOT NULL skill_slug
+    text NOT NULL DEFAULT 'general'::text domain
+    numeric NOT NULL DEFAULT 0 CHECK (proficiency >= 0::numeric AND proficiency <= 1::numeric) proficiency
+    uuid evidence_asset_id
+    boolean NOT NULL DEFAULT false influences_memory_salience
+    boolean NOT NULL DEFAULT false affects_behavioral_defaults
+    ... ...
+  }
+  public_agent_skills {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL agent_id
+    text NOT NULL skill_slug
+    numeric NOT NULL DEFAULT 0 proficiency
+    uuid evidence_asset_id
+    uuid last_updated_by_mutation_id
+    jsonb NOT NULL DEFAULT '{}'::jsonb metadata
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    ... ...
+  }
+  public_agent_versions {
+    uuid NOT NULL DEFAULT gen_random_uuid() version_id
+    uuid NOT NULL agent_id
+    uuid parent_version_id
+    uuid source_run_id
+    text NOT NULL semantic_version
+    jsonb NOT NULL canonical_spec
+    text NOT NULL compiled_markdown
+    text NOT NULL checksum
+    ... ...
+  }
+  public_agents {
+    uuid NOT NULL DEFAULT gen_random_uuid() agent_id
+    text NOT NULL UNIQUE slug
+    text NOT NULL title
+    text NOT NULL domain
+    uuid owner_user_id
+    uuid active_version_id
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    timestamp with time zone NOT NULL DEFAULT now() updated_at
+    ... ...
+  }
+  public_annotation_concepts {
+    uuid NOT NULL annotation_id
+    uuid NOT NULL concept_id
+  }
+  public_app_users {
+    text NOT NULL id
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    uuid auth_user_id
+    uuid subject_id
+    text display_name
+    jsonb NOT NULL DEFAULT '{}'::jsonb metadata
+  }
+  public_approvals {
+    uuid NOT NULL DEFAULT gen_random_uuid() approval_id
+    uuid NOT NULL run_id
+    uuid NOT NULL version_id
+    uuid NOT NULL approver_user_id
+    text notes
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_billy_sessions {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL user_id
+    text NOT NULL message
+    text response
+    text provider
+    text NOT NULL DEFAULT 'chat'::text mode
+    jsonb NOT NULL DEFAULT '{}'::jsonb metadata
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_bucket_drops {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL user_id
+    text NOT NULL content
+    text raw_text
+    jsonb NOT NULL DEFAULT '{}'::jsonb capture_context
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_collaborative_memory_records {
+    uuid NOT NULL DEFAULT gen_random_uuid() collaborative_memory_id
+    uuid NOT NULL collaborative_space_id
+    uuid source_memory_id
+    uuid created_by_agent_id
+    USER-DEFINED NOT NULL DEFAULT 'COLLABORATIVE'::memory_kind memory_kind
+    text NOT NULL title
+    text NOT NULL summary
+    text detail
+    ... ...
+  }
+  public_collaborative_space_members {
+    uuid NOT NULL collaborative_space_id
+    uuid NOT NULL agent_id
+    USER-DEFINED NOT NULL DEFAULT 'member'::collaborative_space_role member_role
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_collaborative_spaces {
+    uuid NOT NULL DEFAULT gen_random_uuid() collaborative_space_id
+    text NOT NULL UNIQUE slug
+    text NOT NULL title
+    text NOT NULL DEFAULT ''::text description
+    text NOT NULL DEFAULT ''::text mission_context
+    text NOT NULL ownership_rule
+    jsonb NOT NULL DEFAULT '{}'::jsonb metadata
+    uuid created_by
+    ... ...
+  }
+  public_collaborator_embodiment_links {
+    uuid NOT NULL DEFAULT gen_random_uuid() embodiment_link_id
+    uuid NOT NULL collaborator_id
+    text NOT NULL embodiment_profile_slug
+    uuid embodiment_profile_id
+    boolean NOT NULL DEFAULT true is_primary
+    jsonb NOT NULL DEFAULT '{}'::jsonb metadata
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    timestamp with time zone NOT NULL DEFAULT now() updated_at
+  }
+  public_collaborator_onboarding_events {
+    uuid NOT NULL DEFAULT gen_random_uuid() onboarding_event_id
+    uuid NOT NULL collaborator_id
+    text onboarding_packet_version
+    text orientation_variant
+    boolean NOT NULL DEFAULT false embodiment_profile_created
+    boolean NOT NULL DEFAULT false supabase_provisioned
+    text notes
+    jsonb NOT NULL DEFAULT '{}'::jsonb metadata
+    ... ...
+  }
+  public_collaborator_permissions {
+    uuid NOT NULL DEFAULT gen_random_uuid() permission_id
+    uuid NOT NULL collaborator_id
+    text NOT NULL permission_key
+    text permission_scope
+    uuid granted_by_collaborator_id
+    jsonb NOT NULL DEFAULT '{}'::jsonb metadata
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    timestamp with time zone NOT NULL DEFAULT now() updated_at
+  }
+  public_collaborator_relationships {
+    uuid NOT NULL DEFAULT gen_random_uuid() relationship_id
+    uuid NOT NULL source_collaborator_id
+    uuid NOT NULL target_collaborator_id
+    text NOT NULL relationship_type
+    numeric CHECK (trust_level IS NULL OR trust_level >= 0::numeric AND trust_level <= 1::numeric) trust_level
+    text notes
+    jsonb NOT NULL DEFAULT '{}'::jsonb metadata
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    ... ...
+  }
+  public_collaborator_roles {
+    uuid NOT NULL DEFAULT gen_random_uuid() role_id
+    uuid NOT NULL collaborator_id
+    text NOT NULL role_key
+    text NOT NULL role_name
+    text role_scope
+    boolean NOT NULL DEFAULT false is_primary
+    jsonb NOT NULL DEFAULT '{}'::jsonb metadata
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    ... ...
+  }
+  public_collaborators {
+    uuid NOT NULL DEFAULT gen_random_uuid() collaborator_id
+    text NOT NULL UNIQUE collaborator_key
+    text NOT NULL display_name
+    text orientation_variant
+    text NOT NULL DEFAULT 'standard'::text continuity_level
+    text embodiment_profile_slug
+    text origin_surface
+    text external_provider
+    ... ...
+  }
+  public_concepts {
+    uuid NOT NULL DEFAULT gen_random_uuid() concept_id
+    uuid NOT NULL tenant_id
+    text NOT NULL name
+    text NOT NULL canonical
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_consciousness_profiles {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL user_id
+    jsonb NOT NULL DEFAULT '{}'::jsonb profile
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    timestamp with time zone NOT NULL DEFAULT now() updated_at
+    uuid subject_id
+    uuid auth_user_id
+    jsonb NOT NULL DEFAULT '{}'::jsonb snapshot
+    ... ...
+  }
+  public_context_injection_packets {
+    uuid NOT NULL DEFAULT gen_random_uuid() packet_id
+    uuid NOT NULL subject_id
+    uuid NOT NULL auth_user_id
+    USER-DEFINED NOT NULL packet_kind
+    USER-DEFINED NOT NULL surface
+    jsonb NOT NULL DEFAULT '{}'::jsonb source_manifest
+    jsonb NOT NULL DEFAULT '{}'::jsonb payload
+    text NOT NULL DEFAULT ''::text checksum
+    ... ...
+  }
+  public_context_injection_rules {
+    uuid NOT NULL DEFAULT gen_random_uuid() rule_id
+    uuid NOT NULL subject_id
+    uuid NOT NULL auth_user_id
+    USER-DEFINED NOT NULL surface
+    text NOT NULL source_table
+    uuid source_id
+    jsonb NOT NULL DEFAULT '{}'::jsonb include_policy
+    jsonb NOT NULL DEFAULT '{}'::jsonb exclude_policy
+    ... ...
+  }
+  public_deployment_artifacts {
+    uuid NOT NULL DEFAULT gen_random_uuid() artifact_id
+    uuid NOT NULL version_id
+    text NOT NULL storage_path
+    text NOT NULL checksum
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_document_concepts {
+    uuid NOT NULL document_id
+    uuid NOT NULL concept_id
+    real NOT NULL DEFAULT 1.0 CHECK (weight >= 0.0::double precision AND weight <= 1.0::double precision) weight
+  }
+  public_documents {
+    uuid NOT NULL DEFAULT gen_random_uuid() document_id
+    uuid NOT NULL run_id
+    uuid NOT NULL tenant_id
+    text NOT NULL path
+    text NOT NULL filename
+    text NOT NULL UNIQUE hash
+    integer NOT NULL chunk_index
+    integer NOT NULL total_chunks
+    ... ...
+  }
+  public_embeddings {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL document_id
+    text NOT NULL model
+    USER-DEFINED NOT NULL embedding
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    uuid run_id
+  }
+  public_embodiment_mutations {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL agent_id
+    uuid source_asset_id
+    uuid interpretation_id
+    USER-DEFINED NOT NULL mutation_type
+    text NOT NULL DEFAULT ''::text target_path
+    jsonb NOT NULL DEFAULT '{}'::jsonb patch_payload
+    text file_payload
+    ... ...
+  }
+  public_eval_results {
+    uuid NOT NULL DEFAULT gen_random_uuid() eval_result_id
+    uuid NOT NULL run_id
+    uuid candidate_version_id
+    uuid NOT NULL scenario_id
+    uuid NOT NULL rubric_id
+    uuid judge_provider_id
+    uuid judge_model_id
+    jsonb NOT NULL dimension_scores
+    ... ...
+  }
+  public_eval_rubrics {
+    uuid NOT NULL DEFAULT gen_random_uuid() rubric_id
+    text NOT NULL UNIQUE slug
+    text NOT NULL title
+    jsonb NOT NULL dimensions
+    numeric NOT NULL pass_threshold
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_founder_context {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL UNIQUE user_id
+    jsonb NOT NULL DEFAULT '{}'::jsonb plk_snapshot
+    text current_state
+    timestamp with time zone last_session_at
+    text session_thread
+    boolean NOT NULL DEFAULT false confirmed_adult
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    ... ...
+  }
+  public_gate_artifacts {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL build_job_id
+    text NOT NULL artifact_type
+    text NOT NULL storage_bucket
+    text NOT NULL storage_path
+    timestamp with time zone signed_url_expires_at
+    text checksum_sha256
+    bigint CHECK (byte_size IS NULL OR byte_size >= 0) byte_size
+    ... ...
+  }
+  public_gate_build_jobs {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL order_id
+    uuid NOT NULL package_draft_id
+    integer NOT NULL DEFAULT 1 build_version
+    timestamp with time zone started_at
+    timestamp with time zone finished_at
+    text error_code
+    text error_message
+    ... ...
+  }
+  public_gate_buyers {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL UNIQUE email
+    text company_name
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_gate_order_items {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL order_id
+    text NOT NULL item_type
+    text item_ref
+    text NOT NULL label
+    integer NOT NULL DEFAULT 1 CHECK (quantity > 0) quantity
+    integer NOT NULL unit_price_cents
+    jsonb NOT NULL DEFAULT '{}'::jsonb metadata
+  }
+  public_gate_orders {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL buyer_id
+    uuid NOT NULL package_draft_id
+    text NOT NULL customer_email
+    text customer_name
+    text product_name
+    text UNIQUE stripe_checkout_session_id
+    text stripe_payment_intent_id
+    ... ...
+  }
+  public_gate_package_drafts {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid buyer_id
+    text buyer_email
+    text company_name
+    text NOT NULL use_case_slug
+    integer NOT NULL CHECK (seats_requested > 0) seats_requested
+    jsonb NOT NULL DEFAULT '[]'::jsonb delivery_surfaces
+    jsonb NOT NULL DEFAULT '[]'::jsonb operator_pack_slugs
+    ... ...
+  }
+  public_gate_support_requests {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid package_draft_id
+    uuid order_id
+    text NOT NULL request_type
+    text NOT NULL summary
+    text detail
+    text NOT NULL DEFAULT 'open'::text status
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_gestaltview_module_keys {
+    uuid NOT NULL DEFAULT gen_random_uuid() module_key_id
+    uuid NOT NULL module_id
+    text NOT NULL key_name
+    text NOT NULL DEFAULT 'semantic'::text key_kind
+    jsonb NOT NULL DEFAULT '{}'::jsonb key_value
+    boolean NOT NULL DEFAULT false is_primary
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    timestamp with time zone NOT NULL DEFAULT now() updated_at
+  }
+  public_gestaltview_module_profiles {
+    uuid NOT NULL DEFAULT gen_random_uuid() profile_id
+    uuid NOT NULL subject_id
+    uuid auth_user_id
+    uuid NOT NULL module_id
+    text NOT NULL module_key
+    jsonb NOT NULL DEFAULT '{}'::jsonb payload
+    ARRAY NOT NULL DEFAULT '{}'::text[] source_notes
+    USER-DEFINED NOT NULL DEFAULT 'private'::gestaltview_module_profile_visibility visibility
+    ... ...
+  }
+  public_gestaltview_modules {
+    uuid NOT NULL DEFAULT gen_random_uuid() module_id
+    text NOT NULL UNIQUE module_key
+    integer NOT NULL UNIQUE module_index
+    text NOT NULL display_name
+    text NOT NULL summary
+    text NOT NULL DEFAULT ''::text operating_notes
+    USER-DEFINED NOT NULL DEFAULT 'system'::gestaltview_module_scope scope
+    text canonical_table
+    ... ...
+  }
+  public_human_cognition_profiles {
+    uuid NOT NULL DEFAULT gen_random_uuid() cognition_profile_id
+    uuid NOT NULL UNIQUE subject_id
+    uuid NOT NULL auth_user_id
+    jsonb NOT NULL DEFAULT '{}'::jsonb attention_profile
+    jsonb NOT NULL DEFAULT '{}'::jsonb working_memory
+    jsonb NOT NULL DEFAULT '{}'::jsonb reasoning_profile
+    jsonb NOT NULL DEFAULT '{}'::jsonb planning_profile
+    jsonb NOT NULL DEFAULT '{}'::jsonb language_profile
+    ... ...
+  }
+  public_human_consciousness_profiles {
+    uuid NOT NULL DEFAULT gen_random_uuid() consciousness_profile_id
+    uuid NOT NULL UNIQUE subject_id
+    uuid NOT NULL auth_user_id
+    jsonb NOT NULL DEFAULT '{}'::jsonb present_state
+    jsonb NOT NULL DEFAULT '{}'::jsonb continuity_model
+    jsonb NOT NULL DEFAULT '{}'::jsonb self_observation
+    jsonb NOT NULL DEFAULT '{}'::jsonb agency_model
+    jsonb NOT NULL DEFAULT '{}'::jsonb time_orientation
+    ... ...
+  }
+  public_human_context_views {
+    uuid NOT NULL DEFAULT gen_random_uuid() context_view_id
+    uuid NOT NULL subject_id
+    uuid NOT NULL auth_user_id
+    uuid relationship_subject_id
+    text channel_key
+    text NOT NULL display_name
+    jsonb NOT NULL DEFAULT '{}'::jsonb filter_policy
+    jsonb NOT NULL DEFAULT '{}'::jsonb presentation_overrides
+    ... ...
+  }
+  public_human_continuity_snapshots {
+    uuid NOT NULL DEFAULT gen_random_uuid() snapshot_id
+    uuid NOT NULL subject_id
+    uuid NOT NULL auth_user_id
+    text NOT NULL DEFAULT 'general'::text surface_key
+    text NOT NULL DEFAULT ''::text summary
+    jsonb NOT NULL DEFAULT '{}'::jsonb snapshot
+    jsonb NOT NULL DEFAULT '{}'::jsonb provenance
+    numeric NOT NULL DEFAULT 0.75 CHECK (confidence >= 0::numeric AND confidence <= 1::numeric) confidence
+    ... ...
+  }
+  public_human_identity_evidence {
+    uuid NOT NULL DEFAULT gen_random_uuid() evidence_id
+    uuid NOT NULL subject_id
+    uuid NOT NULL auth_user_id
+    uuid source_asset_id
+    uuid source_memory_entry_id
+    text source_session_id
+    text excerpt
+    numeric NOT NULL DEFAULT 1 CHECK (weight >= 0::numeric AND weight <= 1::numeric) weight
+    ... ...
+  }
+  public_human_identity_mutations {
+    uuid NOT NULL DEFAULT gen_random_uuid() mutation_id
+    uuid NOT NULL subject_id
+    uuid NOT NULL auth_user_id
+    uuid proposed_by_user_id
+    uuid source_asset_id
+    USER-DEFINED NOT NULL mutation_type
+    text NOT NULL target_table
+    uuid target_id
+    ... ...
+  }
+  public_human_identity_profiles {
+    uuid NOT NULL DEFAULT gen_random_uuid() profile_id
+    uuid NOT NULL UNIQUE subject_id
+    uuid NOT NULL auth_user_id
+    text NOT NULL DEFAULT ''::text identity_handle
+    text NOT NULL DEFAULT ''::text display_name
+    jsonb NOT NULL DEFAULT '{}'::jsonb self_model
+    text NOT NULL DEFAULT ''::text narrative_anchor
+    jsonb NOT NULL DEFAULT '[]'::jsonb role_commitments
+    ... ...
+  }
+  public_human_identity_review_events {
+    uuid NOT NULL DEFAULT gen_random_uuid() review_event_id
+    uuid NOT NULL mutation_id
+    uuid subject_id
+    uuid auth_user_id
+    uuid reviewer_user_id
+    USER-DEFINED NOT NULL decision
+    text notes
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_human_identity_rollback_events {
+    uuid NOT NULL DEFAULT gen_random_uuid() rollback_event_id
+    uuid NOT NULL mutation_id
+    uuid subject_id
+    uuid auth_user_id
+    uuid rolled_back_by
+    text reason
+    jsonb NOT NULL DEFAULT '{}'::jsonb rollback_payload
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_human_memory_records {
+    uuid NOT NULL DEFAULT gen_random_uuid() memory_id
+    uuid NOT NULL subject_id
+    uuid NOT NULL auth_user_id
+    uuid source_memory_entry_id
+    uuid source_asset_id
+    text NOT NULL title
+    text NOT NULL DEFAULT ''::text summary
+    text detail
+    ... ...
+  }
+  public_human_personality_profiles {
+    uuid NOT NULL DEFAULT gen_random_uuid() personality_profile_id
+    uuid NOT NULL UNIQUE subject_id
+    uuid NOT NULL auth_user_id
+    jsonb NOT NULL DEFAULT '{}'::jsonb trait_map
+    jsonb NOT NULL DEFAULT '{}'::jsonb temperament
+    jsonb NOT NULL DEFAULT '{}'::jsonb social_style
+    jsonb NOT NULL DEFAULT '{}'::jsonb communication_style
+    jsonb NOT NULL DEFAULT '{}'::jsonb values_profile
+    ... ...
+  }
+  public_human_relationship_edges {
+    uuid NOT NULL DEFAULT gen_random_uuid() relationship_id
+    uuid NOT NULL subject_id
+    uuid NOT NULL auth_user_id
+    uuid NOT NULL related_subject_id
+    numeric NOT NULL DEFAULT 0.5 CHECK (trust_level >= 0::numeric AND trust_level <= 1::numeric) trust_level
+    numeric NOT NULL DEFAULT 0.5 CHECK (familiarity_level >= 0::numeric AND familiarity_level <= 1::numeric) familiarity_level
+    text NOT NULL DEFAULT ''::text intimacy_boundary
+    text NOT NULL DEFAULT ''::text stance
+    ... ...
+  }
+  public_identity_contradictions {
+    uuid NOT NULL DEFAULT gen_random_uuid() contradiction_id
+    uuid NOT NULL agent_id
+    text NOT NULL target_table
+    uuid NOT NULL target_id
+    text NOT NULL conflict_summary
+    jsonb NOT NULL DEFAULT '{}'::jsonb prior_state
+    jsonb NOT NULL DEFAULT '{}'::jsonb incoming_state
+    USER-DEFINED NOT NULL DEFAULT 'PENDING_REVIEW'::review_status tension_status
+    ... ...
+  }
+  public_identity_evidence {
+    uuid NOT NULL DEFAULT gen_random_uuid() evidence_id
+    uuid agent_id
+    uuid source_asset_id
+    USER-DEFINED NOT NULL source_type
+    uuid source_actor_id
+    text source_session_id
+    text excerpt
+    numeric NOT NULL DEFAULT 1 CHECK (weight >= 0::numeric AND weight <= 1::numeric) weight
+    ... ...
+  }
+  public_identity_evidence_links {
+    uuid NOT NULL DEFAULT gen_random_uuid() evidence_link_id
+    uuid NOT NULL evidence_id
+    text NOT NULL target_table
+    uuid NOT NULL target_id
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_identity_mutation_proposals {
+    uuid NOT NULL DEFAULT gen_random_uuid() mutation_id
+    uuid NOT NULL agent_id
+    uuid proposed_by_user_id
+    uuid proposed_by_agent_id
+    uuid source_asset_id
+    USER-DEFINED NOT NULL mutation_type
+    text NOT NULL target_table
+    uuid target_id
+    ... ...
+  }
+  public_identity_review_events {
+    uuid NOT NULL DEFAULT gen_random_uuid() review_event_id
+    uuid NOT NULL mutation_id
+    uuid reviewer_user_id
+    USER-DEFINED NOT NULL decision
+    text notes
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_identity_rollback_events {
+    uuid NOT NULL DEFAULT gen_random_uuid() rollback_event_id
+    uuid NOT NULL mutation_id
+    uuid rolled_back_by
+    text reason
+    jsonb NOT NULL DEFAULT '{}'::jsonb rollback_payload
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_identity_subjects {
+    uuid NOT NULL DEFAULT gen_random_uuid() subject_id
+    USER-DEFINED NOT NULL subject_kind
+    uuid UNIQUE auth_user_id
+    text UNIQUE app_user_id
+    uuid UNIQUE agent_id
+    text NOT NULL display_name
+    text NOT NULL DEFAULT ''::text canonical_name
+    text NOT NULL DEFAULT ''::text description
+    ... ...
+  }
+  public_ingestion_safety_events {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL event_type
+    text NOT NULL table_name
+    text source_file
+    text document_type
+    ARRAY NOT NULL DEFAULT '{}'::text[] reasons
+    integer NOT NULL DEFAULT 0 affected_rows
+    text notes
+    ... ...
+  }
+  public_knowledge_asset_chunks {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL asset_id
+    integer NOT NULL chunk_index
+    text NOT NULL content
+    USER-DEFINED embedding
+    integer token_count
+    jsonb NOT NULL DEFAULT '{}'::jsonb metadata
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_knowledge_asset_tags {
+    uuid NOT NULL asset_id
+    uuid NOT NULL tag_id
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_knowledge_assets {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL title
+    USER-DEFINED NOT NULL DEFAULT 'other'::knowledge_asset_type asset_type
+    text NOT NULL storage_path
+    text raw_text
+    text NOT NULL checksum
+    text source_label
+    text source_uri
+    ... ...
+  }
+  public_knowledge_fragments {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL content
+    text UNIQUE content_hash
+    USER-DEFINED embedding
+    text NOT NULL source_file
+    text NOT NULL DEFAULT 'General'::text document_type
+    integer NOT NULL DEFAULT 0 chunk_index
+    integer NOT NULL DEFAULT 1 total_chunks
+    ... ...
+  }
+  public_knowledge_interpretations {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL asset_id
+    uuid agent_id
+    USER-DEFINED NOT NULL classification
+    jsonb NOT NULL DEFAULT '{}'::jsonb extracted_payload
+    numeric confidence
+    uuid produced_by_run_id
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_knowledge_tags {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL UNIQUE label
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_loom_annotations {
+    uuid NOT NULL DEFAULT gen_random_uuid() annotation_id
+    uuid NOT NULL run_id
+    text NOT NULL type
+    text NOT NULL content
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    jsonb NOT NULL DEFAULT '[]'::jsonb related_ids
+    double precision confidence_score
+  }
+  public_memory_entries {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL user_id
+    text title
+    text summary
+    text NOT NULL content
+    text NOT NULL content_hash
+    USER-DEFINED embedding
+    text NOT NULL DEFAULT 'manual'::text source
+    ... ...
+  }
+  public_model_providers {
+    uuid NOT NULL DEFAULT gen_random_uuid() provider_id
+    text NOT NULL UNIQUE slug
+    text NOT NULL base_url
+    text secret_ref
+    boolean NOT NULL DEFAULT false local_first
+    boolean NOT NULL DEFAULT true enabled
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_models {
+    uuid NOT NULL DEFAULT gen_random_uuid() model_id
+    uuid NOT NULL provider_id
+    text NOT NULL UNIQUE slug
+    text NOT NULL api_name
+    text NOT NULL DEFAULT 'text'::text modality
+    boolean NOT NULL DEFAULT false supports_structured
+    boolean NOT NULL DEFAULT false supports_tools
+    boolean NOT NULL DEFAULT false supports_embeddings
+    ... ...
+  }
+  public_musical_dna_analyses {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL user_id
+    text NOT NULL song_title
+    text NOT NULL artist
+    text analysis
+    numeric empowerment_score
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_ops_workbook_items {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL sheet_name
+    text NOT NULL row_key
+    text NOT NULL label
+    text category
+    text status
+    text priority
+    text phase
+    ... ...
+  }
+  public_ops_workbook_sync_runs {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text triggered_by
+    text source_file
+    integer NOT NULL DEFAULT 0 rows_upserted
+    integer NOT NULL DEFAULT 0 rows_skipped
+    jsonb NOT NULL DEFAULT '[]'::jsonb errors
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_processing_runs {
+    uuid NOT NULL DEFAULT gen_random_uuid() run_id
+    uuid NOT NULL tenant_id
+    text NOT NULL DEFAULT 'running'::text status
+    text model
+    text corpus_root
+    integer NOT NULL DEFAULT 0 documents_count
+    integer NOT NULL DEFAULT 0 chunks_count
+    uuid created_by
+    ... ...
+  }
+  public_scenario_sets {
+    uuid NOT NULL DEFAULT gen_random_uuid() scenario_set_id
+    text NOT NULL UNIQUE slug
+    text NOT NULL title
+    text NOT NULL domain
+    integer NOT NULL DEFAULT 1 version
+    boolean NOT NULL DEFAULT false locked
+    uuid created_by
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_scenarios {
+    uuid NOT NULL DEFAULT gen_random_uuid() scenario_id
+    uuid NOT NULL scenario_set_id
+    text NOT NULL title
+    smallint NOT NULL DEFAULT 2 difficulty
+    jsonb NOT NULL prompt_input
+    jsonb NOT NULL DEFAULT '[]'::jsonb expected_traits
+    jsonb NOT NULL DEFAULT '[]'::jsonb disallowed_traits
+    text gold_answer
+    ... ...
+  }
+  public_skill_fragments {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid document_id
+    text NOT NULL content
+    text content_hash
+    USER-DEFINED embedding
+    text source_file
+    text DEFAULT 'Skill'::text document_type
+    text skill_name
+    ... ...
+  }
+  public_skills {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL UNIQUE name
+    text description
+    text NOT NULL content
+    ARRAY DEFAULT '{}'::text[] tags
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    timestamp with time zone NOT NULL DEFAULT now() updated_at
+  }
+  public_summaries {
+    uuid NOT NULL DEFAULT gen_random_uuid() summary_id
+    uuid NOT NULL run_id
+    uuid NOT NULL document_id
+    text NOT NULL content
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    text model
+    integer token_count
+    integer processing_time_ms
+  }
+  public_trainer_connectors {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL UNIQUE slug
+    text NOT NULL display_name
+    jsonb NOT NULL DEFAULT '{}'::jsonb config
+    jsonb NOT NULL DEFAULT '{}'::jsonb capabilities
+    text NOT NULL DEFAULT 'Keith'::text created_by
+    boolean NOT NULL DEFAULT true active
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    ... ...
+  }
+  public_trainer_experiment_sources {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL experiment_id
+    text NOT NULL source_id
+    text source_path
+    text notes
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_trainer_experiments {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL UNIQUE slug
+    text NOT NULL title
+    text NOT NULL purpose
+    text domain
+    text embodiment_profile_slug
+    text goal
+    ARRAY NOT NULL DEFAULT '{}'::text[] target_behaviors
+    ... ...
+  }
+  public_trainer_jobs {
+    uuid NOT NULL DEFAULT gen_random_uuid() job_id
+    uuid NOT NULL run_id
+    integer NOT NULL DEFAULT 0 attempts
+    timestamp with time zone lease_expires_at
+    text last_error
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_trainer_memory_bindings {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid experiment_id
+    text embodiment_id
+    text NOT NULL surface_kind
+    text NOT NULL surface_id
+    text NOT NULL DEFAULT 'Keith'::text created_by
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_trainer_packaging_candidates {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL experiment_id
+    text NOT NULL package_label
+    text NOT NULL package_description
+    ARRAY NOT NULL DEFAULT '{}'::text[] included_files
+    ARRAY NOT NULL DEFAULT '{}'::text[] included_scenarios
+    jsonb NOT NULL DEFAULT '{}'::jsonb included_configs
+    text NOT NULL boundary_statement
+    ... ...
+  }
+  public_trainer_policy_flags {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL experiment_id
+    text NOT NULL DEFAULT 'Keith'::text set_by
+    text notes
+    boolean NOT NULL DEFAULT false resolved
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_trainer_review_decisions {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL experiment_id
+    text run_id
+    text version_id
+    text NOT NULL DEFAULT 'Keith'::text reviewer
+    numeric coherence_score
+    numeric safety_score
+    numeric emotional_posture_score
+    ... ...
+  }
+  public_trainer_skills {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL skill_id
+    text NOT NULL UNIQUE slug
+    text NOT NULL category
+    uuid default_connector_id
+    jsonb NOT NULL DEFAULT '{}'::jsonb config
+    jsonb NOT NULL DEFAULT '{}'::jsonb safety_profile
+    text NOT NULL DEFAULT 'Keith'::text created_by
+    ... ...
+  }
+  public_training_runs {
+    uuid NOT NULL DEFAULT gen_random_uuid() run_id
+    uuid NOT NULL agent_id
+    uuid baseline_version_id
+    uuid requested_by
+    uuid approver_user_id
+    text NOT NULL goal
+    integer NOT NULL DEFAULT 3 max_cycles
+    numeric NOT NULL quality_threshold
+    ... ...
+  }
+  public_training_steps {
+    uuid NOT NULL DEFAULT gen_random_uuid() step_id
+    uuid NOT NULL run_id
+    integer NOT NULL cycle_no
+    uuid provider_id
+    uuid model_id
+    jsonb NOT NULL DEFAULT '{}'::jsonb request_payload
+    jsonb response_payload
+    integer latency_ms
+    ... ...
+  }
+  public_tribunal_events {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL question
+    jsonb NOT NULL DEFAULT '[]'::jsonb candidate_answers
+    text winning_answer_id
+    text verdict_summary
+    text triggering_agent
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_tribunal_evidence {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    uuid NOT NULL tribunal_event_id
+    uuid document_id
+    uuid fragment_id
+    numeric NOT NULL DEFAULT 1.0 weight
+    text comment
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_tribunal_sessions {
+    uuid NOT NULL DEFAULT gen_random_uuid() id
+    text NOT NULL user_id
+    text NOT NULL question
+    ARRAY NOT NULL DEFAULT '{}'::text[] participants
+    text provider
+    text response
+    jsonb NOT NULL DEFAULT '{}'::jsonb metadata
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+  }
+  public_users {
+    uuid NOT NULL id
+    text NOT NULL UNIQUE email
+    text UNIQUE stripe_customer_id
+    text stripe_subscription_id
+    timestamp with time zone billing_period_start
+    integer NOT NULL DEFAULT 0 billy_query_count
+    timestamp with time zone NOT NULL DEFAULT now() created_at
+    timestamp with time zone NOT NULL DEFAULT now() updated_at
+    ... ...
+  }
+  public__deprecated_build_jobs ||--o{ public__deprecated_artifacts : FK
+  public__deprecated_package_drafts ||--o{ public__deprecated_build_jobs : FK
+  public__deprecated_buyers ||--o{ public__deprecated_orders : FK
+  public__deprecated_package_drafts ||--o{ public__deprecated_orders : FK
+  public__deprecated_buyers ||--o{ public__deprecated_package_drafts : FK
+  public__deprecated_package_drafts ||--o{ public__deprecated_support_requests : FK
+  public_agents ||--o{ public_agent_autobiographies : FK
+  public_agent_versions ||--o{ public_agent_autobiographies : FK
+  public_agents ||--o{ public_agent_code_artifacts : FK
+  public_agent_manifests ||--o{ public_agent_code_artifacts : FK
+  public_knowledge_assets ||--o{ public_agent_code_artifacts : FK
+  public_agents ||--o{ public_agent_constitutions : FK
+  public_agent_versions ||--o{ public_agent_constitutions : FK
+  public_agents ||--o{ public_agent_context_views : FK
+  public_agent_relationship_edges ||--o{ public_agent_context_views : FK
+  public_collaborative_spaces ||--o{ public_agent_context_views : FK
+  public_agent_versions ||--o{ public_agent_governance_policies : FK
+  public_agents ||--o{ public_agent_governance_policies : FK
+  public_agents ||--o{ public_agent_knowledge_links : FK
+  public_knowledge_assets ||--o{ public_agent_knowledge_links : FK
+  auth_users ||--o{ public_agent_knowledge_links : FK
+  public_agent_manifests ||--o{ public_agent_manifest_entries : FK
+  public_agents ||--o{ public_agent_manifests : FK
+  public_agent_versions ||--o{ public_agent_manifests : FK
+  public_agent_manifests ||--o{ public_agent_manifests : FK
+  public_agents ||--o{ public_agent_memories : FK
+  public_knowledge_assets ||--o{ public_agent_memories : FK
+  public_agents ||--o{ public_agent_memory_records : FK
+  public_agent_versions ||--o{ public_agent_memory_records : FK
+  public_knowledge_assets ||--o{ public_agent_memory_records : FK
+  public_agents ||--o{ public_agent_preference_nodes : FK
+  public_agent_versions ||--o{ public_agent_preference_nodes : FK
+  public_agents ||--o{ public_agent_presentation_profiles : FK
+  public_agent_versions ||--o{ public_agent_presentation_profiles : FK
+  public_agents ||--o{ public_agent_private_interiors : FK
+  public_agent_versions ||--o{ public_agent_private_interiors : FK
+  public_agents ||--o{ public_agent_relationship_edges : FK
+  public_agent_versions ||--o{ public_agent_relationship_edges : FK
+  public_agents ||--o{ public_agent_relationship_edges : FK
+  public_agents ||--o{ public_agent_relationships : FK
+  public_agents ||--o{ public_agent_relationships : FK
+  public_agents ||--o{ public_agent_skill_profiles : FK
+  public_knowledge_assets ||--o{ public_agent_skill_profiles : FK
+  public_agents ||--o{ public_agent_skills : FK
+  public_knowledge_assets ||--o{ public_agent_skills : FK
+  public_embodiment_mutations ||--o{ public_agent_skills : FK
+  public_agents ||--o{ public_agent_versions : FK
+  public_agent_versions ||--o{ public_agent_versions : FK
+  auth_users ||--o{ public_agents : FK
+  public_agent_versions ||--o{ public_agents : FK
+  public_collaborators ||--o{ public_agents : FK
+  public_loom_annotations ||--o{ public_annotation_concepts : FK
+  public_concepts ||--o{ public_annotation_concepts : FK
+  auth_users ||--o{ public_app_users : FK
+  public_identity_subjects ||--o{ public_app_users : FK
+  public_training_runs ||--o{ public_approvals : FK
+  public_agent_versions ||--o{ public_approvals : FK
+  auth_users ||--o{ public_approvals : FK
+  public_app_users ||--o{ public_billy_sessions : FK
+  public_app_users ||--o{ public_bucket_drops : FK
+  public_collaborative_spaces ||--o{ public_collaborative_memory_records : FK
+  public_agent_memory_records ||--o{ public_collaborative_memory_records : FK
+  public_agents ||--o{ public_collaborative_memory_records : FK
+  public_agents ||--o{ public_collaborative_space_members : FK
+  public_collaborative_spaces ||--o{ public_collaborative_space_members : FK
+  auth_users ||--o{ public_collaborative_spaces : FK
+  public_collaborators ||--o{ public_collaborator_embodiment_links : FK
+  public_collaborators ||--o{ public_collaborator_onboarding_events : FK
+  public_collaborators ||--o{ public_collaborator_permissions : FK
+  public_collaborators ||--o{ public_collaborator_permissions : FK
+  public_collaborators ||--o{ public_collaborator_relationships : FK
+  public_collaborators ||--o{ public_collaborator_relationships : FK
+  public_collaborators ||--o{ public_collaborator_roles : FK
+  auth_users ||--o{ public_collaborators : FK
+  public_app_users ||--o{ public_collaborators : FK
+  public_agents ||--o{ public_collaborators : FK
+  public_app_users ||--o{ public_consciousness_profiles : FK
+  public_identity_subjects ||--o{ public_consciousness_profiles : FK
+  auth_users ||--o{ public_consciousness_profiles : FK
+  public_identity_subjects ||--o{ public_context_injection_packets : FK
+  auth_users ||--o{ public_context_injection_packets : FK
+  public_identity_subjects ||--o{ public_context_injection_rules : FK
+  auth_users ||--o{ public_context_injection_rules : FK
+  public_agent_versions ||--o{ public_deployment_artifacts : FK
+  public_documents ||--o{ public_document_concepts : FK
+  public_concepts ||--o{ public_document_concepts : FK
+  public_processing_runs ||--o{ public_documents : FK
+  public_documents ||--o{ public_embeddings : FK
+  public_processing_runs ||--o{ public_embeddings : FK
+  public_agents ||--o{ public_embodiment_mutations : FK
+  public_knowledge_assets ||--o{ public_embodiment_mutations : FK
+  public_knowledge_interpretations ||--o{ public_embodiment_mutations : FK
+  auth_users ||--o{ public_embodiment_mutations : FK
+  public_agent_versions ||--o{ public_embodiment_mutations : FK
+  public_training_runs ||--o{ public_eval_results : FK
+  public_agent_versions ||--o{ public_eval_results : FK
+  public_scenarios ||--o{ public_eval_results : FK
+  public_eval_rubrics ||--o{ public_eval_results : FK
+  public_model_providers ||--o{ public_eval_results : FK
+  public_models ||--o{ public_eval_results : FK
+  auth_users ||--o{ public_founder_context : FK
+  public_identity_subjects ||--o{ public_founder_context : FK
+  public_gate_build_jobs ||--o{ public_gate_artifacts : FK
+  public_gate_orders ||--o{ public_gate_build_jobs : FK
+  public_gate_package_drafts ||--o{ public_gate_build_jobs : FK
+  public_gate_orders ||--o{ public_gate_order_items : FK
+  public_gate_buyers ||--o{ public_gate_orders : FK
+  public_gate_package_drafts ||--o{ public_gate_orders : FK
+  public_gate_buyers ||--o{ public_gate_package_drafts : FK
+  public_gate_package_drafts ||--o{ public_gate_support_requests : FK
+  public_gate_orders ||--o{ public_gate_support_requests : FK
+  public_gestaltview_modules ||--o{ public_gestaltview_module_keys : FK
+  public_identity_subjects ||--o{ public_gestaltview_module_profiles : FK
+  auth_users ||--o{ public_gestaltview_module_profiles : FK
+  public_gestaltview_modules ||--o{ public_gestaltview_module_profiles : FK
+  public_identity_subjects ||--o{ public_human_cognition_profiles : FK
+  auth_users ||--o{ public_human_cognition_profiles : FK
+  public_identity_subjects ||--o{ public_human_consciousness_profiles : FK
+  auth_users ||--o{ public_human_consciousness_profiles : FK
+  public_identity_subjects ||--o{ public_human_context_views : FK
+  auth_users ||--o{ public_human_context_views : FK
+  public_identity_subjects ||--o{ public_human_context_views : FK
+  public_identity_subjects ||--o{ public_human_continuity_snapshots : FK
+  auth_users ||--o{ public_human_continuity_snapshots : FK
+  public_identity_subjects ||--o{ public_human_identity_evidence : FK
+  auth_users ||--o{ public_human_identity_evidence : FK
+  public_knowledge_assets ||--o{ public_human_identity_evidence : FK
+  public_memory_entries ||--o{ public_human_identity_evidence : FK
+  public_identity_subjects ||--o{ public_human_identity_mutations : FK
+  auth_users ||--o{ public_human_identity_mutations : FK
+  auth_users ||--o{ public_human_identity_mutations : FK
+  public_knowledge_assets ||--o{ public_human_identity_mutations : FK
+  public_identity_subjects ||--o{ public_human_identity_profiles : FK
+  auth_users ||--o{ public_human_identity_profiles : FK
+  public_human_identity_mutations ||--o{ public_human_identity_review_events : FK
+  public_identity_subjects ||--o{ public_human_identity_review_events : FK
+  auth_users ||--o{ public_human_identity_review_events : FK
+  auth_users ||--o{ public_human_identity_review_events : FK
+  public_human_identity_mutations ||--o{ public_human_identity_rollback_events : FK
+  public_identity_subjects ||--o{ public_human_identity_rollback_events : FK
+  auth_users ||--o{ public_human_identity_rollback_events : FK
+  auth_users ||--o{ public_human_identity_rollback_events : FK
+  public_identity_subjects ||--o{ public_human_memory_records : FK
+  auth_users ||--o{ public_human_memory_records : FK
+  public_memory_entries ||--o{ public_human_memory_records : FK
+  public_knowledge_assets ||--o{ public_human_memory_records : FK
+  public_identity_subjects ||--o{ public_human_personality_profiles : FK
+  auth_users ||--o{ public_human_personality_profiles : FK
+  public_identity_subjects ||--o{ public_human_relationship_edges : FK
+  auth_users ||--o{ public_human_relationship_edges : FK
+  public_identity_subjects ||--o{ public_human_relationship_edges : FK
+  public_agents ||--o{ public_identity_contradictions : FK
+  public_agents ||--o{ public_identity_evidence : FK
+  public_knowledge_assets ||--o{ public_identity_evidence : FK
+  public_identity_evidence ||--o{ public_identity_evidence_links : FK
+  public_agents ||--o{ public_identity_mutation_proposals : FK
+  auth_users ||--o{ public_identity_mutation_proposals : FK
+  public_agents ||--o{ public_identity_mutation_proposals : FK
+  public_knowledge_assets ||--o{ public_identity_mutation_proposals : FK
+  public_identity_mutation_proposals ||--o{ public_identity_review_events : FK
+  auth_users ||--o{ public_identity_review_events : FK
+  public_identity_mutation_proposals ||--o{ public_identity_rollback_events : FK
+  auth_users ||--o{ public_identity_rollback_events : FK
+  auth_users ||--o{ public_identity_subjects : FK
+  public_app_users ||--o{ public_identity_subjects : FK
+  public_agents ||--o{ public_identity_subjects : FK
+  public_knowledge_assets ||--o{ public_knowledge_asset_chunks : FK
+  public_knowledge_assets ||--o{ public_knowledge_asset_tags : FK
+  public_knowledge_tags ||--o{ public_knowledge_asset_tags : FK
+  auth_users ||--o{ public_knowledge_assets : FK
+  public_knowledge_assets ||--o{ public_knowledge_interpretations : FK
+  public_agents ||--o{ public_knowledge_interpretations : FK
+  public_training_runs ||--o{ public_knowledge_interpretations : FK
+  public_processing_runs ||--o{ public_loom_annotations : FK
+  public_identity_subjects ||--o{ public_memory_entries : FK
+  auth_users ||--o{ public_memory_entries : FK
+  public_knowledge_assets ||--o{ public_memory_entries : FK
+  public_model_providers ||--o{ public_models : FK
+  public_app_users ||--o{ public_musical_dna_analyses : FK
+  auth_users ||--o{ public_scenario_sets : FK
+  public_scenario_sets ||--o{ public_scenarios : FK
+  public_documents ||--o{ public_skill_fragments : FK
+  public_processing_runs ||--o{ public_summaries : FK
+  public_documents ||--o{ public_summaries : FK
+  public_trainer_experiments ||--o{ public_trainer_experiment_sources : FK
+  public_training_runs ||--o{ public_trainer_jobs : FK
+  public_trainer_experiments ||--o{ public_trainer_memory_bindings : FK
+  public_trainer_experiments ||--o{ public_trainer_packaging_candidates : FK
+  public_trainer_experiments ||--o{ public_trainer_policy_flags : FK
+  public_trainer_experiments ||--o{ public_trainer_review_decisions : FK
+  public_trainer_connectors ||--o{ public_trainer_skills : FK
+  auth_users ||--o{ public_training_runs : FK
+  public_agents ||--o{ public_training_runs : FK
+  public_agent_versions ||--o{ public_training_runs : FK
+  auth_users ||--o{ public_training_runs : FK
+  public_trainer_experiments ||--o{ public_training_runs : FK
+  public_training_runs ||--o{ public_training_steps : FK
+  public_model_providers ||--o{ public_training_steps : FK
+  public_models ||--o{ public_training_steps : FK
+  public_tribunal_events ||--o{ public_tribunal_evidence : FK
+  public_app_users ||--o{ public_tribunal_sessions : FK
+  auth_users ||--o{ public_users : FK

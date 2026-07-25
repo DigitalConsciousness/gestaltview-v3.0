@@ -1,0 +1,4 @@
+interface:
+  display_name: "Revenue & Pricing"
+  short_description: "Design offers, monetization, and pricing surfaces."
+  default_prompt: "Use this skill for pricing, packaging, monetization, and revenue operations decisions."

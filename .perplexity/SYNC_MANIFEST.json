@@ -1,0 +1,85 @@
+{
+  "generatedAt": "2026-07-16T15:29:37.512Z",
+  "sourceRoot": "/workspaces/effective-fortnight",
+  "generatedManifestRefreshed": true,
+  "files": [
+    {
+      "source": "docs/CurrentState.md",
+      "target": ".perplexity/CurrentState.md",
+      "sha256": "1872f6e7c3afedd2de0078dbd64daa006d93aef0b280f141576d0feed3e9227d",
+      "inSync": true
+    },
+    {
+      "source": "docs/CurrentState.md",
+      "target": ".perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/07_CURRENT_STATE_AND_EVIDENCE/CurrentState.md",
+      "sha256": "1872f6e7c3afedd2de0078dbd64daa006d93aef0b280f141576d0feed3e9227d",
+      "inSync": true
+    },
+    {
+      "source": "docs/gestaltview-v2.manifest.json",
+      "target": ".perplexity/REPO_MANIFEST.json",
+      "sha256": "a58a775ba19a5b1d483500154221d5e5b2001ef3a3f558f0d25a1e6c3b4b5338",
+      "inSync": true
+    },
+    {
+      "source": "docs/gestaltview-v2.manifest.md",
+      "target": ".perplexity/REPO_MANIFEST.md",
+      "sha256": "be56396e762aa691d449f136afc95dcfa2ce740ea3cb2da61e139631b54a89bb",
+      "inSync": true
+    },
+    {
+      "source": "docs/gestaltview-v2.manifest.json",
+      "target": ".perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.json",
+      "sha256": "a58a775ba19a5b1d483500154221d5e5b2001ef3a3f558f0d25a1e6c3b4b5338",
+      "inSync": true
+    },
+    {
+      "source": "docs/gestaltview-v2.manifest.md",
+      "target": ".perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.md",
+      "sha256": "be56396e762aa691d449f136afc95dcfa2ce740ea3cb2da61e139631b54a89bb",
+      "inSync": true
+    },
+    {
+      "source": "docs/ContinuityStack.md",
+      "target": ".perplexity/ContinuityStack.md",
+      "sha256": "c569468f3569e919eb69215b934e9e9697fa3ae898280db21c96600567f6e58e",
+      "inSync": true
+    },
+    {
+      "source": "docs/SessionHandoffPacket.md",
+      "target": ".perplexity/SessionHandoffPacket.md",
+      "sha256": "2f3d81166bb6379336c9c6a4d8823d96471c78ab80c2fc405815de80f3d73a15",
+      "inSync": true
+    },
+    {
+      "source": "docs/Workflows.md",
+      "target": ".perplexity/Workflows.md",
+      "sha256": "26fc6b3bea3acfe0f3d3a81b8067f4d623db641dfc0d64d216e8f6f478891321",
+      "inSync": true
+    },
+    {
+      "source": "docs/README-manifest.md",
+      "target": ".perplexity/README-manifest.md",
+      "sha256": "f77b49cc91fdde85479e6bd6cf79554c202cfaac32615f4595ed1a647040433a",
+      "inSync": true
+    },
+    {
+      "source": "README.md",
+      "target": ".perplexity/REPO_README.md",
+      "sha256": "c0157c8abe9c16d58c6489eba12982531af64c25d973d7d5f60026bf19775dc1",
+      "inSync": true
+    },
+    {
+      "source": ".agents/skills/CurrentState.md",
+      "target": ".perplexity/agents-skills-CurrentState.md",
+      "sha256": "d287136866b0ce5b5a6e341fa6a0a0b1c0063432ed93b9591ab1979e5f7a83a7",
+      "inSync": true
+    },
+    {
+      "source": ".agents/skills/manifest.json",
+      "target": ".perplexity/agents-skills-manifest.json",
+      "sha256": "b26f704bb721a8f9bbe91f0403fb1dd74bd26e1fd29e0d41b422ffcbccf1f922",
+      "inSync": true
+    }
+  ]
+}

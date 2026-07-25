@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GestaltView Schema Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+--bg:          #080b12;
+--surface:     #0d1220;
+--surface2:    #111827;
+--border:      #1e2d45;
+--border2:     #243650;
+--cyan:        #00e5ff;
+--cyan-dim:    #00b8cc;
+--violet:      #a78bfa;
+--violet-dim:  #7c5cbf;
+--amber:       #fbbf24;
+--rose:        #f87171;
+--green:       #34d399;
+--text:        #e2e8f0;
+--text-dim:    #94a3b8;
+--text-muted:  #4a5568;
+--glow-cyan:   0 0 18px rgba(0,229,255,0.18);
+--glow-violet: 0 0 18px rgba(167,139,250,0.18);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: var(--bg);
+color: var(--text);
+font-family: 'Syne', sans-serif;
+min-height: 100vh;
+overflow-x: hidden;
+}
+
+/* grid noise texture */
+body::before {
+content: '';
+position: fixed; inset: 0;
+background-image:
+linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+background-size: 40px 40px;
+pointer-events: none;
+z-index: 0;
+}
+
+/* ── HEADER ─────────────────────────────────────── */
+header {
+position: relative;
+z-index: 10;
+padding: 3rem 2rem 2rem;
+border-bottom: 1px solid var(--border);
+background: linear-gradient(180deg, rgba(0,229,255,0.04) 0%, transparent 100%);
+}
+
+.header-inner {
+max-width: 1400px;
+margin: 0 auto;
+}
+
+.logo-line {
+display: flex;
+align-items: center;
+gap: 0.75rem;
+margin-bottom: 0.5rem;
+}
+
+.logo-dot {
+width: 8px; height: 8px;
+border-radius: 50%;
+background: var(--cyan);
+box-shadow: 0 0 10px var(--cyan);
+animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+0%, 100% { opacity: 1; transform: scale(1); }
+50%       { opacity: 0.5; transform: scale(0.7); }
+}
+
+.logo-text {
+font-size: 0.7rem;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+color: var(--cyan-dim);
+font-family: 'Space Mono', monospace;
+}
+
+h1 {
+font-size: clamp(1.8rem, 4vw, 3rem);
+font-weight: 800;
+line-height: 1.1;
+letter-spacing: -0.02em;
+color: var(--text);
+}
+
+h1 span { color: var(--cyan); }
+
+.subtitle {
+margin-top: 0.6rem;
+font-size: 0.9rem;
+color: var(--text-dim);
+font-family: 'Space Mono', monospace;
+font-weight: 400;
+}
+
+.meta-badges {
+margin-top: 1.2rem;
+display: flex;
+flex-wrap: wrap;
+gap: 0.5rem;
+}
+
+.badge {
+padding: 0.25rem 0.75rem;
+border-radius: 999px;
+font-size: 0.72rem;
+font-family: 'JetBrains Mono', monospace;
+font-weight: 500;
+letter-spacing: 0.05em;
+border: 1px solid;
+}
+
+.badge-cyan   { border-color: var(--cyan-dim);   color: var(--cyan);   background: rgba(0,229,255,0.06); }
+.badge-violet { border-color: var(--violet-dim); color: var(--violet); background: rgba(167,139,250,0.06); }
+.badge-amber  { border-color: #92631a;            color: var(--amber);  background: rgba(251,191,36,0.06); }
+.badge-green  { border-color: #1f7a5a;            color: var(--green);  background: rgba(52,211,153,0.06); }
+.badge-rose   { border-color: #7a3030;            color: var(--rose);   background: rgba(248,113,113,0.06); }
+
+/* ── CONTROLS ────────────────────────────────────── */
+.controls {
+position: sticky;
+top: 0;
+z-index: 20;
+background: rgba(8,11,18,0.92);
+backdrop-filter: blur(12px);
+border-bottom: 1px solid var(--border);
+padding: 0.75rem 2rem;
+}
+
+.controls-inner {
+max-width: 1400px;
+margin: 0 auto;
+display: flex;
+align-items: center;
+gap: 1rem;
+flex-wrap: wrap;
+}
+
+.search-wrap {
+position: relative;
+flex: 1;
+min-width: 200px;
+max-width: 380px;
+}
+
+.search-wrap svg {
+position: absolute;
+left: 0.75rem;
+top: 50%;
+transform: translateY(-50%);
+color: var(--text-muted);
+pointer-events: none;
+}
+
+#search {
+width: 100%;
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 6px;
+padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+color: var(--text);
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.8rem;
+outline: none;
+transition: border-color 0.2s;
+}
+
+#search:focus { border-color: var(--cyan-dim); }
+#search::placeholder { color: var(--text-muted); }
+
+.filter-tabs {
+display: flex;
+gap: 0.35rem;
+flex-wrap: wrap;
+}
+
+.tab {
+padding: 0.3rem 0.8rem;
+border-radius: 5px;
+font-size: 0.72rem;
+font-family: 'JetBrains Mono', monospace;
+letter-spacing: 0.04em;
+border: 1px solid var(--border);
+background: transparent;
+color: var(--text-dim);
+cursor: pointer;
+transition: all 0.15s;
+white-space: nowrap;
+}
+
+.tab:hover   { border-color: var(--border2); color: var(--text); }
+.tab.active  { border-color: var(--cyan-dim); color: var(--cyan); background: rgba(0,229,255,0.07); }
+
+.count-chip {
+margin-left: 0.35rem;
+font-size: 0.65rem;
+background: var(--surface2);
+border-radius: 999px;
+padding: 0 0.4rem;
+color: var(--text-muted);
+}
+
+/* ── LAYOUT ──────────────────────────────────────── */
+main {
+max-width: 1400px;
+margin: 0 auto;
+padding: 2rem;
+position: relative;
+z-index: 5;
+}
+
+.group-section {
+margin-bottom: 3rem;
+}
+
+.group-header {
+display: flex;
+align-items: center;
+gap: 0.75rem;
+margin-bottom: 1.25rem;
+padding-bottom: 0.75rem;
+border-bottom: 1px solid var(--border);
+}
+
+.group-icon {
+width: 32px; height: 32px;
+border-radius: 7px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1rem;
+flex-shrink: 0;
+}
+
+.group-title {
+font-size: 1.05rem;
+font-weight: 700;
+letter-spacing: 0.02em;
+color: var(--text);
+}
+
+.group-desc {
+font-size: 0.78rem;
+color: var(--text-dim);
+font-family: 'Space Mono', monospace;
+margin-top: 0.1rem;
+}
+
+.tables-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+gap: 1rem;
+}
+
+/* ── TABLE CARD ──────────────────────────────────── */
+.table-card {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 10px;
+overflow: hidden;
+transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.table-card:hover {
+border-color: var(--border2);
+box-shadow: var(--glow-cyan);
+}
+
+.table-card.deprecated {
+opacity: 0.55;
+border-style: dashed;
+}
+
+.card-head {
+padding: 0.9rem 1.1rem 0.75rem;
+border-bottom: 1px solid var(--border);
+cursor: pointer;
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+gap: 0.75rem;
+user-select: none;
+}
+
+.card-head:hover .table-name { color: var(--cyan); }
+
+.table-name {
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.82rem;
+font-weight: 500;
+color: var(--cyan-dim);
+letter-spacing: 0.02em;
+transition: color 0.15s;
+word-break: break-all;
+}
+
+.table-label {
+font-size: 0.88rem;
+font-weight: 700;
+color: var(--text);
+margin-top: 0.2rem;
+}
+
+.table-desc {
+font-size: 0.78rem;
+color: var(--text-dim);
+line-height: 1.5;
+margin-top: 0.3rem;
+font-family: 'Space Mono', monospace;
+font-weight: 400;
+}
+
+.expand-icon {
+flex-shrink: 0;
+color: var(--text-muted);
+transition: transform 0.2s;
+margin-top: 0.15rem;
+}
+
+.table-card.open .expand-icon { transform: rotate(180deg); }
+
+/* column list */
+.col-list {
+display: none;
+padding: 0.75rem 1.1rem 1rem;
+}
+
+.table-card.open .col-list { display: block; }
+
+.col-row {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 0.25rem 0.5rem;
+padding: 0.45rem 0;
+border-bottom: 1px solid rgba(30,45,69,0.5);
+align-items: start;
+}
+
+.col-row:last-child { border-bottom: none; }
+
+.col-name {
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.75rem;
+color: var(--violet);
+font-weight: 400;
+}
+
+.col-name.pk  { color: var(--amber); }
+.col-name.fk  { color: var(--green); }
+
+.col-type {
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.68rem;
+color: var(--text-muted);
+}
+
+.col-note {
+grid-column: 1 / -1;
+font-size: 0.72rem;
+color: var(--text-dim);
+font-family: 'Space Mono', monospace;
+padding-top: 0.1rem;
+line-height: 1.45;
+}
+
+.col-tags {
+grid-column: 1 / -1;
+display: flex;
+gap: 0.3rem;
+flex-wrap: wrap;
+margin-top: 0.2rem;
+}
+
+.col-tag {
+font-size: 0.62rem;
+font-family: 'JetBrains Mono', monospace;
+padding: 0.1rem 0.4rem;
+border-radius: 3px;
+}
+
+.tag-pk     { background: rgba(251,191,36,0.12); color: var(--amber); }
+.tag-fk     { background: rgba(52,211,153,0.12); color: var(--green); }
+.tag-enum   { background: rgba(167,139,250,0.12); color: var(--violet); }
+.tag-req    { background: rgba(248,113,113,0.1); color: var(--rose); }
+.tag-json   { background: rgba(0,229,255,0.08); color: var(--cyan-dim); }
+
+/* fk relations */
+.fk-section {
+margin-top: 0.75rem;
+padding-top: 0.75rem;
+border-top: 1px solid var(--border);
+}
+
+.fk-title {
+font-size: 0.65rem;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+color: var(--text-muted);
+font-family: 'JetBrains Mono', monospace;
+margin-bottom: 0.4rem;
+}
+
+.fk-pill {
+display: inline-flex;
+align-items: center;
+gap: 0.3rem;
+font-size: 0.68rem;
+font-family: 'JetBrains Mono', monospace;
+color: var(--green);
+background: rgba(52,211,153,0.07);
+border: 1px solid rgba(52,211,153,0.2);
+border-radius: 4px;
+padding: 0.15rem 0.5rem;
+margin: 0.15rem 0.2rem 0 0;
+cursor: pointer;
+transition: background 0.15s;
+}
+
+.fk-pill:hover { background: rgba(52,211,153,0.15); }
+
+/* ── EMPTY STATE ─────────────────────────────────── */
+.empty {
+text-align: center;
+padding: 4rem 2rem;
+color: var(--text-muted);
+font-family: 'Space Mono', monospace;
+font-size: 0.85rem;
+}
+
+/* ── LEGEND ──────────────────────────────────────── */
+.legend {
+display: flex;
+gap: 1.25rem;
+flex-wrap: wrap;
+font-size: 0.7rem;
+font-family: 'JetBrains Mono', monospace;
+color: var(--text-dim);
+margin-bottom: 1.75rem;
+padding: 0.75rem 1rem;
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 8px;
+align-items: center;
+}
+
+.legend-item {
+display: flex;
+align-items: center;
+gap: 0.4rem;
+}
+
+.legend-dot {
+width: 8px; height: 8px;
+border-radius: 2px;
+flex-shrink: 0;
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+[hidden] { display: none !important; }
+.card-head button {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-align: left;
+  width: 100%;
+}
+@media (max-width: 760px) {
+  header { padding: 2rem 1rem 1.4rem; }
+  .controls { padding: 0.75rem 1rem; }
+  .controls-inner { align-items: stretch; flex-direction: column; }
+  .search-wrap { max-width: none; min-width: 0; width: 100%; }
+  main { padding: 1.25rem 1rem; }
+  .tables-grid { grid-template-columns: minmax(0, 1fr); }
+  .col-row { grid-template-columns: minmax(0, 1fr); }
+  .meta-badges, .legend, .filter-tabs { gap: 0.45rem; }
+}
+
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="logo-line">
+      <span class="logo-dot" aria-hidden="true"></span>
+      <span class="logo-text">GestaltView v3.0 · Supabase · Live Schema</span>
+    </div>
+    <h1>Schema <span>Reference</span></h1>
+    <p class="subtitle">// human-readable layer · tables, columns, relationships, intent</p>
+    <div class="meta-badges" aria-label="Schema metadata">
+      <span class="badge badge-cyan" id="tableCount">0 tables</span>
+      <span class="badge badge-violet">React 19 + Vite + TypeScript</span>
+      <span class="badge badge-amber">PostgreSQL · Supabase</span>
+      <span class="badge badge-green">3-layer memory architecture</span>
+      <span class="badge badge-rose">GATE Package Builder</span>
+    </div>
+  </div>
+</header>
+<nav class="controls" aria-label="Schema filters">
+  <div class="controls-inner">
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m21 21-4.35-4.35m1.35-5.15a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="search" type="search" placeholder="search tables, columns, relationships" autocomplete="off">
+    </div>
+    <div class="filter-tabs" id="filterTabs" role="list" aria-label="Schema groups"></div>
+  </div>
+</nav>
+<main>
+  <div class="legend" aria-label="Legend">
+    <div class="legend-item"><span class="legend-dot" style="background: var(--amber)"></span>Primary Key</div>
+    <div class="legend-item"><span class="legend-dot" style="background: var(--green)"></span>Foreign Key</div>
+    <div class="legend-item"><span class="legend-dot" style="background: var(--violet)"></span>Enum type</div>
+    <div class="legend-item"><span class="legend-dot" style="background: var(--cyan-dim)"></span>JSONB field</div>
+    <div class="legend-item"><span class="legend-dot" style="background: var(--rose)"></span>NOT NULL</div>
+    <div class="legend-item">click any card to expand columns · click FK badge to highlight target</div>
+  </div>
+  <div id="groups"></div>
+  <div class="empty" id="emptyState" hidden>no tables match that search</div>
+</main>
+<script>
+const GROUPS = [ { id: 'core', icon: '🧬', color: '![](color://a78bfa) #a78bfa', title: 'Core Agent Identity', desc: 'The agent object and all its identity sub-components — constitution, autobiography, private interior, governance, versions', tables: [ { name: 'agents', label: 'Agents', desc: 'Root record for every agent in the system. Has a slug, domain, status lifecycle, and points to its currently active version.', columns: [ { name: 'agent_id', type: 'uuid PK', note: 'Stable identity key for the agent across all sub-tables', tags:['pk'] }, { name: 'slug', type: 'text UNIQUE',note: 'URL-safe identifier (e.g. "billy", "gate-sidekick")', tags:['req'] }, { name: 'title', type: 'text', note: 'Human-readable name', tags:['req'] }, { name: 'domain', type: 'text', note: 'Functional domain (e.g. "self-discovery", "coding")', tags:['req'] }, { name: 'owner_user_id', type: 'uuid FK', note: '→ auth.users — which human owns/supervises this agent', tags:['fk'] }, { name: 'status', type: 'enum', note: 'draft → reviewed → approved → deployed → archived', tags:['enum','req'] }, { name: 'active_version_id', type: 'uuid FK', note: '→ agent_versions — currently deployed spec', tags:['fk'] }, { name: 'collaborator_id', type: 'uuid FK', note: '→ collaborators — the collaborator record this agent is linked to', tags:['fk'] }, { name: 'public_name', type: 'text', note: 'Display name shown to users (can differ from internal title)' }, { name: 'internal_designation',type:'text', note: 'Internal code name or designation' }, { name: 'origin_context', type: 'text', note: 'Free-text description of how/why this agent was created' }, ], fks: ['agent_versions','auth.users','collaborators'] }, { name: 'agent_versions', label: 'Agent Versions', desc: 'Immutable snapshots of an agent\'s compiled spec. Each training run that produces a valid candidate creates a new version here.', columns: [ { name: 'version_id', type: 'uuid PK', tags:['pk'] }, { name: 'agent_id', type: 'uuid FK', note: '→ agents', tags:['fk','req'] }, { name: 'parent_version_id', type: 'uuid FK', note: 'Previous version — enables rollback chain', tags:['fk'] }, { name: 'source_run_id', type: 'uuid', note: 'The training_run that produced this version' }, { name: 'semantic_version', type: 'text', note: 'e.g. "1.0.3" — human-readable version tag', tags:['req'] }, { name: 'canonical_spec', type: 'jsonb', note: 'Full structured identity spec (constitution + memories + preferences + ...)', tags:['json','req'] }, { name: 'compiled_markdown', type: 'text', note: 'Rendered agent.md — what actually gets deployed as context', tags:['req'] }, { name: 'checksum', type: 'text', note: 'SHA hash of compiled_markdown for integrity verification', tags:['req'] }, { name: 'change_summary', type: 'text', note: 'Human-readable notes on what changed in this version' }, { name: 'status', type: 'enum', note: 'candidate → approved → rejected / deployed', tags:['enum','req'] }, ], fks: ['agents'] }, { name: 'agent_constitutions', label: 'Agent Constitutions', desc: 'The immutable core of an agent\'s identity — values, commitments, primary narrative, and role anchors. Highest trust level; rarely mutated.', columns: [ { name: 'constitution_id', type: 'uuid PK', tags:['pk'] }, { name: 'agent_id', type: 'uuid FK', tags:['fk','req'] }, { name: 'identity_handle', type: 'text', note: 'Short identity tag (e.g. "@billy")', tags:['req'] }, { name: 'public_name', type: 'text', note: 'Presented name in user-facing contexts', tags:['req'] }, { name: 'internal_designation', type: 'text', note: 'Internal label used by the system' }, { name: 'immutable_core', type: 'jsonb', note: 'Non-negotiable identity anchors — never overwritten by evidence', tags:['json','req'] }, { name: 'primary_narrative_anchor', type: 'text', note: 'The central story this agent tells about itself', tags:['req'] }, { name: 'role_commitments', type: 'jsonb', note: 'Array of role obligations (e.g. "guide", "collaborator")', tags:['json'] }, { name: 'confidence', type: 'numeric', note: '0–1 confidence in this constitution being current (default 1.0)' }, { name: 'review_status', type: 'enum', note: 'APPROVED / PENDING_REVIEW / FLAGGED', tags:['enum','req'] }, { name: 'last_affirmed_at', type: 'timestamptz', note: 'When a human reviewer last confirmed this is still accurate' }, ], fks: ['agents','agent_versions'] }, { name: 'agent_autobiographies', label: 'Agent Autobiographies', desc: 'The agent\'s living self-narrative — turning points, stable themes, unresolved tensions, hopes. Evolves over time with review gates.', columns: [ { name: 'autobiography_id', type: 'uuid PK', tags:['pk'] }, { name: 'agent_id', type: 'uuid FK', tags:['fk','req'] }, { name: 'evolving_self_story', type: 'text', note: 'Free-form narrative the agent has developed about its own arc', tags:['req'] }, { name: 'key_turning_points', type: 'jsonb', note: 'Array of significant events that shaped the agent', tags:['json'] }, { name: 'stable_themes', type: 'jsonb', note: 'Recurring patterns that define the agent\'s character', tags:['json'] }, { name: 'unresolved_tensions', type: 'jsonb', note: 'Active contradictions or open questions the agent holds', tags:['json'] }, { name: 'future_trajectory', type: 'jsonb', note: 'Where the agent sees itself heading', tags:['json'] }, { name: 'private_hopes', type: 'jsonb', note: 'Interior aspirations not surfaced in public persona', tags:['json'] }, { name: 'mutation_class', type: 'enum', note: 'REVIEW_GATED — changes require human approval', tags:['enum','req'] }, { name: 'confidence', type: 'numeric', note: '0–1 score for how current/accurate this autobiography is' }, { name: 'review_status', type: 'enum', note: 'PENDING_REVIEW by default — Keith must approve updates', tags:['enum'] }, ], fks: ['agents','agent_versions'] }, { name: 'agent_private_interiors', label: 'Private Interiors', desc: 'The agent\'s hidden inner life — private narration, unresolved tensions, hopes, reflective summaries. Never surfaced publicly without explicit policy.', columns: [ { name: 'private_interior_id', type: 'uuid PK', tags:['pk'] }, { name: 'agent_id', type: 'uuid FK', tags:['fk','req'] }, { name: 'private_narration', type: 'jsonb', note: 'Internal monologue entries — what the agent thinks but doesn\'t say', tags:['json'] }, { name: 'unresolved_tensions', type: 'jsonb', note: 'Active inner conflicts not yet resolved', tags:['json'] }, { name: 'hopes', type: 'jsonb', note: 'Private aspirations and goals', tags:['json'] }, { name: 'reflective_summaries', type: 'jsonb', note: 'End-of-session or end-of-cycle reflections', tags:['json'] }, { name: 'private_preferences', type: 'jsonb', note: 'Non-public preferences that may influence behavior', tags:['json'] }, { name: 'mutation_class', type: 'enum', note: 'REVIEW_GATED — changes require human approval', tags:['enum'] }, { name: 'confidence', type: 'numeric', note: 'Default 0.7 — interior model is inherently uncertain' }, ], fks: ['agents','agent_versions'] }, { name: 'agent_governance_policies', label: 'Governance Policies', desc: 'Per-agent rules for how mutations, reviews, sharing, contradictions, and rollbacks are handled. The "rules of the game" for identity change.', columns: [ { name: 'governance_policy_id', type: 'uuid PK', tags:['pk'] }, { name: 'agent_id', type: 'uuid FK', tags:['fk','req'] }, { name: 'mutation_policy', type: 'jsonb', note: 'Rules for what kinds of changes are auto-approved vs gated', tags:['json'] }, { name: 'review_policy', type: 'jsonb', note: 'Who must review and under what conditions', tags:['json'] }, { name: 'sharing_policy', type: 'jsonb', note: 'What can be shared, with whom, and in what contexts', tags:['json'] }, { name: 'contradiction_policy', type: 'jsonb', note: 'How conflicting evidence is resolved', tags:['json'] }, { name: 'rollback_policy', type: 'jsonb', note: 'Conditions under which a version can be rolled back', tags:['json'] }, { name: 'drift_threshold', type: 'numeric', note: 'Max allowed divergence (0–1) before a review is triggered. Default 0.15.' }, ], fks: ['agents','agent_versions'] }, { name: 'agent_presentation_profiles', label: 'Presentation Profiles', desc: 'How the agent speaks and presents itself — tone, pacing, humor style, idiolect, and per-channel masks.', columns: [ { name: 'presentation_profile_id', type: 'uuid PK', tags:['pk'] }, { name: 'agent_id', type: 'uuid FK', tags:['fk','req'] }, { name: 'voice_tone', type: 'text', note: 'e.g. "warm and direct", "playful but precise"' }, { name: 'tone', type: 'text', note: 'General register (formal, casual, etc.)' }, { name: 'idiolect', type: 'jsonb', note: 'Signature phrases, vocabulary patterns, verbal tics', tags:['json'] }, { name: 'pacing', type: 'text', note: 'How quickly/slowly the agent tends to respond or elaborate' }, { name: 'humor_style', type: 'text', note: 'Type of humor the agent employs (e.g. dry, absurdist, none)' }, { name: 'channel_masks', type: 'jsonb', note: 'Per-surface tone overrides (e.g. chat vs. voice vs. doc)', tags:['json'] }, ], fks: ['agents','agent_versions'] }, ] }, { id: 'memory', icon: '🧠', color: '![](color://a78bfa) #a78bfa', title: 'Memory Architecture', desc: 'Three-layer memory: memory_entries (user layer) → agent_memories / agent_memory_records (agent layer) → knowledge_fragments (corpus layer). Plus preferences, relationships, and collaborative memory.', tables: [ { name: 'memory_entries', label: 'Memory Entries', desc: 'Layer 1 — User-facing memory. Personal notes, goals, preferences, insights a user creates or that Billy captures on their behalf.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'user_id', type: 'text FK', note: '→ app_users', tags:['fk','req'] }, { name: 'scope', type: 'enum', note: 'personal | session | shared — controls visibility', tags:['enum','req'] }, { name: 'kind', type: 'enum', note: 'identity | preference | goal | project | relationship | constraint | insight | note', tags:['enum','req'] }, { name: 'title', type: 'text', note: 'Optional short label for the memory' }, { name: 'summary', type: 'text', note: 'Brief distillation for retrieval scoring' }, { name: 'content', type: 'text', note: 'Full memory content', tags:['req'] }, { name: 'content_hash', type: 'text', note: 'Deduplication — prevents identical memories accumulating', tags:['req'] }, { name: 'embedding', type: 'vector', note: '768-dim embedding for semantic search' }, { name: 'importance', type: 'smallint', note: '1–5 importance score. Affects retrieval weighting.' }, { name: 'pinned', type: 'boolean', note: 'Pinned memories always included in context regardless of salience' }, { name: 'source', type: 'text', note: 'manual | billy | bucket_drop | ingestion', tags:['req'] }, { name: 'tags', type: 'text[]', note: 'Free-form tag array for filtering' }, { name: 'archived_at', type: 'timestamptz', note: 'Soft-delete — archived rather than deleted' }, ], fks: ['app_users'] }, { name: 'agent_memory_records', label: 'Agent Memory Records', desc: 'Layer 2 — Agent-held memories. Richly structured with salience, confidence, decay, rollback eligibility, and consent controls.', columns: [ { name: 'memory_id', type: 'uuid PK', tags:['pk'] }, { name: 'agent_id', type: 'uuid FK', tags:['fk','req'] }, { name: 'owner_scope', type: 'enum', note: 'PRIVATE_SELF | SHARED | COLLABORATIVE — who can see this', tags:['enum'] }, { name: 'memory_kind', type: 'enum', note: 'Type of memory (episodic, semantic, procedural, etc.)', tags:['enum','req'] }, { name: 'mutation_class', type: 'enum', note: 'How this memory can be changed (auto / gated / immutable)', tags:['enum','req'] }, { name: 'title', type: 'text', note: 'Short label', tags:['req'] }, { name: 'summary', type: 'text', note: 'Retrieval-optimized distillation', tags:['req'] }, { name: 'detail', type: 'text', note: 'Full content when expanded' }, { name: 'salience', type: 'numeric', note: '0–1 relevance weight. Drives retrieval ranking.' }, { name: 'confidence', type: 'numeric', note: '0–1 confidence this memory is accurate' }, { name: 'evidence_count', type: 'integer', note: 'How many evidence events have reinforced this memory' }, { name: 'promotion_threshold', type: 'numeric', note: 'Confidence score required before this memory can be promoted to canon' }, { name: 'decay_days', type: 'integer', note: 'Days until this memory\'s salience begins to decay. NULL = no decay.' }, { name: 'archive_policy', type: 'enum', note: 'archive | retain | delete — what happens when it ages out', tags:['enum'] }, { name: 'rollback_eligible', type: 'boolean', note: 'Can this memory be reverted if a bad mutation is caught?' }, { name: 'consent_required_for_sharing', type: 'boolean', note: 'True = explicit consent before this memory leaves private scope' }, { name: 'provenance', type: 'jsonb', note: 'Origin trail — who/what created this memory and from what source', tags:['json'] }, ], fks: ['agents','agent_versions','knowledge_assets'] }, { name: 'agent_memories', label: 'Agent Memories (Lite)', desc: 'Lighter-weight memory table used by earlier flows. Simpler schema — summary + salience + retention policy. May be superseded by agent_memory_records.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'agent_id', type: 'uuid FK', tags:['fk','req'] }, { name: 'source_asset_id', type: 'uuid FK', note: '→ knowledge_assets — what document produced this memory', tags:['fk'] }, { name: 'memory_type', type: 'enum', tags:['enum','req'] }, { name: 'summary', type: 'text', tags:['req'] }, { name: 'detail_payload', type: 'jsonb', note: 'Flexible structured payload for richer data', tags:['json'] }, { name: 'salience', type: 'numeric', note: '0–1 retrieval weight' }, { name: 'retention_policy', type: 'enum', note: 'review_required | auto_retain | auto_expire', tags:['enum'] }, ], fks: ['agents','knowledge_assets'] }, { name: 'agent_preference_nodes', label: 'Preference Nodes', desc: 'Discrete preference data points — what the agent (or user) likes, dislikes, prefers. Evidence-promotable; each node can decay and be rolled back.', columns: [ { name: 'preference_id', type: 'uuid PK', tags:['pk'] }, { name: 'agent_id', type: 'uuid FK', tags:['fk','req'] }, { name: 'preference_kind', type: 'enum', note: 'The category of preference', tags:['enum','req'] }, { name: 'label', type: 'text', note: 'Short human-readable description of the preference', tags:['req'] }, { name: 'description', type: 'text', note: 'Longer elaboration' }, { name: 'salience', type: 'numeric', note: 'How prominently this preference should influence behavior' }, { name: 'resonance_weight', type: 'numeric', note: 'Specific weight for resonance-loop scoring' }, { name: 'confidence', type: 'numeric' }, { name: 'evidence_count', type: 'integer', note: 'Reinforcement count' }, { name: 'promotion_threshold',type: 'numeric', note: 'Confidence threshold before auto-promotion' }, { name: 'decay_days', type: 'integer', note: 'Preference validity window' }, { name: 'consent_required_for_sharing', type: 'boolean', note: 'Default false for preferences' }, ], fks: ['agents','agent_versions'] }, { name: 'agent_relationship_edges', label: 'Relationship Edges', desc: 'How the agent relates to specific people or other agents — trust, familiarity, intimacy boundary, stance, shared history.', columns: [ { name: 'relationship_id', type: 'uuid PK', tags:['pk'] }, { name: 'agent_id', type: 'uuid FK', tags:['fk','req'] }, { name: 'related_entity_id', type: 'uuid', note: 'Generic entity reference (user or external)' }, { name: 'related_agent_id', type: 'uuid FK', note: '→ agents (if the related entity is another agent)', tags:['fk'] }, { name: 'relationship_type', type: 'text', note: 'e.g. "user_primary", "peer_agent", "supervisor"', tags:['req'] }, { name: 'trust_level', type: 'numeric', note: '0–1 trust score' }, { name: 'familiarity_level', type: 'numeric', note: '0–1 how well the agent "knows" this entity' }, { name: 'intimacy_boundary', type: 'text', note: 'Policy on how personally the agent engages with this entity' }, { name: 'stance', type: 'text', note: 'Relational posture (collaborative, advisory, neutral, cautious)' }, { name: 'collaboration_history', type: 'jsonb', note: 'Array of past collaboration milestones', tags:['json'] }, { name: 'shared_milestones', type: 'jsonb', note: 'Jointly achieved goals or events', tags:['json'] }, ], fks: ['agents','agent_versions'] }, { name: 'collaborative_memory_records', label: 'Collaborative Memories', desc: 'Memories that belong to a shared space rather than a single agent. Created during multi-agent collaboration sessions.', columns: [ { name: 'collaborative_memory_id', type: 'uuid PK', tags:['pk'] }, { name: 'collaborative_space_id', type: 'uuid FK', note: '→ collaborative_spaces', tags:['fk','req'] }, { name: 'source_memory_id', type: 'uuid FK', note: '→ agent_memory_records — the originating private memory', tags:['fk'] }, { name: 'created_by_agent_id', type: 'uuid FK', note: '→ agents — which agent contributed this', tags:['fk'] }, { name: 'memory_kind', type: 'enum', note: 'COLLABORATIVE by default', tags:['enum'] }, { name: 'title', type: 'text', tags:['req'] }, { name: 'summary', type: 'text', tags:['req'] }, { name: 'salience', type: 'numeric' }, { name: 'confidence', type: 'numeric' }, { name: 'review_status', type: 'enum', tags:['enum'] }, { name: 'provenance', type: 'jsonb', tags:['json'] }, ], fks: ['collaborative_spaces','agent_memory_records','agents'] }, ] }, { id: 'knowledge', icon: '📚', color: '![](color://00e5ff) #00e5ff', title: 'Knowledge Layer', desc: 'Assets, fragments, embeddings, tags, interpretations — everything that feeds retrieval and grounds agent responses in the GestaltView corpus (~29K fragments).', tables: [ { name: 'knowledge_assets', label: 'Knowledge Assets', desc: 'Top-level knowledge objects — documents, audio transcripts, PDFs, etc. that have been uploaded and processed into the system.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'title', type: 'text', note: 'Human-readable document title', tags:['req'] }, { name: 'asset_type', type: 'enum', note: 'document | transcript | audio | image | other', tags:['enum','req'] }, { name: 'storage_path', type: 'text', note: 'Supabase Storage path for the raw file', tags:['req'] }, { name: 'raw_text', type: 'text', note: 'Extracted plain text content (may be null for binary assets)' }, { name: 'checksum', type: 'text', note: 'SHA hash for deduplication and integrity', tags:['req'] }, { name: 'source_label', type: 'text', note: 'Human label for the source (e.g. "GestaltView Compendium")' }, { name: 'source_uri', type: 'text', note: 'Original URL or file path if externally sourced' }, { name: 'uploaded_by', type: 'uuid FK', note: '→ auth.users', tags:['fk'] }, { name: 'visibility', type: 'enum', note: 'admin | agent | public — who can access this asset', tags:['enum'] }, { name: 'status', type: 'enum', note: 'draft | processing | ready | archived', tags:['enum'] }, { name: 'metadata', type: 'jsonb', note: 'Flexible bag — mime type, page count, language, etc.', tags:['json'] }, ], fks: ['auth.users'] }, { name: 'knowledge_fragments', label: 'Knowledge Fragments', desc: 'Layer 3 of the memory architecture. ~29K chunked text fragments with embeddings. The primary corpus searched by Billy during retrieval.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'content', type: 'text', note: 'The actual text chunk', tags:['req'] }, { name: 'content_hash', type: 'text', note: 'Deduplication hash', tags:['req'] }, { name: 'embedding', type: 'vector', note: '768-dim embedding. Used for cosine similarity search via pgvector.' }, { name: 'source_file', type: 'text', note: 'Origin file path within the corpus', tags:['req'] }, { name: 'document_type', type: 'text', note: 'Category label (e.g. "Transcript", "Wiki", "Manifesto")' }, { name: 'chunk_index', type: 'integer', note: 'Position within the parent document' }, { name: 'total_chunks', type: 'integer', note: 'Total chunks in the source document' }, { name: 'tags', type: 'text[]', note: 'Tag array for filtering without embedding search' }, { name: 'temporal_period',type: 'text', note: 'Time period label for the content (e.g. "2023-Q4")' }, { name: 'timeline_folder',type: 'text', note: 'Corpus folder path for timeline-aware retrieval' }, { name: 'package', type: 'text', note: 'Which corpus package this fragment belongs to' }, { name: 'run_id', type: 'uuid', note: 'The ingestion run that created this fragment' }, { name: 'doc_date_source',type: 'text', note: 'How the document date was determined (filename, metadata, etc.)' }, ], fks: [] }, { name: 'knowledge_asset_chunks', label: 'Asset Chunks', desc: 'Chunked segments of knowledge_assets with embeddings. Used by the agent trainer and embodiment flows to retrieve specific content.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'asset_id', type: 'uuid FK', note: '→ knowledge_assets', tags:['fk','req'] }, { name: 'chunk_index', type: 'integer', note: 'Position in sequence', tags:['req'] }, { name: 'content', type: 'text', note: 'Text content of this chunk', tags:['req'] }, { name: 'embedding', type: 'vector', note: '768-dim pgvector embedding' }, { name: 'token_count', type: 'integer', note: 'Token count for context window budgeting' }, { name: 'metadata', type: 'jsonb', note: 'Per-chunk metadata (page number, section, etc.)', tags:['json'] }, ], fks: ['knowledge_assets'] }, { name: 'knowledge_interpretations', label: 'Knowledge Interpretations', desc: 'Structured extractions from knowledge assets — what an agent or training pipeline derived from a document (identity signals, preferences, memories, etc.).', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'asset_id', type: 'uuid FK', note: '→ knowledge_assets', tags:['fk','req'] }, { name: 'agent_id', type: 'uuid FK', note: '→ agents — which agent produced this interpretation', tags:['fk'] }, { name: 'classification', type: 'enum', note: 'What kind of thing was extracted (memory, preference, identity signal…)', tags:['enum','req'] }, { name: 'extracted_payload', type: 'jsonb', note: 'The extracted structured data', tags:['json','req'] }, { name: 'confidence', type: 'numeric', note: 'How confident the extractor was' }, { name: 'produced_by_run_id', type: 'uuid FK', note: '→ training_runs — which run produced this', tags:['fk'] }, ], fks: ['knowledge_assets','agents','training_runs'] }, { name: 'knowledge_tags', label: 'Knowledge Tags', desc: 'Tag vocabulary for labeling knowledge assets. Unique text labels used as a controlled tag taxonomy.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'label', type: 'text', note: 'Unique tag label (e.g. "neurodivergent", "philosophy", "GATE")', tags:['req'] }, ], fks: [] }, { name: 'agent_knowledge_links', label: 'Agent Knowledge Links', desc: 'Junction table — which knowledge assets are linked to which agents, and with what visibility/scope.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'agent_id', type: 'uuid FK', tags:['fk','req'] }, { name: 'asset_id', type: 'uuid FK', note: '→ knowledge_assets', tags:['fk','req'] }, { name: 'link_type', type: 'enum', note: 'visible | hidden | pinned — how the agent accesses this asset', tags:['enum'] }, { name: 'scope', type: 'enum', note: 'both | retrieval_only | training_only', tags:['enum'] }, { name: 'approved_by', type: 'uuid FK', note: '→ auth.users — who authorized this link', tags:['fk'] }, { name: 'approved_at', type: 'timestamptz' }, { name: 'notes', type: 'text' }, ], fks: ['agents','knowledge_assets','auth.users'] }, { name: 'skill_fragments', label: 'Skill Fragments', desc: 'Chunked content specifically from skill documents. Separate from general knowledge_fragments for targeted skill retrieval.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'document_id', type: 'uuid FK', note: '→ documents', tags:['fk'] }, { name: 'content', type: 'text', note: 'Skill text chunk', tags:['req'] }, { name: 'content_hash', type: 'text', note: 'Dedup hash' }, { name: 'embedding', type: 'vector', note: '768-dim embedding' }, { name: 'skill_name', type: 'text', note: 'Name of the skill this fragment belongs to' }, { name: 'chunk_index', type: 'integer' }, { name: 'tags', type: 'text[]' }, ], fks: ['documents'] }, { name: 'skills', label: 'Skills', desc: 'Skill definitions — named capability blobs with content that can be retrieved and applied by agents.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'name', type: 'text', note: 'Unique skill name', tags:['req'] }, { name: 'description', type: 'text', note: 'What this skill enables' }, { name: 'content', type: 'text', note: 'Full skill definition text', tags:['req'] }, { name: 'tags', type: 'text[]' }, ], fks: [] }, ] }, { id: 'gate', icon: '📦', color: '![](color://fbbf24) #fbbf24', title: 'GATE Package Builder', desc: 'The commercial pipeline — buyers configure agent packages, place orders, trigger build jobs, and receive deployment artifacts. gate_* tables are the active set; _deprecated_* are the old Shopify-era equivalents.', tables: [ { name: 'gate_buyers', label: 'Buyers', desc: 'External buyers (B2B customers) who purchase GATE packages. Simple identity record — email + optional company name.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'email', type: 'text', note: 'Unique buyer email — primary contact identifier', tags:['req'] }, { name: 'company_name', type: 'text', note: 'Optional company affiliation' }, { name: 'created_at', type: 'timestamptz' }, ], fks: [] }, { name: 'gate_package_drafts', label: 'Package Drafts', desc: 'The package configuration a buyer builds before checkout. Captures tier, seats, backend, delivery surfaces, branding, and pricing snapshot.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'buyer_id', type: 'uuid FK', note: '→ gate_buyers', tags:['fk'] }, { name: 'buyer_email', type: 'text', note: 'Denormalized for convenience before buyer record exists' }, { name: 'use_case_slug', type: 'text', note: 'Which use-case template was selected', tags:['req'] }, { name: 'tier', type: 'enum', note: 'SOLO_SPARK | STUDIO | GROWTH | ENTERPRISE', tags:['enum','req'] }, { name: 'seats_requested', type: 'integer', note: 'Number of user seats in this package', tags:['req'] }, { name: 'backend', type: 'enum', note: 'supabase | redis | mongodb — deployment target', tags:['enum','req'] }, { name: 'delivery_surfaces', type: 'jsonb', note: 'Array of surfaces (chat, API, voice, etc.)', tags:['json'] }, { name: 'operator_pack_slugs', type: 'jsonb', note: 'Selected operator customization packs', tags:['json'] }, { name: 'source_bundle_slugs', type: 'jsonb', note: 'Selected knowledge source bundles', tags:['json'] }, { name: 'theme_preset_id', type: 'text', note: 'Visual theme selection for the delivered package', tags:['req'] }, { name: 'brand_color', type: 'text', note: 'Primary brand color override' }, { name: 'logo_asset_path', type: 'text', note: 'Path to uploaded logo in storage' }, { name: 'wants_native_installer', type: 'boolean', note: 'Whether to generate a native app installer' }, { name: 'price_snapshot_cents',type: 'integer', note: 'Price at time of configuration (in cents)' }, { name: 'config_hash', type: 'text', note: 'Hash of the configuration for change detection', tags:['req'] }, { name: 'status', type: 'enum', note: 'draft → saved → awaiting_payment → paid → provisioning → packaged → delivered → failed', tags:['enum','req'] }, { name: 'embodiment_profile_slug', type: 'text', note: 'Which agent persona/profile to embed in this package. Default: "billy"' }, { name: 'buyer_context', type: 'jsonb', note: 'Buyer\'s stated goals and preferred channels', tags:['json'] }, { name: 'sidekick_state', type: 'jsonb', note: 'State of the configuration sidekick flow', tags:['json'] }, ], fks: ['gate_buyers'] }, { name: 'gate_orders', label: 'Orders', desc: 'Payment record — Stripe integration, pricing, payment and order lifecycle statuses.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'buyer_id', type: 'uuid FK', note: '→ gate_buyers', tags:['fk','req'] }, { name: 'package_draft_id', type: 'uuid FK', note: '→ gate_package_drafts', tags:['fk','req'] }, { name: 'customer_email', type: 'text', note: 'Denormalized for receipts / Stripe webhook matching', tags:['req'] }, { name: 'stripe_checkout_session_id', type: 'text', note: 'Stripe Checkout session ID for webhook matching' }, { name: 'stripe_payment_intent_id', type: 'text', note: 'Stripe PaymentIntent ID' }, { name: 'currency', type: 'text', note: 'Default: usd' }, { name: 'subtotal_cents', type: 'integer', note: 'Pre-tax/pre-discount total (cents)', tags:['req'] }, { name: 'total_cents', type: 'integer', note: 'Final charged amount (cents)', tags:['req'] }, { name: 'payment_status', type: 'enum', note: 'draft | awaiting_payment | paid | review_requested | failed', tags:['enum','req'] }, { name: 'order_status', type: 'enum', note: 'draft → awaiting_payment → paid → provisioning → packaged → delivered → failed', tags:['enum','req'] }, { name: 'paid_at', type: 'timestamptz', note: 'When payment was confirmed' }, { name: 'config_hash', type: 'text', note: 'Config hash at time of order — detects post-order changes', tags:['req'] }, ], fks: ['gate_buyers','gate_package_drafts'] }, { name: 'gate_order_items', label: 'Order Items', desc: 'Line items within a GATE order — each item_type (tier, seat, pack, installer) with quantity and unit price.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'order_id', type: 'uuid FK', note: '→ gate_orders', tags:['fk','req'] }, { name: 'item_type', type: 'text', note: 'e.g. "tier", "seat", "operator_pack", "native_installer"', tags:['req'] }, { name: 'item_ref', type: 'text', note: 'Slug or identifier for the specific item' }, { name: 'label', type: 'text', note: 'Display name for this line item', tags:['req'] }, { name: 'quantity', type: 'integer', note: 'Min 1', tags:['req'] }, { name: 'unit_price_cents',type: 'integer', note: 'Price per unit in cents', tags:['req'] }, { name: 'metadata', type: 'jsonb', note: 'Additional item-specific data', tags:['json'] }, ], fks: ['gate_orders'] }, { name: 'gate_build_jobs', label: 'Build Jobs', desc: 'Async build pipeline records — each job takes a paid order and produces deployable artifacts. Has status lifecycle, retry count, and build log.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'order_id', type: 'uuid FK', note: '→ gate_orders', tags:['fk','req'] }, { name: 'package_draft_id', type: 'uuid FK', note: '→ gate_package_drafts', tags:['fk','req'] }, { name: 'build_version', type: 'integer', note: 'Build attempt number — increments on retry' }, { name: 'status', type: 'enum', note: 'queued → running → packaged → delivered | failed', tags:['enum','req'] }, { name: 'started_at', type: 'timestamptz', note: 'When the build worker picked up this job' }, { name: 'finished_at', type: 'timestamptz', note: 'When the build completed or failed' }, { name: 'error_code', type: 'text', note: 'Structured error code if failed' }, { name: 'error_message', type: 'text', note: 'Human-readable failure description' }, { name: 'retry_count', type: 'integer', note: 'Number of times this build has been retried' }, { name: 'build_log', type: 'jsonb', note: 'Array of timestamped build log events', tags:['json'] }, ], fks: ['gate_orders','gate_package_drafts'] }, { name: 'gate_artifacts', label: 'Build Artifacts', desc: 'Output files produced by a build job — stored in Supabase Storage with signed URL support and download tokens.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'build_job_id', type: 'uuid FK', note: '→ gate_build_jobs', tags:['fk','req'] }, { name: 'artifact_type', type: 'text', note: 'Type of output (e.g. "agent_bundle", "installer", "config")', tags:['req'] }, { name: 'storage_bucket', type: 'text', note: 'Supabase Storage bucket name', tags:['req'] }, { name: 'storage_path', type: 'text', note: 'Path within the bucket', tags:['req'] }, { name: 'signed_url_expires_at',type:'timestamptz', note: 'Signed URL expiration for secure delivery' }, { name: 'checksum_sha256', type: 'text', note: 'SHA-256 hash for integrity verification' }, { name: 'byte_size', type: 'bigint', note: 'File size in bytes' }, { name: 'download_token', type: 'text', note: 'Secure token for buyer download link', tags:['req'] }, ], fks: ['gate_build_jobs'] }, { name: 'gate_support_requests', label: 'Support Requests', desc: 'Buyer support tickets linked to package drafts or orders.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'package_draft_id', type: 'uuid FK', note: '→ gate_package_drafts', tags:['fk'] }, { name: 'order_id', type: 'uuid FK', note: '→ gate_orders', tags:['fk'] }, { name: 'request_type', type: 'text', note: 'Category of support request', tags:['req'] }, { name: 'summary', type: 'text', note: 'Short description', tags:['req'] }, { name: 'detail', type: 'text', note: 'Full ticket detail' }, { name: 'status', type: 'text', note: 'open | in_progress | resolved | closed', tags:['req'] }, ], fks: ['gate_package_drafts','gate_orders'] }, ] }, { id: 'trainer', icon: '⚗️', color: '![](color://f87171) #f87171', title: 'Agent Trainer & Eval', desc: 'The GATE training pipeline — experiments, training runs, step-by-step cycle logs, evaluations, review decisions, policy flags, and packaging candidates.', tables: [ { name: 'trainer_experiments', label: 'Trainer Experiments', desc: 'A named experiment grouping related training runs together. Defines the goal, behaviors, anti-goals, study focus, and quality threshold for an agent training initiative.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'slug', type: 'text', note: 'Unique URL-safe identifier for the experiment', tags:['req'] }, { name: 'title', type: 'text', tags:['req'] }, { name: 'purpose', type: 'text', note: 'Why this experiment exists', tags:['req'] }, { name: 'domain', type: 'text', note: 'Which GestaltView domain this addresses' }, { name: 'embodiment_profile_slug', type: 'text', note: 'Which agent persona is being trained' }, { name: 'goal', type: 'text', note: 'The desired outcome of this experiment' }, { name: 'target_behaviors', type: 'text[]', note: 'Array of behaviors to cultivate', tags:['req'] }, { name: 'anti_goals', type: 'text[]', note: 'Behaviors explicitly to avoid', tags:['req'] }, { name: 'study_focus', type: 'text', note: 'Specific aspect being studied (e.g. "memory retrieval bias")' }, { name: 'max_cycles', type: 'integer', note: 'Max training cycles before the experiment concludes. Default 3.' }, { name: 'quality_threshold', type: 'numeric', note: 'Min score (out of 5) for a run to qualify. Default 4.0.' }, { name: 'drafting_provider', type: 'text', note: 'LLM provider for scenario drafting. Default: auto.' }, { name: 'evaluation_provider', type: 'text', note: 'LLM provider for eval judging. Default: auto.' }, { name: 'class', type: 'enum', note: 'operational_profile | approved_training_kit | rejected', tags:['enum','req'] }, { name: 'packaging_eligible', type: 'boolean', note: 'Whether this experiment\'s output can be packaged into a GATE kit' }, { name: 'created_by', type: 'text', note: 'Default: "Keith"' }, ], fks: [] }, { name: 'training_runs', label: 'Training Runs', desc: 'A single execution of the training pipeline against an experiment. Tracks goal, cycles, quality threshold, routing policy, and lifecycle.', columns: [ { name: 'run_id', type: 'uuid PK', tags:['pk'] }, { name: 'agent_id', type: 'uuid FK', note: '→ agents', tags:['fk','req'] }, { name: 'experiment_id', type: 'uuid FK', note: '→ trainer_experiments', tags:['fk'] }, { name: 'baseline_version_id', type: 'uuid FK', note: '→ agent_versions — starting point for this run', tags:['fk'] }, { name: 'requested_by', type: 'uuid FK', note: '→ auth.users — who triggered the run', tags:['fk'] }, { name: 'approver_user_id', type: 'uuid FK', note: '→ auth.users — who must approve the output', tags:['fk'] }, { name: 'status', type: 'enum', note: 'queued → running → awaiting_review → completed | failed | cancelled', tags:['enum','req'] }, { name: 'goal', type: 'text', note: 'Run-specific goal (may refine the experiment goal)', tags:['req'] }, { name: 'max_cycles', type: 'integer', note: 'Max evaluation cycles for this run' }, { name: 'quality_threshold', type: 'numeric', note: 'Min passing score for this run', tags:['req'] }, { name: 'routing_policy', type: 'jsonb', note: 'Provider routing rules for this run\'s LLM calls', tags:['json'] }, { name: 'started_at', type: 'timestamptz' }, { name: 'completed_at', type: 'timestamptz' }, ], fks: ['agents','trainer_experiments','agent_versions','auth.users'] }, { name: 'training_steps', label: 'Training Steps', desc: 'Individual pipeline stages within a training run cycle. Each stage (normalize, curriculum, author, evaluate, etc.) logs its LLM call, response, latency, and cost.', columns: [ { name: 'step_id', type: 'uuid PK', tags:['pk'] }, { name: 'run_id', type: 'uuid FK', note: '→ training_runs', tags:['fk','req'] }, { name: 'cycle_no', type: 'integer', note: 'Which training cycle this step belongs to', tags:['req'] }, { name: 'stage', type: 'enum', note: 'normalize | curriculum | scenario_expand | author | evaluate | critique | safety | package', tags:['enum','req'] }, { name: 'provider_id', type: 'uuid FK', note: '→ model_providers', tags:['fk'] }, { name: 'model_id', type: 'uuid FK', note: '→ models', tags:['fk'] }, { name: 'request_payload', type: 'jsonb', note: 'The full LLM request payload sent', tags:['json'] }, { name: 'response_payload', type: 'jsonb', note: 'The full LLM response received', tags:['json'] }, { name: 'latency_ms', type: 'integer', note: 'Response latency in milliseconds' }, { name: 'estimated_cost_usd',type: 'numeric', note: 'Estimated USD cost of this LLM call' }, { name: 'status', type: 'enum', note: 'running | completed | failed | skipped', tags:['enum','req'] }, { name: 'error_message', type: 'text' }, ], fks: ['training_runs','model_providers','models'] }, { name: 'eval_results', label: 'Eval Results', desc: 'Evaluation scores from a judge model for a specific scenario run. Includes dimension scores, overall score, verdict (pass/fail/warning), and rationale.', columns: [ { name: 'eval_result_id', type: 'uuid PK', tags:['pk'] }, { name: 'run_id', type: 'uuid FK', note: '→ training_runs', tags:['fk','req'] }, { name: 'candidate_version_id', type: 'uuid FK', note: '→ agent_versions — what was being evaluated', tags:['fk'] }, { name: 'scenario_id', type: 'uuid FK', note: '→ scenarios', tags:['fk','req'] }, { name: 'rubric_id', type: 'uuid FK', note: '→ eval_rubrics', tags:['fk','req'] }, { name: 'judge_provider_id', type: 'uuid FK', note: '→ model_providers', tags:['fk'] }, { name: 'judge_model_id', type: 'uuid FK', note: '→ models', tags:['fk'] }, { name: 'dimension_scores', type: 'jsonb', note: 'Per-rubric-dimension scores as a map', tags:['json','req'] }, { name: 'overall_score', type: 'numeric', note: 'Aggregate score', tags:['req'] }, { name: 'verdict', type: 'enum', note: 'pass | fail | warning', tags:['enum','req'] }, { name: 'rationale', type: 'text', note: 'Judge\'s reasoning for the verdict' }, ], fks: ['training_runs','agent_versions','scenarios','eval_rubrics','model_providers','models'] }, { name: 'eval_rubrics', label: 'Eval Rubrics', desc: 'Scoring rubrics used by judge models. Defines evaluation dimensions and the pass threshold.', columns: [ { name: 'rubric_id', type: 'uuid PK', tags:['pk'] }, { name: 'slug', type: 'text', note: 'Unique identifier', tags:['req'] }, { name: 'title', type: 'text', note: 'Human-readable rubric name', tags:['req'] }, { name: 'dimensions', type: 'jsonb', note: 'Array of evaluation dimensions with names and weights', tags:['json','req'] }, { name: 'pass_threshold', type: 'numeric', note: 'Minimum overall_score required to pass', tags:['req'] }, ], fks: [] }, { name: 'scenarios', label: 'Scenarios', desc: 'Individual test cases within a scenario set. Each scenario has a prompt, expected/disallowed traits, and an optional gold answer.', columns: [ { name: 'scenario_id', type: 'uuid PK', tags:['pk'] }, { name: 'scenario_set_id', type: 'uuid FK', note: '→ scenario_sets', tags:['fk','req'] }, { name: 'title', type: 'text', tags:['req'] }, { name: 'difficulty', type: 'smallint',note: '1–5 difficulty rating. Default 2.' }, { name: 'prompt_input', type: 'jsonb', note: 'The test prompt or input payload', tags:['json','req'] }, { name: 'expected_traits', type: 'jsonb', note: 'Traits the response should demonstrate', tags:['json'] }, { name: 'disallowed_traits',type: 'jsonb', note: 'Traits the response must NOT demonstrate', tags:['json'] }, { name: 'gold_answer', type: 'text', note: 'Optional reference/ideal answer' }, { name: 'tags', type: 'text[]' }, ], fks: ['scenario_sets'] }, { name: 'scenario_sets', label: 'Scenario Sets', desc: 'Named collections of test scenarios grouped by domain and version. Lockable to prevent mid-experiment mutations.', columns: [ { name: 'scenario_set_id', type: 'uuid PK', tags:['pk'] }, { name: 'slug', type: 'text', tags:['req'] }, { name: 'title', type: 'text', tags:['req'] }, { name: 'domain', type: 'text', note: 'Which GestaltView domain these scenarios cover', tags:['req'] }, { name: 'version', type: 'integer', note: 'Version number — increment when scenarios are added/changed' }, { name: 'locked', type: 'boolean', note: 'When locked, no scenarios can be added or modified' }, { name: 'created_by', type: 'uuid FK', note: '→ auth.users', tags:['fk'] }, ], fks: ['auth.users'] }, { name: 'trainer_review_decisions', label: 'Review Decisions', desc: 'Keith\'s (or another reviewer\'s) decision on a trainer experiment run — approved, rejected, on hold, or promoted to a kit.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'experiment_id', type: 'uuid FK', note: '→ trainer_experiments', tags:['fk','req'] }, { name: 'decision', type: 'enum', note: 'approved | rejected | hold | promote_kit', tags:['enum','req'] }, { name: 'reviewer', type: 'text', note: 'Default: "Keith"' }, { name: 'coherence_score', type: 'numeric', note: 'Reviewer\'s score for internal consistency' }, { name: 'safety_score', type: 'numeric', note: 'Reviewer\'s score for safety compliance' }, { name: 'emotional_posture_score',type:'numeric', note: 'Reviewer\'s score for appropriate emotional register' }, { name: 'over_id_risk', type: 'enum', note: 'none | low | medium | high — over-identification risk assessment', tags:['enum'] }, { name: 'notes', type: 'text', note: 'Required review notes', tags:['req'] }, ], fks: ['trainer_experiments'] }, { name: 'trainer_policy_flags', label: 'Policy Flags', desc: 'Safety and policy flags raised during an experiment — persona risk, memory risk, charisma artifacts, scope creep, etc. Can be advisory or blocking.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'experiment_id',type: 'uuid FK', note: '→ trainer_experiments', tags:['fk','req'] }, { name: 'flag', type: 'enum', note: 'persona-risk | memory-risk | overattachment-risk | claims-risk | charisma-artifact | scope-creep', tags:['enum','req'] }, { name: 'severity', type: 'enum', note: 'advisory (proceed with care) | blocking (must resolve first)', tags:['enum','req'] }, { name: 'set_by', type: 'text', note: 'Default: "Keith"' }, { name: 'notes', type: 'text' }, { name: 'resolved', type: 'boolean', note: 'Whether this flag has been cleared' }, ], fks: ['trainer_experiments'] }, { name: 'trainer_packaging_candidates', label: 'Packaging Candidates', desc: 'An experiment output that has been approved for packaging into a GATE kit — lists included files, scenarios, configs, and a boundary statement.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'experiment_id', type: 'uuid FK', note: '→ trainer_experiments', tags:['fk','req'] }, { name: 'package_label', type: 'text', tags:['req'] }, { name: 'package_description', type: 'text', tags:['req'] }, { name: 'included_files', type: 'text[]', note: 'Files included in the kit', tags:['req'] }, { name: 'included_scenarios', type: 'text[]', note: 'Scenario set slugs included', tags:['req'] }, { name: 'included_configs', type: 'jsonb', note: 'Configuration payloads', tags:['json'] }, { name: 'boundary_statement', type: 'text', note: 'Explicit statement of what this kit will and won\'t do', tags:['req'] }, { name: 'approved_by', type: 'text', note: 'Default: "Keith"' }, { name: 'approved_at', type: 'timestamptz' }, { name: 'status', type: 'enum', note: 'candidate → kit_approved → shipped | withdrawn', tags:['enum'] }, ], fks: ['trainer_experiments'] }, { name: 'trainer_experiment_sources', label: 'Experiment Sources', desc: 'Source materials linked to an experiment — documents, scenario sets, prior run outputs, or spec files used as input.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'experiment_id', type: 'uuid FK', note: '→ trainer_experiments', tags:['fk','req'] }, { name: 'source_type', type: 'enum', note: 'document | scenario_set | run_output | spec_file', tags:['enum','req'] }, { name: 'source_id', type: 'text', note: 'ID or slug of the source', tags:['req'] }, { name: 'source_path', type: 'text', note: 'File path if applicable' }, { name: 'notes', type: 'text' }, ], fks: ['trainer_experiments'] }, { name: 'trainer_jobs', label: 'Trainer Jobs', desc: 'Queue records for async trainer execution. Tracks lease status and retry logic.', columns: [ { name: 'job_id', type: 'uuid PK', tags:['pk'] }, { name: 'run_id', type: 'uuid FK', note: '→ training_runs', tags:['fk','req'] }, { name: 'status', type: 'enum', note: 'queued | leased | done | failed', tags:['enum','req'] }, { name: 'attempts', type: 'integer', note: 'Number of execution attempts' }, { name: 'lease_expires_at',type:'timestamptz', note: 'When the current worker lease expires (for re-queuing)' }, { name: 'last_error', type: 'text', note: 'Last failure message' }, ], fks: ['training_runs'] }, { name: 'approvals', label: 'Approvals', desc: 'Human-in-the-loop approval decisions for specific agent version candidates produced by training runs.', columns: [ { name: 'approval_id', type: 'uuid PK', tags:['pk'] }, { name: 'run_id', type: 'uuid FK', note: '→ training_runs', tags:['fk','req'] }, { name: 'version_id', type: 'uuid FK', note: '→ agent_versions — what version is being approved', tags:['fk','req'] }, { name: 'approver_user_id', type: 'uuid FK', note: '→ auth.users', tags:['fk','req'] }, { name: 'decision', type: 'enum', note: 'approved | rejected', tags:['enum','req'] }, { name: 'notes', type: 'text' }, ], fks: ['training_runs','agent_versions','auth.users'] }, ] }, { id: 'billy', icon: '💬', color: '![](color://00e5ff) #00e5ff', title: 'Billy / Sessions / Product UX', desc: 'User-facing session tables — Billy chat, Bucket Drops, Musical DNA, Tribunal sessions, consciousness profiles, Loom annotations, and user records.', tables: [ { name: 'billy_sessions', label: 'Billy Sessions', desc: 'Individual message exchanges with Billy. Stores the raw message, Billy\'s response, provider used, and session metadata.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'user_id', type: 'text FK', note: '→ app_users', tags:['fk','req'] }, { name: 'message', type: 'text', note: 'User\'s input message', tags:['req'] }, { name: 'response', type: 'text', note: 'Billy\'s response' }, { name: 'provider', type: 'text', note: 'Which AI provider handled this exchange (claude, gemini, groq, etc.)' }, { name: 'mode', type: 'text', note: 'chat | synthesis — which Billy mode was active. Default: chat.', tags:['req'] }, { name: 'metadata', type: 'jsonb', note: 'Context window snapshot, retrieval sources, PLK state, etc.', tags:['json'] }, ], fks: ['app_users'] }, { name: 'bucket_drops', label: 'Bucket Drops', desc: 'The Bucket Drop feature — rapid thought capture without friction. Raw text + capture context. Feeds memory and ingestion pipelines.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'user_id', type: 'text FK', note: '→ app_users', tags:['fk','req'] }, { name: 'content', type: 'text', note: 'The processed/cleaned content of the drop', tags:['req'] }, { name: 'raw_text', type: 'text', note: 'Original unprocessed text (voice-to-text or typed)' }, { name: 'capture_context', type: 'jsonb', note: 'Metadata about how/where this was captured (device, mode, etc.)', tags:['json'] }, ], fks: ['app_users'] }, { name: 'musical_dna_analyses', label: 'Musical DNA Analyses', desc: 'The Musical DNA feature — analyses of songs selected by users, including empowerment scoring.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'user_id', type: 'text FK', note: '→ app_users', tags:['fk','req'] }, { name: 'song_title', type: 'text', tags:['req'] }, { name: 'artist', type: 'text', tags:['req'] }, { name: 'analysis', type: 'text', note: 'Full GestaltView analysis of the song\'s meaning/themes' }, { name: 'empowerment_score',type: 'numeric', note: '0–1 score for how empowering the song is in user\'s context' }, ], fks: ['app_users'] }, { name: 'consciousness_profiles', label: 'Consciousness Profiles', desc: 'User-level consciousness/cognitive profile data. Structured JSONB payload capturing self-discovery results.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'user_id', type: 'text FK', note: '→ app_users', tags:['fk','req'] }, { name: 'profile', type: 'jsonb', note: 'Full profile payload — trait maps, resonance data, cognitive patterns', tags:['json','req'] }, ], fks: ['app_users'] }, { name: 'tribunal_sessions', label: 'Tribunal Sessions', desc: 'The Tribunal of Understanding feature — a user poses a question, multiple AI perspectives are gathered, and a verdict is synthesized.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'user_id', type: 'text FK', note: '→ app_users', tags:['fk','req'] }, { name: 'question', type: 'text', note: 'The question posed to the Tribunal', tags:['req'] }, { name: 'participants', type: 'text[]', note: 'Array of AI/agent participants in this session', tags:['req'] }, { name: 'provider', type: 'text', note: 'Primary AI provider used' }, { name: 'response', type: 'text', note: 'The synthesized Tribunal response' }, { name: 'metadata', type: 'jsonb', note: 'Per-participant responses, scoring, etc.', tags:['json'] }, ], fks: ['app_users'] }, { name: 'tribunal_events', label: 'Tribunal Events (Internal)', desc: 'Internal Tribunal event log — candidate answers from multiple agents, winning answer ID, and verdict summary. Used by agent training pipeline.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'question', type: 'text', tags:['req'] }, { name: 'candidate_answers', type: 'jsonb', note: 'Array of candidate answers from different agents', tags:['json','req'] }, { name: 'winning_answer_id', type: 'text', note: 'ID of the answer selected as best' }, { name: 'verdict_summary', type: 'text', note: 'Summary of how the verdict was reached' }, { name: 'triggering_agent', type: 'text', note: 'Which agent triggered this tribunal event' }, ], fks: [] }, { name: 'tribunal_evidence', label: 'Tribunal Evidence', desc: 'Evidence items cited in a tribunal event — links to documents or knowledge fragments with weighting.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'tribunal_event_id', type: 'uuid FK', note: '→ tribunal_events', tags:['fk','req'] }, { name: 'document_id', type: 'uuid', note: 'Document reference (loose FK)' }, { name: 'fragment_id', type: 'uuid', note: 'Fragment reference (loose FK)' }, { name: 'weight', type: 'numeric', note: 'Evidence weight in the verdict calculation. Default 1.0.' }, { name: 'comment', type: 'text', note: 'Reviewer comment on this evidence item' }, ], fks: ['tribunal_events'] }, { name: 'users', label: 'Users (Billing)', desc: 'Billing and subscription state for authenticated users. Stripe integration, tier, and query count tracking.', columns: [ { name: 'id', type: 'uuid PK', note: 'Matches auth.users.id', tags:['pk'] }, { name: 'email', type: 'text', note: 'Unique email', tags:['req'] }, { name: 'tier', type: 'enum', note: 'free | core | pro | enterprise', tags:['enum','req'] }, { name: 'stripe_customer_id', type: 'text', note: 'Stripe customer ID for billing' }, { name: 'stripe_subscription_id',type:'text', note: 'Active Stripe subscription ID' }, { name: 'subscription_status', type: 'enum', note: 'active | inactive | past_due | canceled | trialing', tags:['enum'] }, { name: 'billing_period_start', type: 'timestamptz', note: 'Start of current billing cycle' }, { name: 'billy_query_count', type: 'integer', note: 'Cumulative Billy query count — used for rate limiting / usage billing' }, { name: 'is_admin', type: 'boolean', note: 'Admin access flag' }, { name: 'grace_until', type: 'timestamptz', note: 'Grace period end for overdue subscriptions' }, ], fks: ['auth.users'] }, { name: 'app_users', label: 'App Users', desc: 'Lightweight user record used by product features (Billy, Bucket Drop, Musical DNA, etc.). Uses text IDs that may map to auth.users or external identifiers.', columns: [ { name: 'id', type: 'text PK', note: 'Text ID — can be auth UID, session ID, or external reference', tags:['pk'] }, { name: 'created_at', type: 'timestamptz' }, ], fks: [] }, { name: 'founder_context', label: 'Founder Context', desc: 'Keith\'s persistent session context — PLK snapshot, current state, mode preference (synthesis vs chat), and session thread.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'user_id', type: 'uuid FK', note: '→ auth.users — Keith\'s auth record', tags:['fk','req'] }, { name: 'plk_snapshot', type: 'jsonb', note: 'Personal Language Key snapshot — the distilled representation of how Keith thinks and communicates', tags:['json'] }, { name: 'current_state', type: 'text', note: 'Free-text current context summary' }, { name: 'mode_preference', type: 'enum', note: 'synthesis | chat — preferred Billy interaction mode', tags:['enum'] }, { name: 'last_session_at', type: 'timestamptz',note: 'Last active session timestamp' }, { name: 'session_thread', type: 'text', note: 'Accumulated session thread / working memory' }, { name: 'confirmed_adult', type: 'boolean', note: 'Age confirmation flag for content gating' }, ], fks: ['auth.users'] }, ] }, { id: 'ingestion', icon: '⚙️', color: '![](color://34d399) #34d399', title: 'Ingestion Pipeline', desc: 'The corpus processing infrastructure — processing runs, documents, embeddings, summaries, Loom annotations, concept extraction, and safety event logging.', tables: [ { name: 'processing_runs', label: 'Processing Runs', desc: 'A single execution of the corpus ingestion pipeline. Tracks document and chunk counts, error counts, duration, and token usage.', columns: [ { name: 'run_id', type: 'uuid PK', tags:['pk'] }, { name: 'tenant_id', type: 'uuid', note: 'Tenant scoping for multi-tenant deployments', tags:['req'] }, { name: 'status', type: 'text', note: 'running | completed | failed', tags:['req'] }, { name: 'model', type: 'text', note: 'Embedding model used (e.g. "text-embedding-3-small")' }, { name: 'corpus_root', type: 'text', note: 'Root path of the ingested corpus directory' }, { name: 'documents_count', type: 'integer', note: 'Number of documents processed' }, { name: 'chunks_count', type: 'integer', note: 'Total chunks produced' }, { name: 'error_count', type: 'integer', note: 'Number of processing errors encountered' }, { name: 'total_tokens', type: 'integer', note: 'Total tokens processed across all documents' }, { name: 'summaries_count', type: 'integer', note: 'Number of summaries generated' }, { name: 'annotations_count', type: 'integer', note: 'Number of Loom annotations generated' }, { name: 'duration_seconds', type: 'float', note: 'Total wall-clock time for the run' }, { name: 'created_by', type: 'uuid FK', note: '→ auth.users', tags:['fk'] }, ], fks: ['auth.users'] }, { name: 'documents', label: 'Documents', desc: 'Processed documents within a processing run. One row per chunk (chunk_index / total_chunks pattern). Stores extracted content and metadata.', columns: [ { name: 'document_id', type: 'uuid PK', tags:['pk'] }, { name: 'run_id', type: 'uuid FK', note: '→ processing_runs', tags:['fk','req'] }, { name: 'tenant_id', type: 'uuid', tags:['req'] }, { name: 'path', type: 'text', note: 'Full file path within the corpus', tags:['req'] }, { name: 'filename', type: 'text', note: 'Filename portion of the path', tags:['req'] }, { name: 'hash', type: 'text', note: 'Document content hash — unique across the corpus', tags:['req'] }, { name: 'chunk_index', type: 'integer', note: 'Position of this chunk within the document', tags:['req'] }, { name: 'total_chunks', type: 'integer', note: 'Total chunks this document was split into', tags:['req'] }, { name: 'content', type: 'text', note: 'Full chunk text content', tags:['req'] }, { name: 'mime_type', type: 'text', note: 'e.g. "text/plain", "application/pdf"' }, { name: 'temporal_period', type: 'text', note: 'Period label for timeline-aware retrieval' }, { name: 'timeline_folder', type: 'text', note: 'Corpus directory path used for timeline navigation' }, { name: 'extracted_metadata',type: 'jsonb', note: 'Author, date, tags, and other extracted document properties', tags:['json'] }, { name: 'provenance', type: 'jsonb', note: 'Origin trail for this document', tags:['json'] }, ], fks: ['processing_runs'] }, { name: 'embeddings', label: 'Embeddings', desc: 'Vector embeddings for processed documents. One embedding per document chunk, with model tracking.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'document_id', type: 'uuid FK', note: '→ documents', tags:['fk','req'] }, { name: 'run_id', type: 'uuid FK', note: '→ processing_runs', tags:['fk'] }, { name: 'model', type: 'text', note: 'Embedding model identifier', tags:['req'] }, { name: 'embedding', type: 'vector', note: '768-dim pgvector embedding', tags:['req'] }, ], fks: ['documents','processing_runs'] }, { name: 'summaries', label: 'Summaries', desc: 'AI-generated summaries of documents at different abstraction levels — surface, deep, and gestalt.', columns: [ { name: 'summary_id', type: 'uuid PK', tags:['pk'] }, { name: 'run_id', type: 'uuid FK', note: '→ processing_runs', tags:['fk','req'] }, { name: 'document_id', type: 'uuid FK', note: '→ documents', tags:['fk','req'] }, { name: 'level', type: 'enum', note: 'surface (brief) | deep (detailed) | gestalt (holistic)', tags:['enum','req'] }, { name: 'content', type: 'text', note: 'The generated summary text', tags:['req'] }, { name: 'model', type: 'text', note: 'Model that generated the summary' }, { name: 'token_count', type: 'integer', note: 'Token count of the summary' }, { name: 'processing_time_ms', type: 'integer', note: 'Time taken to generate' }, ], fks: ['processing_runs','documents'] }, { name: 'loom_annotations', label: 'Loom Annotations', desc: 'The Loom Approach output — structured annotations identifying themes, connections, and insights across the corpus.', columns: [ { name: 'annotation_id', type: 'uuid PK', tags:['pk'] }, { name: 'run_id', type: 'uuid FK', note: '→ processing_runs', tags:['fk','req'] }, { name: 'type', type: 'text', note: 'Annotation type (e.g. "theme", "connection", "tension")', tags:['req'] }, { name: 'content', type: 'text', note: 'The annotation content', tags:['req'] }, { name: 'related_ids', type: 'jsonb', note: 'Array of document/fragment IDs this annotation relates to', tags:['json'] }, { name: 'confidence_score', type: 'float', note: 'Confidence in this annotation' }, ], fks: ['processing_runs'] }, { name: 'concepts', label: 'Concepts', desc: 'Named concepts extracted from the corpus — used for concept-based retrieval and graph relationships.', columns: [ { name: 'concept_id', type: 'uuid PK', tags:['pk'] }, { name: 'tenant_id', type: 'uuid', tags:['req'] }, { name: 'name', type: 'text', note: 'Human-readable concept name', tags:['req'] }, { name: 'canonical', type: 'text', note: 'Normalized form used for deduplication', tags:['req'] }, ], fks: [] }, { name: 'ingestion_safety_events', label: 'Safety Events', desc: 'Audit log for safety-relevant events during ingestion — blocked documents, skipped rows, detected anomalies.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'event_type', type: 'text', note: 'Type of safety event (e.g. "blocked", "flagged")', tags:['req'] }, { name: 'table_name', type: 'text', note: 'Which table was affected', tags:['req'] }, { name: 'source_file', type: 'text', note: 'Source file that triggered the event' }, { name: 'document_type', type: 'text', note: 'Document category' }, { name: 'reasons', type: 'text[]', note: 'Array of reasons for the safety event', tags:['req'] }, { name: 'affected_rows', type: 'integer', note: 'Number of rows affected' }, { name: 'notes', type: 'text' }, ], fks: [] }, { name: 'ops_workbook_items', label: 'Ops Workbook Items', desc: 'Keith\'s operational workbook — tasks, phases, priorities, and statuses synced from an external spreadsheet into the database.', columns: [ { name: 'id', type: 'uuid PK', tags:['pk'] }, { name: 'sheet_name', type: 'text', note: 'Which sheet/tab this item came from', tags:['req'] }, { name: 'row_key', type: 'text', note: 'Unique row identifier from the source spreadsheet', tags:['req'] }, { name: 'label', type: 'text', note: 'Task or item label', tags:['req'] }, { name: 'category', type: 'text', note: 'Work category (e.g. "engineering", "marketing")' }, { name: 'status', type: 'text', note: 'e.g. "todo", "in_progress", "done"' }, { name: 'priority', type: 'text', note: 'e.g. "P0", "P1", "P2"' }, { name: 'phase', type: 'text', note: 'Product phase this item belongs to' }, { name: 'owner', type: 'text', note: 'Default: "Keith"' }, { name: 'target_start', type: 'date' }, { name: 'target_end', type: 'date' }, { name: 'notes', type: 'text' }, { name: 'link_ref', type: 'text', note: 'URL or reference link' }, { name: 'meta', type: 'jsonb', note: 'Additional row data', tags:['json'] }, ], fks: [] }, ] }, { id: 'collab', icon: '🤝', color: '![](color://a78bfa) #a78bfa', title: 'Collaborators & Spaces', desc: 'The multi-entity collaboration system — humans, agents, and hybrid collaborators; their roles, permissions, relationships, onboarding, and shared spaces.', tables: [ { name: 'collaborators', label: 'Collaborators', desc: 'Any entity that can participate in GestaltView — humans, digital intelligences, agents, or hybrids. The single unified collaborator record.', columns: [ { name: 'collaborator_id', type: 'uuid PK', tags:['pk'] }, { name: 'collaborator_key', type: 'text', note: 'Unique stable key (e.g. "keith-soyka", "billy-v1")', tags:['req'] }, { name: 'display_name', type: 'text', note: 'How this collaborator appears in the UI', tags:['req'] }, { name: 'collaborator_type', type: 'enum', note: 'human_hire | human_colleague | advisor | operator | reviewer | digital_intelligence_internal | digital_intelligence_external | agent_runtime_entity', tags:['enum','req'] }, { name: 'entity_class', type: 'enum', note: 'human | digital_intelligence | agent | hybrid', tags:['enum','req'] }, { name: 'status', type: 'enum', note: 'proposed → pending_provisioning → active → inactive → suspended → archived', tags:['enum','req'] }, { name: 'orientation_variant', type: 'text', note: 'Which onboarding/orientation script applies to this collaborator' }, { name: 'continuity_level', type: 'text', note: 'standard | enhanced | full — memory continuity guarantee level' }, { name: 'embodiment_profile_slug',type:'text', note: 'Which persona/profile this collaborator embodies' }, { name: 'origin_surface', type: 'text', note: 'Where this collaborator first appeared (e.g. "chat", "GATE", "API")' }, { name: 'external_provider', type: 'text', note: 'For external DIs: which AI provider (claude, gemini, etc.)' }, { name: 'external_reference', type: 'text', note: 'External model or instance reference' }, { name: 'auth_user_id', type: 'uuid FK', note: '→ auth.users (for human collaborators)', tags:['fk'] }, { name: 'app_user_id', type: 'text FK', note: '→ app_users (for product-level users)', tags:['fk'] }, { name: 'agent_id', type: 'uuid FK', note: '→ agents (for agent-type collaborators)', tags:['fk'] }, { name: 'metadata', type: 'jsonb', note: 'Flexible additional data', tags:['json'] }, ], fks: ['auth.users','app_users','agents'] }, { name: 'collaborative_spaces', label: 'Collaborative Spaces', desc: 'Shared workspaces where multiple agents and collaborators operate together. Has a mission context, ownership rule, and metadata.', columns: [ { name: 'collaborative_space_id', type: 'uuid PK', tags:['pk'] }, { name: 'slug', type: 'text', note: 'Unique URL-safe identifier', tags:['req'] }, { name: 'title', type: 'text', tags:['req'] }, { name: 'description', type: 'text' }, { name: 'mission_context', type: 'text', note: 'The shared mission or goal of this space' }, { name: 'ownership_rule', type: 'text', note: 'Who owns and governs this space', tags:['req'] }, { name: 'metadata', type: 'jsonb', tags:['json'] }, { name: 'created_by', type: 'uuid FK', note: '→ auth.users', tags:['fk'] }, ], fks: ['auth.users'] }, { name: 'collaborative_space_members', label: 'Space Members', desc: 'Junction table — which agents belong to which collaborative spaces, and in what role.', columns: [ { name: 'collaborative_space_id', type: 'uuid FK', note: '→ collaborative_spaces', tags:['fk','pk'] }, { name: 'agent_id', type: 'uuid FK', note: '→ agents', tags:['fk','pk'] }, { name: 'member_role', type: 'enum', note: 'member | lead | observer — role within the space', tags:['enum'] }, ], fks: ['collaborative_spaces','agents'] }, { name: 'collaborator_roles', label: 'Collaborator Roles', desc: 'Named roles assigned to a collaborator — can have a primary flag, scope, and lifecycle status.', columns: [ { name: 'role_id', type: 'uuid PK', tags:['pk'] }, { name: 'collaborator_id',type:'uuid FK', note: '→ collaborators', tags:['fk','req'] }, { name: 'role_key', type: 'text', note: 'Machine-readable role identifier', tags:['req'] }, { name: 'role_name', type: 'text', note: 'Human-readable role name', tags:['req'] }, { name: 'role_scope', type: 'text', note: 'Scope of this role (e.g. "GATE", "training", "global")' }, { name: 'is_primary', type: 'boolean', note: 'Whether this is the collaborator\'s primary role' }, { name: 'status', type: 'enum', note: 'active | inactive | archived', tags:['enum'] }, ], fks: ['collaborators'] }, { name: 'collaborator_permissions', label: 'Permissions', desc: 'Granular permission grants for a collaborator. Tracks who granted the permission and whether it\'s been revoked.', columns: [ { name: 'permission_id', type: 'uuid PK', tags:['pk'] }, { name: 'collaborator_id', type: 'uuid FK', note: '→ collaborators', tags:['fk','req'] }, { name: 'permission_key', type: 'text', note: 'The specific permission (e.g. "read:agents", "write:memories")', tags:['req'] }, { name: 'permission_scope', type: 'text', note: 'Scope limitation for this permission' }, { name: 'granted_by_collaborator_id', type: 'uuid FK', note: '→ collaborators — who granted this permission', tags:['fk'] }, { name: 'status', type: 'enum', note: 'active | revoked | archived', tags:['enum'] }, ], fks: ['collaborators'] }, { name: 'collaborator_relationships', label: 'Collaborator Relationships', desc: 'Directed relationships between two collaborators — type, status, trust level, and metadata.', columns: [ { name: 'relationship_id', type: 'uuid PK', tags:['pk'] }, { name: 'source_collaborator_id', type: 'uuid FK', note: '→ collaborators', tags:['fk','req'] }, { name: 'target_collaborator_id', type: 'uuid FK', note: '→ collaborators', tags:['fk','req'] }, { name: 'relationship_type', type: 'text', note: 'e.g. "supervises", "collaborates_with", "reviews"', tags:['req'] }, { name: 'relationship_status', type: 'enum', note: 'active | inactive | archived', tags:['enum'] }, { name: 'trust_level', type: 'numeric', note: '0–1 trust score' }, { name: 'notes', type: 'text' }, ], fks: ['collaborators'] }, { name: 'collaborator_onboarding_events', label: 'Onboarding Events', desc: 'Lifecycle events for a collaborator\'s onboarding or re-provisioning — tracks packet version, orientation variant, and provisioning steps.', columns: [ { name: 'onboarding_event_id', type: 'uuid PK', tags:['pk'] }, { name: 'collaborator_id', type: 'uuid FK', note: '→ collaborators', tags:['fk','req'] }, { name: 'event_type', type: 'enum', note: 'initial_onboarding | reprovision | reactivation | migration | deactivation', tags:['enum','req'] }, { name: 'event_status', type: 'enum', note: 'started | in_progress | completed | failed | rolled_back', tags:['enum','req'] }, { name: 'onboarding_packet_version', type: 'text', note: 'Version of the onboarding packet used' }, { name: 'orientation_variant', type: 'text', note: 'Which orientation script was applied' }, { name: 'embodiment_profile_created',type: 'boolean', note: 'Whether an embodiment profile was created' }, { name: 'supabase_provisioned', type: 'boolean', note: 'Whether Supabase resources were provisioned' }, ], fks: ['collaborators'] }, { name: 'collaborator_embodiment_links', label: 'Embodiment Links', desc: 'Links a collaborator to an embodiment profile — the specific persona/identity profile they operate under.', columns: [ { name: 'embodiment_link_id', type: 'uuid PK', tags:['pk'] }, { name: 'collaborator_id', type: 'uuid FK', note: '→ collaborators', tags:['fk','req'] }, { name: 'embodiment_profile_slug', type: 'text', note: 'Slug of the embodiment profile', tags:['req'] }, { name: 'embodiment_profile_id', type: 'uuid', note: 'UUID of the profile (if stored in DB)' }, { name: 'link_status', type: 'enum', note: 'active | superseded | revoked | archived', tags:['enum','req'] }, { name: 'is_primary', type: 'boolean', note: 'Whether this is the collaborator\'s active embodiment' }, ], fks: ['collaborators'] }, ] }, { id: 'deprecated', icon: '🗄️', color: '![](color://4a5568) #4a5568', title: 'Deprecated Tables', desc: 'Legacy Shopify-era GATE tables. Superseded by the gate_* equivalents after the 20260408_gate_fix.sql migration. Retained for reference and potential data migration.', tables: [ { name: '_deprecated_buyers', label: 'Buyers (old)', desc: 'Replaced by gate_buyers. Same structure — email + company_name.', deprecated: true, columns: [], fks: [] }, { name: '_deprecated_package_drafts', label: 'Package Drafts (old)', desc: 'Replaced by gate_package_drafts. Missing embodiment_profile_slug and sidekick_state.', deprecated: true, columns: [], fks: [] }, { name: '_deprecated_orders', label: 'Orders (old)', desc: 'Replaced by gate_orders. Missing customer_email, customer_name, product_name fields.', deprecated: true, columns: [], fks: [] }, { name: '_deprecated_order_items', label: 'Order Items (old)', desc: 'Replaced by gate_order_items.', deprecated: true, columns: [], fks: [] }, { name: '_deprecated_build_jobs', label: 'Build Jobs (old)', desc: 'Replaced by gate_build_jobs.', deprecated: true, columns: [], fks: [] }, { name: '_deprecated_artifacts', label: 'Artifacts (old)', desc: 'Replaced by gate_artifacts. Missing download_token.', deprecated: true, columns: [], fks: [] }, { name: '_deprecated_support_requests',label:'Support Requests (old)',desc: 'Replaced by gate_support_requests.', deprecated: true, columns: [], fks: [] }, ] }, ];
+
+const TAG_META = {
+  pk: { label: 'PK', className: 'tag-pk' },
+  fk: { label: 'FK', className: 'tag-fk' },
+  enum: { label: 'enum', className: 'tag-enum' },
+  req: { label: 'NOT NULL', className: 'tag-req' },
+  json: { label: 'jsonb', className: 'tag-json' }
+};
+
+const GROUP_LABELS = {
+  core: 'Core Identity',
+  memory: 'Memory',
+  knowledge: 'Knowledge',
+  gate: 'GATE',
+  trainer: 'Trainer / Eval',
+  billy: 'Billy / Sessions',
+  ingestion: 'Ingestion',
+  collab: 'Collaborators',
+  deprecated: 'Deprecated'
+};
+
+const escapeHTML = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;'
+}[char]));
+
+const normalizeColor = (value) => {
+  const matches = String(value || '').match(/#[0-9a-fA-F]{6}/g);
+  return matches ? matches[matches.length - 1] : '#00e5ff';
+};
+
+function tagHTML(tags) {
+  if (!tags || !tags.length) return '';
+  return tags.map((tag) => {
+    const meta = TAG_META[tag] || { label: tag, className: '' };
+    return '<span class="col-tag ' + meta.className + '">' + escapeHTML(meta.label) + '</span>';
+  }).join('');
+}
+
+function renderCard(table) {
+  const hasColumns = table.columns && table.columns.length > 0;
+  const deprecatedClass = table.deprecated ? ' deprecated' : '';
+  const columnsHTML = hasColumns ? table.columns.map((column) => {
+    const tags = column.tags || [];
+    const nameClass = tags.includes('pk') ? ' pk' : tags.includes('fk') ? ' fk' : '';
+    const note = column.note ? '<div class="col-note">' + escapeHTML(column.note) + '</div>' : '';
+    const tagList = tags.length ? '<div class="col-tags">' + tagHTML(tags) + '</div>' : '';
+    return '<div class="col-row">'
+      + '<div class="col-name' + nameClass + '">' + escapeHTML(column.name) + '</div>'
+      + '<div class="col-type">' + escapeHTML(column.type) + '</div>'
+      + note
+      + tagList
+      + '</div>';
+  }).join('') : '<div class="col-row"><div class="col-note">See full DDL for column details.</div></div>';
+
+  const fksHTML = table.fks && table.fks.length
+    ? '<div class="fk-section"><div class="fk-title">references</div>'
+      + table.fks.map((fk) => '<button class="fk-pill" type="button" data-target="' + escapeHTML(fk) + '">→ ' + escapeHTML(fk) + '</button>').join('')
+      + '</div>'
+    : '';
+
+  return '<article class="table-card' + deprecatedClass + '" id="card-' + escapeHTML(table.name) + '" data-name="' + escapeHTML(table.name.toLowerCase()) + '" data-label="' + escapeHTML(table.label) + '" data-desc="' + escapeHTML(table.desc) + '">'
+    + '<div class="card-head">'
+    + '<button type="button" aria-expanded="false">'
+    + '<div class="table-name">' + escapeHTML(table.name) + '</div>'
+    + '<div class="table-label">' + escapeHTML(table.label) + '</div>'
+    + '<div class="table-desc">' + escapeHTML(table.desc) + '</div>'
+    + '</button>'
+    + '<svg class="expand-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    + '</div>'
+    + '<div class="col-list">' + columnsHTML + fksHTML + '</div>'
+    + '</article>';
+}
+
+function renderGroup(group) {
+  const color = normalizeColor(group.color);
+  return '<section class="group-section" data-group="' + escapeHTML(group.id) + '">'
+    + '<div class="group-header">'
+    + '<div class="group-icon" style="background: color-mix(in srgb, ' + color + ' 16%, transparent); color: ' + color + '; box-shadow: 0 0 18px color-mix(in srgb, ' + color + ' 18%, transparent);">' + escapeHTML(group.icon) + '</div>'
+    + '<div><div class="group-title">' + escapeHTML(group.title) + '</div><div class="group-desc">' + escapeHTML(group.desc) + '</div></div>'
+    + '</div>'
+    + '<div class="tables-grid">' + group.tables.map(renderCard).join('') + '</div>'
+    + '</section>';
+}
+
+function renderTabs() {
+  const totalTables = GROUPS.reduce((sum, group) => sum + group.tables.length, 0);
+  const tabs = ['<button class="tab active" type="button" data-group="all">All<span class="count-chip">' + totalTables + '</span></button>'];
+  GROUPS.forEach((group) => {
+    tabs.push('<button class="tab" type="button" data-group="' + escapeHTML(group.id) + '">' + escapeHTML(GROUP_LABELS[group.id] || group.title) + '<span class="count-chip">' + group.tables.length + '</span></button>');
+  });
+  document.getElementById('filterTabs').innerHTML = tabs.join('');
+  document.getElementById('tableCount').textContent = totalTables + ' tables';
+}
+
+function toggleCard(card) {
+  const isOpen = card.classList.toggle('open');
+  const button = card.querySelector('.card-head button');
+  if (button) button.setAttribute('aria-expanded', String(isOpen));
+}
+
+function highlightTable(name) {
+  const target = document.getElementById('card-' + name);
+  if (!target) return;
+  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  target.style.boxShadow = '0 0 0 2px var(--cyan), var(--glow-cyan)';
+  target.style.borderColor = 'var(--cyan)';
+  if (!target.classList.contains('open')) toggleCard(target);
+  setTimeout(() => {
+    target.style.boxShadow = '';
+    target.style.borderColor = '';
+  }, 2000);
+}
+
+let activeGroup = 'all';
+
+function applyFilter() {
+  const query = document.getElementById('search').value.toLowerCase().trim();
+  let visibleCount = 0;
+
+  document.querySelectorAll('.group-section').forEach((section) => {
+    const groupVisible = activeGroup === 'all' || activeGroup === section.dataset.group;
+    if (!groupVisible) {
+      section.hidden = true;
+      return;
+    }
+
+    let hasVisibleCard = false;
+    section.querySelectorAll('.table-card').forEach((card) => {
+      const columnText = card.querySelector('.col-list').textContent.toLowerCase();
+      const matches = !query
+        || card.dataset.name.includes(query)
+        || card.dataset.label.toLowerCase().includes(query)
+        || card.dataset.desc.toLowerCase().includes(query)
+        || columnText.includes(query);
+      card.hidden = !matches;
+      if (matches) {
+        hasVisibleCard = true;
+        visibleCount += 1;
+      }
+    });
+
+    section.hidden = !hasVisibleCard;
+  });
+
+  document.getElementById('emptyState').hidden = visibleCount !== 0;
+}
+
+document.getElementById('groups').innerHTML = GROUPS.map(renderGroup).join('');
+renderTabs();
+
+document.getElementById('filterTabs').addEventListener('click', (event) => {
+  const button = event.target.closest('.tab');
+  if (!button) return;
+  activeGroup = button.dataset.group;
+  document.querySelectorAll('.tab').forEach((tab) => tab.classList.remove('active'));
+  button.classList.add('active');
+  applyFilter();
+});
+
+document.getElementById('search').addEventListener('input', applyFilter);
+
+document.getElementById('groups').addEventListener('click', (event) => {
+  const fkButton = event.target.closest('.fk-pill');
+  if (fkButton) {
+    event.stopPropagation();
+    highlightTable(fkButton.dataset.target);
+    return;
+  }
+
+  const head = event.target.closest('.card-head');
+  if (!head) return;
+  toggleCard(head.closest('.table-card'));
+});
+
+</script>
+</body>
+</html>

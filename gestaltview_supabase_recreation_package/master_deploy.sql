@@ -1,0 +1,156 @@
+-- GestaltView Supabase Recreation Package
+-- Master psql deploy script. Run from the package root:
+--   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f master_deploy.sql
+-- This uses psql meta-commands and is NOT intended for Supabase SQL Editor paste-as-one-file.
+
+\set ON_ERROR_STOP on
+\echo 'Starting GestaltView Supabase recreation deploy'
+\echo 'Applying 20260301000100_rate_limits_and_users.sql'
+\i canonical_migrations/20260301000100_rate_limits_and_users.sql
+\echo 'Applying 20260301000200_admin_seed_original.sql'
+\i canonical_migrations/20260301000200_admin_seed_original.sql
+\echo 'Applying 20260301000400_user_trigger.sql'
+\i canonical_migrations/20260301000400_user_trigger.sql
+\echo 'Applying 20260311162044_new-migration.sql'
+\i canonical_migrations/20260311162044_new-migration.sql
+\echo 'Applying 20260319162400_tribunal-tables.sql'
+\i canonical_migrations/20260319162400_tribunal-tables.sql
+\echo 'Applying 20260319164400_orders-loom-concepts.sql'
+\i canonical_migrations/20260319164400_orders-loom-concepts.sql
+\echo 'Applying 20260321100000_founder-context.sql'
+\i canonical_migrations/20260321100000_founder-context.sql
+\echo 'Applying 20260321104200_grace_period.sql'
+\i canonical_migrations/20260321104200_grace_period.sql
+\echo 'Applying 20260321104300_fix_embedding_dims_768.sql'
+\i canonical_migrations/20260321104300_fix_embedding_dims_768.sql
+\echo 'Applying 20260324010700_add_filter_package_to_rpcs.sql'
+\i canonical_migrations/20260324010700_add_filter_package_to_rpcs.sql
+\echo 'Applying 20260324010800_fix_rpc_conflict.sql'
+\i canonical_migrations/20260324010800_fix_rpc_conflict.sql
+\echo 'Applying 20260325000000_create_skill_tables.sql'
+\i canonical_migrations/20260325000000_create_skill_tables.sql
+\echo 'Applying 20260327094500_align_fragment_embeddings_to_768.sql'
+\i canonical_migrations/20260327094500_align_fragment_embeddings_to_768.sql
+\echo 'Applying 20260327094600_fix_vector_dims.sql'
+\i canonical_migrations/20260327094600_fix_vector_dims.sql
+\echo 'Applying 20260330115505_trainer_security_hardening.sql'
+\i canonical_migrations/20260330115505_trainer_security_hardening.sql
+\echo 'Applying 20260330120000_trainer_core.sql'
+\i canonical_migrations/20260330120000_trainer_core.sql
+\echo 'Applying 20260330120830_trainer_rls_policies.sql'
+\i canonical_migrations/20260330120830_trainer_rls_policies.sql
+\echo 'Applying 20260330170000_founder_admin_bootstrap.sql'
+\i canonical_migrations/20260330170000_founder_admin_bootstrap.sql
+\echo 'Applying 20260330193000_persistent_memory_entries.sql'
+\i canonical_migrations/20260330193000_persistent_memory_entries.sql
+\echo 'Applying 20260331110000_trainer_study_sources_rpc.sql'
+\i canonical_migrations/20260331110000_trainer_study_sources_rpc.sql
+\echo 'Applying 20260331110001_vector_sim_source.sql'
+\i canonical_migrations/20260331110001_vector_sim_source.sql
+\echo 'Applying 20260406171500_create_gate_package_builder_tables.sql'
+\i canonical_migrations/20260406171500_create_gate_package_builder_tables.sql
+\echo 'Applying 20260406193500_add_gate_draft_contact_fields.sql'
+\i canonical_migrations/20260406193500_add_gate_draft_contact_fields.sql
+\echo 'Applying 20260407120000_extend_orders_for_gate_checkout.sql'
+\i canonical_migrations/20260407120000_extend_orders_for_gate_checkout.sql
+\echo 'Applying 20260408113000_isolate_gate_persistence.sql'
+\i canonical_migrations/20260408113000_isolate_gate_persistence.sql
+\echo 'Applying 20260408143000_gate_artifact_download_keys.sql'
+\i canonical_migrations/20260408143000_gate_artifact_download_keys.sql
+\echo 'Applying 20260410190000_agent_personhood_framework.sql'
+\i canonical_migrations/20260410190000_agent_personhood_framework.sql
+\echo 'Applying 20260410200000_resolve_legacy_tables_rls.sql'
+\i canonical_migrations/20260410200000_resolve_legacy_tables_rls.sql
+\echo 'Applying 20260410213000_workbook_and_experiment_governance.sql'
+\i canonical_migrations/20260410213000_workbook_and_experiment_governance.sql
+\echo 'Applying 20260411083000_add_gate_sidekick_state.sql'
+\i canonical_migrations/20260411083000_add_gate_sidekick_state.sql
+\echo 'Applying 20260411110000_integrate_agent_identity_governance.sql'
+\i canonical_migrations/20260411110000_integrate_agent_identity_governance.sql
+\echo 'Applying 20260412093000_trainer_control_plane_stabilization.sql'
+\i canonical_migrations/20260412093000_trainer_control_plane_stabilization.sql
+\echo 'Applying 20260412101500_fix_trgm_search_path_for_trainer_search.sql'
+\i canonical_migrations/20260412101500_fix_trgm_search_path_for_trainer_search.sql
+\echo 'Applying 20260413120000_add_temporal_metadata_to_corpus_tables.sql'
+\i canonical_migrations/20260413120000_add_temporal_metadata_to_corpus_tables.sql
+\echo 'Applying 20260413121000_temporal_backfill.sql'
+\i canonical_migrations/20260413121000_temporal_backfill.sql
+\echo 'Applying 20260413190000_add_collaborator_system.sql'
+\i canonical_migrations/20260413190000_add_collaborator_system.sql
+\echo 'Applying 20260413193000_backfill_collaborators.sql'
+\i canonical_migrations/20260413193000_backfill_collaborators.sql
+\echo 'Applying 20260419090700_runtime_alignment_carryover.sql'
+\i canonical_migrations/20260419090700_runtime_alignment_carryover.sql
+\echo 'Applying 20260420150000_human_continuity_schema.sql'
+\i canonical_migrations/20260420150000_human_continuity_schema.sql
+\echo 'Applying 20260427100000_trainer_hyperagent_integration.sql'
+\i canonical_migrations/20260427100000_trainer_hyperagent_integration.sql
+\echo 'Applying 20260428000000_trainer_list_indexes.sql'
+\i canonical_migrations/20260428000000_trainer_list_indexes.sql
+\echo 'Applying 20260429120000_gestaltview_module_registry.sql'
+\i canonical_migrations/20260429120000_gestaltview_module_registry.sql
+\echo 'Applying 20260430143000_workspaces_documents_persistence.sql'
+\i canonical_migrations/20260430143000_workspaces_documents_persistence.sql
+\echo 'Applying 20260509000000_embodiment_governance_persistence.sql'
+\i canonical_migrations/20260509000000_embodiment_governance_persistence.sql
+\echo 'Applying 20260515000000_inner_world_files.sql'
+\i canonical_migrations/20260515000000_inner_world_files.sql
+\echo 'Applying 20260515000100_embodiment_profiles.sql'
+\i canonical_migrations/20260515000100_embodiment_profiles.sql
+\echo 'Applying 20260515134500_manhattan_mornings_inner_world_schema.sql'
+\i canonical_migrations/20260515134500_manhattan_mornings_inner_world_schema.sql
+\echo 'Applying 20260518000000_backfill_embodiment_profile_history.sql'
+\i canonical_migrations/20260518000000_backfill_embodiment_profile_history.sql
+\echo 'Applying 20260518001000_backfill_embodiment_profile_governance.sql'
+\i canonical_migrations/20260518001000_backfill_embodiment_profile_governance.sql
+\echo 'Applying 20260519000000_add_user_content_tables.sql'
+\i canonical_migrations/20260519000000_add_user_content_tables.sql
+\echo 'Applying 20260519010000_fix_blueprints_schema.sql'
+\i canonical_migrations/20260519010000_fix_blueprints_schema.sql
+\echo 'Applying 20260519020000_add_source_refs_to_inner_world_and_insights.sql'
+\i canonical_migrations/20260519020000_add_source_refs_to_inner_world_and_insights.sql
+\echo 'Applying 20260525000000_di_runtime.sql'
+\i canonical_migrations/20260525000000_di_runtime.sql
+\echo 'Applying 20260526000000_add_profile_preference_fields.sql'
+\i canonical_migrations/20260526000000_add_profile_preference_fields.sql
+\echo 'Applying 20260526001000_add_sanctuary_source_refs.sql'
+\i canonical_migrations/20260526001000_add_sanctuary_source_refs.sql
+\echo 'Applying 20260528000000_profile_ingestion_and_route_embodiments.sql'
+\i canonical_migrations/20260528000000_profile_ingestion_and_route_embodiments.sql
+\echo 'Applying 20260531013000_masterclass_module_setup_and_progress_tracking.sql'
+\i canonical_migrations/20260531013000_masterclass_module_setup_and_progress_tracking.sql
+\echo 'Applying 20260531020000_vector_search_and_indexes.sql'
+\i canonical_migrations/20260531020000_vector_search_and_indexes.sql
+\echo 'Applying 20260601000100_profile_pipeline_v1_core.sql'
+\i canonical_migrations/20260601000100_profile_pipeline_v1_core.sql
+\echo 'Applying 20260601000200_profile_pipeline_v1_rls.sql'
+\i canonical_migrations/20260601000200_profile_pipeline_v1_rls.sql
+\echo 'Applying 20260601000300_profile_pipeline_v1_backfill.sql'
+\i canonical_migrations/20260601000300_profile_pipeline_v1_backfill.sql
+\echo 'Applying 20260601000400_profile_pipeline_v1_rpc_helpers.sql'
+\i canonical_migrations/20260601000400_profile_pipeline_v1_rpc_helpers.sql
+\echo 'Applying 20260601000500_model_homes_v1.sql'
+\i canonical_migrations/20260601000500_model_homes_v1.sql
+\echo 'Applying 20260601000600_resonance_event_bus_v1.sql'
+\i canonical_migrations/20260601000600_resonance_event_bus_v1.sql
+\echo 'Applying 20260601000700_route_embodiment_alignment.sql'
+\i canonical_migrations/20260601000700_route_embodiment_alignment.sql
+\echo 'Applying 20260602000100_codex_artifacts.sql'
+\i canonical_migrations/20260602000100_codex_artifacts.sql
+\echo 'Applying 20260604000100_codex_artifact_tables.sql'
+\i canonical_migrations/20260604000100_codex_artifact_tables.sql
+\echo 'Applying 20260609000100_transcriptory_captures.sql'
+\i canonical_migrations/20260609000100_transcriptory_captures.sql
+\echo 'Applying 20260609000200_transcriptory_audio_bucket.sql'
+\i canonical_migrations/20260609000200_transcriptory_audio_bucket.sql
+\echo 'Applying 20260609000300_artifact_query_indexes.sql'
+\i canonical_migrations/20260609000300_artifact_query_indexes.sql
+\echo 'Applying 20260610000100_transcriptory_sessions_and_sources.sql'
+\i canonical_migrations/20260610000100_transcriptory_sessions_and_sources.sql
+\echo 'Applying 20260610000200_transcriptory_search_and_triggers.sql'
+\i canonical_migrations/20260610000200_transcriptory_search_and_triggers.sql
+\echo 'Applying 20260610000300_transcriptory_processing_state.sql'
+\i canonical_migrations/20260610000300_transcriptory_processing_state.sql
+\echo 'Applying 20260611000100_codex_job_claim_rpc.sql'
+\i canonical_migrations/20260611000100_codex_job_claim_rpc.sql
+\echo 'GestaltView Supabase recreation deploy complete'

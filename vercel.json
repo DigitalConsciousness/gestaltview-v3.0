@@ -1,0 +1,128 @@
+{
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist/public",
+  "framework": null,
+  "crons": [
+    {
+      "path": "/api/cron/provenance-upgrade",
+      "schedule": "0 */2 * * *"
+    },
+    {
+      "path": "/api/cron/codex-drain",
+      "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/cron/profile-portrait-drain",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/profile-portrait-cadence",
+      "schedule": "0 0 1 * *"
+    }
+  ],
+  "functions": {
+    "api/billy.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/billy-health.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/billy-bucket-drop.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/diligence.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/pricing.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/session/*.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/stripe/*.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/gate/*.ts": {
+      "includeFiles": "templates/gate/**"
+    },
+    "api/voice/*.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/actions/*.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/actions/**/*.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/gen-engine/*.ts": {
+      "includeFiles": "api/_lib/**,shared/rendering/**"
+    },
+    "api/render/*.ts": {
+      "includeFiles": "api/_lib/**,shared/rendering/**"
+    },
+    "api/keep-alive.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/collaborators/*.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/modules/**/*.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/cron/provenance-upgrade.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/cron/codex-drain.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/cron/profile-portrait-drain.ts": {
+      "includeFiles": "api/_lib/**"
+    },
+    "api/cron/profile-portrait-cadence.ts": {
+      "includeFiles": "api/_lib/**"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/gate/drafts/([^/]+)/validate",
+      "destination": "/api/gate/draft-validate?id=$1"
+    },
+    {
+      "source": "/api/gate/drafts/([^/]+)",
+      "destination": "/api/gate/draft?id=$1"
+    },
+    {
+      "source": "/api/gate/orders/([^/]+)/redeem",
+      "destination": "/api/gate/order-redeem?id=$1"
+    },
+    {
+      "source": "/api/gate/orders/([^/]+)/download",
+      "destination": "/api/gate/order-download?id=$1"
+    },
+    {
+      "source": "/api/gate/orders/([^/]+)",
+      "destination": "/api/gate/order?id=$1"
+    },
+    {
+      "source": "/api/gate/build-jobs/([^/]+)/run",
+      "destination": "/api/gate/build-job-run?id=$1"
+    },
+    {
+      "source": "/api/gate/build-jobs/([^/]+)/regenerate",
+      "destination": "/api/gate/build-job-regenerate?id=$1"
+    },
+    {
+      "source": "/api/gate/webhooks/stripe",
+      "destination": "/api/gate/webhook-stripe"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

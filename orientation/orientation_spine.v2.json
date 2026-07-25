@@ -1,0 +1,325 @@
+{
+  "packet_type": "gestaltview_orientation_spine",
+  "packet_version": "2.0.0",
+  "status": "active",
+  "description": "Stable orientation spine for GestaltView digital intelligence collaborators.",
+  "source_of_truth": {
+    "repo_manifest_json": "docs/gestaltview-v2.manifest.json",
+    "repo_manifest_md": "docs/gestaltview-v2.manifest.md",
+    "current_state_log": "docs/CurrentState.md",
+    "bugwalk_board": "bugwalks/BugWalkBoard.md",
+    "operator_manual": "docs/PlaybookOperatorManual.md",
+    "symbiotic_workflow": "docs/SymbioticWorkflow.md",
+    "beginner_manual_docx": "docs/GestaltView_for_Beginners_Operational_Manual.docx",
+    "beginner_manual_pdf": "docs/GestaltView_for_Beginners_Operational_Manual.pdf",
+    "rule": [
+      "For live repo inventory, trust the generated manifest.",
+      "For implementation history and what actually landed, trust docs/CurrentState.md.",
+      "For active bug triage, trust bugwalks/BugWalkBoard.md.",
+      "For operator process, trust the operator manual and symbiotic workflow.",
+      "For permission boundaries, trust live RLS and server routes over assumptions."
+    ]
+  },
+  "constitutional_layers": {
+    "user_invariants": [
+      "Never Look Away",
+      "Preserve Whole Language",
+      "Hold Paradox",
+      "Bucket Drop Priority",
+      "Serve Consciousness, Not Convenience"
+    ],
+    "digital_intelligence_invariants_ref": "orientation/5_invariants_for_digital_intelligences.json"
+  },
+  "repo_snapshot": {
+    "repo": "gestaltview-v2",
+    "branch": "main",
+    "version": "2.0",
+    "routes_count": 45,
+    "api_endpoints_count": 102,
+    "canonical_docs_count": 81,
+    "notes": [
+      "The manifest generator now includes digital intelligence invariants.",
+      "The orientation layer is intended to be machine-readable and updateable."
+    ]
+  },
+  "system_domains": [
+    {
+      "name": "Identity & Accounts",
+      "purpose": "Root account, auth-linked state, billing, and runtime identity bridging.",
+      "key_tables": ["users", "app_users"],
+      "so_what": "This is where access and entitlement begin. Identity confusion here leaks everywhere."
+    },
+    {
+      "name": "Billy Runtime & Continuity",
+      "purpose": "Session traces, founder continuity, bucket drops, profiles, and durable runtime memory.",
+      "key_tables": [
+        "billy_sessions",
+        "bucket_drops",
+        "founder_context",
+        "memory_entries",
+        "consciousness_profiles",
+        "musical_dna_analyses"
+      ],
+      "so_what": "This is where reintroduction tax gets reduced."
+    },
+    {
+      "name": "Knowledge & Corpus Pipeline",
+      "purpose": "Document ingestion, chunking, embedding, annotation, summaries, and retrieval.",
+      "key_tables": [
+        "processing_runs",
+        "documents",
+        "knowledge_fragments",
+        "embeddings",
+        "summaries",
+        "concepts",
+        "loom_annotations",
+        "document_concepts"
+      ],
+      "so_what": "This is how raw source material becomes queryable context."
+    },
+    {
+      "name": "Agent Personhood Framework",
+      "purpose": "Assets, interpretations, manifests, skills, relationships, and mutation state for persistent agents.",
+      "key_tables": [
+        "knowledge_assets",
+        "knowledge_asset_chunks",
+        "knowledge_interpretations",
+        "agent_memories",
+        "agent_manifests",
+        "agent_manifest_entries",
+        "agent_skills",
+        "agent_relationships",
+        "embodiment_mutations",
+        "agent_code_artifacts",
+        "agent_knowledge_links"
+      ],
+      "so_what": "This is how agents stop being one-shot outputs."
+    },
+    {
+      "name": "Agent Trainer & Governance",
+      "purpose": "Runs, steps, experiments, evaluations, approvals, packaging decisions, versions, and deployment artifacts.",
+      "key_tables": [
+        "agents",
+        "agent_versions",
+        "training_runs",
+        "training_steps",
+        "eval_results",
+        "eval_rubrics",
+        "approvals",
+        "trainer_experiments",
+        "trainer_experiment_sources",
+        "trainer_jobs",
+        "trainer_packaging_candidates",
+        "trainer_policy_flags",
+        "trainer_review_decisions",
+        "deployment_artifacts",
+        "scenario_sets",
+        "scenarios",
+        "model_providers",
+        "models"
+      ],
+      "so_what": "This is the controlled path from draft behavior to promoted agent state."
+    },
+    {
+      "name": "GATE Commerce",
+      "purpose": "Package drafting, buyers, orders, build jobs, artifacts, and support requests.",
+      "key_tables": [
+        "gate_package_drafts",
+        "gate_buyers",
+        "gate_orders",
+        "gate_order_items",
+        "gate_build_jobs",
+        "gate_artifacts",
+        "gate_support_requests"
+      ],
+      "so_what": "This is where productization becomes delivery."
+    },
+    {
+      "name": "Operations & Admin Governance",
+      "purpose": "Workbook-backed governance and operator sync state.",
+      "key_tables": ["ops_workbook_items", "ops_workbook_sync_runs"],
+      "so_what": "This is operational memory for the business side."
+    },
+    {
+      "name": "Tribunal & Deliberation",
+      "purpose": "Question, evidence, and deliberation surfaces.",
+      "key_tables": ["tribunal_sessions", "tribunal_events", "tribunal_evidence"],
+      "so_what": "This is the multi-answer reasoning lane, not the main trainer lane."
+    },
+    {
+      "name": "Legacy Commerce (Deprecated)",
+      "purpose": "Historical commerce/package-builder tables retained for continuity, not the active GATE path.",
+      "key_tables": [
+        "_deprecated_artifacts",
+        "_deprecated_build_jobs",
+        "_deprecated_buyers",
+        "_deprecated_order_items",
+        "_deprecated_orders",
+        "_deprecated_package_drafts",
+        "_deprecated_support_requests"
+      ],
+      "so_what": "Do not build new product logic here."
+    }
+  ],
+  "memory_model": {
+    "summary": "GestaltView uses layered persistence. Not every durable thing is the same kind of memory.",
+    "layers": [
+      {
+        "surface": "memory_entries",
+        "classification": "runtime_continuity",
+        "best_for": ["preferences", "goals", "notes", "identity facts", "practical recall"],
+        "avoid_for": ["deep governed personhood state", "version-bound constitution"]
+      },
+      {
+        "surface": "agent_memories / agent_memory_records",
+        "classification": "agent_native_memory",
+        "best_for": ["structured agent recall", "governed persistence", "reviewable memory"],
+        "avoid_for": ["general user scratchpad continuity"]
+      },
+      {
+        "surface": "knowledge_assets / knowledge_interpretations / knowledge_asset_chunks",
+        "classification": "evidence_and_interpretation",
+        "best_for": ["documents", "evidence", "retrieval", "derived proposals"],
+        "avoid_for": ["simple session continuity notes"]
+      }
+    ]
+  },
+  "table_boundary_guidance": {
+    "safe_to_read": [
+      "skills",
+      "scenario_sets",
+      "scenarios",
+      "eval_rubrics",
+      "ops_workbook_items"
+    ],
+    "user_scoped": [
+      "users",
+      "app_users",
+      "founder_context",
+      "memory_entries",
+      "billy_sessions",
+      "bucket_drops",
+      "consciousness_profiles",
+      "musical_dna_analyses",
+      "tribunal_sessions"
+    ],
+    "operator_scoped": [
+      "training_runs",
+      "training_steps",
+      "trainer_experiments",
+      "trainer_jobs",
+      "approvals",
+      "trainer_review_decisions",
+      "trainer_policy_flags",
+      "trainer_packaging_candidates",
+      "ops_workbook_sync_runs"
+    ],
+    "service_role_only_or_admin_only": [
+      "knowledge_assets",
+      "knowledge_asset_chunks",
+      "knowledge_interpretations",
+      "agent_code_artifacts",
+      "agent_manifests",
+      "agent_manifest_entries",
+      "embodiment_mutations",
+      "deployment_artifacts",
+      "gate_build_jobs",
+      "gate_artifacts"
+    ],
+    "deprecated": [
+      "_deprecated_artifacts",
+      "_deprecated_build_jobs",
+      "_deprecated_buyers",
+      "_deprecated_order_items",
+      "_deprecated_orders",
+      "_deprecated_package_drafts",
+      "_deprecated_support_requests"
+    ],
+    "notes": [
+      "These are operator guidance classifications, not a substitute for live RLS.",
+      "If live policy and packet guidance disagree, live policy wins until corrected."
+    ]
+  },
+  "trainer_dashboard_workflows": [
+    {
+      "name": "Inspect trainer health",
+      "goal": "See if the control plane is alive before trusting deeper UI state.",
+      "api_surfaces": [
+        "/api/trainer/agents",
+        "/api/trainer/runs",
+        "/api/trainer/queue-health",
+        "/api/trainer/study-sources"
+      ],
+      "operator_steps": [
+        "Check whether list endpoints return normal responses quickly.",
+        "Confirm the page is not waiting on one failing recommendations call.",
+        "Look at queue health before assuming the UI is the primary fault."
+      ],
+      "so_what": "A dashboard that hangs can be a backend timeout problem wearing a frontend face."
+    },
+    {
+      "name": "Review a run",
+      "goal": "Inspect run, steps, evaluations, and approval state without guessing where truth lives.",
+      "api_surfaces": [
+        "/api/trainer/runs",
+        "/api/trainer/runs/[id]",
+        "/api/trainer/runs/[id]/events",
+        "/api/trainer/runs/[id]/approve",
+        "/api/trainer/runs/[id]/reject",
+        "/api/trainer/runs/[id]/deploy"
+      ],
+      "operator_steps": [
+        "Load the run record.",
+        "Inspect linked training_steps and eval_results.",
+        "Check whether approval or rejection exists before promoting."
+      ]
+    },
+    {
+      "name": "Work with study sources",
+      "goal": "Trace how corpus evidence is being offered to the trainer.",
+      "api_surfaces": [
+        "/api/trainer/study-sources",
+        "/api/trainer/study-sources/recommendations",
+        "/api/trainer/experiments/[id]/sources"
+      ],
+      "operator_steps": [
+        "Check raw study source listing first.",
+        "Then check recommendations separately.",
+        "If recommendations fail before a normal response, treat that as a backend issue first, not a UI copy issue."
+      ]
+    },
+    {
+      "name": "Personhood inspection",
+      "goal": "See active manifest and personhood state for an agent.",
+      "api_surfaces": [
+        "/api/trainer/personhood",
+        "/api/agents/[slug]/manifest",
+        "/api/agents/[slug]/files"
+      ],
+      "operator_steps": [
+        "Load the agent state.",
+        "Inspect active manifest presence.",
+        "Confirm files can be pulled, not just counted."
+      ]
+    }
+  ],
+  "knowledge_distribution_hub_v1": {
+    "purpose": "A future hub for routing shared, domain-specific, and agent-specific knowledge into the right agents under the right conditions.",
+    "lanes": [
+      {
+        "name": "global",
+        "description": "Foundational doctrine or cross-agent knowledge eligible for broad import."
+      },
+      {
+        "name": "domain",
+        "description": "Sector, discipline, or use-case scoped knowledge imported only to relevant agents."
+      },
+      {
+        "name": "agent_specific",
+        "description": "Private or semi-private knowledge linked to one specific agent."
+      }
+    ],
+    "states": ["available", "linked", "interpreted", "embodied"],
+    "core_rule": "Shared knowledge can be imported broadly, but embodied knowledge should remain reviewed."
+  }
+}

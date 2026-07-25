@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "events": [
+    {
+      "date": "2024-08-01",
+      "title": "Moves to New York City",
+      "description": "After Big Lots closes, Keith relocates from Connecticut and the evidence archive starts to take shape in a new city.",
+      "evidence_link": "docs/OriginStory.md"
+    },
+    {
+      "date": "2025-05-05",
+      "title": "Origin sprint begins",
+      "description": "Keith realizes he needs a better way to organize the evidence collected against Dunton Consulting, and GestaltView begins as a necessity.",
+      "evidence_link": "docs/origin-story.md"
+    },
+    {
+      "date": "2025-05-12",
+      "title": "First formal schema artifact",
+      "description": "The first structured schema artifact appears and gives the project a durable shape.",
+      "evidence_link": "docs/OriginStory.md"
+    },
+    {
+      "date": "2025-05-13",
+      "title": "Seed prompt copyright notice",
+      "description": "The GestaltView seed prompt receives a formal copyright notice, anchoring the language and methodology.",
+      "evidence_link": "client/src/canonical/PLKMASTER.md"
+    },
+    {
+      "date": "2025-10-22",
+      "title": "Origin transcript recorded",
+      "description": "A transcript records the origin narrative and the founding conditions that shaped the runtime.",
+      "evidence_link": "specs/origin/ORIGIN_PROCESS.md"
+    }
+  ]
+}

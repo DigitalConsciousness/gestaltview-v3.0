@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gestaltview.ai/schemas/gestaltview.render-request.v2.schema.json",
+  "title": "GestaltView Render Request v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["sourceFamily"],
+  "properties": {
+    "sourceFamily": {
+      "enum": [
+        "scene_graph",
+        "generated_artifact",
+        "codex_artifact",
+        "created_artifact",
+        "transcriptory"
+      ]
+    },
+    "artifactId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "sceneGraph": {
+      "$ref": "#/$defs/sceneGraph"
+    },
+    "content": {
+      "type": "string",
+      "maxLength": 2000000
+    },
+    "idempotencyKey": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "targets": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "$ref": "#/$defs/target"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "sourceFamily": {
+            "const": "scene_graph"
+          }
+        }
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": ["sceneGraph"]
+          },
+          {
+            "required": ["content"]
+          }
+        ]
+      },
+      "else": {
+        "required": ["artifactId"]
+      }
+    }
+  ],
+  "$defs": {
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["format", "mimeType"],
+      "properties": {
+        "format": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "mimeType": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        },
+        "quality": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "destinationIntent": {
+          "type": "string",
+          "default": "preview"
+        },
+        "required": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "sceneGraph": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "graphId", "nodes", "edges"],
+      "properties": {
+        "schema": {
+          "const": "nextgen.scene-graph.v1"
+        },
+        "graphId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "type", "props"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "type": { "type": "string", "minLength": 1 },
+              "name": { "type": "string" },
+              "props": { "type": "object" },
+              "metadata": { "type": "object" }
+            }
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "type", "from", "to", "props"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "type": { "type": "string", "minLength": 1 },
+              "from": { "type": "string", "minLength": 1 },
+              "to": { "type": "string", "minLength": 1 },
+              "props": { "type": "object" }
+            }
+          }
+        },
+        "metadata": { "type": "object" }
+      }
+    }
+  }
+}

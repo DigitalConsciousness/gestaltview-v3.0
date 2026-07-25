@@ -1,0 +1,2 @@
+clip_id,profile_slug,text,mode,intended_traits,speaker_consent_ref,source,duration_seconds,sample_rate,review_status,notes
+sample-001,billy,Hey. Good to hear you. What's on your mind?,greeting,warm|present|unhurried,,synthetic-audition,,24000,proposed,

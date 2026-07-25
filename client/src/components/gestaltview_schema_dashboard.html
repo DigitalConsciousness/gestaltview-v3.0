@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GestaltView — Schema State Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f7f4;color:#0b0b0b;padding:2rem;max-width:900px;margin:0 auto}
+h1{font-size:20px;font-weight:500;margin-bottom:.25rem}
+.subtitle{font-size:13px;color:#888;margin-bottom:1.5rem}
+.stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:1.25rem}
+.stat{background:#fff;border-radius:8px;padding:.85rem 1rem;border:0.5px solid #e1e0d9}
+.stat-label{font-size:12px;color:#898781;margin-bottom:4px}
+.stat-val{font-size:22px;font-weight:500}
+.stat-val.lit{color:#1baf7a}
+.stat-val.dark{color:#b4b2a9}
+.stat-val.vec{color:#2a78d6}
+.filter-bar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.filter-bar span{font-size:13px;color:#898781}
+.pill{font-size:12px;padding:4px 12px;border-radius:8px;border:0.5px solid #c3c2b7;background:#fff;cursor:pointer;color:#52514e}
+.pill.active{background:#2a78d6;color:#fff;border-color:#2a78d6}
+.domain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
+.dcard{background:#fff;border:0.5px solid #e1e0d9;border-radius:12px;padding:.9rem 1rem;cursor:pointer}
+.dcard:hover{border-color:#888}
+.dcard.selected{border:1.5px solid #2a78d6}
+.dcard-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.5rem}
+.dcard-name{font-size:13px;font-weight:500}
+.dcard-count{font-size:11px;color:#898781}
+.dot-row{display:flex;flex-wrap:wrap;gap:3px}
+.dot{width:9px;height:9px;border-radius:2px}
+.dot.lit{background:#1baf7a}
+.dot.dark{background:#d3d1c7}
+.detail-panel{background:#fff;border:0.5px solid #e1e0d9;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;min-height:100px}
+.detail-title{font-size:14px;font-weight:500;margin-bottom:.75rem;display:flex;align-items:center;gap:8px}
+.tlist{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.trow{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:8px;background:#f8f7f4;border:0.5px solid #e1e0d9}
+.trow.tlit{border-left:3px solid #1baf7a}
+.trow.tdark{border-left:3px solid #d3d1c7}
+.tname{font-size:12px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tmeta{font-size:11px;color:#898781;flex-shrink:0;display:flex;gap:6px}
+.badge-rows{font-size:10px;padding:1px 6px;border-radius:4px;background:#d4f5e9;color:#0a5c42;font-weight:500}
+.badge-vec{font-size:10px;padding:1px 6px;border-radius:4px;background:#dbe9fb;color:#0c447c;font-weight:500}
+.bar-section{margin-top:1rem}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.bar-label{font-size:12px;color:#52514e;width:140px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
+.bar-track{flex:1;background:#e1e0d9;border-radius:4px;height:10px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px}
+.bar-fill.blit{background:#1baf7a}
+.bar-fill.bdark{background:#b4b2a9}
+.bar-pct{font-size:11px;color:#898781;width:30px;text-align:right}
+.section-label{font-size:12px;color:#898781;margin-bottom:.6rem}
+</style>
+</head>
+<body>
+<h1>GestaltView — Schema State</h1>
+<p class="subtitle" id="schema-subtitle">Live snapshot from the current Supabase project · project dzrxepbgetinldcknior</p>
+
+<div class="stat-row">
+  <div class="stat"><div class="stat-label">public tables</div><div class="stat-val" id="stat-public-tables">180</div></div>
+  <div class="stat"><div class="stat-label">lit (has rows)</div><div class="stat-val lit" id="stat-lit-tables">22</div></div>
+  <div class="stat"><div class="stat-label">dark (empty)</div><div class="stat-val dark" id="stat-dark-tables">158</div></div>
+  <div class="stat"><div class="stat-label">vector indexes</div><div class="stat-val vec" id="stat-vector-indexes">6</div></div>
+  <div class="stat"><div class="stat-label">enum types</div><div class="stat-val" id="stat-enum-types">34</div></div>
+</div>
+
+<div id="schema-alert" style="display:none;margin:0 0 1rem;padding:.75rem 1rem;border-radius:10px;border:1px solid rgba(225,224,217,.9);background:#fff;color:#7a3d00;font-size:12px"></div>
+
+<div class="filter-bar">
+  <span>show:</span>
+  <button class="pill active" onclick="setFilter('all',this)">all tables</button>
+  <button class="pill" onclick="setFilter('lit',this)">lit only</button>
+  <button class="pill" onclick="setFilter('dark',this)">dark only</button>
+  <button class="pill" onclick="setFilter('vector',this)">vector</button>
+</div>
+
+<div class="domain-grid" id="domain-grid"></div>
+<div class="detail-panel" id="detail-panel">
+  <div style="color:#898781;font-size:13px;padding:.5rem 0">Click a domain card to inspect its tables.</div>
+</div>
+
+<div class="bar-section">
+  <div class="section-label">lit ratio by domain</div>
+  <div id="bar-chart"></div>
+</div>
+
+<script>
+const DATA = [{"domain":"Agent Identity","table":"agents","rows":0,"cols":13,"fks":3,"indexes":8,"lit":false},{"domain":"Agent Identity","table":"agent_autobiographies","rows":0,"cols":16,"fks":2,"indexes":6,"lit":false},{"domain":"Agent Identity","table":"agent_constitutions","rows":0,"cols":15,"fks":2,"indexes":6,"lit":false},{"domain":"Agent Identity","table":"agent_governance_policies","rows":0,"cols":11,"fks":2,"indexes":6,"lit":false},{"domain":"Agent Identity","table":"agent_preference_nodes","rows":0,"cols":24,"fks":2,"indexes":4,"lit":false},{"domain":"Agent Identity","table":"agent_presentation_profiles","rows":0,"cols":14,"fks":2,"indexes":6,"lit":false},{"domain":"Agent Identity","table":"agent_private_interiors","rows":0,"cols":15,"fks":2,"indexes":6,"lit":false},{"domain":"Agent Identity","table":"agent_versions","rows":0,"cols":11,"fks":2,"indexes":8,"lit":false},{"domain":"Agent Identity","table":"agent_context_views","rows":0,"cols":12,"fks":3,"indexes":4,"lit":false},{"domain":"Agent Identity","table":"agent_memories","rows":0,"cols":9,"fks":2,"indexes":5,"lit":false},{"domain":"Agent Identity","table":"agent_memory_records","rows":0,"cols":27,"fks":3,"indexes":8,"lit":false},{"domain":"Agent Identity","table":"agent_relationship_edges","rows":0,"cols":25,"fks":3,"indexes":4,"lit":false},{"domain":"Agent Identity","table":"agent_relationships","rows":0,"cols":9,"fks":2,"indexes":8,"lit":false},{"domain":"Agent Identity","table":"agent_skill_profiles","rows":0,"cols":12,"fks":2,"indexes":5,"lit":false},{"domain":"Agent Identity","table":"agent_skills","rows":0,"cols":9,"fks":3,"indexes":6,"lit":false},{"domain":"Agent Identity","table":"agent_knowledge_links","rows":0,"cols":9,"fks":3,"indexes":9,"lit":false},{"domain":"Agent Identity","table":"agent_manifest_entries","rows":0,"cols":9,"fks":1,"indexes":7,"lit":false},{"domain":"Agent Identity","table":"agent_manifests","rows":0,"cols":9,"fks":3,"indexes":5,"lit":false},{"domain":"Agent Identity","table":"agent_code_artifacts","rows":0,"cols":12,"fks":3,"indexes":8,"lit":false},{"domain":"Embodiment","table":"embodiment_profiles","rows":24,"cols":12,"fks":0,"indexes":2,"lit":true},{"domain":"Embodiment","table":"embodiment_readiness_scores","rows":24,"cols":7,"fks":1,"indexes":3,"lit":true},{"domain":"Embodiment","table":"embodiment_training_runs","rows":24,"cols":8,"fks":1,"indexes":1,"lit":true},{"domain":"Embodiment","table":"embodiment_modules","rows":5,"cols":6,"fks":0,"indexes":2,"lit":true},{"domain":"Embodiment","table":"embodiment_mutations","rows":0,"cols":15,"fks":5,"indexes":5,"lit":false},{"domain":"Embodiment","table":"embodiment_mutation_proposals","rows":0,"cols":13,"fks":2,"indexes":7,"lit":false},{"domain":"Embodiment","table":"embodiment_review_log","rows":0,"cols":7,"fks":2,"indexes":5,"lit":false},{"domain":"Embodiment","table":"pending_embodiment_mutations","rows":0,"cols":11,"fks":0,"indexes":0,"lit":false},{"domain":"Embodiment","table":"collaborator_embodiment_links","rows":0,"cols":9,"fks":1,"indexes":3,"lit":false},{"domain":"Embodiment","table":"route_embodiment_assignments","rows":13,"cols":7,"fks":0,"indexes":2,"lit":true},{"domain":"Human Identity","table":"human_identity_profiles","rows":0,"cols":16,"fks":0,"indexes":1,"lit":false},{"domain":"Human Identity","table":"human_memory_records","rows":0,"cols":22,"fks":0,"indexes":1,"lit":false},{"domain":"Human Identity","table":"human_personality_profiles","rows":0,"cols":15,"fks":0,"indexes":1,"lit":false},{"domain":"Human Identity","table":"human_cognition_profiles","rows":0,"cols":16,"fks":0,"indexes":1,"lit":false},{"domain":"Human Identity","table":"human_consciousness_profiles","rows":0,"cols":16,"fks":0,"indexes":1,"lit":false},{"domain":"Human Identity","table":"human_context_views","rows":0,"cols":14,"fks":2,"indexes":1,"lit":false},{"domain":"Human Identity","table":"human_continuity_snapshots","rows":0,"cols":12,"fks":0,"indexes":1,"lit":false},{"domain":"Human Identity","table":"human_identity_evidence","rows":0,"cols":15,"fks":2,"indexes":1,"lit":false},{"domain":"Human Identity","table":"human_identity_mutations","rows":0,"cols":29,"fks":2,"indexes":1,"lit":false},{"domain":"Human Identity","table":"human_identity_review_events","rows":0,"cols":8,"fks":1,"indexes":1,"lit":false},{"domain":"Human Identity","table":"human_identity_rollback_events","rows":0,"cols":8,"fks":1,"indexes":1,"lit":false},{"domain":"Human Identity","table":"human_relationship_edges","rows":0,"cols":16,"fks":0,"indexes":1,"lit":false},{"domain":"Identity System","table":"identity_subjects","rows":0,"cols":13,"fks":1,"indexes":6,"lit":false},{"domain":"Identity System","table":"identity_claims","rows":0,"cols":11,"fks":1,"indexes":4,"lit":false},{"domain":"Identity System","table":"identity_contradictions","rows":0,"cols":11,"fks":1,"indexes":4,"lit":false},{"domain":"Identity System","table":"identity_evidence","rows":0,"cols":11,"fks":2,"indexes":3,"lit":false},{"domain":"Identity System","table":"identity_evidence_links","rows":0,"cols":5,"fks":1,"indexes":6,"lit":false},{"domain":"Identity System","table":"identity_mutation_proposals","rows":0,"cols":22,"fks":4,"indexes":9,"lit":false},{"domain":"Identity System","table":"identity_review_events","rows":0,"cols":8,"fks":2,"indexes":3,"lit":false},{"domain":"Identity System","table":"identity_rollback_events","rows":0,"cols":8,"fks":2,"indexes":1,"lit":false},{"domain":"Identity System","table":"pending_identity_reviews","rows":0,"cols":14,"fks":0,"indexes":0,"lit":false},{"domain":"Memory & Knowledge","table":"memory_entries","rows":0,"cols":26,"fks":0,"indexes":14,"lit":false},{"domain":"Memory & Knowledge","table":"knowledge_assets","rows":0,"cols":14,"fks":1,"indexes":6,"lit":false},{"domain":"Memory & Knowledge","table":"knowledge_asset_chunks","rows":0,"cols":8,"fks":1,"indexes":6,"lit":false},{"domain":"Memory & Knowledge","table":"knowledge_asset_tags","rows":0,"cols":3,"fks":2,"indexes":3,"lit":false},{"domain":"Memory & Knowledge","table":"knowledge_fragments","rows":0,"cols":22,"fks":0,"indexes":8,"lit":false},{"domain":"Memory & Knowledge","table":"knowledge_interpretations","rows":0,"cols":8,"fks":3,"indexes":5,"lit":false},{"domain":"Memory & Knowledge","table":"knowledge_tags","rows":0,"cols":3,"fks":0,"indexes":2,"lit":false},{"domain":"Memory & Knowledge","table":"skill_fragments","rows":0,"cols":13,"fks":1,"indexes":4,"lit":false},{"domain":"Memory & Knowledge","table":"skills","rows":0,"cols":7,"fks":0,"indexes":3,"lit":false},{"domain":"Memory & Knowledge","table":"embeddings","rows":0,"cols":6,"fks":2,"indexes":4,"lit":false},{"domain":"Memory & Knowledge","table":"documents","rows":0,"cols":18,"fks":1,"indexes":7,"lit":false},{"domain":"Memory & Knowledge","table":"document_concepts","rows":0,"cols":3,"fks":2,"indexes":3,"lit":false},{"domain":"Memory & Knowledge","table":"concepts","rows":0,"cols":5,"fks":0,"indexes":5,"lit":false},{"domain":"Memory & Knowledge","table":"annotation_concepts","rows":0,"cols":2,"fks":2,"indexes":3,"lit":false},{"domain":"Tribunal / Eval","table":"tribunal_sessions","rows":0,"cols":8,"fks":1,"indexes":3,"lit":false},{"domain":"Tribunal / Eval","table":"tribunal_events","rows":0,"cols":7,"fks":0,"indexes":2,"lit":false},{"domain":"Tribunal / Eval","table":"tribunal_evidence","rows":0,"cols":7,"fks":1,"indexes":2,"lit":false},{"domain":"Tribunal / Eval","table":"eval_results","rows":0,"cols":12,"fks":6,"indexes":3,"lit":false},{"domain":"Tribunal / Eval","table":"eval_rubrics","rows":1,"cols":6,"fks":0,"indexes":2,"lit":true},{"domain":"Tribunal / Eval","table":"scenario_sets","rows":0,"cols":8,"fks":1,"indexes":3,"lit":false},{"domain":"Tribunal / Eval","table":"scenarios","rows":0,"cols":10,"fks":1,"indexes":3,"lit":false},{"domain":"Tribunal / Eval","table":"orchestration_decisions","rows":6,"cols":32,"fks":0,"indexes":7,"lit":true},{"domain":"Tribunal / Eval","table":"approvals","rows":0,"cols":7,"fks":3,"indexes":2,"lit":false},{"domain":"Trainer","table":"trainer_jobs","rows":0,"cols":15,"fks":1,"indexes":10,"lit":false},{"domain":"Trainer","table":"trainer_job_events","rows":0,"cols":9,"fks":2,"indexes":5,"lit":false},{"domain":"Trainer","table":"trainer_workers","rows":0,"cols":8,"fks":1,"indexes":3,"lit":false},{"domain":"Trainer","table":"trainer_experiments","rows":0,"cols":24,"fks":0,"indexes":6,"lit":false},{"domain":"Trainer","table":"trainer_experiment_sources","rows":0,"cols":7,"fks":1,"indexes":3,"lit":false},{"domain":"Trainer","table":"trainer_skills","rows":0,"cols":10,"fks":1,"indexes":4,"lit":false},{"domain":"Trainer","table":"trainer_memory_bindings","rows":0,"cols":8,"fks":1,"indexes":3,"lit":false},{"domain":"Trainer","table":"trainer_review_decisions","rows":0,"cols":12,"fks":1,"indexes":3,"lit":false},{"domain":"Trainer","table":"trainer_packaging_candidates","rows":0,"cols":13,"fks":1,"indexes":3,"lit":false},{"domain":"Trainer","table":"trainer_policy_flags","rows":0,"cols":8,"fks":1,"indexes":4,"lit":false},{"domain":"Trainer","table":"trainer_connectors","rows":0,"cols":10,"fks":0,"indexes":5,"lit":false},{"domain":"Trainer","table":"training_runs","rows":0,"cols":20,"fks":5,"indexes":8,"lit":false},{"domain":"Trainer","table":"training_steps","rows":0,"cols":13,"fks":3,"indexes":4,"lit":false},{"domain":"Corpus / Ingestion","table":"gsvw_ingestion_documents","rows":0,"cols":24,"fks":2,"indexes":10,"lit":false},{"domain":"Corpus / Ingestion","table":"gsvw_ingestion_chunks","rows":0,"cols":16,"fks":2,"indexes":11,"lit":false},{"domain":"Corpus / Ingestion","table":"gsvw_ingestion_runs","rows":0,"cols":14,"fks":0,"indexes":1,"lit":false},{"domain":"Corpus / Ingestion","table":"gsvw_ingestion_events","rows":0,"cols":8,"fks":2,"indexes":3,"lit":false},{"domain":"Corpus / Ingestion","table":"gsvw_dormancy_review_items","rows":0,"cols":10,"fks":2,"indexes":3,"lit":false},{"domain":"Corpus / Ingestion","table":"gsvw_repo_alignment_snapshots","rows":0,"cols":8,"fks":0,"indexes":4,"lit":false},{"domain":"Corpus / Ingestion","table":"gsvw_runtime_capture_events","rows":2,"cols":12,"fks":0,"indexes":6,"lit":true},{"domain":"Corpus / Ingestion","table":"corpus_harvest_events","rows":0,"cols":6,"fks":2,"indexes":1,"lit":false},{"domain":"Corpus / Ingestion","table":"ingestion_safety_events","rows":0,"cols":9,"fks":0,"indexes":3,"lit":false},{"domain":"Corpus / Ingestion","table":"profile_ingestion_sources","rows":0,"cols":8,"fks":1,"indexes":3,"lit":false},{"domain":"Corpus / Ingestion","table":"user_profile_ingestion_runs","rows":0,"cols":9,"fks":1,"indexes":3,"lit":false},{"domain":"Gestalt Modules","table":"gestaltview_modules","rows":14,"cols":11,"fks":0,"indexes":4,"lit":true},{"domain":"Gestalt Modules","table":"gestaltview_module_keys","rows":14,"cols":8,"fks":1,"indexes":4,"lit":true},{"domain":"Gestalt Modules","table":"gestaltview_module_profiles","rows":0,"cols":13,"fks":3,"indexes":6,"lit":false},{"domain":"Gestalt Modules","table":"workspace_rooms","rows":0,"cols":9,"fks":0,"indexes":3,"lit":false},{"domain":"Gestalt Modules","table":"workspace_documents","rows":0,"cols":17,"fks":1,"indexes":6,"lit":false},{"domain":"Gestalt Modules","table":"scaffold_nodes","rows":0,"cols":10,"fks":1,"indexes":4,"lit":false},{"domain":"Gestalt Modules","table":"bucket_drops","rows":0,"cols":16,"fks":4,"indexes":7,"lit":false},{"domain":"Gestalt Modules","table":"capture_events","rows":0,"cols":13,"fks":2,"indexes":5,"lit":false},{"domain":"Gestalt Modules","table":"resonance_events","rows":0,"cols":12,"fks":2,"indexes":7,"lit":false},{"domain":"Model Home","table":"model_homes","rows":2,"cols":23,"fks":0,"indexes":5,"lit":true},{"domain":"Model Home","table":"model_home_assignments","rows":0,"cols":8,"fks":1,"indexes":8,"lit":false},{"domain":"Model Home","table":"model_home_capabilities","rows":0,"cols":6,"fks":1,"indexes":3,"lit":false},{"domain":"Model Home","table":"model_home_consent_grants","rows":0,"cols":6,"fks":2,"indexes":4,"lit":false},{"domain":"Model Home","table":"model_home_evaluations","rows":0,"cols":7,"fks":1,"indexes":1,"lit":false},{"domain":"Model Home","table":"model_home_events","rows":0,"cols":8,"fks":2,"indexes":2,"lit":false},{"domain":"Model Home","table":"model_providers","rows":2,"cols":8,"fks":0,"indexes":2,"lit":true},{"domain":"Model Home","table":"models","rows":2,"cols":14,"fks":1,"indexes":2,"lit":true},{"domain":"Billy / Sessions","table":"billy_sessions","rows":0,"cols":8,"fks":1,"indexes":3,"lit":false},{"domain":"Billy / Sessions","table":"di_sessions","rows":1,"cols":9,"fks":1,"indexes":5,"lit":true},{"domain":"Billy / Sessions","table":"di_memory_events","rows":0,"cols":11,"fks":2,"indexes":8,"lit":false},{"domain":"Billy / Sessions","table":"transcriptory_captures","rows":0,"cols":31,"fks":2,"indexes":14,"lit":false},{"domain":"Billy / Sessions","table":"transcriptory_sessions","rows":0,"cols":10,"fks":1,"indexes":3,"lit":false},{"domain":"Billy / Sessions","table":"transcriptory_sources","rows":0,"cols":8,"fks":2,"indexes":4,"lit":false},{"domain":"Billy / Sessions","table":"session_rate_limits","rows":0,"cols":4,"fks":0,"indexes":3,"lit":false},{"domain":"Portraits / Profiles","table":"profile_portraits","rows":0,"cols":19,"fks":2,"indexes":8,"lit":false},{"domain":"Portraits / Profiles","table":"portrait_dimensions","rows":0,"cols":13,"fks":2,"indexes":6,"lit":false},{"domain":"Portraits / Profiles","table":"portrait_inference_queue","rows":0,"cols":9,"fks":2,"indexes":6,"lit":false},{"domain":"Portraits / Profiles","table":"portrait_inference_runs","rows":0,"cols":18,"fks":2,"indexes":5,"lit":false},{"domain":"Portraits / Profiles","table":"portrait_render_events","rows":0,"cols":6,"fks":2,"indexes":4,"lit":false},{"domain":"Portraits / Profiles","table":"profile_pipeline_runs","rows":0,"cols":10,"fks":1,"indexes":3,"lit":false},{"domain":"Portraits / Profiles","table":"profile_pipeline_run_links","rows":0,"cols":7,"fks":1,"indexes":3,"lit":false},{"domain":"Portraits / Profiles","table":"processing_runs","rows":0,"cols":10,"fks":0,"indexes":1,"lit":false},{"domain":"Collaborators","table":"collaborators","rows":0,"cols":18,"fks":3,"indexes":6,"lit":false},{"domain":"Collaborators","table":"collaborator_roles","rows":0,"cols":10,"fks":1,"indexes":3,"lit":false},{"domain":"Collaborators","table":"collaborator_permissions","rows":0,"cols":9,"fks":2,"indexes":2,"lit":false},{"domain":"Collaborators","table":"collaborator_relationships","rows":0,"cols":10,"fks":2,"indexes":3,"lit":false},{"domain":"Collaborators","table":"collaborator_onboarding_events","rows":0,"cols":12,"fks":1,"indexes":2,"lit":false},{"domain":"Collaborators","table":"collaborative_spaces","rows":0,"cols":10,"fks":1,"indexes":2,"lit":false},{"domain":"Collaborators","table":"collaborative_space_members","rows":0,"cols":4,"fks":2,"indexes":3,"lit":false},{"domain":"Collaborators","table":"collaborative_memory_records","rows":0,"cols":16,"fks":3,"indexes":3,"lit":false},{"domain":"Commerce","table":"orders","rows":0,"cols":9,"fks":0,"indexes":8,"lit":false},{"domain":"Commerce","table":"order_notes","rows":0,"cols":4,"fks":1,"indexes":3,"lit":false},{"domain":"Commerce","table":"deliverables","rows":0,"cols":4,"fks":1,"indexes":3,"lit":false},{"domain":"Commerce","table":"blueprints","rows":0,"cols":7,"fks":1,"indexes":4,"lit":false},{"domain":"Commerce","table":"deployment_artifacts","rows":0,"cols":6,"fks":1,"indexes":1,"lit":false},{"domain":"Commerce","table":"artifacts","rows":0,"cols":10,"fks":1,"indexes":3,"lit":false},{"domain":"Commerce","table":"created_artifacts","rows":3,"cols":12,"fks":0,"indexes":1,"lit":true},{"domain":"Commerce","table":"artifact_provenance_envelopes","rows":3,"cols":9,"fks":1,"indexes":1,"lit":true},{"domain":"Commerce","table":"codex_artifacts","rows":1,"cols":18,"fks":1,"indexes":5,"lit":true},{"domain":"Commerce","table":"codex_jobs","rows":2,"cols":9,"fks":1,"indexes":8,"lit":true},{"domain":"User Layer","table":"users","rows":1,"cols":12,"fks":1,"indexes":7,"lit":true},{"domain":"User Layer","table":"app_users","rows":1,"cols":6,"fks":0,"indexes":1,"lit":true},{"domain":"User Layer","table":"user_files","rows":1,"cols":17,"fks":1,"indexes":8,"lit":true},{"domain":"User Layer","table":"user_preferences","rows":0,"cols":9,"fks":1,"indexes":3,"lit":false},{"domain":"User Layer","table":"user_personality_dimensions","rows":0,"cols":9,"fks":1,"indexes":3,"lit":false},{"domain":"User Layer","table":"uploads","rows":0,"cols":5,"fks":1,"indexes":3,"lit":false},{"domain":"User Layer","table":"journals","rows":0,"cols":6,"fks":1,"indexes":5,"lit":false},{"domain":"User Layer","table":"scrapbook_items","rows":0,"cols":8,"fks":2,"indexes":5,"lit":false},{"domain":"User Layer","table":"insights","rows":0,"cols":16,"fks":1,"indexes":10,"lit":false},{"domain":"User Layer","table":"summaries","rows":0,"cols":6,"fks":2,"indexes":4,"lit":false},{"domain":"User Layer","table":"loom_annotations","rows":0,"cols":5,"fks":1,"indexes":3,"lit":false},{"domain":"User Layer","table":"musical_dna_analyses","rows":0,"cols":7,"fks":1,"indexes":3,"lit":false},{"domain":"User Layer","table":"masterclass_progress","rows":0,"cols":6,"fks":1,"indexes":7,"lit":false},{"domain":"User Layer","table":"founder_context","rows":0,"cols":18,"fks":1,"indexes":3,"lit":false},{"domain":"User Layer","table":"inner_world_artifacts","rows":1,"cols":19,"fks":4,"indexes":15,"lit":true}];
+const VEC_TABLES = new Set(['memory_entries','knowledge_asset_chunks','knowledge_fragments','skill_fragments','embeddings','human_memory_records']);
+let filter='all', selectedDomain=null;
+function setFilter(f,el){filter=f;document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');renderGrid();renderDetail();}
+function getDomains(){const m={};DATA.forEach(r=>{if(!m[r.domain])m[r.domain]=[];m[r.domain].push(r);});return m;}
+function filterRows(rows){if(filter==='lit')return rows.filter(r=>r.lit);if(filter==='dark')return rows.filter(r=>!r.lit);if(filter==='vector')return rows.filter(r=>VEC_TABLES.has(r.table));return rows;}
+function renderGrid(){const map=getDomains();const grid=document.getElementById('domain-grid');grid.innerHTML='';Object.keys(map).forEach(domain=>{const rows=map[domain];const filtered=filterRows(rows);if(!filtered.length)return;const div=document.createElement('div');div.className='dcard'+(selectedDomain===domain?' selected':'');div.onclick=()=>{selectedDomain=selectedDomain===domain?null:domain;renderGrid();renderDetail();};div.innerHTML=`<div class="dcard-header"><span class="dcard-name">${domain}</span><span class="dcard-count">${filtered.length}/${rows.length}</span></div><div class="dot-row">${rows.map(r=>`<div class="dot ${r.lit?'lit':'dark'}" title="${r.table}: ${r.rows} rows"></div>`).join('')}</div>`;grid.appendChild(div);});}
+function renderDetail(){const panel=document.getElementById('detail-panel');if(!selectedDomain){panel.innerHTML='<div style="color:#898781;font-size:13px;padding:.5rem 0">Click a domain card to inspect its tables.</div>';return;}const map=getDomains();const rows=filterRows(map[selectedDomain]);const allRows=map[selectedDomain];const litN=allRows.filter(r=>r.lit).length;const totalCols=allRows.reduce((a,r)=>a+r.cols,0);const totalIdx=allRows.reduce((a,r)=>a+r.indexes,0);panel.innerHTML=`<div class="detail-title"><span>${selectedDomain}</span><span style="font-size:11px;background:${litN>0?'#d4f5e9':'#f8f7f4'};color:${litN>0?'#0a5c42':'#898781'};padding:2px 8px;border-radius:4px">${litN}/${allRows.length} lit</span><span style="font-size:11px;color:#898781">${totalCols} cols · ${totalIdx} indexes</span></div><div class="tlist">${rows.map(r=>`<div class="trow ${r.lit?'tlit':'tdark'}"><span class="tname" title="${r.table}">${r.table}</span><span class="tmeta">${r.lit?`<span class="badge-rows">${r.rows}r</span>`:''} ${VEC_TABLES.has(r.table)?`<span class="badge-vec">vec</span>`:''}<span style="font-size:11px;color:#898781">${r.cols}c</span></span></div>`).join('')}</div>`;}
+function renderBars(){const map=getDomains();const bc=document.getElementById('bar-chart');const sorted=Object.keys(map).sort((a,b)=>{const la=map[a].filter(r=>r.lit).length/map[a].length;const lb=map[b].filter(r=>r.lit).length/map[b].length;return lb-la;});bc.innerHTML=sorted.map(d=>{const rows=map[d];const lit=rows.filter(r=>r.lit).length;const pct=Math.round(lit/rows.length*100);return`<div class="bar-row"><span class="bar-label" title="${d}">${d}</span><div class="bar-track"><div class="bar-fill ${pct>0?'blit':'bdark'}" style="width:${Math.max(pct,2)}%"></div></div><span class="bar-pct">${pct}%</span></div>`;}).join('');}
+const schemaAlert = document.getElementById('schema-alert');
+const schemaSubtitle = document.getElementById('schema-subtitle');
+const statPublicTables = document.getElementById('stat-public-tables');
+const statLitTables = document.getElementById('stat-lit-tables');
+const statDarkTables = document.getElementById('stat-dark-tables');
+const statVectorIndexes = document.getElementById('stat-vector-indexes');
+const statEnumTypes = document.getElementById('stat-enum-types');
+
+function setAlert(message, visible = true){
+  if(!schemaAlert) return;
+  schemaAlert.style.display = visible ? 'block' : 'none';
+  schemaAlert.textContent = message;
+}
+
+function updateSummary(summary, generatedAt){
+  if(statPublicTables) statPublicTables.textContent = String(summary?.public_tables ?? DATA.length);
+  if(statLitTables) statLitTables.textContent = String(summary?.lit_tables ?? DATA.filter(r => r.lit).length);
+  if(statDarkTables) statDarkTables.textContent = String(summary?.dark_tables ?? DATA.filter(r => !r.lit).length);
+  if(statVectorIndexes) statVectorIndexes.textContent = String(summary?.vector_tables ?? DATA.filter(r => VEC_TABLES.has(r.table)).length);
+  if(statEnumTypes) statEnumTypes.textContent = String(summary?.enum_types ?? 0);
+  if(schemaSubtitle) {
+    schemaSubtitle.textContent = generatedAt
+      ? `Live snapshot refreshed ${new Date(generatedAt).toLocaleString()} · project dzrxepbgetinldcknior`
+      : 'Live snapshot from the current Supabase project · project dzrxepbgetinldcknior';
+  }
+}
+
+function mergeLiveRows(rows){
+  if(!Array.isArray(rows) || rows.length === 0) return;
+  const liveByTable = new Map(rows.map((row) => [row.table_name, row]));
+  DATA.forEach((row) => {
+    const live = liveByTable.get(row.table);
+    if(!live) return;
+    row.rows = Number(live.row_count) || 0;
+    row.cols = Number(live.column_count) || 0;
+    row.fks = Number(live.foreign_key_count) || 0;
+    row.indexes = Number(live.index_count) || 0;
+    row.lit = Boolean(live.has_rows);
+  });
+  VEC_TABLES.clear();
+  rows.forEach((row) => {
+    if(row.has_vector_index) {
+      VEC_TABLES.add(row.table_name);
+    }
+  });
+}
+
+async function loadLiveSnapshot(){
+  try {
+    const response = await fetch('/api/schema/dashboard', {
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+    if(!response.ok){
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const payload = await response.json();
+    mergeLiveRows(payload.tables);
+    updateSummary(payload.summary, payload.generated_at);
+    setAlert('Live schema snapshot loaded successfully.', false);
+    renderGrid();
+    renderDetail();
+    renderBars();
+  } catch (error) {
+    setAlert(`Live schema snapshot unavailable, showing the embedded fallback data instead. ${error instanceof Error ? error.message : String(error)}`);
+    updateSummary(null, null);
+  }
+}
+
+renderGrid();
+renderBars();
+void loadLiveSnapshot();
+</script>
+</body>
+</html>

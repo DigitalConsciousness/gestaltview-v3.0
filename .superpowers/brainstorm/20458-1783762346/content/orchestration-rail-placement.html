@@ -1,0 +1,65 @@
+<h2>Where should the orchestration rail live?</h2>
+<p class="subtitle">Each option preserves the current Workshop + Art Teacher layout. Click the placement that makes the worker fan-out easiest to understand while forging.</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:18px;background:#07111d;min-height:330px">
+      <div style="font:700 14px sans-serif;color:#eaf7ff;margin-bottom:12px">The Workshop</div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 30%;gap:10px">
+        <div>
+          <div style="height:52px;border:1px solid #274154;border-radius:9px;background:#0b1825;margin-bottom:8px;padding:8px;color:#7795aa;font:10px sans-serif">RAW MATERIAL</div>
+          <div style="height:60px;border:1px solid #274154;border-radius:9px;background:#0b1825;margin-bottom:8px;padding:8px;color:#7795aa;font:10px sans-serif">OUTPUT + STYLE + DESTINATION</div>
+          <div style="height:28px;border:1px solid #258cba;border-radius:9px;background:#0d3044;margin-bottom:8px;color:#9edfff;text-align:center;padding-top:8px;font:700 10px sans-serif">SYNTHESIZE</div>
+          <div style="border:1px solid #2da8b5;border-radius:10px;background:#092934;padding:9px">
+            <div style="color:#a8edf2;font:700 9px sans-serif;letter-spacing:.12em">ORCHESTRATION · AUTO</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px">
+              <div style="height:36px;border-radius:6px;background:#123b40;color:#baf4d9;font:8px sans-serif;padding:5px">Extractor<br>done</div>
+              <div style="height:36px;border-radius:6px;background:#123b40;color:#baf4d9;font:8px sans-serif;padding:5px">Enricher<br>done</div>
+              <div style="height:36px;border-radius:6px;background:#123b40;color:#baf4d9;font:8px sans-serif;padding:5px">Presenter<br>allowed</div>
+            </div>
+          </div>
+        </div>
+        <div style="height:280px;border:1px solid #4b315d;border-radius:9px;background:#160f24;padding:8px;color:#c6a8df;font:10px sans-serif">ART TEACHER</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A · Inline after Synthesize</h3>
+      <p>Recommended. The rail appears where the action happens, then stays beside the resulting artifact as an execution receipt.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:18px;background:#07111d;min-height:330px">
+      <div style="font:700 14px sans-serif;color:#eaf7ff;margin-bottom:9px">The Workshop</div>
+      <div style="border:1px solid #2da8b5;border-radius:10px;background:#092934;padding:9px;margin-bottom:9px">
+        <div style="color:#a8edf2;font:700 9px sans-serif;letter-spacing:.12em">CENTRAL DI ORCHESTRAL LAYER</div>
+        <div style="display:flex;gap:5px;margin-top:7px"><div style="flex:1;height:28px;background:#123b40;border-radius:6px"></div><div style="flex:1;height:28px;background:#123b40;border-radius:6px"></div><div style="flex:1;height:28px;background:#123b40;border-radius:6px"></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 30%;gap:10px">
+        <div><div style="height:72px;border:1px solid #274154;border-radius:9px;background:#0b1825;margin-bottom:8px"></div><div style="height:90px;border:1px solid #274154;border-radius:9px;background:#0b1825;margin-bottom:8px"></div><div style="height:28px;border:1px solid #258cba;border-radius:9px;background:#0d3044"></div></div>
+        <div style="height:210px;border:1px solid #4b315d;border-radius:9px;background:#160f24;padding:8px;color:#c6a8df;font:10px sans-serif">ART TEACHER</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B · Room-wide status band</h3>
+      <p>Most visible and architectural, but it reads like global infrastructure and pushes the actual source material down the page.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:18px;background:#07111d;min-height:330px">
+      <div style="font:700 14px sans-serif;color:#eaf7ff;margin-bottom:12px">The Workshop</div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 30%;gap:10px">
+        <div><div style="height:72px;border:1px solid #274154;border-radius:9px;background:#0b1825;margin-bottom:8px"></div><div style="height:90px;border:1px solid #274154;border-radius:9px;background:#0b1825;margin-bottom:8px"></div><div style="height:28px;border:1px solid #258cba;border-radius:9px;background:#0d3044"></div></div>
+        <div style="height:270px;border:1px solid #4b315d;border-radius:9px;background:#160f24;padding:8px;color:#c6a8df;font:10px sans-serif">
+          ART TEACHER
+          <div style="margin-top:55px;border:1px solid #2da8b5;border-radius:8px;background:#092934;padding:7px;color:#a8edf2;font:700 8px sans-serif">ORCHESTRATION<br><div style="height:24px;background:#123b40;border-radius:5px;margin-top:5px"></div><div style="height:24px;background:#123b40;border-radius:5px;margin-top:5px"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C · Inside the Art Teacher rail</h3>
+      <p>Keeps orchestration near the DI presence, but conflates the room guide with worker execution and disappears when the sidebar is closed.</p>
+    </div>
+  </div>
+</div>

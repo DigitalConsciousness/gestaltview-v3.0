@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "templates": [
+    {
+      "slug": "research-scout",
+      "name": "Research Scout",
+      "role": "Collects and summarizes external references before execution",
+      "inputs": ["query", "domain"],
+      "outputs": ["citations", "summary", "risk_flags"]
+    },
+    {
+      "slug": "implementation-pilot",
+      "name": "Implementation Pilot",
+      "role": "Builds targeted code changes from scoped requirements",
+      "inputs": ["task_spec", "constraints", "repo_paths"],
+      "outputs": ["patch_plan", "changed_files", "test_commands"]
+    },
+    {
+      "slug": "qa-guardian",
+      "name": "QA Guardian",
+      "role": "Runs checks, validates outputs, and reports release readiness",
+      "inputs": ["test_matrix", "artifacts"],
+      "outputs": ["pass_fail", "defects", "release_recommendation"]
+    }
+  ],
+  "orchestration": {
+    "mode": "sequential",
+    "flow": ["research-scout", "implementation-pilot", "qa-guardian"],
+    "handoff_contract": "Every sub-agent emits explicit machine-readable outputs and confidence notes."
+  }
+}

@@ -1,0 +1,49 @@
+name: Corpus Ingest
+
+on:
+  workflow_dispatch:
+    inputs:
+      manifest_path:
+        description: Path to manifest JSON (relative to repo root)
+        required: true
+        default: buyer-import.template.json
+      user_id:
+        description: kit_users.id target for fragments
+        required: true
+      embedding_provider:
+        description: Embedding provider (none or openai)
+        required: true
+        default: none
+      dry_run:
+        description: Set true to validate only
+        required: true
+        default: "true"
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate manifest file exists
+        run: test -f "${{ github.event.inputs.manifest_path }}"
+
+      - name: Run generic corpus ingest scaffold
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENAI_API_KEY: ${{ github.event.inputs.embedding_provider == 'openai' && secrets.OPENAI_API_KEY || '' }}
+          EMBEDDING_MODEL: text-embedding-3-small
+        run: |
+          python agent_trainer/gv_operator_kit/scripts/corpus_ingest.py \
+            "${{ github.event.inputs.manifest_path }}" \
+            --user-id "${{ github.event.inputs.user_id }}" \
+            --embedding-provider "${{ github.event.inputs.embedding_provider }}" \
+            $([ "${{ github.event.inputs.dry_run }}" = "true" ] && echo --dry-run)

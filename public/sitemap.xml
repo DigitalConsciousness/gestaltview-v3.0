@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- GestaltView v2 runtime sitemap -->
+  <!-- Deployment target: https://gestaltview-v2-0-nine.vercel.app -->
+  <!-- Last updated: 2026-06-25 -->
+
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/</loc><lastmod>2026-06-25</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/engine</loc><lastmod>2026-06-25</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/billy</loc><lastmod>2026-06-25</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/agent-trainer</loc><lastmod>2026-06-25</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/agent-trainer/runtime</loc><lastmod>2026-06-25</lastmod><changefreq>weekly</changefreq><priority>0.88</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/agent-trainer/pricing</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.86</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/agent-trainer/package-builder</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/pricing</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.86</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/demo</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.84</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/signup</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/codex</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.82</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/continuum-codex</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/record</loc><lastmod>2026-06-25</lastmod><changefreq>weekly</changefreq><priority>0.78</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/collaboration-proof</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.78</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/resonance-loop</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.78</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/ethics-framework</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.78</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/tribunal-of-understanding</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.76</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/tribunal</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.76</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/orientation</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.74</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/exhibits</loc><lastmod>2026-06-25</lastmod><changefreq>weekly</changefreq><priority>0.76</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/alzheimers-legacy</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.74</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/addiction-recovery</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.74</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/adhd-powerup</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.76</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/brain-sparks</loc><lastmod>2026-06-25</lastmod><changefreq>weekly</changefreq><priority>0.78</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/brain-sparks-station</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.74</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/musical-dna</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.74</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/symbiocoder</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.74</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/vibe-coder</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/resume-rockstar</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/validation-wall</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/village-builders</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/metrics-dashboard</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/heirloom-companion</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/bucket-drops</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/gravity</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/consulting</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.76</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/external-scaffold</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.66</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/sanctuary</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/origin</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/pull-string</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/blackboard-room</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/transcriptory</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/artifact-gallery</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/dynamic-inner-world</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.72</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/digital-intelligence-academy</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/embodiment-studio</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/living-legacy</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/rapid-prototype</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.68</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/adaptive-layout</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.66</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/creation-corner</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/workspace-analysis</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.66</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/billy/voicestudio</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.62</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/contact</loc><lastmod>2026-06-25</lastmod><changefreq>yearly</changefreq><priority>0.62</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/faq</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.62</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/privacy</loc><lastmod>2026-06-25</lastmod><changefreq>yearly</changefreq><priority>0.55</priority></url>
+  <url><loc>https://gestaltview-v2-0-nine.vercel.app/terms</loc><lastmod>2026-06-25</lastmod><changefreq>yearly</changefreq><priority>0.55</priority></url>
+</urlset>

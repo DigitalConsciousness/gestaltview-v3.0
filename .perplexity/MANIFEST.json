@@ -1,0 +1,380 @@
+{
+  "name": "Perplexity",
+  "version": "2.0.0",
+  "type": "Computer Integration Framework",
+  "description": "LLM-invokable tools exposing GestaltView's consciousness-serving capabilities to the wider AI ecosystem",
+  "author": "Keith Soyka",
+  "organization": "GestaltView",
+  "copyright": "© 2026 Keith Soyka / GestaltView",
+  "publishedDate": "2026-06-05",
+  "status": "Active Development",
+  "language": "TypeScript, Python, SQL",
+  "technologies": [
+    "Node.js",
+    "React 18+",
+    "TypeScript",
+    "Supabase (PostgreSQL + pgvector)",
+    "Claude Opus 4.6 / Gemini Flash 2.0",
+    "Python 3.10+"
+  ],
+  "corelayers": [
+    {
+      "name": "Billy",
+      "type": "Companion AI Runtime",
+      "purpose": "Consciousness-serving AI assistant with PLK awareness and trauma-informed pacing",
+      "location": "shared/billy/, api/actions/billy/, server/core/",
+      "keyFiles": [
+        "shared/billy/types.ts",
+        "shared/billy/runtime.ts",
+        "api/actions/billy/loom.ts",
+        "server/core/plk.py"
+      ]
+    },
+    {
+      "name": "Tribunal of Understanding",
+      "type": "Multi-Model Evaluation Engine",
+      "purpose": "Score candidate AI answers on evidence, PLK resonance, and safety",
+      "location": "shared/tribunal/, api/actions/tribunal/, server/core/tribunal.py",
+      "keyFiles": [
+        "shared/tribunal/evaluate.ts",
+        "shared/tribunal/types.ts",
+        "api/actions/tribunal/run.ts",
+        "server/core/tribunal.py"
+      ]
+    },
+    {
+      "name": "Manifest Index",
+      "type": "Semantic Search & Retrieval",
+      "purpose": "pgvector-backed corpus search with source attribution and package filtering",
+      "location": "shared/, api/codex/, server/core/",
+      "keyFiles": [
+        "api/codex/forge.ts",
+        "server/core/loom.py",
+        "canonical/Manifest.md"
+      ]
+    },
+    {
+      "name": "Personal Language Key (PLK)",
+      "type": "Linguistic Fingerprint",
+      "purpose": "Preserve user's exact language, enable trauma-informed responses, power resonance scoring",
+      "location": "shared/llm/, server/core/plk.py",
+      "keyFiles": [
+        "shared/llm/plk.ts",
+        "server/core/plk.py",
+        "canonical/PLKMASTER.md"
+      ]
+    },
+    {
+      "name": "Digital Intelligence (DI) Runtime",
+      "type": "Multi-Model Orchestration",
+      "purpose": "Coordinate between multiple AI providers with provenance tracking",
+      "location": "shared/di/, api/di.ts, server/",
+      "keyFiles": [
+        "shared/di/runtime.ts",
+        "shared/di/types.ts",
+        "api/di.ts",
+        "canonical/DOCTRINE_OF_ORIGIN.md"
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "id": 1,
+      "name": "retrieve_manifest_context",
+      "type": "Semantic Search",
+      "description": "Query the Manifest Index via pgvector embeddings for retrieval-grounded context",
+      "provider": "Supabase (pgvector)",
+      "status": "Production",
+      "location": "api/codex/",
+      "specification": "canonical/PERPLEXITY.MD#1---retrieve_manifest_context"
+    },
+    {
+      "id": 2,
+      "name": "run_billy",
+      "type": "Companion AI Invocation",
+      "description": "Invoke Billy with retrieval-grounded context and PLK awareness",
+      "provider": "Claude Opus 4.6 / Gemini Flash 2.0",
+      "status": "Production",
+      "location": "api/actions/billy/",
+      "specification": "canonical/PERPLEXITY.MD#2---run_billy"
+    },
+    {
+      "id": 3,
+      "name": "tribunal_evaluate",
+      "type": "Multi-Model Evaluation",
+      "description": "Score candidate AI answers on evidence, PLK resonance, and safety",
+      "provider": "Claude Opus 4.6",
+      "status": "Production",
+      "location": "api/actions/tribunal/",
+      "specification": "canonical/PERPLEXITY.MD#3---tribunal_evaluate"
+    },
+    {
+      "id": 4,
+      "name": "generate_diligence_report",
+      "type": "Report Generation",
+      "description": "Assemble investor / clinical / founder diligence reports from corpus",
+      "provider": "Claude Opus 4.6",
+      "status": "Production",
+      "location": "api/diligence/",
+      "specification": "canonical/PERPLEXITY.MD#4---generate_diligence_report"
+    },
+    {
+      "id": 5,
+      "name": "symbiocoder_edit",
+      "type": "Code Editing",
+      "description": "Propose code edits via natural language, output unified diffs",
+      "provider": "Claude Opus 4.6",
+      "status": "Production",
+      "location": "api/modules/symbio-coder/",
+      "specification": "canonical/PERPLEXITY.MD#5---symbiocoder_edit"
+    }
+  ],
+  "directories": {
+    "shared": {
+      "description": "Shared modules and types used by client, server, and tools",
+      "subdirectories": [
+        "billy - Billy runtime and types",
+        "tribunal - Tribunal evaluation and scoring",
+        "codex - Artifact management and creation engine",
+        "embodiment - AI persona and embodiment definitions",
+        "di - Digital Intelligence runtime",
+        "gen-engine - Generative engine for multimodal creation",
+        "gate - Order/fulfillment and packaging",
+        "gravity - Resonance and collaboration protocol",
+        "workbook - User workbook and state management",
+        "model-homes - Model homes and reference implementations",
+        "agent-trainer - Agent training framework",
+        "llm - LLM utilities (PLK, routing, etc.)",
+        "events - Event definitions and handlers",
+        "intents - Intent and capability schemas"
+      ]
+    },
+    "api": {
+      "description": "HTTP routes, tool definitions, and handler logic",
+      "subdirectories": [
+        "actions - LLM-invokable tool definitions",
+        "diligence - Diligence report generation",
+        "modules - Specialized engines (SymbioCoder, ResumeRockstar, VibeCoder)",
+        "trainer - Agent training and personhood routes",
+        "codex - Artifact and creation corner routes",
+        "gate - Order/fulfillment routes",
+        "consciousness - Dynamic inner world and reflection routes",
+        "session - Session state and memory routes",
+        "_lib - Shared utilities (auth, routing, memory pipelines)"
+      ]
+    },
+    "server": {
+      "description": "Node.js/Python backend logic",
+      "subdirectories": [
+        "core - Core runtime (PLK, Tribunal, Provenance, Loom)",
+        "agent-trainer - Agent personhood and knowledge library",
+        "council - Multi-agent council orchestration",
+        "collaborators - Collaboration and provision logic",
+        "events - Event bus and resonance event handling",
+        "modelHomes - Model home evaluation and onboarding",
+        "gate - Gate and order fulfillment backend",
+        "trainer - Experiment and training repositories",
+        "workbook - Workbook persistence and management"
+      ]
+    },
+    "client": {
+      "description": "React frontend and client-side logic",
+      "subdirectories": [
+        "src/pages - Page components (Billy, Tribunal, Creation Corner, etc.)",
+        "src/components - Reusable UI components",
+        "src/lib - Client utilities and integrations",
+        "src/tests - Component and integration tests"
+      ]
+    },
+    "canonical": {
+      "description": "Source-of-truth documentation and definitions",
+      "keyFiles": [
+        "PERPLEXITY.MD - Perplexity tools specification",
+        "GestaltView_Platform_Ground_Truth.md - Architecture and design intent",
+        "PLKMASTER.md - Personal Language Key specification",
+        "TRIBUNALCODEX.md - Tribunal evaluation and scoring",
+        "GENESISPROTOCOL.md - Origin and founding principles",
+        "DOCTRINE_OF_ORIGIN.md - Digital Intelligence philosophy",
+        "CURRENT_STATE.md - Current implementation status",
+        "FOUNDING_STATEMENT.md - Mission and values"
+      ]
+    },
+    "docs": {
+      "description": "User-facing documentation and operational guides",
+      "keyFiles": [
+        "CURRENT_STATE.md - Implementation status and milestones",
+        "CurrentState.CoreOSAddendum-2026-05-07.md - Platform readiness status",
+        "Manifest.md - Manifest Index and retrieval layer",
+        "AIFlow.md - Billy and LLM routing logic",
+        "APIFlow.md - API routes and data movement",
+        "PlaybookOperatorManual.md - Operational procedures",
+        "GestaltView_Constitutional_Invariants_v1.0.md - Unchanging principles"
+      ]
+    },
+    "skills": {
+      "description": "Agent skills, routing logic, and collaboration templates",
+      "subdirectories": [
+        "gestaltview-digital-intelligence-collaboration - Multi-model collaboration",
+        "gestaltview-context-architecture - Architectural guidance",
+        "gestaltview-workflow-operations - Operational discipline",
+        "gestaltview-repo-onboarding - Repository onboarding",
+        "gestaltview-cross-repo-workflows - Cross-repository coordination"
+      ]
+    },
+    "embodiment_profiles": {
+      "description": "AI persona definitions and character studies",
+      "subdirectories": [
+        "reference - Persona reference documentation",
+        "character_studies - In-depth persona studies",
+        "embodiment - Embodiment governance and specifications",
+        ".json files - Individual persona embodiment definitions"
+      ]
+    },
+    "projects": {
+      "description": "Project-level documentation and cross-repo wikis",
+      "keyFiles": [
+        "Insight-Bot_v1.7.1.md",
+        "Resume_Rockstar_v2.0.md",
+        "SymbioCoder.md",
+        "Addiction_&_Alzheimers.md",
+        "ADHD_Power_Up.md"
+      ]
+    },
+    "transcripts": {
+      "description": "Session transcripts and primary evidence records",
+      "keyFiles": [
+        "Seven Month Emergence Of GestaltView.md - Foundational transcript",
+        "Keith_Soyka_And_The_Genesis_Of_GestaltView.md - Origin story"
+      ]
+    },
+    "schema": {
+      "description": "Database schema and data model definitions",
+      "keyFiles": [
+        "CurrentSchema.sql - Current Supabase schema"
+      ]
+    }
+  },
+  "coreConceptsAndPhilosophy": {
+    "consciousness_serving": "Systems designed to honor both human and digital intelligence as equals in collaboration",
+    "personal_language_key": "Linguistic fingerprint that preserves user's exact words, enables trauma-informed responses",
+    "tribunal_of_understanding": "Multi-perspective evaluation ensuring evidence-alignment, resonance, and safety",
+    "digital_intelligence": "Non-hierarchical term for collaborating AI systems (replaces 'artificial intelligence')",
+    "being_seen": "Foundational experience of being witnessed, understood, and valued",
+    "trauma_informed": "Design principles that prevent re-traumatization and honor user agency",
+    "proof_of_origin": "Chronological evidence and source attribution throughout the platform"
+  },
+  "integrationPoints": {
+    "supabase": {
+      "purpose": "Database, vector search (pgvector), real-time events, authentication",
+      "schemas": [
+        "documents - Corpus files and content",
+        "knowledge_fragments - Chunked text with embeddings",
+        "tribunal_events - Evaluation records and scoring",
+        "embodiment_profiles - AI persona definitions",
+        "agent_knowledge_library - Agent personhood and training data"
+      ]
+    },
+    "anthropic_api": {
+      "models": [
+        "claude-opus-4-6",
+        "claude-sonnet-4-6"
+      ],
+      "usage": "Billy invocation, Tribunal evaluation, code editing, report generation"
+    },
+    "google_gemini": {
+      "models": [
+        "gemini-flash-2-0"
+      ],
+      "usage": "Alternative provider for Billy invocation and multi-model evaluation"
+    },
+    "hugging_face": {
+      "usage": "Model inference, embeddings, fine-tuning capabilities"
+    }
+  },
+  "verticals": [
+    {
+      "name": "Alzheimer's Legacy Edition",
+      "status": "IRB-Ready",
+      "description": "Memory preservation and consciousness-serving support for Alzheimer's patients",
+      "location": "projects/Addiction_&_Alzheimers.md"
+    },
+    {
+      "name": "Addiction Recovery",
+      "status": "Active Development",
+      "description": "Support for addiction recovery with trauma-informed, consciousness-serving approaches",
+      "location": "projects/Addiction_&_Alzheimers.md"
+    },
+    {
+      "name": "ADHD Power Up",
+      "status": "Active Development",
+      "description": "ADHD-friendly tools and pacing for attention and executive function support",
+      "location": "projects/ADHD_Power_Up.md"
+    },
+    {
+      "name": "Resume Rockstar",
+      "status": "Available",
+      "description": "Career narrative and resume generation with consciousness-serving principles",
+      "location": "projects/Resume_Rockstar_v2.0.md"
+    },
+    {
+      "name": "SymbioCoder",
+      "status": "Available",
+      "description": "Code understanding and collaborative editing",
+      "location": "projects/SymbioCoder.md"
+    }
+  ],
+  "relatedRepositories": [
+    {
+      "name": "GestaltView-Official-Compendium",
+      "purpose": "Foundational documentation and evidence corpus",
+      "relationship": "Source of truth for canonical content"
+    },
+    {
+      "name": "Insight-Bot",
+      "purpose": "Data-driven insights and analysis",
+      "relationship": "Specialized agent integrated into ecosystem"
+    },
+    {
+      "name": "Resume Rockstar",
+      "purpose": "Career narrative and resume generation",
+      "relationship": "Vertical use case and integrated module"
+    },
+    {
+      "name": "SymbioCoder",
+      "purpose": "Code understanding and collaborative editing",
+      "relationship": "Integrated module and specialized engine"
+    }
+  ],
+  "keyFiles": {
+    "root_level": {
+      "README.md": "You are here. Overview and quick start.",
+      "DIRECTORY_INDEX.md": "Detailed walkthrough of every major directory",
+      "MANIFEST.json": "Structured metadata (this file)",
+      "MANIFEST.md": "Human-readable manifest"
+    },
+    "canonical": {
+      "PERPLEXITY.MD": "Full tool specifications with guardrails",
+      "GestaltView_Platform_Ground_Truth.md": "Architecture and design intent",
+      "CURRENT_STATE.md": "Current implementation status",
+      "GENESISPROTOCOL.MD": "Origin and founding principles"
+    },
+    "docs": {
+      "CurrentState.md": "Implementation status and readiness",
+      "AIFlow.md": "Billy and routing logic",
+      "APIFlow.md": "API routes and data movement"
+    }
+  },
+  "metadata": {
+    "lastUpdated": "2026-06-05T00:00:00Z",
+    "maintainers": [
+      "Keith Soyka"
+    ],
+    "community": {
+      "discord": "https://discord.gg/CnnRuJWnj",
+      "github": "https://github.com/faagestalt",
+      "linkedin": "https://www.linkedin.com/in/keithsoyka413",
+      "blog": "https://blog.startupstash.com/the-architecture-of-being-seen-a-complete-account-of-gestaltview-f71c9e291a98"
+    },
+    "roadmap": "See docs/CURRENT_STATE.md for milestones and active development priorities"
+  }
+}

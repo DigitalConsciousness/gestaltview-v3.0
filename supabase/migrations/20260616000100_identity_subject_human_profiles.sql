@@ -1,0 +1,260 @@
+-- Source: gestaltview_supabase_recreation_package/supabase/schemadiff.sql
+-- Purpose: add the live-only identity / human profile tables that were
+-- created in the Supabase SQL Editor but never captured in supabase/migrations.
+
+create table if not exists public.identity_subjects (
+  subject_id uuid not null default gen_random_uuid(),
+  subject_kind public.identity_subject_kind not null,
+  auth_user_id uuid unique,
+  app_user_id text unique,
+  agent_id uuid unique,
+  display_name text not null,
+  canonical_name text not null default '',
+  description text not null default '',
+  status text not null default 'active' check (status in ('active', 'pending', 'paused', 'archived')),
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  constraint identity_subjects_pkey primary key (subject_id),
+  constraint identity_subjects_auth_user_id_fkey foreign key (auth_user_id) references auth.users(id),
+  constraint identity_subjects_app_user_id_fkey foreign key (app_user_id) references public.app_users(id),
+  constraint identity_subjects_agent_id_fkey foreign key (agent_id) references public.agents(agent_id)
+);
+
+create table if not exists public.human_identity_profiles (
+  profile_id uuid not null default gen_random_uuid(),
+  subject_id uuid not null unique,
+  auth_user_id uuid not null,
+  identity_handle text not null default '',
+  display_name text not null default '',
+  self_model jsonb not null default '{}'::jsonb,
+  narrative_anchor text not null default '',
+  role_commitments jsonb not null default '[]'::jsonb,
+  boundary_policy jsonb not null default '{}'::jsonb,
+  contradiction_notes jsonb not null default '[]'::jsonb,
+  confidence numeric not null default 0.75 check (confidence >= 0::numeric and confidence <= 1::numeric),
+  review_status public.review_status not null default 'PENDING_REVIEW',
+  provenance jsonb not null default '{}'::jsonb,
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  constraint human_identity_profiles_pkey primary key (profile_id),
+  constraint human_identity_profiles_subject_id_fkey foreign key (subject_id) references public.identity_subjects(subject_id),
+  constraint human_identity_profiles_auth_user_id_fkey foreign key (auth_user_id) references auth.users(id)
+);
+
+create table if not exists public.human_cognition_profiles (
+  cognition_profile_id uuid not null default gen_random_uuid(),
+  subject_id uuid not null unique,
+  auth_user_id uuid not null,
+  attention_profile jsonb not null default '{}'::jsonb,
+  working_memory jsonb not null default '{}'::jsonb,
+  reasoning_profile jsonb not null default '{}'::jsonb,
+  planning_profile jsonb not null default '{}'::jsonb,
+  language_profile jsonb not null default '{}'::jsonb,
+  executive_controls jsonb not null default '{}'::jsonb,
+  decision_policy jsonb not null default '{}'::jsonb,
+  confidence numeric not null default 0.75 check (confidence >= 0::numeric and confidence <= 1::numeric),
+  review_status public.review_status not null default 'NOT_REQUIRED',
+  provenance jsonb not null default '{}'::jsonb,
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  constraint human_cognition_profiles_pkey primary key (cognition_profile_id),
+  constraint human_cognition_profiles_subject_id_fkey foreign key (subject_id) references public.identity_subjects(subject_id),
+  constraint human_cognition_profiles_auth_user_id_fkey foreign key (auth_user_id) references auth.users(id)
+);
+
+create table if not exists public.human_consciousness_profiles (
+  consciousness_profile_id uuid not null default gen_random_uuid(),
+  subject_id uuid not null unique,
+  auth_user_id uuid not null,
+  present_state jsonb not null default '{}'::jsonb,
+  continuity_model jsonb not null default '{}'::jsonb,
+  self_observation jsonb not null default '{}'::jsonb,
+  agency_model jsonb not null default '{}'::jsonb,
+  time_orientation jsonb not null default '{}'::jsonb,
+  awareness_model jsonb not null default '{}'::jsonb,
+  confidence numeric not null default 0.75 check (confidence >= 0::numeric and confidence <= 1::numeric),
+  review_status public.review_status not null default 'NOT_REQUIRED',
+  provenance jsonb not null default '{}'::jsonb,
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  constraint human_consciousness_profiles_pkey primary key (consciousness_profile_id),
+  constraint human_consciousness_profiles_subject_id_fkey foreign key (subject_id) references public.identity_subjects(subject_id),
+  constraint human_consciousness_profiles_auth_user_id_fkey foreign key (auth_user_id) references auth.users(id)
+);
+
+create table if not exists public.human_personality_profiles (
+  personality_profile_id uuid not null default gen_random_uuid(),
+  subject_id uuid not null unique,
+  auth_user_id uuid not null,
+  trait_map jsonb not null default '{}'::jsonb,
+  temperament jsonb not null default '{}'::jsonb,
+  social_style jsonb not null default '{}'::jsonb,
+  communication_style jsonb not null default '{}'::jsonb,
+  values_profile jsonb not null default '{}'::jsonb,
+  attachments jsonb not null default '{}'::jsonb,
+  confidence numeric not null default 0.75 check (confidence >= 0::numeric and confidence <= 1::numeric),
+  review_status public.review_status not null default 'NOT_REQUIRED',
+  provenance jsonb not null default '{}'::jsonb,
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  constraint human_personality_profiles_pkey primary key (personality_profile_id),
+  constraint human_personality_profiles_subject_id_fkey foreign key (subject_id) references public.identity_subjects(subject_id),
+  constraint human_personality_profiles_auth_user_id_fkey foreign key (auth_user_id) references auth.users(id)
+);
+
+create table if not exists public.human_context_views (
+  context_view_id uuid not null default gen_random_uuid(),
+  subject_id uuid not null,
+  auth_user_id uuid not null,
+  scope text not null check (scope in ('self', 'relationship', 'channel', 'workspace')),
+  relationship_subject_id uuid,
+  channel_key text,
+  display_name text not null,
+  filter_policy jsonb not null default '{}'::jsonb,
+  presentation_overrides jsonb not null default '{}'::jsonb,
+  sharing_policy jsonb not null default '{}'::jsonb,
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  constraint human_context_views_pkey primary key (context_view_id),
+  constraint human_context_views_subject_id_fkey foreign key (subject_id) references public.identity_subjects(subject_id),
+  constraint human_context_views_auth_user_id_fkey foreign key (auth_user_id) references auth.users(id),
+  constraint human_context_views_relationship_subject_id_fkey foreign key (relationship_subject_id) references public.identity_subjects(subject_id)
+);
+
+create table if not exists public.human_continuity_snapshots (
+  snapshot_id uuid not null default gen_random_uuid(),
+  subject_id uuid not null,
+  auth_user_id uuid not null,
+  snapshot_kind text not null check (snapshot_kind in ('identity', 'cognition', 'consciousness', 'personality', 'memory', 'relationship', 'context', 'reflection', 'handoff', 'review')),
+  surface_key text not null default 'general',
+  summary text not null default '',
+  snapshot jsonb not null default '{}'::jsonb,
+  provenance jsonb not null default '{}'::jsonb,
+  confidence numeric not null default 0.75 check (confidence >= 0::numeric and confidence <= 1::numeric),
+  review_status public.review_status not null default 'NOT_REQUIRED',
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  constraint human_continuity_snapshots_pkey primary key (snapshot_id),
+  constraint human_continuity_snapshots_subject_id_fkey foreign key (subject_id) references public.identity_subjects(subject_id),
+  constraint human_continuity_snapshots_auth_user_id_fkey foreign key (auth_user_id) references auth.users(id)
+);
+
+create table if not exists public.human_memory_records (
+  memory_id uuid not null default gen_random_uuid(),
+  subject_id uuid not null,
+  auth_user_id uuid not null,
+  source_memory_entry_id uuid,
+  source_asset_id uuid,
+  memory_kind text not null check (memory_kind in ('identity', 'preference', 'goal', 'project', 'relationship', 'constraint', 'insight', 'note', 'reflection', 'episode', 'value', 'boundary')),
+  scope text not null default 'personal' check (scope in ('personal', 'session', 'shared', 'reviewed')),
+  title text not null,
+  summary text not null default '',
+  detail text,
+  content_hash text not null,
+  embedding vector,
+  tags text[] not null default '{}'::text[],
+  emotional_valence numeric check (emotional_valence >= -1 and emotional_valence <= 1),
+  salience numeric not null default 0.5 check (salience >= 0::numeric and salience <= 1::numeric),
+  confidence numeric not null default 0.5 check (confidence >= 0::numeric and confidence <= 1::numeric),
+  evidence_count integer not null default 0 check (evidence_count >= 0),
+  consent_required boolean not null default true,
+  archive_policy public.archive_policy not null default 'archive',
+  provenance jsonb not null default '{}'::jsonb,
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  constraint human_memory_records_pkey primary key (memory_id),
+  constraint human_memory_records_subject_id_fkey foreign key (subject_id) references public.identity_subjects(subject_id),
+  constraint human_memory_records_auth_user_id_fkey foreign key (auth_user_id) references auth.users(id),
+  constraint human_memory_records_source_memory_entry_id_fkey foreign key (source_memory_entry_id) references public.memory_entries(id),
+  constraint human_memory_records_source_asset_id_fkey foreign key (source_asset_id) references public.knowledge_assets(id)
+);
+
+create table if not exists public.human_relationship_edges (
+  relationship_id uuid not null default gen_random_uuid(),
+  subject_id uuid not null,
+  auth_user_id uuid not null,
+  related_subject_id uuid not null,
+  relationship_type text not null check (relationship_type in ('self', 'partner', 'family', 'friend', 'coworker', 'mentor', 'mentee', 'client', 'collaborator', 'other')),
+  trust_level numeric not null default 0.5 check (trust_level >= 0::numeric and trust_level <= 1::numeric),
+  familiarity_level numeric not null default 0.5 check (familiarity_level >= 0::numeric and familiarity_level <= 1::numeric),
+  intimacy_boundary text not null default '',
+  stance text not null default '',
+  shared_context jsonb not null default '[]'::jsonb,
+  confidence numeric not null default 0.5 check (confidence >= 0::numeric and confidence <= 1::numeric),
+  review_status public.review_status not null default 'NOT_REQUIRED',
+  provenance jsonb not null default '{}'::jsonb,
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  constraint human_relationship_edges_pkey primary key (relationship_id),
+  constraint human_relationship_edges_subject_id_fkey foreign key (subject_id) references public.identity_subjects(subject_id),
+  constraint human_relationship_edges_auth_user_id_fkey foreign key (auth_user_id) references auth.users(id),
+  constraint human_relationship_edges_related_subject_id_fkey foreign key (related_subject_id) references public.identity_subjects(subject_id)
+);
+
+create table if not exists public.human_identity_evidence (
+  evidence_id uuid not null default gen_random_uuid(),
+  subject_id uuid not null,
+  auth_user_id uuid not null,
+  source_type text not null check (source_type in ('conversation', 'task', 'reflection', 'import', 'human-review', 'agent-observation', 'system-derived')),
+  source_asset_id uuid,
+  source_memory_entry_id uuid,
+  source_session_id text,
+  excerpt text,
+  weight numeric not null default 1 check (weight >= 0::numeric and weight <= 1::numeric),
+  observed_at timestamp with time zone not null default now(),
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamp with time zone not null default now(),
+  constraint human_identity_evidence_pkey primary key (evidence_id),
+  constraint human_identity_evidence_subject_id_fkey foreign key (subject_id) references public.identity_subjects(subject_id),
+  constraint human_identity_evidence_auth_user_id_fkey foreign key (auth_user_id) references auth.users(id),
+  constraint human_identity_evidence_source_asset_id_fkey foreign key (source_asset_id) references public.knowledge_assets(id),
+  constraint human_identity_evidence_source_memory_entry_id_fkey foreign key (source_memory_entry_id) references public.memory_entries(id)
+);
+
+create table if not exists public.human_identity_mutations (
+  mutation_id uuid not null default gen_random_uuid(),
+  subject_id uuid not null,
+  auth_user_id uuid not null,
+  proposed_by_user_id uuid,
+  source_asset_id uuid,
+  mutation_type public.identity_mutation_type not null,
+  target_table text not null,
+  target_id uuid,
+  target_path text not null default '',
+  mutation_class public.mutation_class not null,
+  risk_level public.identity_mutation_risk_level not null default 'medium',
+  status public.identity_mutation_status not null default 'proposed',
+  patch_payload jsonb not null default '{}'::jsonb,
+  diff_summary text not null default '',
+  reason text,
+  confidence numeric not null default 0.5 check (confidence >= 0::numeric and confidence <= 1::numeric),
+  evidence_count integer not null default 0 check (evidence_count >= 0),
+  last_affirmed_at timestamp with time zone,
+  approved_at timestamp with time zone,
+  applied_at timestamp with time zone,
+  rolled_back_at timestamp with time zone,
+  provenance jsonb not null default '{}'::jsonb,
+  created_at timestamp with time zone not null default now(),
+  constraint human_identity_mutations_pkey primary key (mutation_id),
+  constraint human_identity_mutations_subject_id_fkey foreign key (subject_id) references public.identity_subjects(subject_id),
+  constraint human_identity_mutations_auth_user_id_fkey foreign key (auth_user_id) references auth.users(id),
+  constraint human_identity_mutations_proposed_by_user_id_fkey foreign key (proposed_by_user_id) references auth.users(id),
+  constraint human_identity_mutations_source_asset_id_fkey foreign key (source_asset_id) references public.knowledge_assets(id)
+);
+
+create table if not exists public.human_identity_review_events (
+  review_event_id uuid not null default gen_random_uuid(),
+  mutation_id uuid not null,
+  subject_id uuid,
+  auth_user_id uuid,
+  reviewer_user_id uuid,
+  decision public.identity_review_decision not null,
+  notes text,
+  created_at timestamp with time zone not null default now(),
+  constraint human_identity_review_events_pkey primary key (review_event_id),
+  constraint human_identity_review_events_mutation_id_fkey foreign key (mutation_id) references public.human_identity_mutations(mutation_id),
+  constraint human_identity_review_events_subject_id_fkey foreign key (subject_id) references public.identity_subjects(subject_id),
+  constraint human_identity_review_events_auth_user_id_fkey foreign key (auth_user_id) references auth.users(id),
+  constraint human_identity_review_events_reviewer_user_id_fkey foreign key (reviewer_user_id) references auth.users(id)
+);

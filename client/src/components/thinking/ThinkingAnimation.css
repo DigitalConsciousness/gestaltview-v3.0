@@ -1,0 +1,140 @@
+.gv-thinking-animation {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem 1rem;
+  max-width: 34rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 212, 255, 0.16);
+  background:
+    linear-gradient(135deg, rgba(5, 10, 18, 0.92), rgba(5, 10, 18, 0.72)),
+    radial-gradient(circle at top left, rgba(0, 212, 255, 0.08), transparent 48%),
+    radial-gradient(circle at bottom right, rgba(167, 139, 250, 0.08), transparent 42%);
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.24),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  color: #e9fcff;
+  font-family: "DM Sans", sans-serif;
+}
+
+.gv-thinking-icon {
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 9999px;
+}
+
+.gv-thinking-icon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.28), transparent 68%);
+  animation: gv-thinking-pulse 1.9s ease-in-out infinite;
+}
+
+.gv-thinking-icon-svg {
+  position: relative;
+  z-index: 1;
+  width: 1.45rem;
+  height: 1.45rem;
+  color: #7cf7ff;
+  filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.35));
+  animation: gv-thinking-spin 5s linear infinite;
+}
+
+.gv-thinking-icon-svg circle,
+.gv-thinking-icon-svg path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gv-thinking-icon-svg circle:nth-of-type(1) {
+  opacity: 0.36;
+}
+
+.gv-thinking-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.gv-thinking-name {
+  margin: 0;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(124, 247, 255, 0.72);
+}
+
+.gv-thinking-message {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #f4fdff;
+  animation: gv-thinking-message-fade var(--thinking-interval, 4000ms) ease-in-out both;
+}
+
+@keyframes gv-thinking-pulse {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.72;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+@keyframes gv-thinking-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes gv-thinking-message-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  88% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0.96;
+    transform: translateY(-1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gv-thinking-animation,
+  .gv-thinking-icon::before,
+  .gv-thinking-icon-svg,
+  .gv-thinking-message {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+

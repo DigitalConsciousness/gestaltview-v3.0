@@ -1,0 +1,41 @@
+
+packet_type: gestaltview_orientation
+packet_version: 0.1.0
+generated_at_utc: 2026-04-13T11:03:01Z
+project: GestaltView
+single_source_of_truth:
+  schema_shape: schema.updated.sql
+  change_history: live_supabase_migrations
+  permissions: live_rls_and_route_boundaries
+domains:
+  - name: Legacy Commerce (Deprecated)
+    tables: [_deprecated_artifacts, _deprecated_build_jobs, _deprecated_buyers, _deprecated_order_items, _deprecated_orders, _deprecated_package_drafts, _deprecated_support_requests]
+  - name: Agent Personhood Framework
+    tables: [agent_code_artifacts, agent_knowledge_links, agent_manifest_entries, agent_manifests, agent_memories, agent_relationships, agent_skills, embodiment_mutations, knowledge_asset_chunks, knowledge_asset_tags, knowledge_assets, knowledge_interpretations]
+  - name: Agent Trainer & Governance
+    tables: [agent_versions, agents, approvals, deployment_artifacts, eval_results, eval_rubrics, model_providers, models, scenario_sets, scenarios, trainer_experiment_sources, trainer_experiments, trainer_jobs, trainer_packaging_candidates, trainer_policy_flags, trainer_review_decisions, training_runs, training_steps]
+  - name: Knowledge & Corpus Pipeline
+    tables: [annotation_concepts, concepts, document_concepts, documents, embeddings, knowledge_fragments, knowledge_tags, loom_annotations, processing_runs, skill_fragments, skills, summaries]
+  - name: Identity & Accounts
+    tables: [app_users, users]
+  - name: Billy Runtime & Continuity
+    tables: [billy_sessions, bucket_drops, consciousness_profiles, founder_context, memory_entries, musical_dna_analyses]
+  - name: GATE Commerce
+    tables: [gate_artifacts, gate_build_jobs, gate_buyers, gate_order_items, gate_orders, gate_package_drafts, gate_support_requests]
+  - name: Operations & Admin Governance
+    tables: [ops_workbook_items, ops_workbook_sync_runs]
+  - name: Tribunal & Deliberation
+    tables: [tribunal_events, tribunal_evidence, tribunal_sessions]
+memory_layers:
+  - surface: memory_entries
+    role: Lightweight persistent continuity memory keyed by user_id text.
+  - surface: agent_memories / agent_memory_records
+    role: More explicitly agent-native memory and governed memory records.
+  - surface: knowledge_assets / knowledge_interpretations / knowledge_asset_chunks
+    role: Evidence and derived interpretation surfaces rather than raw continuity memory.
+cautions:
+  - Do not assume broad reads are safe just because they currently work.
+  - Do not treat schema snapshots as full change history.
+  - Do not mix user identity surfaces (auth.users, public.users, app_users) casually without understanding which workflow owns which identity mapping.
+  - Do not assume commerce draft rows are trustworthy unless mutation boundaries are explicit.
+  - Do not flatten personhood, memory, and knowledge into one generic persistence concept.

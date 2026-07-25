@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0.0",
+  "default_branch": "main",
+  "chunking": {
+    "max_chars": 4500,
+    "overlap_chars": 300
+  },
+  "exclude": [
+    ".git/**",
+    "node_modules/**",
+    "dist/**",
+    "dist/public/**",
+    ".next/**",
+    ".vercel/**",
+    "coverage/**",
+    "*.png",
+    "*.jpg",
+    "*.jpeg",
+    "*.gif",
+    "*.webp",
+    "*.mp3",
+    "*.wav",
+    "*.mp4",
+    "*.mov",
+    "*.zip",
+    "*.tar",
+    "*.gz"
+  ],
+  "sources": [
+    {
+      "source_repo": "DigitalConsciousness/gestaltview-v2.0",
+      "source_label": "runtime",
+      "local_path": ".",
+      "lane": "runtime",
+      "include": [
+        "README.md",
+        "package.json",
+        "config/**/*.json",
+        "docs/**/*.md",
+        "specs/**/*.md",
+        "api/**/*.ts",
+        "client/src/pages/**/*.tsx",
+        "client/src/components/**/*.tsx",
+        "client/src/hooks/**/*.ts",
+        "client/src/lib/**/*.ts",
+        "shared/**/*.ts",
+        "server/**/*.ts",
+        "scripts/**/*.py",
+        "scripts/**/*.mjs",
+        "supabase/migrations/**/*.sql",
+        "supabase/functions/**/*.ts"
+      ],
+      "document_type_hints": {
+        "docs/": "runtime_documentation",
+        "specs/": "implementation_spec",
+        "api/": "runtime_api",
+        "client/src/pages/": "runtime_page",
+        "client/src/components/": "runtime_component",
+        "shared/": "shared_contract",
+        "supabase/": "database_or_edge_function",
+        "scripts/": "operator_script"
+      }
+    },
+    {
+      "source_repo": "DigitalConsciousness/GestaltView_Corpus_-_Knowledge_Repository",
+      "source_label": "corpus",
+      "local_path": "../GestaltView_Corpus_-_Knowledge_Repository",
+      "lane": "corpus",
+      "include": [
+        "**/*.md",
+        "**/*.txt",
+        "**/*.json",
+        "**/*.yaml",
+        "**/*.yml",
+        "**/*.csv",
+        "**/*.py",
+        "**/*.ipynb",
+        "**/*.sql",
+        "**/*.html",
+        "**/*.pdf"
+      ],
+      "document_type_hints": {
+        "embodiment": "embodiment_source",
+        "plk": "plk_source",
+        "memory": "memory_source",
+        "transcript": "transcript",
+        "schema": "schema",
+        "orientation": "orientation",
+        "canonical": "canonical_context"
+      }
+    }
+  ]
+}

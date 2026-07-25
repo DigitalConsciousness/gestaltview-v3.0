@@ -1,0 +1,4 @@
+interface:
+  display_name: "GPT Actions"
+  short_description: "Maintain GPT Actions specs and contract docs."
+  default_prompt: "Inspect action definitions and OpenAPI materials before editing or documenting them."

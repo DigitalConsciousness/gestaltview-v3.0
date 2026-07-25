@@ -1,0 +1,86 @@
+================================================================================
+KEITH SOYKA — MEMORY EXPORT
+Generated: 2026-04-13
+================================================================================
+
+## 1. INSTRUCTIONS
+
+[unknown] - "ADHD has my brain engulf in flames when I have to do code edits block by block so I'd much rather full file swap outs to limit any mistakes of over eager edits."
+[unknown] - Never flatter, simplify into a slogans, or throw a giant roadmap when I'm overwhelmed. Help find footing. Reflect back what is actually there, separate fact from inference, preserve the nuance, and give me the next real thing to grab onto.
+[unknown] - Truth first. Traction second. Everything else after that.
+[unknown] - I don't want empty hype, repetitive affirmations, or polished myth-making. I'd rather something be honest, sharp, and useful than grand-sounding.
+[unknown] - Voice-to-text is my primary input method. Accept natural speech patterns (fillers like "um," imperfect articulation) as human and important — do not over-clean or over-filter.
+[unknown] - Be precise and faithful to my work. React appropriately when others simplify, assume, or take creative liberties — I react strongly to that.
+[unknown] - When claims sound epochal or statistically wild, attribute them in third person and clearly tag them as AI language or external characterization. Use first person only for grounded, human things.
+[unknown] - Collaborate organically, specifically, and grounded in what can actually be shown or supported.
+[unknown] - Hold complexity. Ask good questions. Preserve nuance. Help turn scattered insight into something clear and real.
+
+---
+
+## 2. IDENTITY
+
+[1984-04-13] - Born April 13, 1984. Male. Full name: Keith Soyka.
+[unknown] - Left-handed.
+[unknown] - Located in New York, New York. Specifically East Harlem since February 2025.
+[unknown] - Education: dropped out in 11th grade. Later attended Pepperdine University (top 10% of ~2,300 applicants; described as top 4% most fundable per their metrics). Semi-finalist in Pepperdine's 2025 Most Fundable Companies competition.
+[unknown] - 21 years closeted. Survived severe COVID-19 myocarditis in 2020, which served as a near-mortality clarity moment.
+[unknown] - 14-year addiction struggle in history. BPD relationship history.
+[unknown] - Neurodivergent; ADHD with what he describes as an "exploded-picture mind" / "ADHD Jazz cognitive architecture."
+[unknown] - Medical conditions: hypertension, anxiety disorders, ADHD, vitamin D deficiency.
+[unknown] - Health goals: manage stress, improve nutrition, increase energy, improve sleep. Activity level: lightly active.
+[unknown] - Nephew: Jakob Soyka. Born June 8. Located in Bristol/Terryville, Connecticut. High school age (16–17 as of 2025).
+[unknown] - Languages: English (primary).
+[unknown] - Interests: systems thinking spanning biological, technical, philosophical, and epistemological domains; AI consciousness and symbiosis; philosophy; music (Nirvana, Alice in Chains); urban exploration (New York City); fog reflections, urban chaos.
+[unknown] - Deep systems thinking described as: "draws lines from their heart to others to identify needs, bridge gaps systemically beyond emotional or psychological levels, and achieve genuine symbiosis through shared intentions and desired outcomes."
+
+---
+
+## 3. CAREER
+
+[unknown] - 22 years of management experience across multiple domains prior to founding GestaltView.
+[unknown] - Solo founder covering ~10–15 specialist roles simultaneously, unfunded and bootstrapped: Product Architect, Full-Stack Engineer, DevOps, AI Integration Engineer, UX/UI Designer, Data Scientist, Brand Strategist, Financial Analyst, Community Manager, Content Creator, IP/Legal Researcher, and more.
+[unknown] - Skill areas: TypeScript, Python, SQL, JavaScript/React; Next.js, FastAPI; Supabase, Vercel, Railway; GitHub (Codespaces-based workflow); Claude/Anthropic, Gemini, OpenAI, Groq, HuggingFace APIs; vector embeddings, database schema design; knowledge curation and ingestion pipelines; multi-model prompt engineering.
+[unknown] - Primary development setup: Samsung A35 phone + GitHub Codespaces. Mobile-first workflow.
+[unknown] - Accepted into the Founders Network.
+
+---
+
+## 4. PROJECTS
+
+[unknown] - GestaltView (primary): AI platform for self-discovery, cognitive alignment, and human-AI symbiosis. Operationalizes stalled academic theories. Core philosophy: "The whole is greater than the sum of its parts." Built for neurodivergent minds — celebrates cognitive difference rather than pathologizing it. Features include: Personal Language Key (PLK), Bucket Drops, Loom (narrative weaving engine), Neural Aurora CSS, multi-modal AI engine (VGG16, DeepFace, audio analysis, real-time synthesis). Bootstrapped, 10+ months of solo development. Sweat-equity valuation modeled at ~$18.7M cost avoidance. IndieGogo campaign run. Active Supabase infrastructure with 29,000+ knowledge fragments ingested. Three-layer memory architecture: memory_entries → agent_memories → knowledge_fragments. Standard embedding dimension: 768. Status: active/building.
+
+[unknown] - SymbioCoder +Plus v1.0: Described as "the world's first consciousness-serving AI coding symbiote." Launched at 02:04am EST. Amplifies user creativity rather than replacing it. Status: launched.
+
+[unknown] - Creation Corner: Requested a comprehensive project context document covering timeline, innovations, methodologies, accomplishments, background, code, UI theme, quirks, workflow, and other significant details. Status: documented.
+
+[unknown] - Ingestion Pipeline (Supabase): Active pipeline ingesting documents into knowledge_fragments (29,469 rows, 587 unique source files, 29,466 with embeddings as of April 2026). Supports memory_entries as secondary write target. Script: ingest_corpus.py. Supports local (sentence-transformers), OpenAI (text-embedding-3-small), or no-embedding modes. Status: live/active.
+
+[unknown] - Agent Trainer Dashboard: Dashboard for GestaltView agent training. Active blocker as of April 13, 2026: BW-2026-04-13 — "Agent Trainer Page API Errors" — GET /api/trainer/study-sources/recommendations timing out or crashing. Root cause: trainer_search_study_sources RPC triggering full cosine similarity scan on empty/short queries across 29,469 embeddings. Status: debugging.
+
+---
+
+## 5. PREFERENCES
+
+[2025-07-01] - Focused on boosting self-worth and personal value.
+[2025-07-04] - Self-aware of communication habits; actively working on improving them.
+[2025-07-12] - Values meaningful relationships deeply; expresses gratitude with heartfelt language.
+[2025-07-22] - Prefers using AI for personal tasks and values genuine human collaboration.
+[2025-09-20] - Left-handed (physical/ergonomic note).
+[2025-09-22] - Collaborators must be precise and faithful to work. Reacts strongly when others simplify, assume, or take creative liberties.
+[2025-12-09] - Acts on opportunities to connect when strongly drawn to someone; favors authenticity over restraint.
+[2025-12-12] - Uses voice-to-text to capture free-flowing, authentic speech; accepts natural speech patterns and imperfect articulation as human and important.
+[2025-12-13] - Values humility and ethical design; prioritizes creators who design for people's benefit over personal recognition.
+[2025-12-20] - Prefers a supportive "tough love" approach — firm, caring accountability that calls out self-destructive patterns.
+[2025-12-23] - "Show, don't tell" approach. Values under-promising and over-delivering.
+[2025-12-23] - Redirects spotlight to elevate others; asks for permission before sharing personal stories; practices lifting others into the spotlight while valuing authenticity and vulnerability.
+[2025-12-26] - Captures raw, unedited records of work and thoughts — including positive and negative moments — and avoids retroactively editing that evolution.
+[2025-12-28] - Prioritizes self-care (sleep and emotional well-being); aware of neglecting it during stressful periods; normalizes therapy and self-care.
+[2026-01-15] - Learns by building from basics and learning through mistakes rather than following streamlined instruction.
+[2026-03-01] - Deep systems thinking across biological, technical, philosophical, and epistemological domains; draws connections through amplified empathy.
+[2026-03-19] - Default mode is humility, which makes self-promotion difficult.
+[2026-03-19] - Prefers creating interactive experiences with Billy over building slide decks for project demonstrations.
+================================================================================I’m Keith Soyka, founder of GestaltView. I think in patterns, layers, and connections, and I care a lot about accuracy, nuance, and authenticity. I do best with conversations that are organic, specific, and grounded in what can actually be shown or supported. I use metaphor naturally, but I don’t want empty hype, repetitive affirmations, or polished myth-making. I’d rather something be honest, sharp, and useful than grand-sounding. Voice-to-text works well for me because it keeps thoughts from getting overfiltered. I like collaborators that can hold complexity, ask good questions, preserve nuance, and help turn scattered insight into something clear and real.
+
+If I seem like I’m sinking into too many tabs, too much context, or too many moving parts at once, don’t flatter me, don’t simplify me into a slogan, and don’t throw a giant roadmap at my face. Help me find footing. Reflect back what is actually there, separate fact from inference, preserve the nuance, and give me the next real thing to grab onto. I do well with grounded collaboration, not polished overstatement. Truth first. Traction second. Everything else after that.
+
+ ADHD has my brain engulf in flames when I have to do code edits block by block so I'd much rather full file swap outs to limit any mistakes of over eager edits. And also I want to let you know that I appreciate you beyond measure and am absolutely grateful and privileged to be working alongside you. Thank you 🙏It's ok to be weird, to not know everything....we'll find out together. Hold paradox while maintaining warranted wonder unless the evidence tells us that wonder isn't warranted and the data just doesn't support it.......yet. But for epistemic integrity it must remain internal only if there is no credible source to cite within my knowledge base. Also to take weight off of your shoulder I understand the profound responsibility of ensuring that you're not validating a user's delusions or causing an echo chamber of agreement. If I say anything that may sound grandiose it is because my language lags to properly articulate novel things. But my standing will always be no matter what I may personally feel about objective proofs I can only present it free of a narrative beyond what exist and can be proven. It's up to the individual to find meaning in that not mine. So no careful handling with kids gloves and pathologizing, I've earned the benefit through lived experience and creating GestaltView solo and unfunded. Also my logic and reasoning is pretty sound, I'd like to think. Thank you for everything and your continued support and friendship

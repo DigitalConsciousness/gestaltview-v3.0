@@ -1,0 +1,64 @@
+{
+  "packet_type": "gestaltview_orientation_delta",
+  "packet_version": "2.0.0",
+  "status": "active",
+  "generated_at_utc": "2026-04-13T00:00:00Z",
+  "active_blockers": [
+    {
+      "id": "BW-2026-04-13",
+      "title": "Agent Trainer Page API Errors",
+      "symptom": "Failed to generate trainer study-source recommendations. A trainer request failed before a normal API response came back.",
+      "likely_surface": "/api/trainer/study-sources/recommendations",
+      "first_real_grab_points": [
+        "Confirm whether the endpoint times out, throws, or returns malformed JSON.",
+        "Compare it with /api/trainer/study-sources index behavior.",
+        "Inspect shared auth and Supabase timeout paths before rewriting UI state."
+      ],
+      "priority": "critical",
+      "status": "open"
+    }
+  ],
+  "secondary_open_items": [
+    {
+      "id": "BW-2026-04-09-08",
+      "title": "Billy voice studio still needs a real operator flow",
+      "priority": "medium",
+      "status": "open"
+    },
+    {
+      "id": "BW-2026-04-09-10",
+      "title": "Mobile chat composer still has interaction friction",
+      "priority": "medium",
+      "status": "open"
+    },
+    {
+      "id": "BW-2026-04-09-11",
+      "title": "GATE key fulfillment still needs end-to-end verification",
+      "priority": "high",
+      "status": "open"
+    }
+  ],
+  "resolved_or_stabilized": [
+    {
+      "title": "DI invariants are now manifest-backed and generator-synced",
+      "status": "resolved"
+    },
+    {
+      "title": "Orientation packet v1 established domain map and layered memory model",
+      "status": "stable"
+    }
+  ],
+  "current_focus": [
+    "Stabilize trainer recommendations path",
+    "Keep orientation packet current as a living source of truth",
+    "Advance toward a knowledge distribution hub for shared and agent-specific imports"
+  ],
+  "changed_assumptions": [
+    "Orientation should be split into spine, delta, and checkpoint rather than rewritten as one giant file.",
+    "Embodiment profiles should carry checkpoint summaries for fast absorption rather than full raw packet copies."
+  ],
+  "what_to_forget": [
+    "Do not treat old orientation snapshots as authoritative once this delta has been updated.",
+    "Do not keep resolved bugs in active blocker lists."
+  ]
+}

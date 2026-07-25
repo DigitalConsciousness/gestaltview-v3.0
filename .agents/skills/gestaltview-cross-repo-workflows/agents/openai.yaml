@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cross-Repo Workflows"
+  short_description: "Coordinate compendium, app, and sibling repos."
+  default_prompt: "Use this skill for integrated repository planning, handoffs, manifests, and workflow synchronization."

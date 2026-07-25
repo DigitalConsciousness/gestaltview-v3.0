@@ -1,0 +1,143 @@
+gilVersion: "0.1"
+
+envelope:
+  id: "gil-2026-04-24T22-15-00Z-trainer-timeout"
+  createdAt: "2026-04-24T22:15:00Z"
+  createdBy:
+    userId: "keith-soyka"
+    sessionId: "sess-1234"
+    actorKind: "human"
+  source: "chat"
+  locale: "en-US"
+  channel: "web_app"
+  tags:
+    - "agent-trainer"
+    - "timeout"
+    - "doctrine-sensitive"
+  energy:
+    state: "overwhelmed"
+    level: 7
+  plkSnapshotId: "plk-v5.0-2026-04-24"
+  gravityScore: 0.86
+  parentIntentId: null
+
+normalized:
+  kind: "code_change"
+  domainLane: "trainer"
+  who: "Agent Trainer control plane and study-source recommendations API"
+  what: "Fix recurring timeout and degraded path behavior without weakening governance or RLS."
+  where: "gestaltview-v2 runtime repo and Supabase trainer tables"
+  when: "immediate; next deploy window"
+  why: "Trainer is a critical governance surface; timeouts erode trust and observability."
+  how: "Harden API routes, align schema writes with live Supabase trainerjobs shape, and add degraded but truthful fallback behavior."
+  summary: "Resolve Agent Trainer recommendation timeouts safely, preserving governance, RLS, and truthful degraded states."
+  narrative: |
+    The Agent Trainer recommendations path is intermittently timing out or hanging,
+    especially when Supabase is slow. I need this fixed in a way that preserves the
+    trainer control-plane governance, respects RLS and Constitutional Invariants,
+    and keeps degraded states visible instead of hiding them behind generic errors.
+  priority: "high"
+  timeHorizon: "this_session"
+  rawText: |
+    Trainer recs endpoint keeps timing out in a way that smells like RLS or N+1 queries.
+    I need this fixed without loosening security or breaking the control plane logic.
+  bucketDropId: "bd-2026-04-24T22-10-30Z"
+
+context:
+  repo:
+    repoAreas:
+      - "client/src/features/agent-trainer"
+      - "api/trainer"
+      - "apilib/supabase"
+    files:
+      - "client/src/features/agent-trainer/lib/trainerApi.ts"
+      - "api/trainer/queue-health.ts"
+      - "api/trainer/study-sources/recommendations.ts"
+    supabaseEntities:
+      - "trainingruns"
+      - "trainerjobs"
+      - "trainerpackagingcandidates"
+  corpus:
+    manifestNodes:
+      - "docs:CurrentState/Agent-Trainer-degraded-path-repair"
+      - "docs:Trainer-RLS-Policies"
+    corpusFiles:
+      - "docs/CurrentState.md"
+      - "skills/gestaltview-agent-trainer/SKILL.md"
+      - "docs/AIFlow.md"
+    exhibits:
+      - "trainer"
+      - "core"
+  invariants:
+    - id: "never-look-away"
+      name: "Never Look Away"
+      required: true
+    - id: "preserve-whole-language"
+      name: "Preserve Whole Language"
+      required: true
+    - id: "hold-paradox"
+      name: "Hold Paradox"
+      required: false
+  plk:
+    profileId: "plk-v5.0-2026-04-24"
+    resonanceTarget: 0.95
+    preserveMetaphors: true
+
+plan:
+  outputFormat: "full_file_swap"
+  steps:
+    - id: "analysis-1"
+      description: "Inspect current trainer API degraded-path behavior and Supabase query patterns."
+      kind: "analysis"
+      required: true
+    - id: "code-1"
+      description: "Align trainer API origin retry logic and queue-health timeout wrapper with CurrentState docs."
+      kind: "code_edit"
+      required: true
+    - id: "code-2"
+      description: "Update trainerjobs write paths to match live Supabase schema without relying on missing columns."
+      kind: "code_edit"
+      required: true
+    - id: "schema-1"
+      description: "Confirm trainer RLS and service-role policies are still correct; no schema changes unless strictly required."
+      kind: "schema_change"
+      required: false
+    - id: "review-1"
+      description: "Run targeted regression tests and review Gravity / logs for new degraded states."
+      kind: "review"
+      required: true
+  verification:
+    - description: "Type-check and build the project."
+      command: "npm run build"
+    - description: "Run trainer-focused API tests."
+      command: "npx vitest run --config vitest.api.config.ts api/tests/trainer-*.test.ts"
+    - description: "Manually hit queue-health and recommendations routes in the admin dashboard and confirm degraded states render truthfully."
+      route: "/admin/trainer"
+      manualCheck: "Confirm slow Supabase leads to visible degraded state, not hang or 500."
+  successCriteria: |
+    Trainer dashboard does not hang or hard-fail under Supabase slowness;
+    degraded states are visible and truthful; governance and RLS remain intact.
+
+governance:
+  doctrineLinks:
+    - id: "constitutional-invariants-v1"
+      section: "Never Look Away"
+    - id: "docsContextPersistenceProtocol"
+      section: "Degraded-path truthfulness"
+  doctrineStatus: "candidate"
+  safetyFlags:
+    - severity: "block"
+      code: "rls"
+      message: "Do not loosen trainer RLS or bypass policies to fix timeouts."
+    - severity: "warn"
+      code: "doctrine_drift"
+      message: "Ensure trainer governance docs are updated if behavior changes."
+
+routing:
+  requireTribunal: true
+  offlineCapable: false
+  providerTier: "balanced"
+  requireHighSafetyModel: true
+  temperature: 0.3
+  maxTokens: 1800
+  preferredExhibit: "trainer"

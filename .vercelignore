@@ -1,0 +1,20 @@
+node_modules
+dist
+.git
+.codex
+.snapshots
+.agents
+vercel_logs
+refactor
+refactor_(all needs to be implemented)
+api/__tests__
+server/__tests__
+shared/**/*.test.ts
+
+docs/wiki/_context
+docs/wiki/_reports
+docs/wikis
+gv_design_spec_package
+skills
+wiki
+gestaltview_supabase_recreation_package

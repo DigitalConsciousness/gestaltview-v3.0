@@ -1,0 +1,29 @@
+{
+  "include": ["client/src/**/*", "shared/**/*", "server/**/*", "worker/**/*", "api/**/*", "config/**/*", "metadata/**/*"],
+  "exclude": ["node_modules", "build", "dist"],
+  "compilerOptions": {
+    "incremental": true,
+    "target": "ES2022",
+    "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
+    "noEmit": true,
+    "module": "ESNext",
+    "strict": true,
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "moduleResolution": "bundler",
+    "ignoreDeprecations": "5.0",
+    "baseUrl": ".",
+    "types": ["node", "vite/client"],
+    "paths": {
+      "@/*": ["./client/src/*"],
+      "@shared/*": ["./shared/*"],
+      "@shared/rendering": ["./shared/rendering/index.ts"],
+      "@shared/rendering/*": ["./shared/rendering/*"],
+      "@config/*": ["./config/*"]
+    }
+  }
+}

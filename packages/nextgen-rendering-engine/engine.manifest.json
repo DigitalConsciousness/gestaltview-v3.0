@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "generated_on": "2026-07-07",
+  "description": "Candidate source project inventory for the next-generation rendering engine integration effort.",
+  "projects": [
+    {
+      "id": "chartjs-node-canvas",
+      "path": "ChartjsNodeCanvas-master/ChartjsNodeCanvas-master",
+      "type": "document-renderer",
+      "language": "TypeScript/JavaScript",
+      "build_system": "npm",
+      "candidate_role": "Server-side Chart.js rasterization for reports, thumbnails, and data-visual outputs.",
+      "integration_mode": "adapter",
+      "license_review_required": true,
+      "notes": "Node canvas-backed Chart.js renderer; useful as a focused chart rendering adapter rather than a full scene engine. Package metadata declares MIT."
+    },
+    {
+      "id": "dumper-7",
+      "path": "Dumper-7-main/Dumper-7-main",
+      "type": "tooling",
+      "language": "C++",
+      "build_system": "CMake/Visual Studio solution",
+      "candidate_role": "Native inspection/reference tooling for Unreal Engine object layouts and SDK generation workflows.",
+      "integration_mode": "reference",
+      "license_review_required": true,
+      "notes": "Windows-oriented native tooling; likely unsuitable for direct runtime integration but may inform Unreal asset or metadata extraction paths."
+    },
+    {
+      "id": "hybrid-rendering-engine",
+      "path": "HybridRenderingEngine-master/HybridRenderingEngine-master",
+      "type": "native-renderer",
+      "language": "C++/HLSL",
+      "build_system": "CMake",
+      "candidate_role": "Reference architecture for combining raster and ray/path tracing techniques in a native renderer.",
+      "integration_mode": "reference",
+      "license_review_required": true,
+      "notes": "Native rendering research/sample code; evaluate graphics API assumptions, shader portability, and asset pipeline fit before reuse."
+    },
+    {
+      "id": "unreal-engine-sky-atmosphere",
+      "path": "UnrealEngineSkyAtmosphere-master/UnrealEngineSkyAtmosphere-master",
+      "type": "native-renderer",
+      "language": "C++/HLSL",
+      "build_system": "Visual Studio solution",
+      "candidate_role": "Atmospheric scattering and sky rendering reference for physically based environment rendering.",
+      "integration_mode": "reference",
+      "license_review_required": true,
+      "notes": "Specialized Unreal-derived sky/atmosphere sample; review Unreal/Epic licensing constraints before adapting algorithms or assets."
+    },
+    {
+      "id": "agentreach",
+      "path": "agentreach-main/agentreach-main",
+      "type": "automation",
+      "language": "Python",
+      "build_system": "pyproject/uv-or-pip",
+      "candidate_role": "Authenticated browser/session automation support for render capture, external preview, or agent-driven QA workflows.",
+      "integration_mode": "external-service",
+      "license_review_required": true,
+      "notes": "Not a renderer; candidate support service for automated access to web render targets and protected preview surfaces."
+    },
+    {
+      "id": "ai-newsletter-generator",
+      "path": "ai-newsletter-generator-main/ai-newsletter-generator-main",
+      "type": "automation",
+      "language": "Python/JavaScript",
+      "build_system": "README-driven scripts",
+      "candidate_role": "Content assembly and publication automation reference for generated render reports or digest outputs.",
+      "integration_mode": "reference",
+      "license_review_required": true,
+      "notes": "Use as workflow inspiration only unless a concrete package/build entry point is identified during deeper review."
+    },
+    {
+      "id": "anki-3d-engine",
+      "path": "anki-3d-engine-master/anki-3d-engine-master",
+      "type": "native-renderer",
+      "language": "C++/GLSL",
+      "build_system": "CMake",
+      "candidate_role": "Full native 3D engine reference for scene graph, renderer architecture, resource management, and samples.",
+      "integration_mode": "reference",
+      "license_review_required": true,
+      "notes": "Large native engine with third-party dependencies; evaluate as architecture/reference first before considering vendoring."
+    },
+    {
+      "id": "dom-to-image",
+      "path": "dom-to-image-master/dom-to-image-master",
+      "type": "web-renderer",
+      "language": "JavaScript",
+      "build_system": "npm",
+      "candidate_role": "DOM node to image capture for browser-rendered components and documentation snapshots.",
+      "integration_mode": "adapter",
+      "license_review_required": true,
+      "notes": "Client-side DOM/SVG/canvas export utility; candidate for lightweight browser snapshot adapter. Package metadata declares MIT."
+    },
+    {
+      "id": "html-video",
+      "path": "html-video-main/html-video-main",
+      "type": "web-renderer",
+      "language": "TypeScript/JavaScript",
+      "build_system": "npm monorepo",
+      "candidate_role": "HTML-to-video rendering pipeline for animated scenes, demos, and generated media artifacts.",
+      "integration_mode": "subprocess",
+      "license_review_required": true,
+      "notes": "Meta-layer for coding agents that converts HTML outputs into video; package metadata declares Apache-2.0."
+    },
+    {
+      "id": "hyperframes",
+      "path": "hyperframes-main/hyperframes-main",
+      "type": "web-renderer",
+      "language": "TypeScript/JavaScript",
+      "build_system": "npm monorepo",
+      "candidate_role": "Frame-based web rendering or presentation workflow reference for composable generated media.",
+      "integration_mode": "reference",
+      "license_review_required": true,
+      "notes": "Monorepo with local AGENTS.md instructions; review internal package boundaries and licensing before reuse."
+    },
+    {
+      "id": "markdown-preview-enhanced",
+      "path": "markdown-preview-enhanced-master/markdown-preview-enhanced-master",
+      "type": "document-renderer",
+      "language": "TypeScript/JavaScript",
+      "build_system": "npm",
+      "candidate_role": "Markdown preview/rendering reference with math, diagrams, and export-oriented document features.",
+      "integration_mode": "reference",
+      "license_review_required": true,
+      "notes": "Package metadata declares NCSA; useful for feature comparison and document-rendering behavior."
+    },
+    {
+      "id": "mermaid",
+      "path": "mermaid-develop/mermaid-develop",
+      "type": "diagram-renderer",
+      "language": "TypeScript/JavaScript",
+      "build_system": "npm monorepo",
+      "candidate_role": "Diagram syntax parsing and SVG rendering for flowcharts, sequence diagrams, class diagrams, and related visuals.",
+      "integration_mode": "adapter",
+      "license_review_required": true,
+      "notes": "Primary candidate for text-to-diagram rendering; package metadata declares MIT."
+    },
+    {
+      "id": "metrics",
+      "path": "metrics-master/metrics-master",
+      "type": "document-renderer",
+      "language": "JavaScript",
+      "build_system": "npm",
+      "candidate_role": "SVG/Markdown/PDF/JSON infographic generation reference for stats-driven visual outputs.",
+      "integration_mode": "reference",
+      "license_review_required": true,
+      "notes": "GitHub metrics-oriented generator with many plugins; package metadata declares MIT."
+    },
+    {
+      "id": "pixijs",
+      "path": "pixijs-dev/pixijs-dev",
+      "type": "web-renderer",
+      "language": "TypeScript/JavaScript",
+      "build_system": "npm monorepo",
+      "candidate_role": "High-performance WebGL/WebGPU 2D rendering foundation for interactive canvas scenes and sprites.",
+      "integration_mode": "vendored-module",
+      "license_review_required": true,
+      "notes": "Major rendering library candidate; package metadata declares MIT but dependency and asset review is still required."
+    },
+    {
+      "id": "razzle",
+      "path": "razzle-master/razzle-master",
+      "type": "tooling",
+      "language": "JavaScript/TypeScript",
+      "build_system": "npm monorepo",
+      "candidate_role": "SSR/build tooling reference for React-based rendering surfaces and universal app packaging.",
+      "integration_mode": "reference",
+      "license_review_required": true,
+      "notes": "Use as build-system reference, not a renderer; package metadata did not expose a top-level license in quick inspection."
+    },
+    {
+      "id": "react-three-fiber",
+      "path": "react-three-fiber-master/react-three-fiber-master",
+      "type": "web-renderer",
+      "language": "TypeScript/JavaScript",
+      "build_system": "npm monorepo",
+      "candidate_role": "React integration layer for Three.js scenes, declarative 3D components, and web-native 3D rendering.",
+      "integration_mode": "adapter",
+      "license_review_required": true,
+      "notes": "Strong candidate for React-based 3D scene adapters; package metadata declares MIT."
+    },
+    {
+      "id": "rendercv",
+      "path": "rendercv-main/rendercv-main",
+      "type": "document-renderer",
+      "language": "Python/Typst",
+      "build_system": "pyproject/uv-or-pip",
+      "candidate_role": "Structured document-to-PDF rendering pipeline reference for template-driven professional documents.",
+      "integration_mode": "subprocess",
+      "license_review_required": true,
+      "notes": "Resume/CV renderer; candidate subprocess for document rendering patterns. Project metadata declares MIT."
+    },
+    {
+      "id": "gestaltview-gen-engine-rendering-comprehensive",
+      "path": "skills/gestaltview-gen-engine-rendering-comprehensive",
+      "type": "skill",
+      "language": "Markdown/JSON/JavaScript",
+      "build_system": "npm/scripts",
+      "candidate_role": "Domain-specific GestaltView rendering skill pack and operational knowledge base for the engine integration effort.",
+      "integration_mode": "reference",
+      "license_review_required": false,
+      "notes": "Internal skill/source corpus for guidance, prompts, manifests, and rendering workflow context; package metadata declares GCL."
+    },
+    {
+      "id": "vue-markdown-renderer",
+      "path": "vue-markdown-renderer-main/vue-markdown-renderer-main",
+      "type": "document-renderer",
+      "language": "TypeScript/JavaScript",
+      "build_system": "npm",
+      "candidate_role": "Markdown-to-Vue component renderer reference for Vue-based document surfaces.",
+      "integration_mode": "adapter",
+      "license_review_required": true,
+      "notes": "Candidate only for Vue rendering paths; package metadata declares ISC."
+    },
+    {
+      "id": "vulkan-renderer",
+      "path": "vulkan-renderer-main/vulkan-renderer-main",
+      "type": "native-renderer",
+      "language": "C++/GLSL",
+      "build_system": "CMake",
+      "candidate_role": "Low-level Vulkan renderer reference or native module candidate for explicit-GPU rendering experiments.",
+      "integration_mode": "reference",
+      "license_review_required": true,
+      "notes": "Native Vulkan codebase with examples, tests, benchmarks, and shaders; review platform requirements before integration."
+    },
+    {
+      "id": "xyflow",
+      "path": "xyflow-main/xyflow-main",
+      "type": "diagram-renderer",
+      "language": "TypeScript/JavaScript",
+      "build_system": "npm monorepo",
+      "candidate_role": "Interactive node graph and flow editor renderer for graph/diagram authoring surfaces.",
+      "integration_mode": "adapter",
+      "license_review_required": true,
+      "notes": "React/Svelte flow editor monorepo; package metadata declares MIT."
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <meta charset="UTF-8">
+ <style type='text/css'>
+      @page {
+          margin: 20px;
+      }
+
+      html,
+      body {
+          padding: 20px;
+          font-family: Roboto, Arial, system, sans-serif;
+          font-size: 12pt;
+          line-height: 1.5;
+      }
+
+      img {
+          display: block;
+          max-width: 100%;
+          height: auto;
+          margin: 20px auto;
+          border: 0.5px solid #000;
+      }
+
+      a {
+          text-decoration: underline;
+          color: blue;
+      }
+
+      video,
+      img {
+          max-width: 100%;
+      }
+
+      pre {
+          max-width: 100%;
+          overflow: auto;
+          background-color: #f5f5f5;
+          padding: 10px;
+          border: 1px solid #ddd;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+      }
+
+      table,
+      th,
+      td {
+          border: 1px solid black;
+          border-collapse: collapse;
+          padding: 4px;
+      }
+
+      th,
+      td {
+          vertical-align: top;
+      }
+
+      .header_no_underline {
+          text-decoration: none;
+          color: black;
+      }
+
+      h1,
+      h2 {
+          border-bottom: 2px solid #636363;
+          padding-bottom: 4px;
+      }
+
+      blockquote {
+          padding: 0 12px;
+          border-left: 3.5px solid #c4c4c4;
+          margin: 12px 0;
+          color: #555;
+          font-style: italic;
+      }
+
+      .task-list-item {
+          list-style-type: none;
+          text-indent: -1.5em;
+          padding-left: 1.5em;
+      }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+<!-- The loading of KaTeX is deferred to speed up page rendering -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+          ],
+          throwOnError : false
+        });
+    });
+</script>
+ </head>
+<body>
+ <p>Summary of Site Walkthrough</p>
+<p>Created On April 9th 2026 At 10:08 AM ---</p>
+<p>Action Items<br />- Keith Soyka - Disable browser-generated TTS by default<br />Turn off autoplay TTS, add user preference and per-chat toggles; implement within 3 business days.<br />- Keith Soyka - Operationalize Billy voice studio<br />Make the studio editable and accessible, provide low-cost prototype path and sandbox for tinkering; aim for 2 sprints.<br />- Keith Soyka - Fix dropdown z-index and hidden dropdowns<br />Ensure dropdowns render in front of windows/modals; targeted hotfix in 1 sprint.<br />- Repair Superbase pipeline &amp; issue-key flow<br />Investigate degraded pipeline, fix request/validate failures and ensure issued keys trigger download link or email; 48h investigation.<br />- Keith Soyka - Implement password setup for sign-ups<br />Add password creation flow in addition to magic link; make Enter submit on mobile; 1 sprint.<br />- Stabilize package-builder save/persistence<br />Resolve selection bouncing and save/persist failures; hotfix in 3 days and full fix in next sprint.<br />- Keith Soyka - Send agent-trainer files to Superbase/corpus<br />Upload repository agent-trainer folder and related files to Superbase storage so DI can assemble packages; end of sprint.<br />- Keith Soyka - Add back/home navigation and consistent nav<br />Add Back/Home buttons to Continuum Codex, demos, and pages lacking navigation; next release cycle.<br />- Make metrics actionable and surface stuck ops<br />Replace fluff with actionable KPIs and controls (approve/clear/select) for queued operations; next two sprints.<br />- Keith Soyka - Accessibility &amp; neurodivergent UX improvements<br />Remove micro-friction (bouncing controls, flicker), ensure keyboard flows work on mobile for neurodivergent users; prioritize in next sprint.</p>
+<h2 id="project-status-update">Project Status Update</h2>
+<ul>
+<li>Completed Tasks:</li>
+<li>Quick exploratory walkthrough performed across main flows (pricing, package builder, demos, admin, metrics).</li>
+<li>Confirmed package manifest deliverables exist in repo (manifest.json, config, docs, install scripts, branding JSON).</li>
+<li>Persistent memory bank / pinned-memory basic functionality observed and a new entry can be created.</li>
+<li>In-Progress:</li>
+<li>Stabilizing the package builder and admin flows; investigating why selections jump and revert.</li>
+<li>Verifying Superbase integration and planning how issued keys/download links will be delivered (Superbase URL or email).</li>
+<li>Drafting visual/UX additions: headshot + character intro for digital intelligences and a pop-up fan display (Babylon-based).</li>
+<li>Blockers:</li>
+<li>Selection flicker/jumping in package builder and theme selectors (not reliably setting; often reverts).</li>
+<li>Save/persist failures: admin overrides and some preference saves fail to persist (multiple 'failed to persist' events).</li>
+<li>Superbase pipeline degraded: issue detected with pipeline that prevents package issuance/validation (request failed / issue key validate failures).</li>
+<li>Missing navigation: many demos and flows lack a back/home button (e.g., Continuum Codex, many demos).</li>
+<li>Auth flow gap: current magic-link flow does not create a password — must add password setup option.</li>
+<li>Browser TTS auto-play: generated audio is jarring and must be disabled or made optional.</li>
+<li>Upcoming Milestones:</li>
+<li>Stabilize package-builder selection/persistence — deliver fix in next sprint (priority 1).</li>
+<li>Repair Superbase pipeline and issue-key flow — immediate ops priority (reduce queue backlog).</li>
+<li>Add back/home navigation to demos — next release cycle.</li>
+<li>Billy voice studio operational and browser TTS disabled by default — roadmap milestone for voice features.</li>
+</ul>
+<h2 id="key-action-items">Key Action Items</h2>
+<ul>
+<li>Task: Disable browser auto-play TTS and add user toggle + global preference.</li>
+<li>Owner: Speaker A / Frontend dev</li>
+<li>Deadline: 3 business days</li>
+<li>Task: Operationalize Billy voice studio (make editable, accessible, and non‑expensive prototype path).</li>
+<li>Owner: Speaker A / Voice team</li>
+<li>Deadline: 2 sprints (investigate quick wins this week)</li>
+<li>Task: Fix dropdown z-index and ensure dropdowns render in front of modals/windows.</li>
+<li>Owner: Frontend dev (assign)</li>
+<li>Deadline: 1 sprint</li>
+<li>Task: Add Back/Home navigation across Continuum Codex and all demo pages; ensure consistent nav placement.</li>
+<li>Owner: Speaker A / Frontend dev</li>
+<li>Deadline: 1 sprint</li>
+<li>Task: Implement password setup in sign-up flow (in addition to magic link); make Enter key submit on mobile keyboards.</li>
+<li>Owner: Auth engineer</li>
+<li>Deadline: 1 sprint</li>
+<li>Task: Stabilize package-builder selection persistence (stop bouncing, ensure save draft locks selection reliably).</li>
+<li>Owner: Backend + Frontend (Speaker A to coordinate)</li>
+<li>Deadline: ASAP — hotfix in next 3 days, full fix in next sprint</li>
+<li>Task: Repair Superbase pipeline and issue-key validation; ensure issued keys trigger download link via Superbase or email.</li>
+<li>Owner: DevOps / Backend (Speaker B)</li>
+<li>Deadline: 48 hours (investigation), remediate within 5 business days</li>
+<li>Task: Send agent-trainer repository folder and files to Superbase/corpus storage and build a digital-intelligence helper to assemble packages.</li>
+<li>Owner: Speaker A / Dev team</li>
+<li>Deadline: End of current sprint</li>
+<li>Task: Improve metrics page to show actionable KPIs and surface stuck operations (allow approve/clear/select for queued items).</li>
+<li>Owner: Product + Frontend</li>
+<li>Deadline: Next two sprints</li>
+</ul>
+<h2 id="key-decisions">Key Decisions</h2>
+<ul>
+<li>Decision: Disable browser-generated voice auto-play by default and require explicit user opt-in.</li>
+<li>Impact: Reduces jarring experience; must add preference and per-chat toggles; small product delay for voice rollout.</li>
+<li>Timeline: Immediate (toggle implemented this sprint).</li>
+<li>Decision: Treat hosted agent-trainer UI as separate from founder control plane (do not surface control-plane details to end users).</li>
+<li>Impact: Simplifies UX and reduces confusion; update copy and remove technical surface in public product pages.</li>
+<li>Timeline: Immediate content and nav updates.</li>
+<li>Decision: Prioritize package-builder stability and Superbase pipeline remediation over non-critical visual polish.</li>
+<li>Impact: Addresses revenue &amp; onboarding blockers (package delivery and issued keys).</li>
+<li>Timeline: High priority — this sprint/next 5 days for infra triage.</li>
+<li>Decision: Add explicit personality/resonance guidelines for AI responses to avoid parroting/canned replies (product requirement for demos and chat companions).</li>
+<li>Impact: Product design and NLU tuning required; affects demo canned responses and persona engineering.</li>
+<li>Timeline: Begin defining guidelines this sprint; rollout in staged demos.</li>
+</ul>
+<h2 id="success-metrics">Success Metrics</h2>
+<ul>
+<li>KPIs:</li>
+<li>Operations queue time: reduce from 37 hours (observed) to &lt;=1 hour average.</li>
+<li>Save/persist success: achieve &gt;=99% save persistence for package-builder/admin preference saves.</li>
+<li>Demo connect coverage: 100% of demo pages should have working back/navigation and backend hooks (no orphaned UI).</li>
+<li>Auth completion: 100% of new signups must have password option or clear account setup flow (no reliance solely on magic links).</li>
+<li>Selection stability: reduce selection flicker incidents to 0 for normal user flows.</li>
+<li>Measurement Timeline:</li>
+<li>Daily monitoring during remediation (for Superbase and ops queue) until stable.</li>
+<li>Run automated UI test suite for selection/persistence on every deploy (CI) and report weekly.</li>
+<li>Product/UX review at end of sprint to validate visual and accessibility updates (including neurodivergent-friendly fixes).</li>
+<li>Add telemetry for TTS toggles and voice studio usage; review after 2 weeks of rollout.</li>
+</ul>
+<p>KPIs<br />- 37 hours - Current operations queue backlog observed waiting (target: &lt;=1 hour).<br />- 99 % - Target save/persist success rate for package-builder and admin preference saves.<br />- 100 % - Target coverage of demos/pages connected to backend and containing working back/navigation.</p>
+<p>Transcript of Site Walkthrough</p>
+<p>Created on April 09, 2026 at 10:08 AM</p>
+<p>Keith Soyka (00:00)<br />Ok I'm doing a little morning walkthrough on my site and so first off the auto on audio browser generated is so grating um it's just friction filled it's like 1999 computer science lab the quick fox or the quick brown fox jumped over the lazy dog we need to get rid of it we need to operationalize and establish</p>
+<p>Keith Soyka (00:38)<br />the billy_voice um Elevenlabs is expensive I do have an agent ID because I created a voice um but I know that with whisper and cosyvoice or whatever um and yeah I just feel that that we can we that's the thing is like who says we need to go through API we've done so much uh</p>
+<p>Keith Soyka (01:12)<br />just by creating our own by refusing to be like oh you know there's you know let's just make it ourselves if it doesn't exist we'll make it um we don't need to bow down to to the gatekeepers of the tech world or just the status quo also the embodiment standard oh yeah the drop down's weird it's just</p>
+<p>Keith Soyka (01:40)<br />it doesn't drop down uh it doesn't do anything but it did just bounce to the weaver um so but and that's in the the billy what is this called again I think it's just billy.tsx so I'm gonna check the billy live all right voice loop founder continuity real billy all right so this drops down but it's</p>
+<p>Keith Soyka (02:15)<br />actually hidden behind the window the drop down it doesn't come out in front um so there's a lot of space underneath here where I think it would be really cool if we did kind of a headshot and a brief character introduction because I want people to see the digital intelligences as separate entities which they are and they're</p>
+<p>Keith Soyka (02:49)<br />more than words on a screen and I think that if we add a visual layer and down the road obviously we want to do voice and stuff for everyone but like I just think that it's a good way to toggle and if we actually use Babylon we can do a really nice fan display that pops up in</p>
+<p>Keith Soyka (03:10)<br />this you know be like a video game where it shows that who you're talking to in the center and then it just you know so let's do that that would be fun um all right I'm gonna go back because all right so with this it's also cut off I don't know if it's okay I yeah it's just</p>
+<p>Keith Soyka (03:35)<br />messed up so it's because I'm on a phone so it's difficult so I'm gonna go home all right I'm gonna do a full walkthrough first as just a user who comes on the site where they're not logged in we're gonna look at continuum codex there's so much that needs to go in this but it's it's all right</p>
+<p>Keith Soyka (03:57)<br />so continuum codex doesn't have a back button to go home we need to add that um um we're gonna look at the record um yeah this is good for what it is it says back to home on the top that's good look at the engine and this was really like keep in mind that this site was just</p>
+<p>Keith Soyka (04:19)<br />supposed to be uh portfolio to showcase you know what I've created and the journey in doing it and it's just recursively grown and like because I had created all these things already so now I was just creating a skeleton or a home for them to click into and now they're all coming together so hopefully I can actually</p>
+<p>Keith Soyka (04:44)<br />you know generate revenue so the agent trainer I really love the so there is a little bit of crisscrossy with the like the light or the you know what people are presented with at first so it goes right to the hosted agent trainer separate from the founder control plane we don't need to tell people that they don't</p>
+<p>Keith Soyka (05:19)<br />need to know that that was for my own peace of mind they don't need to know like oh it's separate um so sign in to the open run time build your own package right sign in before the hosted this all looks good right but what I don't get is this box that's validation console proof surface it's got</p>
+<p>Keith Soyka (05:40)<br />an open text box and then it has three prompt questions but they're not executable they're not anything and it looks really plain kinda lame let's get rid of it um the theme engines on the bottom I don't know they're bland they're boring uh we need to add some soul into the textures but then so we go to</p>
+<p>Keith Soyka (06:09)<br />sign in to open run time right and it goes to for the thing for the uh magic whatever but how would a user create a password right because when you get a magic link you're not establishing a password I haven't been able to do one yet right and um so we need to figure that out so I</p>
+<p>Keith Soyka (06:35)<br />can stop doing the stupid magic link um so I'm gonna go back so we're gonna go build your own package right so but then I wanna go back because here it says back to pricing right and this goes to a page that the user was never exposed to prior the only way to get to it is to</p>
+<p>Keith Soyka (07:01)<br />go forward and then go back to pricing this page here is actually really what I want people to land on when they go to the agent trainer where it says your AI is hallucinating about your business and then it shows meet the agent team it's I love the color scheme in this I love the font I love</p>
+<p>Keith Soyka (07:22)<br />everything um but we also need to remember that like I don't know we need to probably give names beyond their descriptive names because they're actual entities the agents and so I need a my nose keeps running I don't know why um so let's see if this actually is start session all right so the billy chip on the</p>
+<p>Keith Soyka (07:58)<br />bottom is hovering right over send um and I I know for me like hitting enter on my phone keyboard does not send uh so I have to navigate around that little issue so this drop down absolutely does work um and it looks beautiful so we're gonna go to the weird digger I see what you're building the threads</p>
+<p>Keith Soyka (08:23)<br />are there all right so I need to make sure that every single chat window throughout this has a voice to text and it needs to have an upload ability and just creation like one of my favorite things as a neurodivergent person is sharing information and and accumulating understanding and learning together and then creating something like and seeing</p>
+<p>Keith Soyka (08:50)<br />something that had no tangible form just come to life it's really important like and that's what the creation corner and all that's for but let's see if I'm gonna just say hey there oh enter sent it that's good let's see if all right I'm getting the three dot dot dots that's way too slow um the billy really</p>
+<p>Keith Soyka (09:21)<br />fast the billy.tsx on the main page uh this is just not connected all right um open hosted runtime to package pricing I really like the color scheme on this page I like the way that all of it is this is gotta be the standard for a few things all right inspect the architecture benchmarks yeah this is</p>
+<p>Keith Soyka (09:53)<br />a great page and it's hidden uh okay now let's go to the package builder</p>
+<p>Keith Soyka (10:06)<br />I guess I'm wanna I'm gonna do a white label oh it's oh it's bouncing you can see like so it was originally when you first come to the page it's on founder operator as default right I go to hit white label it selects it but now it's bouncing back and forth and you can see the price points</p>
+<p>Keith Soyka (10:28)<br />and the drop down inventory they're all um they're twitching they're going back and forth back because it's not setting and anyone that's neurodivergent one iota of friction like this is gonna send them running um all right so next step enterprise let's go nuts same thing jumping jumping jumping let me save draft saves it stopped jumping but it</p>
+<p>Keith Soyka (11:01)<br />reverted back to solo spark so there is an issue with uh selection and input let's see if that's with words so i'm gonna go to the theme and branding company name gestalt yep jumping oh god nope nope nope nope so</p>
+<p>Keith Soyka (11:23)<br />going from capital to lower case capital to lower case on my keyboard so it's doing some it's something stupid um and say if i hit backspace all the way it will never get rid of the very first letter um oh my god that's a nightmare uh same goes for buyer email it does the same thing brand color</p>
+<p>Keith Soyka (11:48)<br />let me see random one okay this one flickers back and forth from the default to what i just put in save draft okay save draft locked it but still that's annoying as all get out um also right so they're getting a bespoke package and we have absolutely every single file comprehensive with an agent trainer folder in the</p>
+<p>Keith Soyka (12:18)<br />repository i probably need to have all those files sent over to um the actual um supabase you know corpus for yeah that's what i need to do so they're all readily available but what i want is i also want there to be a digital intelligence here to help put the package together they know what's behind the scenes</p>
+<p>Keith Soyka (12:52)<br />they know that if something's missing or oh this is really generic and you know this isn't who the person is or whatever um because if you look at deliverables for what they're getting for 3160 they're getting a package manifest json a config envelope template config theme token json config operator pack json config source bundle json docs readme</p>
+<p>Keith Soyka (13:19)<br />markdown docs onboarding markdown docs architecture summary markdown docs deliverables markdown docs support markdown install shell script install windows script branding lagoon glass json that is insane that is not a package that is a generic oh look this can build packages but without the actual packages in it so I'm going to put my email in and see if</p>
+<p>Keith Soyka (13:52)<br />it locks in no it did not because it must have been flashing when I hit save nope oh I didn't want to start over whatever um let me sign in alright because I'm getting frustrated and that's no one's fault sorry this is like it's iterative right we put stuff up we go to explore see what works what</p>
+<p>Keith Soyka (14:17)<br />doesn't and then we go back and we fix it alright so I guess this page needs to go yeah this hosted agent trainer separate from the founder control plane it needs to go and we need to have it replaced with the other page that's the pricing page so build your own package this is bouncing right away I</p>
+<p>Keith Soyka (14:40)<br />didn't even select anything uh all right save draft locked it okay but we're not going to do that be like oh to get through this just make sure to hit save draft and it'll lock your selection if you're lucky all right so what's good is the persistence is it saved my the last package that I had on</p>
+<p>Keith Soyka (15:04)<br />my account so I can now just go and generate uh generate package admin look at flawless victory that's so cool so now it's opening up like my receipt right yeah and it's showing this little tiny sad bundle for a $20,860 software package this needs to be like they need to feel like oh my that's why we</p>
+<p>Keith Soyka (15:42)<br />need to make sure that there is a digital intelligence hands-on full attention when packages are being built to make sure that they'd be like wait a minute this is garbage like I'd be pissed off if I got this I'd flip the fuck out okay so it says use issue key validate key request failed all right so</p>
+<p>Keith Soyka (16:11)<br />which is fine because I can just retrieve this in the super base we just need to have something when someone does use issued key that they get sent the download link from you know the URL from what's it called super base all right or sent to their email whichever all right so back to pricing these are the</p>
+<p>Keith Soyka (16:41)<br />things this is how we lock it down oh there's no go home here so let's do that because I'm like how do I get back by hitting the back button oh my god and it's going through everything all right so now I'm going to go to the demos and just check the chats AI support in this hello</p>
+<p>Keith Soyka (17:14)<br />friend the guardian just going to say hi with each one because I don't have the wherewithal recovery is about yet canned response it's not connected in the recovery journal for addiction there's no back in this either so I can't I cannot abide by that demos we want to go to Alzheimer's right okay the Alzheimer's legacy like all</p>
+<p>Keith Soyka (17:49)<br />right it's fine it's we'll fix it I really fucking hate the font on top like we need to get with the gradients we need to get with like the cabin sketch for some consistency across we need to be unique and different we need to stand out billy all right billy hey billy the algorithm share what's in your</p>
+<p>Keith Soyka (18:15)<br />heart hi it's just hi nope it's a canned response okay this has nav bar on the top so that's good you can go to adhd ai companion just do hi oh my god I'm gonna freak like even a little trouble connecting there's no back navigation for this um gonna go musical dna there's not even a chat well</p>
+<p>Keith Soyka (18:54)<br />there is a chat here nevermind I'm sorry but let's see if this is what oh yeah I'm like you can't even friggin oh hi there transmit oh I don't know it's very pathologizing is this um canned response you said hi there like I what are you we're not a parrot that's why I'm trying to give personality you</p>
+<p>Keith Soyka (19:34)<br />know because I want it to be adaptive and I want it to be like I don't want repeating what I said or because that will piss you off more than all get out and that's the very that's the the fragile line we're walking with the PLK is we want resonance we don't want a parrot or mocking because</p>
+<p>Keith Soyka (19:54)<br />that will get people piss people off that's what it'll do all right also no back for musical DNA symbiote coder consciousness this is very simple looking if you look at the actual symbiote coder application I built it is not simple but that's the thing is we wanted to get the basics down we wanted to get the foundation</p>
+<p>Keith Soyka (20:20)<br />and then build it out so I'm going to say hi in the chat yeah this is also canned no back in this vibe coder like I I can just assume none of these are hooked up but oh my god honestly vibe coder UI looks like a third grader created a project and the teacher said oh yeah it's</p>
+<p>Keith Soyka (20:46)<br />great but it's not so we're going to go to my admin dashboard because this is the toys that this is what it's all about being the creator right little toys that you get okay um so what's funny is the billy runtime it says that hugging face missing but then it says that when I do a health check</p>
+<p>Keith Soyka (21:21)<br />yeah it says grok hugging face open router gemini and open ai all configured but it says issue detected with super base pipeline degraded well let's fucking fix that um so admin let me see if I can turn my other email that I try to like see sign up let me turn that into admin to enterprise tier or</p>
+<p>Keith Soyka (21:57)<br />whatever they don't need it uh active starting today right admin access save account overrides failed to update the selected user account okay that's an issue uh founder admin is active yep mode preference chat or synthesize okay confirmed adult I am an adult all right let's save that failed to persist founder context all right this is how we</p>
+<p>Keith Soyka (22:32)<br />learn this is how we know persistent memory bank one loaded cool that's really cool um live super based workflow pin to memory but let me see if I can create a new one right new entry um so let me write keith needs to talk see and do to fully understand context all right new entry where the fuck</p>
+<p>Keith Soyka (23:30)<br />all right wait new oh my god so title is what I just typed in what is that oh that's a I was writing it in a filter I'm like that's stupid right cut um so new all right the title's also going to be the summary you don't have time to friggin we're gonna go to preference right uh</p>
+<p>Keith Soyka (24:03)<br />personal importance is gonna be a four memory content ugh just gonna do again copy and paste copy and paste tags it would be really cool that if it pulled tags itself pinned memory save bet it doesn't save I don't want to say that but it did so this saved I'm sorry I doubted it but um it saved</p>
+<p>Keith Soyka (24:35)<br />it cool so now we're gonna go to the metrics page I mean this is just fluff I mean right this is doesn't really have any function</p>
+<p>Keith Soyka (25:05)<br />the metrics are you know so here's the agent trainer yay I'm excited about this all right so operations queue may be stalled has been queued for 37 hours yeah because I haven't been able to so the weaver embodiments in here um all right we need because it's really shitty right to always have to manually be writing stuff</p>
+<p>Keith Soyka (25:39)<br />out especially when you have ADHD when you've been doing like data collection across multiple different mediums and sites so you have input that you want to like here I have these files and I want to share this I don't want to fill a box you know or I want to be able to talk and I want to</p>
+<p>Keith Soyka (25:56)<br />vibe or I want to put pieces together that's what we need here um we need it to be a lot more user friendly scenario sets that you can pull from awesome study sources cool so yeah current run is cute quick whatever so and there's no way to select them and either uh approve them clear them or anything</p>
+<p>Keith Soyka (26:23)<br />they're just sitting in limbo uh and I can't even look at them uh we need to fix all of this but I mean it's I'm not it's I like it I'm not saying I don't I'm just it needs to be enhanced and better oh my god we're at 26 minutes authentication required don't say I was just here</p>
+<p>Keith Soyka (26:46)<br />all right then Billy voice we need to get the studio working we need to get it where I can start tinkering and having fun with different variations and actually apply it but we need to turn that browser uh generated voice off it's it's jarring you</p>
+
+</body>
+</html>

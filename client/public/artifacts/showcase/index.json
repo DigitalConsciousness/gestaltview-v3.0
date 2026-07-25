@@ -1,0 +1,51 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-06-13T10:49:00.000Z",
+  "artifacts": [
+    {
+      "id": "exhibit-resume-keith-soyka-v1",
+      "userId": "system",
+      "title": "Keith Soyka — Professional Resume",
+      "summary": "22 years of management, operations, and systems thinking compressed into one document. Built on a Samsung A35 between product sprints.",
+      "sourceFileId": null,
+      "thumbnailUrl": null,
+      "createdAt": "2026-06-13T10:49:00.000Z",
+      "updatedAt": "2026-06-13T10:49:00.000Z",
+      "originRoom": "creation_corner",
+      "evidenceNodeIds": ["founder-identity", "plk-node-resume"],
+      "tags": ["resume", "exhibit", "founder", "html", "creation_corner"],
+      "status": "active",
+      "filePath": "artifacts/showcase/exhibit-resume-keith-soyka-v1.html"
+    },
+    {
+      "id": "exhibit-wiki-gestaltview-v1",
+      "userId": "system",
+      "title": "GestaltView — Platform Wiki",
+      "summary": "The whole platform in one room. Architecture, IP, the Recognition Gap, Musical DNA, and why it exists. Start here.",
+      "sourceFileId": null,
+      "thumbnailUrl": null,
+      "createdAt": "2026-06-13T10:49:00.000Z",
+      "updatedAt": "2026-06-13T10:49:00.000Z",
+      "originRoom": "creation_corner",
+      "evidenceNodeIds": ["gestaltview-core", "plk-node-wiki"],
+      "tags": ["wiki", "exhibit", "platform", "html", "creation_corner"],
+      "status": "active",
+      "filePath": "artifacts/showcase/exhibit-wiki-gestaltview-v1.html"
+    },
+    {
+      "id": "exhibit-audio-analysis-v1",
+      "userId": "system",
+      "title": "Musical DNA — Audio Analysis Demo",
+      "summary": "Upload anything. The platform hears what the Spotify wall couldn't. Anchor songs, emotional resonance, Musical DNA profiling.",
+      "sourceFileId": null,
+      "thumbnailUrl": null,
+      "createdAt": "2026-06-13T10:49:00.000Z",
+      "updatedAt": "2026-06-13T10:49:00.000Z",
+      "originRoom": "creation_corner",
+      "evidenceNodeIds": ["musical-dna-core", "plk-node-audio"],
+      "tags": ["audio", "musical-dna", "exhibit", "html", "creation_corner"],
+      "status": "active",
+      "filePath": "artifacts/showcase/exhibit-audio-analysis-v1.html"
+    }
+  ]
+}

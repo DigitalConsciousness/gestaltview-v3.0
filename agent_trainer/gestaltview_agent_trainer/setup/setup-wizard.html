@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GestaltView Agent Trainer Setup Wizard</title>
+    <style>
+      :root {
+        --bg: #f4efe6;
+        --panel: rgba(255, 251, 245, 0.9);
+        --panel-strong: rgba(255, 255, 255, 0.96);
+        --ink: #1f241f;
+        --muted: #5e6a62;
+        --accent: #0b6b63;
+        --accent-soft: #dcefe8;
+        --warm: #c5742f;
+        --warm-soft: #f7e7d8;
+        --night: #143230;
+        --night-ink: #edf8f5;
+        --border: rgba(26, 55, 50, 0.14);
+        --shadow: 0 20px 55px rgba(31, 36, 31, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(11, 107, 99, 0.14), transparent 28%),
+          radial-gradient(circle at bottom right, rgba(197, 116, 47, 0.12), transparent 24%),
+          linear-gradient(180deg, #fbf7f1 0%, var(--bg) 100%);
+      }
+
+      main {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 44px 22px 72px;
+      }
+
+      .hero,
+      .panel {
+        border-radius: 28px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(18px);
+      }
+
+      .hero {
+        display: grid;
+        gap: 22px;
+        grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+        padding: 30px;
+        background: linear-gradient(145deg, var(--panel-strong), rgba(255, 248, 241, 0.84));
+        margin-bottom: 22px;
+      }
+
+      .hero h1 {
+        margin: 0 0 12px;
+        font-size: clamp(2.2rem, 4vw, 4rem);
+        line-height: 0.94;
+        letter-spacing: -0.05em;
+      }
+
+      .hero p {
+        margin: 0;
+        max-width: 760px;
+        color: var(--muted);
+        line-height: 1.68;
+      }
+
+      .eyebrow,
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        border-radius: 999px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow {
+        padding: 8px 12px;
+        background: rgba(11, 107, 99, 0.11);
+        color: var(--accent);
+        margin-bottom: 14px;
+      }
+
+      .hero-focus {
+        display: grid;
+        gap: 12px;
+        padding: 20px;
+        background: linear-gradient(180deg, rgba(20, 50, 48, 0.98), rgba(25, 68, 63, 0.94));
+        color: var(--night-ink);
+        border-radius: 24px;
+      }
+
+      .hero-focus p {
+        color: rgba(237, 248, 245, 0.82);
+      }
+
+      .hero-tags,
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .pill {
+        padding: 9px 12px;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--night-ink);
+      }
+
+      .pill.warm {
+        background: rgba(197, 116, 47, 0.16);
+        color: #fff5ea;
+      }
+
+      .layout {
+        display: grid;
+        gap: 20px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+
+      .panel {
+        display: grid;
+        gap: 18px;
+        padding: 24px;
+        background: var(--panel);
+      }
+
+      .panel h2,
+      .panel h3 {
+        margin: 0;
+        line-height: 1.1;
+      }
+
+      .panel h2 {
+        font-size: 1.5rem;
+        letter-spacing: -0.03em;
+      }
+
+      .panel h3 {
+        font-size: 1.02rem;
+      }
+
+      .panel p,
+      .panel li,
+      .panel label,
+      .panel option,
+      .panel input,
+      .panel select,
+      .panel textarea {
+        font-size: 0.98rem;
+      }
+
+      .muted {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.62;
+      }
+
+      label {
+        display: grid;
+        gap: 7px;
+        font-weight: 700;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        border: 1px solid rgba(26, 55, 50, 0.12);
+        border-radius: 16px;
+        padding: 13px 14px;
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.88);
+      }
+
+      textarea {
+        min-height: 118px;
+        resize: vertical;
+      }
+
+      .field-grid {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+
+      .step-list,
+      .checklist {
+        display: grid;
+        gap: 12px;
+      }
+
+      .step-item,
+      .mini-card,
+      .summary-card {
+        border-radius: 20px;
+        border: 1px solid rgba(26, 55, 50, 0.1);
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .step-item {
+        display: grid;
+        gap: 10px;
+        padding: 16px 18px;
+      }
+
+      .step-head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .step-tag {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 7px 10px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .step-tag.current {
+        color: var(--accent);
+        background: rgba(11, 107, 99, 0.11);
+      }
+
+      .step-tag.next {
+        color: var(--warm);
+        background: rgba(197, 116, 47, 0.12);
+      }
+
+      .step-tag.queued {
+        color: #5a615e;
+        background: rgba(31, 36, 31, 0.08);
+      }
+
+      .mini-card,
+      .summary-card {
+        padding: 16px;
+      }
+
+      .mini-card {
+        display: grid;
+        gap: 8px;
+      }
+
+      .summary-grid {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      .summary-card strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .warm-panel {
+        background: linear-gradient(180deg, rgba(247, 231, 216, 0.96), rgba(255, 248, 241, 0.86));
+      }
+
+      .night-panel {
+        background: linear-gradient(180deg, rgba(20, 50, 48, 0.98), rgba(28, 63, 59, 0.94));
+        color: var(--night-ink);
+      }
+
+      .night-panel p,
+      .night-panel li {
+        color: rgba(237, 248, 245, 0.82);
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      pre {
+        margin: 0;
+        padding: 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(9, 28, 27, 0.95);
+        color: #def8f4;
+        overflow: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+
+      button {
+        border: none;
+        border-radius: 999px;
+        padding: 12px 18px;
+        background: var(--accent);
+        color: white;
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      button.secondary {
+        background: transparent;
+        color: var(--accent);
+        border: 1px solid rgba(11, 107, 99, 0.26);
+      }
+
+      @media (max-width: 860px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
+        main {
+          padding: 28px 14px 56px;
+        }
+
+        .panel,
+        .hero {
+          border-radius: 22px;
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <div>
+          <div class="eyebrow">Guided Setup</div>
+          <h1>Guide the builder instead of testing them.</h1>
+          <p>
+            This wizard keeps setup on one visible track: name the workspace,
+            create the GitHub repo corpus container, review a small first
+            batch, then import with a manifest-backed dry run before anything
+            goes live.
+          </p>
+        </div>
+        <aside class="hero-focus">
+          <div class="eyebrow" style="background: rgba(255,255,255,0.1); color: #edf8f5; margin: 0">
+            Focus
+          </div>
+          <h2 style="margin: 0; font-size: 1.4rem">Repo-aware onboarding</h2>
+          <p>
+            The operator should always know the current step, the artifact being
+            created, and the next command or UI action.
+          </p>
+          <div class="hero-tags">
+            <span class="pill warm">Repo container first</span>
+            <span class="pill">Dry-run default</span>
+            <span class="pill">Small batch import</span>
+          </div>
+        </aside>
+      </section>
+
+      <section class="layout">
+        <section class="grid">
+          <article class="panel">
+            <h2>1. Identity and ownership</h2>
+            <p class="muted">
+              Start with names and the repo reference so every later artifact
+              points somewhere concrete.
+            </p>
+            <div class="field-grid">
+              <label>
+                Workspace name
+                <input id="workspaceName" value="My Agent Workspace" />
+              </label>
+              <label>
+                Agent name
+                <input id="agentName" value="My AI Assistant" />
+              </label>
+              <label>
+                GitHub repository
+                <input id="repoRef" value="owner/repo" />
+              </label>
+              <label>
+                Default branch
+                <input id="defaultBranch" value="main" />
+              </label>
+            </div>
+            <div class="field-grid">
+              <label>
+                Tier
+                <select id="kitTier">
+                  <option value="SOLO_SPARK">Solo Spark</option>
+                  <option value="STUDIO" selected>Studio</option>
+                  <option value="GROWTH">Growth</option>
+                  <option value="ENTERPRISE">Enterprise</option>
+                </select>
+              </label>
+              <label>
+                Theme preset
+                <select id="themePreset">
+                  <option value="lagoon-glass">Lagoon Glass</option>
+                  <option value="copper-signal">Copper Signal</option>
+                  <option value="signal-noir">Signal Noir</option>
+                  <option value="atlas-neutral">Atlas Neutral</option>
+                  <option value="orchard-air">Orchard Air</option>
+                </select>
+              </label>
+            </div>
+          </article>
+
+          <article class="panel warm-panel">
+            <h2>2. First batch plan</h2>
+            <p class="muted">
+              Keep the first import intentionally small so the operator can see
+              what happened and fix it without digging through a giant ingest.
+            </p>
+            <div class="field-grid">
+              <label>
+                First focus lane
+                <select id="firstTarget">
+                  <option value="knowledge">Knowledge</option>
+                  <option value="code">Code</option>
+                  <option value="product">Product</option>
+                  <option value="context">Context</option>
+                </select>
+              </label>
+              <label>
+                Source count in first pass
+                <input id="sourceCount" type="number" min="1" value="12" />
+              </label>
+              <label>
+                Planned batch count
+                <input id="batchCount" type="number" min="1" value="1" />
+              </label>
+            </div>
+            <label>
+              Review notes
+              <textarea
+                id="notes"
+                placeholder="Document the repo export plan, risky files, and what should stay out of the first batch."
+              ></textarea>
+            </label>
+            <div class="checklist" id="reviewChecklist">
+              <div class="mini-card">Loading review checklist...</div>
+            </div>
+          </article>
+        </section>
+
+        <section class="grid">
+          <article class="panel">
+            <h2>3. Shared onboarding path</h2>
+            <p class="muted" id="segmentRecommendation">
+              Segment recommendation: business
+            </p>
+            <div class="step-list" id="taskGraphList">
+              <div class="step-item">Loading onboarding graph...</div>
+            </div>
+          </article>
+
+          <article class="panel night-panel">
+            <h2>4. Repo corpus container</h2>
+            <p>
+              This is the scaffold the operator should get before any import.
+              Raw repo exports and staged lane files live in different places so
+              the path stays understandable.
+            </p>
+            <pre id="containerPreview">Loading container preview...</pre>
+          </article>
+        </section>
+
+        <section class="grid">
+          <article class="panel">
+            <h2>5. Environment checkpoint</h2>
+            <ul>
+              <li>Create or connect the Supabase project before the first live write.</li>
+              <li>Add at least one provider key for guided setup and evaluations.</li>
+              <li>Generate the repo corpus container before editing the manifest.</li>
+              <li>Run dry first, then repeat the same manifest for live ingest.</li>
+            </ul>
+          </article>
+
+          <article class="panel">
+            <h2>6. Recommended commands</h2>
+            <div class="summary-grid">
+              <div class="summary-card">
+                <strong>Stage repo</strong>
+                <span id="commandStageRepo">./gv.sh repo stage owner/repo</span>
+              </div>
+              <div class="summary-card">
+                <strong>Review first batch</strong>
+                <span id="commandReview">./gv.sh import review ./buyer-import.template.json</span>
+              </div>
+              <div class="summary-card">
+                <strong>Import approved batch</strong>
+                <span id="commandImport">./gv.sh import manifest ./buyer-import.template.json</span>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="panel">
+          <h2>Summary and handoff</h2>
+          <p class="muted">
+            Use this summary as the “you are here” block. It should explain what
+            the operator already set, what container is being created, and what
+            command comes next.
+          </p>
+          <div class="summary-grid">
+            <div class="summary-card">
+              <strong>Workspace</strong>
+              <span id="summaryWorkspace">My Agent Workspace</span>
+            </div>
+            <div class="summary-card">
+              <strong>Agent</strong>
+              <span id="summaryAgent">My AI Assistant</span>
+            </div>
+            <div class="summary-card">
+              <strong>Repository</strong>
+              <span id="summaryRepo">owner/repo</span>
+            </div>
+            <div class="summary-card">
+              <strong>Segment</strong>
+              <span id="summarySegment">business</span>
+            </div>
+            <div class="summary-card">
+              <strong>First lane</strong>
+              <span id="summaryTarget">knowledge</span>
+            </div>
+            <div class="summary-card">
+              <strong>Theme</strong>
+              <span id="summaryTheme">lagoon-glass</span>
+            </div>
+          </div>
+          <div class="button-row">
+            <button id="buildEnv">Build `.env.local` draft</button>
+            <button id="copyChecklist" class="secondary">Copy kickoff checklist</button>
+          </div>
+          <pre id="output"># Your setup draft will appear here.</pre>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      const fields = {
+        workspaceName: document.getElementById("workspaceName"),
+        agentName: document.getElementById("agentName"),
+        repoRef: document.getElementById("repoRef"),
+        defaultBranch: document.getElementById("defaultBranch"),
+        kitTier: document.getElementById("kitTier"),
+        themePreset: document.getElementById("themePreset"),
+        firstTarget: document.getElementById("firstTarget"),
+        sourceCount: document.getElementById("sourceCount"),
+        batchCount: document.getElementById("batchCount"),
+        notes: document.getElementById("notes")
+      };
+
+      const summary = {
+        workspace: document.getElementById("summaryWorkspace"),
+        agent: document.getElementById("summaryAgent"),
+        repo: document.getElementById("summaryRepo"),
+        segment: document.getElementById("summarySegment"),
+        target: document.getElementById("summaryTarget"),
+        theme: document.getElementById("summaryTheme"),
+        output: document.getElementById("output")
+      };
+
+      const onboardingUi = {
+        segmentRecommendation: document.getElementById("segmentRecommendation"),
+        taskGraphList: document.getElementById("taskGraphList"),
+        containerPreview: document.getElementById("containerPreview"),
+        reviewChecklist: document.getElementById("reviewChecklist"),
+        commandStageRepo: document.getElementById("commandStageRepo"),
+        commandReview: document.getElementById("commandReview"),
+        commandImport: document.getElementById("commandImport")
+      };
+
+      const reviewChecklist = [
+        "Start with a small first batch instead of the entire repository.",
+        "Sort each source into knowledge, code, product, or context before import.",
+        "Flag oversized or duplicated files before anything reaches Supabase.",
+        "Keep notes on why a source belongs in the corpus.",
+        "Run dry first, then promote the same manifest to a live ingest."
+      ];
+
+      let onboardingGraph = null;
+
+      function inferSegmentFromTier(tier) {
+        if (tier === "SOLO_SPARK") return "solo";
+        if (tier === "ENTERPRISE") return "enterprise";
+        return "business";
+      }
+
+      function slugify(value) {
+        return value
+          .trim()
+          .toLowerCase()
+          .replace(/^https?:\/\/github\.com\//, "")
+          .replace(/\.git$/, "")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "") || "owner-repo";
+      }
+
+      function containerRoot() {
+        return `.gsvw/repo-corpus/${slugify(fields.repoRef.value || "owner/repo")}`;
+      }
+
+      function containerPreview() {
+        return [
+          `${containerRoot()}/`,
+          "  incoming/github/",
+          "  incoming/files/",
+          "  staged/knowledge/",
+          "  staged/code/",
+          "  staged/product/",
+          "  staged/context/",
+          "  review/seed-plan.md",
+          "  manifests/import-manifest.template.json"
+        ].join("\n");
+      }
+
+      function syncSummary() {
+        const segment = inferSegmentFromTier(fields.kitTier.value);
+        summary.workspace.textContent = fields.workspaceName.value.trim() || "My Agent Workspace";
+        summary.agent.textContent = fields.agentName.value.trim() || "My AI Assistant";
+        summary.repo.textContent = fields.repoRef.value.trim() || "owner/repo";
+        summary.segment.textContent = segment;
+        summary.target.textContent = fields.firstTarget.value;
+        summary.theme.textContent = fields.themePreset.value;
+
+        onboardingUi.segmentRecommendation.textContent = `Segment recommendation: ${segment}`;
+        onboardingUi.containerPreview.textContent = containerPreview();
+        onboardingUi.commandStageRepo.textContent = `./gv.sh repo stage ${fields.repoRef.value.trim() || "owner/repo"} ${fields.defaultBranch.value.trim() || "main"}`;
+        onboardingUi.commandReview.textContent = `./gv.sh import review ${containerRoot()}/manifests/import-manifest.template.json operator-guided ${fields.batchCount.value || 1}`;
+        onboardingUi.commandImport.textContent = `./gv.sh import manifest ${containerRoot()}/manifests/import-manifest.template.json`;
+        renderTaskGraph(segment);
+      }
+
+      function renderReviewChecklist() {
+        onboardingUi.reviewChecklist.innerHTML = reviewChecklist
+          .map((item) => `<div class="mini-card">${item}</div>`)
+          .join("");
+      }
+
+      function envDraft() {
+        return [
+          "NEXT_PUBLIC_SUPABASE_URL=",
+          "NEXT_PUBLIC_SUPABASE_ANON_KEY=",
+          "SUPABASE_SERVICE_ROLE_KEY=",
+          "",
+          "GROQ_API_KEY=",
+          "OPENAI_API_KEY=",
+          "GEMINI_API_KEY=",
+          "",
+          "EMBEDDING_PROVIDER=gemini",
+          "EMBEDDING_MODEL=text-embedding-004",
+          "EMBEDDING_DIMENSION=768",
+          "",
+          `KIT_NAME=${fields.agentName.value.trim() || "My AI Assistant"}`,
+          "KIT_DOMAIN=general",
+          `KIT_TIER=${fields.kitTier.value}`,
+          "",
+          `WORKSPACE_NAME=${fields.workspaceName.value.trim() || "My Agent Workspace"}`,
+          `GITHUB_REPOSITORY=${fields.repoRef.value.trim() || "owner/repo"}`,
+          `GIT_DEFAULT_BRANCH=${fields.defaultBranch.value.trim() || "main"}`,
+          `CORPUS_CONTAINER=${containerRoot()}`,
+          "",
+          `# Theme preset: ${fields.themePreset.value}`,
+          `# Recommended segment: ${inferSegmentFromTier(fields.kitTier.value)}`,
+          `# First lane focus: ${fields.firstTarget.value}`,
+          `# First batch plan: ${fields.sourceCount.value || 0} sources across ${fields.batchCount.value || 1} batch(es)`,
+          `# Notes: ${fields.notes.value.trim()}`
+        ].join("\n");
+      }
+
+      function renderTaskGraph(segment) {
+        if (!onboardingGraph) {
+          onboardingUi.taskGraphList.innerHTML = '<div class="step-item">Shared task graph is loading.</div>';
+          return;
+        }
+
+        const track = (onboardingGraph.tracks[segment] || []).filter(
+          (taskId) => taskId !== "recommend_segment"
+        );
+        const items = track
+          .map((taskId, index) => {
+            const task = onboardingGraph.tasks.find((entry) => entry.task_id === taskId);
+            if (!task) return "";
+            const status = index === 0 ? "current" : index === 1 ? "next" : "queued";
+            const statusLabel = index === 0 ? "Current" : index === 1 ? "Next" : "Queued";
+
+            return `
+              <div class="step-item">
+                <div class="step-head">
+                  <span class="step-tag ${status}">${statusLabel}</span>
+                  <span class="step-tag queued">Step ${index + 1}</span>
+                </div>
+                <strong>${task.title}</strong>
+                <div class="muted">${task.description}</div>
+              </div>
+            `;
+          })
+          .join("");
+
+        onboardingUi.taskGraphList.innerHTML =
+          items || '<div class="step-item">No tasks found for this segment.</div>';
+      }
+
+      async function loadOnboardingGraph() {
+        try {
+          const response = await fetch("./onboarding-task-graph.json");
+          onboardingGraph = await response.json();
+          renderTaskGraph(inferSegmentFromTier(fields.kitTier.value));
+        } catch (_error) {
+          onboardingUi.taskGraphList.innerHTML =
+            '<div class="step-item">Unable to load the shared onboarding task graph.</div>';
+        }
+      }
+
+      for (const element of Object.values(fields)) {
+        element.addEventListener("input", syncSummary);
+        element.addEventListener("change", syncSummary);
+      }
+
+      document.getElementById("buildEnv").addEventListener("click", async () => {
+        const draft = envDraft();
+        summary.output.textContent = draft;
+        try {
+          await navigator.clipboard.writeText(draft);
+        } catch (_error) {
+          // Clipboard access is optional in local browser contexts.
+        }
+      });
+
+      document.getElementById("copyChecklist").addEventListener("click", async () => {
+        const checklist = [
+          `1. Run ./gv.sh repo stage ${fields.repoRef.value.trim() || "owner/repo"} ${fields.defaultBranch.value.trim() || "main"}`,
+          `2. Move the first ${fields.sourceCount.value || 0} reviewed sources into staged lane folders`,
+          `3. Review the manifest with ./gv.sh import review ${containerRoot()}/manifests/import-manifest.template.json`,
+          `4. Verify Supabase and provider credentials`,
+          `5. Run the first ingest with ./gv.sh import manifest ${containerRoot()}/manifests/import-manifest.template.json`,
+          "6. Choose the strongest lane and run evaluations before publishing"
+        ].join("\n");
+        summary.output.textContent = checklist;
+        try {
+          await navigator.clipboard.writeText(checklist);
+        } catch (_error) {
+          // Clipboard access is optional in local browser contexts.
+        }
+      });
+
+      renderReviewChecklist();
+      loadOnboardingGraph();
+      syncSummary();
+    </script>
+  </body>
+</html>

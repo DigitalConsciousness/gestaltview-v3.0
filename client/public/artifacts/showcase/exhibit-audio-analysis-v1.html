@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Musical DNA — Audio Analysis Demo</title>
+<style>
+  :root { color-scheme: dark; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #060a0f;
+    color: #ddeaf5;
+    min-height: 100vh;
+  }
+  .shell {
+    min-height: 100vh;
+    padding: 48px 32px;
+    background:
+      radial-gradient(ellipse 50% 40% at 50% 0%, rgba(0,220,180,0.12) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 30% at 90% 80%, rgba(0,140,255,0.09) 0%, transparent 50%),
+      #060a0f;
+  }
+  .frame {
+    max-width: 880px;
+    margin: 0 auto;
+    border: 1px solid rgba(0,220,180,0.14);
+    border-radius: 24px;
+    background: rgba(255,255,255,0.025);
+    overflow: hidden;
+    box-shadow: 0 0 80px rgba(0,220,180,0.07);
+  }
+  .chrome {
+    padding: 24px 28px;
+    border-bottom: 1px solid rgba(0,220,180,0.12);
+    background: rgba(0,220,180,0.03);
+  }
+  .chrome-label {
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: rgba(0,220,180,0.7);
+    margin-bottom: 8px;
+  }
+  .chrome-title { font-size: 26px; font-weight: 600; color: #f0faf8; line-height: 1.15; }
+  .chrome-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+  .body { padding: 32px 28px; }
+  .section { margin-bottom: 32px; }
+  .section-title {
+    font-size: 11px;
+    letter-spacing: .20em;
+    text-transform: uppercase;
+    color: rgba(0,220,180,0.6);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0,220,180,0.12);
+  }
+  p.body-text {
+    font-size: 14px;
+    line-height: 1.75;
+    color: rgba(255,255,255,0.58);
+    margin-bottom: 12px;
+    max-width: 72ch;
+  }
+  p.body-text strong { color: rgba(255,255,255,0.82); }
+  .waveform {
+    margin: 20px 0;
+    height: 64px;
+    border-radius: 12px;
+    background: rgba(0,220,180,0.06);
+    border: 1px solid rgba(0,220,180,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 0 16px;
+    overflow: hidden;
+  }
+  .bar {
+    width: 3px;
+    border-radius: 2px;
+    background: rgba(0,220,180,0.6);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scaleY(0.3); opacity: 0.5; }
+    50% { transform: scaleY(1); opacity: 1; }
+  }
+  .anchor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .anchor-card {
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(0,220,180,0.15);
+    background: rgba(0,220,180,0.04);
+  }
+  .anchor-name { font-size: 14px; font-weight: 600; color: rgba(0,220,180,0.9); margin-bottom: 3px; }
+  .anchor-artist { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 8px; }
+  .anchor-tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(0,220,180,0.1);
+    color: rgba(0,220,180,0.75);
+  }
+  .dna-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .dna-pill {
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,220,180,0.22);
+    color: rgba(0,220,180,0.8);
+    background: rgba(0,220,180,0.05);
+  }
+  .upload-cta {
+    margin-top: 28px;
+    padding: 20px 24px;
+    border-radius: 16px;
+    background: rgba(0,220,180,0.06);
+    border: 1px solid rgba(0,220,180,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .upload-text { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.6; max-width: 480px; }
+  .upload-text strong { color: rgba(255,255,255,0.85); }
+  .upload-btn {
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: rgba(0,220,180,0.15);
+    border: 1px solid rgba(0,220,180,0.35);
+    color: rgba(0,220,180,0.95);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 180ms;
+  }
+  .upload-btn:hover { background: rgba(0,220,180,0.25); }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="frame">
+    <div class="chrome">
+      <div class="chrome-label">Exhibit · Musical DNA</div>
+      <div class="chrome-title">Audio Analysis Demo</div>
+      <div class="chrome-sub">Upload anything. The platform hears what the Spotify wall couldn't.</div>
+    </div>
+    <div class="body">
+
+      <div class="section">
+        <div class="section-title">What Musical DNA Does</div>
+        <p class="body-text">Spotify's Web API requires a Premium account — GestaltView doesn't need Spotify at all. Users upload up to <strong>10 anchor songs</strong> directly into the platform. The Musical DNA engine profiles each song for emotional resonance, tempo signature, lyrical weight, and genre markers.</p>
+        <p class="body-text">The result is a <strong>Musical DNA Dashboard</strong> that maps a user's sonic identity — not just what they listen to, but what those songs mean to them structurally and emotionally.</p>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Live Waveform</div>
+        <div class="waveform" id="waveform"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Sample Anchor Songs</div>
+        <div class="anchor-grid">
+          <div class="anchor-card">
+            <div class="anchor-name">Anchor Song 1</div>
+            <div class="anchor-artist">Your Upload</div>
+            <span class="anchor-tag">high resonance</span>
+          </div>
+          <div class="anchor-card">
+            <div class="anchor-name">Anchor Song 2</div>
+            <div class="anchor-artist">Your Upload</div>
+            <span class="anchor-tag">emotional weight</span>
+          </div>
+          <div class="anchor-card">
+            <div class="anchor-name">Anchor Song 3</div>
+            <div class="anchor-artist">Your Upload</div>
+            <span class="anchor-tag">tempo anchor</span>
+          </div>
+          <div class="anchor-card">
+            <div class="anchor-name">+ 7 more slots</div>
+            <div class="anchor-artist">Waiting</div>
+            <span class="anchor-tag">open</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Detected DNA Markers</div>
+        <div class="dna-row">
+          <span class="dna-pill">Introspective</span>
+          <span class="dna-pill">Rhythmically grounded</span>
+          <span class="dna-pill">Lyric-forward</span>
+          <span class="dna-pill">High dynamic range</span>
+          <span class="dna-pill">Minor key preference</span>
+          <span class="dna-pill">Story-driven</span>
+        </div>
+      </div>
+
+      <div class="upload-cta">
+        <div class="upload-text">
+          <strong>Ready to map your Musical DNA?</strong><br>
+          Sign in to GestaltView and upload your first anchor song. No Spotify account needed — just the songs that mean something.
+        </div>
+        <button class="upload-btn" onclick="window.parent.postMessage('navigate:/musical-dna','*')">Open Musical DNA</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Animate waveform bars
+  const waveform = document.getElementById('waveform');
+  const barCount = 60;
+  for (let i = 0; i < barCount; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    const height = 10 + Math.random() * 44;
+    bar.style.height = height + 'px';
+    bar.style.animationDelay = (Math.random() * 1.4) + 's';
+    bar.style.animationDuration = (0.8 + Math.random() * 0.8) + 's';
+    waveform.appendChild(bar);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "skills": {
+    "meticulous-cli": {
+      "source": "alwaysmeticulous/skills",
+      "sourceType": "github",
+      "skillPath": "meticulous-cli/SKILL.md",
+      "computedHash": "aced1c393b8171c019f1482f09aceed96b106a17461926b41e0e6de2063dbb9f"
+    },
+    "meticulous-cli-update": {
+      "source": "alwaysmeticulous/skills",
+      "sourceType": "github",
+      "skillPath": "meticulous-cli-update/SKILL.md",
+      "computedHash": "e48ebd5b648429ab466315d962229a616cde7b05731502e020c5019b13ab31d9"
+    },
+    "meticulous-iterative-dev": {
+      "source": "alwaysmeticulous/skills",
+      "sourceType": "github",
+      "skillPath": "meticulous-iterative-dev/SKILL.md",
+      "computedHash": "ce04fcab24440afe7149086509218c68eb234610b191f4dc0d25c522e8c4b5d3"
+    },
+    "meticulous-review": {
+      "source": "alwaysmeticulous/skills",
+      "sourceType": "github",
+      "skillPath": "meticulous-review/SKILL.md",
+      "computedHash": "7cfa05661521aaac961963339cd5711872a36ac9f5b5218a663f93776da38844"
+    },
+    "meticulous-simulate-and-diff": {
+      "source": "alwaysmeticulous/skills",
+      "sourceType": "github",
+      "skillPath": "meticulous-simulate-and-diff/SKILL.md",
+      "computedHash": "2abdce3d12137adb16480db5baaca96b0c818618adb7ebfacd09b06fffc891ae"
+    },
+    "meticulous-test": {
+      "source": "alwaysmeticulous/skills",
+      "sourceType": "github",
+      "skillPath": "meticulous-test/SKILL.md",
+      "computedHash": "d4a44704430a1072def833a6f1821d69c874ed6756969ae376cb41d58d98e9a2"
+    },
+    "meticulous-use-session-data": {
+      "source": "alwaysmeticulous/skills",
+      "sourceType": "github",
+      "skillPath": "meticulous-use-session-data/SKILL.md",
+      "computedHash": "f09dd12b272ec245760967c8c0ab1c885b746b4ea90a45d48c35e567e3074685"
+    },
+    "supabase": {
+      "source": "supabase/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/supabase/SKILL.md",
+      "computedHash": "d414d598b9428b3e851c4ce61898649906b19e55aa7415bb42a286bd9ca2ab32"
+    },
+    "supabase-postgres-best-practices": {
+      "source": "supabase/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/supabase-postgres-best-practices/SKILL.md",
+      "computedHash": "0d2c4857a7d6fdcd3fbc46e458fa4c497f029cab89a01548b3defce203003932"
+    }
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Knowledge Curation"
+  short_description: "Curate the compendium corpus and archives."
+  default_prompt: "Identify canonical knowledge assets, organize archives, and improve discoverability."

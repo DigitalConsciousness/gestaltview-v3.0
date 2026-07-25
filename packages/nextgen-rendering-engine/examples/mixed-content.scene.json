@@ -1,0 +1,23 @@
+{
+  "schema": "nextgen.scene-graph.v1",
+  "graphId": "gestaltview_high_end_demo",
+  "nodes": [
+    { "id": "export_main", "type": "ExportRequest", "name": "High-end GestaltView export", "props": { "roots": ["doc_main"], "targets": [{ "format": "html", "uri": "out/demo.html" }, { "format": "svg", "uri": "out/pipeline.svg" }] } },
+    { "id": "doc_main", "type": "Document", "name": "GestaltView multimodal document", "props": { "format": "interactive-report", "title": "GestaltView NextGen Rendering Engine" } },
+    { "id": "intro", "type": "Markdown", "name": "Executive summary", "props": { "source": "# GestaltView NextGen Rendering Engine\n\nA unified scene graph coordinates native 3D, web canvas, diagrams, charts, video, and document export." } },
+    { "id": "pipeline", "type": "Diagram", "name": "Rendering pipeline", "props": { "diagramType": "mermaid", "renderer": "mermaid", "source": "flowchart LR\n  SG[SceneGraph] --> ORCH[Gestalt Orchestrator]\n  ORCH --> NATIVE[Native GPU Facade]\n  ORCH --> WEB[Web Canvas Shell]\n  ORCH --> DOC[Document Renderer]\n  ORCH --> DIA[Diagram Renderer]\n  NATIVE --> EXPORT[Export Manifest]\n  WEB --> EXPORT\n  DOC --> EXPORT\n  DIA --> EXPORT" } },
+    { "id": "perf_chart", "type": "Chart", "name": "Backend readiness", "props": { "library": "chart.js", "chartType": "bar", "data": { "labels": ["Native", "Web", "Document", "Diagram"], "datasets": [{ "label": "Capability", "data": [85, 90, 88, 92] }] } } },
+    { "id": "hero_scene", "type": "Scene3D", "name": "Hero native scene", "props": { "coordinateSystem": "right-handed-y-up", "units": "meters", "renderSettings": { "pbr": true, "clusteredLighting": true } } },
+    { "id": "sky", "type": "Atmosphere", "name": "Production atmosphere", "props": { "model": "sky-atmosphere-lut", "sunDirection": [0.2, 0.8, 0.4] } },
+    { "id": "web_preview", "type": "DOMSnapshot", "name": "Interactive web preview", "props": { "html": "<canvas data-engine='pixi-r3f'></canvas>", "viewport": { "width": 1920, "height": 1080 } } }
+  ],
+  "edges": [
+    { "id": "e1", "type": "contains", "from": "export_main", "to": "doc_main", "props": { "order": 0 } },
+    { "id": "e2", "type": "contains", "from": "doc_main", "to": "intro", "props": { "order": 1 } },
+    { "id": "e3", "type": "contains", "from": "doc_main", "to": "pipeline", "props": { "order": 2 } },
+    { "id": "e4", "type": "contains", "from": "doc_main", "to": "perf_chart", "props": { "order": 3 } },
+    { "id": "e5", "type": "contains", "from": "doc_main", "to": "web_preview", "props": { "order": 4 } },
+    { "id": "e6", "type": "contains", "from": "hero_scene", "to": "sky", "props": {} },
+    { "id": "e7", "type": "composes", "from": "doc_main", "to": "hero_scene", "props": { "zIndex": 0 } }
+  ]
+}

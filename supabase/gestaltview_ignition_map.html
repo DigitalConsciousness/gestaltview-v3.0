@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GestaltView — Ignition Map</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#090910;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#e2e8f0;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+#hdr{padding:10px 14px 6px;display:flex;align-items:baseline;gap:10px;flex-shrink:0;border-bottom:1px solid #1e1e2e}
+#ttl{font-size:14px;font-weight:600;color:#c7d2fe;letter-spacing:-.02em}
+#sub{font-size:10px;color:#3d4566}
+#ctrl{padding:6px 14px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;flex-shrink:0;border-bottom:1px solid #1e1e2e;min-height:36px}
+.dp{font-size:10px;padding:2px 8px;border-radius:20px;border:1px solid;cursor:pointer;transition:opacity .15s;white-space:nowrap;user-select:none}
+.dp.off{opacity:.25}
+#litbtn{margin-left:auto;font-size:10px;padding:2px 9px;border-radius:6px;border:1px solid #2a2a3f;background:#111120;color:#64748b;cursor:pointer;flex-shrink:0}
+#litbtn.on{background:#0a2a12;color:#4ade80;border-color:#1a4a22}
+#srch{font-size:11px;padding:2px 8px;border-radius:6px;border:1px solid #2a2a3f;background:#111120;color:#e2e8f0;width:130px}
+#srch::placeholder{color:#334155}
+#gwrap{flex:1;overflow-x:auto;overflow-y:hidden;position:relative}
+svg{display:block}
+#tip{position:fixed;background:#0d0d1a;border:1px solid #2a2a40;border-radius:8px;padding:9px 13px;font-size:11px;pointer-events:none;z-index:999;display:none;max-width:210px;box-shadow:0 8px 32px rgba(0,0,0,.7)}
+.tn{font-size:11px;font-weight:700;font-family:monospace;margin-bottom:5px;word-break:break-all}
+.tr{font-size:10px;color:#475569;margin-bottom:1px;display:flex;justify-content:space-between;gap:10px}
+.tr span:last-child{color:#64748b}
+.tbadge{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:600;margin-top:4px}
+#leg{padding:5px 14px;display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid #1e1e2e;flex-shrink:0}
+.li{display:flex;align-items:center;gap:3px;font-size:9px;color:#334155;cursor:pointer}
+.li:hover{color:#64748b}
+.ld{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+@keyframes pulse{0%,100%{r:0;opacity:.6}50%{r:14;opacity:0}}
+.glow-ring{animation:pulse 2.5s ease-in-out infinite}
+</style>
+</head>
+<body>
+
+<div id="hdr">
+  <span id="ttl">⚡ GestaltView — Ignition Map</span>
+  <span id="sub">180 tables · 5 seeding waves · 166 FK chains · live rebuild · dzrxepbgetinldcknior</span>
+</div>
+
+<div id="ctrl">
+  <input id="srch" type="text" placeholder="search table…">
+  <!-- domain pills injected by JS -->
+  <button id="litbtn">◉ lit only</button>
+</div>
+
+<div id="gwrap">
+  <svg id="graph"></svg>
+</div>
+
+<div id="tip"></div>
+<div id="leg"></div>
+
+<script>
+// ─── Domain colour palette ───────────────────────────────────────────────────
+const DC = {
+  'Agent Identity'    : '#818cf8',
+  'Embodiment'        : '#34d399',
+  'Human Identity'    : '#fbbf24',
+  'Identity System'   : '#a78bfa',
+  'Memory & Knowledge': '#60a5fa',
+  'Tribunal / Eval'   : '#f87171',
+  'Trainer'           : '#fb923c',
+  'Corpus'            : '#22d3ee',
+  'Gestalt Modules'   : '#a3e635',
+  'Model Home'        : '#f472b6',
+  'Billy / Sessions'  : '#2dd4bf',
+  'Portraits'         : '#c084fc',
+  'Collaborators'     : '#94a3b8',
+  'Commerce'          : '#fcd34d',
+  'User Layer'        : '#4ade80',
+  'Other'             : '#4b5563',
+};
+
+// Wave labels shown in tooltip / legend
+const WAVE_LABELS = [
+  'Wave 1 — Seed Roots (no FK deps)',
+  'Wave 2 — First Dependents',
+  'Wave 3 — Second Order',
+  'Wave 4 — Deep Chain',
+  'Wave 5 — Agent Core + Cycle Tables',
+];
+
+// Circular FK pairs that get highlighted in violet
+const CYCLIC_PAIRS = new Set(['20-19', '19-20']);
+
+// ─── Graph data (nodes + FK links, derived live from Supabase) ───────────────
+const G = {
+  "nodes": [
+    {"id":0,"name":"active_agent_manifests","domain":"Other","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":1,"name":"agent_autobiographies","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":2,"name":"agent_code_artifacts","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":3},
+    {"id":3,"name":"agent_constitutions","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":4,"name":"agent_context_views","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":3},
+    {"id":5,"name":"agent_governance_policies","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":6,"name":"agent_governed_identity_snapshot","domain":"Agent Identity","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":7,"name":"agent_knowledge_links","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":8,"name":"agent_manifest_entries","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":9,"name":"agent_manifests","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":2,"depends":2},
+    {"id":10,"name":"agent_memories","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":11,"name":"agent_memory_records","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":1,"depends":3},
+    {"id":12,"name":"agent_preference_nodes","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":13,"name":"agent_presentation_profiles","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":14,"name":"agent_private_interiors","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":15,"name":"agent_relationship_edges","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":1,"depends":2},
+    {"id":16,"name":"agent_relationships","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":17,"name":"agent_skill_profiles","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":18,"name":"agent_skills","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":3},
+    {"id":19,"name":"agent_versions","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":15,"depends":1},
+    {"id":20,"name":"agents","domain":"Agent Identity","wave":5,"lit":false,"rows":0,"unlocks":26,"depends":2},
+    {"id":21,"name":"annotation_concepts","domain":"Memory & Knowledge","wave":3,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":22,"name":"app_users","domain":"User Layer","wave":1,"lit":true,"rows":1,"unlocks":6,"depends":0},
+    {"id":23,"name":"approvals","domain":"Tribunal / Eval","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":24,"name":"approved_library_assets_by_agent","domain":"Other","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":25,"name":"artifact_provenance_envelopes","domain":"Commerce","wave":2,"lit":true,"rows":3,"unlocks":0,"depends":1},
+    {"id":26,"name":"artifacts","domain":"Commerce","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":27,"name":"billy_sessions","domain":"Billy / Sessions","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":28,"name":"blueprints","domain":"Commerce","wave":1,"lit":false,"rows":0,"unlocks":1,"depends":0},
+    {"id":29,"name":"bucket_drops","domain":"Gestalt Modules","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":4},
+    {"id":30,"name":"capture_events","domain":"Gestalt Modules","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":31,"name":"codex_artifacts","domain":"Commerce","wave":1,"lit":true,"rows":1,"unlocks":1,"depends":0},
+    {"id":32,"name":"codex_jobs","domain":"Commerce","wave":2,"lit":true,"rows":2,"unlocks":0,"depends":1},
+    {"id":33,"name":"collaborative_memory_records","domain":"Collaborators","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":3},
+    {"id":34,"name":"collaborative_space_members","domain":"Collaborators","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":35,"name":"collaborative_spaces","domain":"Collaborators","wave":1,"lit":false,"rows":0,"unlocks":3,"depends":0},
+    {"id":36,"name":"collaborator_embodiment_links","domain":"Embodiment","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":37,"name":"collaborator_onboarding_events","domain":"Collaborators","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":38,"name":"collaborator_permissions","domain":"Collaborators","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":39,"name":"collaborator_relationships","domain":"Collaborators","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":40,"name":"collaborator_roles","domain":"Collaborators","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":41,"name":"collaborators","domain":"Collaborators","wave":5,"lit":false,"rows":0,"unlocks":6,"depends":2},
+    {"id":42,"name":"concepts","domain":"Memory & Knowledge","wave":1,"lit":false,"rows":0,"unlocks":2,"depends":0},
+    {"id":43,"name":"consciousness_profiles","domain":"Other","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":44,"name":"context_injection_packets","domain":"Other","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":45,"name":"context_injection_rules","domain":"Other","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":46,"name":"corpus_harvest_events","domain":"Corpus","wave":3,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":47,"name":"created_artifacts","domain":"Commerce","wave":1,"lit":true,"rows":3,"unlocks":1,"depends":0},
+    {"id":48,"name":"deliverables","domain":"Commerce","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":49,"name":"deployment_artifacts","domain":"Commerce","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":50,"name":"di_memory_events","domain":"Billy / Sessions","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":51,"name":"di_sessions","domain":"Billy / Sessions","wave":1,"lit":true,"rows":1,"unlocks":1,"depends":0},
+    {"id":52,"name":"document_concepts","domain":"Memory & Knowledge","wave":3,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":53,"name":"documents","domain":"Memory & Knowledge","wave":2,"lit":false,"rows":0,"unlocks":5,"depends":1},
+    {"id":54,"name":"embeddings","domain":"Memory & Knowledge","wave":3,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":55,"name":"embodiment_modules","domain":"Embodiment","wave":1,"lit":true,"rows":5,"unlocks":0,"depends":0},
+    {"id":56,"name":"embodiment_mutation_proposals","domain":"Embodiment","wave":1,"lit":false,"rows":0,"unlocks":1,"depends":0},
+    {"id":57,"name":"embodiment_mutations","domain":"Embodiment","wave":5,"lit":false,"rows":0,"unlocks":1,"depends":4},
+    {"id":58,"name":"embodiment_profiles","domain":"Embodiment","wave":1,"lit":true,"rows":24,"unlocks":1,"depends":0},
+    {"id":59,"name":"embodiment_readiness_scores","domain":"Embodiment","wave":1,"lit":true,"rows":24,"unlocks":0,"depends":0},
+    {"id":60,"name":"embodiment_review_log","domain":"Embodiment","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":61,"name":"embodiment_training_runs","domain":"Embodiment","wave":2,"lit":true,"rows":24,"unlocks":0,"depends":1},
+    {"id":62,"name":"eval_results","domain":"Tribunal / Eval","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":6},
+    {"id":63,"name":"eval_rubrics","domain":"Tribunal / Eval","wave":1,"lit":true,"rows":1,"unlocks":1,"depends":0},
+    {"id":64,"name":"founder_context","domain":"User Layer","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":65,"name":"gestaltview_module_keys","domain":"Gestalt Modules","wave":2,"lit":true,"rows":14,"unlocks":0,"depends":1},
+    {"id":66,"name":"gestaltview_module_profiles","domain":"Gestalt Modules","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":67,"name":"gestaltview_modules","domain":"Gestalt Modules","wave":1,"lit":true,"rows":14,"unlocks":3,"depends":0},
+    {"id":68,"name":"gsvw_current_ingestion_documents","domain":"Other","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":69,"name":"gsvw_dormancy_review_items","domain":"Corpus","wave":4,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":70,"name":"gsvw_ingestion_chunks","domain":"Corpus","wave":3,"lit":false,"rows":0,"unlocks":1,"depends":2},
+    {"id":71,"name":"gsvw_ingestion_documents","domain":"Corpus","wave":2,"lit":false,"rows":0,"unlocks":3,"depends":1},
+    {"id":72,"name":"gsvw_ingestion_events","domain":"Corpus","wave":3,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":73,"name":"gsvw_ingestion_runs","domain":"Corpus","wave":1,"lit":false,"rows":0,"unlocks":3,"depends":0},
+    {"id":74,"name":"gsvw_repo_alignment_snapshots","domain":"Corpus","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":75,"name":"gsvw_runtime_capture_events","domain":"Corpus","wave":1,"lit":true,"rows":2,"unlocks":0,"depends":0},
+    {"id":76,"name":"human_cognition_profiles","domain":"Human Identity","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":77,"name":"human_consciousness_profiles","domain":"Human Identity","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":78,"name":"human_context_views","domain":"Human Identity","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":79,"name":"human_continuity_snapshots","domain":"Human Identity","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":80,"name":"human_identity_evidence","domain":"Human Identity","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":81,"name":"human_identity_mutations","domain":"Human Identity","wave":2,"lit":false,"rows":0,"unlocks":2,"depends":1},
+    {"id":82,"name":"human_identity_profiles","domain":"Human Identity","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":83,"name":"human_identity_review_events","domain":"Human Identity","wave":3,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":84,"name":"human_identity_rollback_events","domain":"Human Identity","wave":3,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":85,"name":"human_memory_records","domain":"Human Identity","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":86,"name":"human_personality_profiles","domain":"Human Identity","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":87,"name":"human_relationship_edges","domain":"Human Identity","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":88,"name":"identity_claims","domain":"Identity System","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":89,"name":"identity_contradictions","domain":"Identity System","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":90,"name":"identity_evidence","domain":"Identity System","wave":5,"lit":false,"rows":0,"unlocks":1,"depends":2},
+    {"id":91,"name":"identity_evidence_links","domain":"Identity System","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":92,"name":"identity_mutation_proposals","domain":"Identity System","wave":5,"lit":false,"rows":0,"unlocks":2,"depends":2},
+    {"id":93,"name":"identity_review_events","domain":"Identity System","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":94,"name":"identity_rollback_events","domain":"Identity System","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":95,"name":"identity_subjects","domain":"Identity System","wave":1,"lit":false,"rows":0,"unlocks":7,"depends":0},
+    {"id":96,"name":"ingestion_safety_events","domain":"Corpus","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":97,"name":"inner_world_artifacts","domain":"User Layer","wave":2,"lit":true,"rows":1,"unlocks":0,"depends":2},
+    {"id":98,"name":"insights","domain":"User Layer","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":99,"name":"journals","domain":"User Layer","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":100,"name":"knowledge_asset_chunks","domain":"Memory & Knowledge","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":101,"name":"knowledge_asset_tags","domain":"Memory & Knowledge","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":102,"name":"knowledge_assets","domain":"Memory & Knowledge","wave":1,"lit":false,"rows":0,"unlocks":12,"depends":0},
+    {"id":103,"name":"knowledge_fragments","domain":"Memory & Knowledge","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":104,"name":"knowledge_interpretations","domain":"Memory & Knowledge","wave":5,"lit":false,"rows":0,"unlocks":1,"depends":3},
+    {"id":105,"name":"knowledge_stats","domain":"Other","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":106,"name":"knowledge_tags","domain":"Memory & Knowledge","wave":1,"lit":false,"rows":0,"unlocks":1,"depends":0},
+    {"id":107,"name":"loom_annotations","domain":"User Layer","wave":2,"lit":false,"rows":0,"unlocks":1,"depends":1},
+    {"id":108,"name":"manifest_file_pull","domain":"Other","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":109,"name":"masterclass_progress","domain":"User Layer","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":110,"name":"memory_entries","domain":"Memory & Knowledge","wave":1,"lit":false,"rows":0,"unlocks":1,"depends":0},
+    {"id":111,"name":"migration_user_map","domain":"Other","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":112,"name":"model_home_assignments","domain":"Model Home","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":113,"name":"model_home_capabilities","domain":"Model Home","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":114,"name":"model_home_consent_grants","domain":"Model Home","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":115,"name":"model_home_evaluations","domain":"Model Home","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":116,"name":"model_home_events","domain":"Model Home","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":117,"name":"model_homes","domain":"Model Home","wave":1,"lit":true,"rows":2,"unlocks":5,"depends":0},
+    {"id":118,"name":"model_providers","domain":"Model Home","wave":1,"lit":true,"rows":2,"unlocks":3,"depends":0},
+    {"id":119,"name":"models","domain":"Model Home","wave":2,"lit":true,"rows":2,"unlocks":2,"depends":1},
+    {"id":120,"name":"musical_dna_analyses","domain":"User Layer","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":121,"name":"ops_workbook_items","domain":"Other","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":122,"name":"ops_workbook_sync_runs","domain":"Other","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":123,"name":"orchestration_decisions","domain":"Tribunal / Eval","wave":1,"lit":true,"rows":6,"unlocks":0,"depends":0},
+    {"id":124,"name":"order_notes","domain":"Commerce","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":125,"name":"orders","domain":"Commerce","wave":1,"lit":false,"rows":0,"unlocks":3,"depends":0},
+    {"id":126,"name":"pending_embodiment_mutations","domain":"Embodiment","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":127,"name":"pending_identity_reviews","domain":"Identity System","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":128,"name":"portrait_dimensions","domain":"Portraits","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":129,"name":"portrait_inference_queue","domain":"Portraits","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":130,"name":"portrait_inference_runs","domain":"Portraits","wave":5,"lit":false,"rows":0,"unlocks":2,"depends":1},
+    {"id":131,"name":"portrait_render_events","domain":"Portraits","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":132,"name":"processing_runs","domain":"Portraits","wave":1,"lit":false,"rows":0,"unlocks":4,"depends":0},
+    {"id":133,"name":"profile_ingestion_sources","domain":"Corpus","wave":3,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":134,"name":"profile_pipeline_run_links","domain":"Portraits","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":135,"name":"profile_pipeline_runs","domain":"Portraits","wave":1,"lit":false,"rows":0,"unlocks":4,"depends":0},
+    {"id":136,"name":"profile_portraits","domain":"Portraits","wave":5,"lit":false,"rows":0,"unlocks":3,"depends":1},
+    {"id":137,"name":"provenance_envelopes","domain":"Other","wave":2,"lit":false,"rows":0,"unlocks":1,"depends":1},
+    {"id":138,"name":"provenance_links","domain":"Other","wave":3,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":139,"name":"resonance_events","domain":"Gestalt Modules","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":140,"name":"route_embodiment_assignments","domain":"Embodiment","wave":1,"lit":true,"rows":13,"unlocks":0,"depends":0},
+    {"id":141,"name":"scaffold_nodes","domain":"Gestalt Modules","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":142,"name":"scenario_sets","domain":"Tribunal / Eval","wave":1,"lit":false,"rows":0,"unlocks":1,"depends":0},
+    {"id":143,"name":"scenarios","domain":"Tribunal / Eval","wave":2,"lit":false,"rows":0,"unlocks":1,"depends":1},
+    {"id":144,"name":"scrapbook_items","domain":"User Layer","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":145,"name":"session_rate_limits","domain":"Billy / Sessions","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":146,"name":"skill_fragments","domain":"Memory & Knowledge","wave":3,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":147,"name":"skill_stats","domain":"Other","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":148,"name":"skills","domain":"Memory & Knowledge","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":149,"name":"summaries","domain":"User Layer","wave":3,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":150,"name":"trainer_connectors","domain":"Trainer","wave":1,"lit":false,"rows":0,"unlocks":1,"depends":0},
+    {"id":151,"name":"trainer_experiment_sources","domain":"Trainer","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":152,"name":"trainer_experiments","domain":"Trainer","wave":1,"lit":false,"rows":0,"unlocks":6,"depends":0},
+    {"id":153,"name":"trainer_job_events","domain":"Trainer","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":2},
+    {"id":154,"name":"trainer_jobs","domain":"Trainer","wave":5,"lit":false,"rows":0,"unlocks":2,"depends":1},
+    {"id":155,"name":"trainer_memory_bindings","domain":"Trainer","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":156,"name":"trainer_memory_surfaces","domain":"Other","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":157,"name":"trainer_packaging_candidates","domain":"Trainer","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":158,"name":"trainer_policy_flags","domain":"Trainer","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":159,"name":"trainer_queue_health_v","domain":"Other","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":160,"name":"trainer_review_decisions","domain":"Trainer","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":161,"name":"trainer_run_summary","domain":"Other","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":162,"name":"trainer_skills","domain":"Trainer","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":163,"name":"trainer_workers","domain":"Trainer","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":164,"name":"training_runs","domain":"Trainer","wave":5,"lit":false,"rows":0,"unlocks":6,"depends":3},
+    {"id":165,"name":"training_steps","domain":"Trainer","wave":5,"lit":false,"rows":0,"unlocks":0,"depends":3},
+    {"id":166,"name":"transcriptory_captures","domain":"Billy / Sessions","wave":2,"lit":false,"rows":0,"unlocks":1,"depends":1},
+    {"id":167,"name":"transcriptory_sessions","domain":"Billy / Sessions","wave":1,"lit":false,"rows":0,"unlocks":1,"depends":0},
+    {"id":168,"name":"transcriptory_sources","domain":"Billy / Sessions","wave":3,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":169,"name":"tribunal_events","domain":"Tribunal / Eval","wave":1,"lit":false,"rows":0,"unlocks":1,"depends":0},
+    {"id":170,"name":"tribunal_evidence","domain":"Tribunal / Eval","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":171,"name":"tribunal_sessions","domain":"Tribunal / Eval","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":172,"name":"uploads","domain":"User Layer","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":173,"name":"user_files","domain":"User Layer","wave":1,"lit":true,"rows":1,"unlocks":2,"depends":0},
+    {"id":174,"name":"user_personality_dimensions","domain":"User Layer","wave":3,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":175,"name":"user_preferences","domain":"User Layer","wave":1,"lit":false,"rows":0,"unlocks":0,"depends":0},
+    {"id":176,"name":"user_profile_ingestion_runs","domain":"Corpus","wave":2,"lit":false,"rows":0,"unlocks":2,"depends":1},
+    {"id":177,"name":"users","domain":"User Layer","wave":1,"lit":true,"rows":1,"unlocks":1,"depends":0},
+    {"id":178,"name":"workspace_documents","domain":"Gestalt Modules","wave":2,"lit":false,"rows":0,"unlocks":0,"depends":1},
+    {"id":179,"name":"workspace_rooms","domain":"Gestalt Modules","wave":1,"lit":false,"rows":0,"unlocks":1,"depends":0}
+  ],
+  "links": [
+    {"source":22,"target":43},{"source":22,"target":29},{"source":22,"target":120},
+    {"source":22,"target":171},{"source":22,"target":27},{"source":132,"target":53},
+    {"source":53,"target":54},{"source":169,"target":170},{"source":125,"target":124},
+    {"source":125,"target":172},{"source":125,"target":48},{"source":132,"target":149},
+    {"source":53,"target":149},{"source":132,"target":107},{"source":53,"target":52},
+    {"source":42,"target":52},{"source":107,"target":21},{"source":42,"target":21},
+    {"source":132,"target":54},{"source":53,"target":146},{"source":118,"target":119},
+    {"source":20,"target":19},{"source":19,"target":20},{"source":142,"target":143},
+    {"source":20,"target":164},{"source":19,"target":164},{"source":164,"target":165},
+    {"source":118,"target":165},{"source":119,"target":165},{"source":164,"target":62},
+    {"source":19,"target":62},{"source":143,"target":62},{"source":63,"target":62},
+    {"source":118,"target":62},{"source":119,"target":62},{"source":164,"target":23},
+    {"source":19,"target":23},{"source":19,"target":49},{"source":164,"target":154},
+    {"source":102,"target":100},{"source":102,"target":101},{"source":106,"target":101},
+    {"source":20,"target":7},{"source":102,"target":7},{"source":102,"target":104},
+    {"source":20,"target":104},{"source":164,"target":104},{"source":20,"target":57},
+    {"source":102,"target":57},{"source":104,"target":57},{"source":19,"target":57},
+    {"source":20,"target":10},{"source":102,"target":10},{"source":20,"target":18},
+    {"source":102,"target":18},{"source":57,"target":18},{"source":20,"target":16},
+    {"source":20,"target":9},{"source":19,"target":9},{"source":9,"target":8},
+    {"source":20,"target":2},{"source":9,"target":2},{"source":102,"target":2},
+    {"source":152,"target":151},{"source":152,"target":160},{"source":152,"target":158},
+    {"source":152,"target":157},{"source":152,"target":164},{"source":20,"target":3},
+    {"source":19,"target":3},{"source":20,"target":1},{"source":19,"target":1},
+    {"source":20,"target":14},{"source":19,"target":14},{"source":20,"target":5},
+    {"source":19,"target":5},{"source":20,"target":13},{"source":19,"target":13},
+    {"source":20,"target":17},{"source":102,"target":17},{"source":20,"target":34},
+    {"source":20,"target":11},{"source":19,"target":11},{"source":102,"target":11},
+    {"source":20,"target":12},{"source":19,"target":12},{"source":20,"target":15},
+    {"source":19,"target":15},{"source":35,"target":34},{"source":35,"target":33},
+    {"source":11,"target":33},{"source":20,"target":33},{"source":20,"target":90},
+    {"source":102,"target":90},{"source":90,"target":91},{"source":20,"target":89},
+    {"source":20,"target":92},{"source":102,"target":92},{"source":92,"target":93},
+    {"source":92,"target":94},{"source":20,"target":4},{"source":15,"target":4},
+    {"source":35,"target":4},{"source":154,"target":163},{"source":164,"target":153},
+    {"source":154,"target":153},{"source":41,"target":38},{"source":28,"target":97},
+    {"source":22,"target":41},{"source":20,"target":41},{"source":41,"target":40},
+    {"source":41,"target":39},{"source":41,"target":37},{"source":41,"target":36},
+    {"source":41,"target":20},{"source":150,"target":162},{"source":152,"target":155},
+    {"source":179,"target":178},{"source":117,"target":113},{"source":56,"target":60},
+    {"source":173,"target":97},{"source":58,"target":61},{"source":173,"target":144},
+    {"source":117,"target":112},{"source":51,"target":50},{"source":177,"target":176},
+    {"source":176,"target":174},{"source":176,"target":133},{"source":117,"target":116},
+    {"source":117,"target":115},{"source":117,"target":114},{"source":135,"target":134},
+    {"source":135,"target":137},{"source":137,"target":138},{"source":135,"target":139},
+    {"source":31,"target":32},{"source":47,"target":25},{"source":167,"target":166},
+    {"source":67,"target":65},{"source":166,"target":168},{"source":130,"target":136},
+    {"source":136,"target":128},{"source":136,"target":130},{"source":130,"target":129},
+    {"source":136,"target":131},{"source":95,"target":45},{"source":95,"target":44},
+    {"source":95,"target":81},{"source":95,"target":80},{"source":95,"target":78},
+    {"source":81,"target":83},{"source":81,"target":84},{"source":95,"target":66},
+    {"source":67,"target":66},{"source":95,"target":29},{"source":67,"target":29},
+    {"source":110,"target":29},{"source":135,"target":46},{"source":53,"target":46},
+    {"source":73,"target":71},{"source":71,"target":70},{"source":73,"target":70},
+    {"source":73,"target":72},{"source":71,"target":72},{"source":71,"target":69},
+    {"source":70,"target":69}
+  ]
+};
+
+// ─── Layout constants ─────────────────────────────────────────────────────────
+const WAVE_Y  = [78, 188, 290, 362, 460];
+const BAND_H  = 90;
+const SVG_W   = 1400;
+const SVG_H   = 530;
+const XPAD    = 50;
+
+// Sort nodes within each wave by domain (visual clustering)
+const byWave = [1,2,3,4,5].map(w =>
+  G.nodes.filter(n => n.wave === w).sort((a,b) => a.domain.localeCompare(b.domain))
+);
+
+// Assign deterministic X positions within each wave lane
+const pos = {};
+byWave.forEach((wNodes, wi) => {
+  const span = SVG_W - XPAD * 2;
+  wNodes.forEach((n, i) => {
+    const x = wNodes.length === 1
+      ? SVG_W / 2
+      : XPAD + (i / (wNodes.length - 1)) * span;
+    pos[n.id] = { x, y: WAVE_Y[wi] };
+  });
+});
+
+// Node radius scales with how many tables this one unlocks
+const rScale = n => Math.max(4, Math.min(12, 4 + n.unlocks * 0.45));
+
+// ─── Build SVG ───────────────────────────────────────────────────────────────
+const svg = document.getElementById('graph');
+svg.setAttribute('viewBox', `0 0 ${SVG_W} ${SVG_H}`);
+svg.setAttribute('width',  SVG_W);
+svg.setAttribute('height', SVG_H);
+svg.style.background = '#090910';
+
+// Filter defs (glow effects)
+const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+defs.innerHTML = `
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="3" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+    <path d="M0,0 L6,3 L0,6 Z" fill="#1e293b"/>
+  </marker>
+`;
+svg.appendChild(defs);
+
+// Wave bands (background stripes)
+const bandsG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+WAVE_Y.forEach((cy, i) => {
+  const by = cy - BAND_H / 2 + 2;
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', 0); rect.setAttribute('y', by);
+  rect.setAttribute('width', SVG_W); rect.setAttribute('height', BAND_H - 4);
+  rect.setAttribute('fill', i % 2 === 0 ? '#0d0d18' : '#0b0b15');
+  bandsG.appendChild(rect);
+
+  // Wave number label
+  const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  lbl.setAttribute('x', 8); lbl.setAttribute('y', by + 13);
+  lbl.setAttribute('fill', '#1e293b'); lbl.setAttribute('font-size', '9');
+  lbl.setAttribute('font-family', 'monospace');
+  lbl.textContent = `W${i + 1}`;
+  bandsG.appendChild(lbl);
+
+  // Node count per wave
+  const cnt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  cnt.setAttribute('x', 8); cnt.setAttribute('y', by + 24);
+  cnt.setAttribute('fill', '#1a2035'); cnt.setAttribute('font-size', '8');
+  cnt.setAttribute('font-family', 'monospace');
+  cnt.textContent = `${byWave[i].length}`;
+  bandsG.appendChild(cnt);
+});
+svg.appendChild(bandsG);
+
+// FK links (bezier curves)
+const linksG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+const linkEls = {};
+G.links.forEach(l => {
+  const s = pos[l.source], t = pos[l.target];
+  if (!s || !t) return;
+  const isCyclic = CYCLIC_PAIRS.has(`${l.source}-${l.target}`);
+  const dy = t.y - s.y;
+  const cx1 = s.x + (t.x - s.x) * 0.25, cy1 = s.y + dy * 0.5;
+  const cx2 = s.x + (t.x - s.x) * 0.75, cy2 = t.y - dy * 0.5;
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', `M${s.x},${s.y} C${cx1},${cy1} ${cx2},${cy2} ${t.x},${t.y}`);
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke',       isCyclic ? '#7c3aed' : '#1e2d45');
+  path.setAttribute('stroke-width', isCyclic ? '1.5'     : '0.8');
+  path.setAttribute('opacity',      isCyclic ? '0.8'     : '0.5');
+  path.setAttribute('marker-end', 'url(#arr)');
+  linkEls[`${l.source}-${l.target}`] = path;
+  linksG.appendChild(path);
+});
+svg.appendChild(linksG);
+
+// Nodes
+const nodesG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+const nodeEls = {};
+G.nodes.forEach(n => {
+  const p = pos[n.id];
+  if (!p) return;
+  const col = DC[n.domain] || '#4b5563';
+  const r   = rScale(n);
+  const g   = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('transform', `translate(${p.x},${p.y})`);
+  g.style.cursor = 'pointer';
+  g.dataset.id   = n.id;
+
+  if (n.lit) {
+    // Animated pulse ring for lit nodes
+    const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    ring.setAttribute('cx', 0); ring.setAttribute('cy', 0); ring.setAttribute('r', r + 2);
+    ring.setAttribute('fill', 'none'); ring.setAttribute('stroke', col);
+    ring.setAttribute('stroke-width', '1.5'); ring.setAttribute('opacity', '0');
+    ring.classList.add('glow-ring');
+    ring.style.animationDelay = `${Math.random() * 2}s`;
+    g.appendChild(ring);
+    // Soft glow halo
+    const halo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    halo.setAttribute('cx', 0); halo.setAttribute('cy', 0); halo.setAttribute('r', r + 4);
+    halo.setAttribute('fill', col); halo.setAttribute('opacity', '0.15');
+    g.appendChild(halo);
+  }
+
+  // Main circle
+  const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  c.setAttribute('cx', 0); c.setAttribute('cy', 0); c.setAttribute('r', r);
+  c.setAttribute('fill',         n.lit ? col : '#0d0d1a');
+  c.setAttribute('stroke',       col);
+  c.setAttribute('stroke-width', n.lit ? '0' : '1.2');
+  c.setAttribute('opacity',      n.lit ? '1' : '0.45');
+  if (n.lit) c.setAttribute('filter', 'url(#glow)');
+  g.appendChild(c);
+
+  // Centre dot for high-influence nodes (unlocks >= 10)
+  if (n.unlocks >= 10) {
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('cx', 0); dot.setAttribute('cy', 0); dot.setAttribute('r', 2);
+    dot.setAttribute('fill', n.lit ? '#fff' : col); dot.setAttribute('opacity', '0.9');
+    g.appendChild(dot);
+  }
+
+  g.addEventListener('mouseenter', e => showTip(e, n, col));
+  g.addEventListener('mousemove',  e => moveTip(e));
+  g.addEventListener('mouseleave', () => hideTip());
+  g.addEventListener('click',      () => selectNode(n.id));
+
+  nodeEls[n.id] = g;
+  nodesG.appendChild(g);
+});
+svg.appendChild(nodesG);
+
+// ─── Tooltip ─────────────────────────────────────────────────────────────────
+const tip = document.getElementById('tip');
+function showTip(e, n, col) {
+  const deps  = G.links.filter(l => l.target === n.id).map(l => G.nodes.find(x => x.id === l.source)?.name).filter(Boolean);
+  tip.innerHTML = `
+    <div class="tn" style="color:${col}">${n.name}</div>
+    <div class="tr"><span>domain</span><span>${n.domain}</span></div>
+    <div class="tr"><span>wave</span><span>${n.wave} — ${WAVE_LABELS[n.wave-1].split(' — ')[1]}</span></div>
+    <div class="tr"><span>rows</span><span>${n.rows}</span></div>
+    <div class="tr"><span>depends on</span><span>${n.depends} table${n.depends!==1?'s':''}</span></div>
+    <div class="tr"><span>unlocks</span><span>${n.unlocks} table${n.unlocks!==1?'s':''}</span></div>
+    ${n.lit
+      ? `<span class="tbadge" style="background:${col}22;color:${col}">● LIT — ${n.rows} row${n.rows!==1?'s':''}</span>`
+      : `<span class="tbadge" style="background:#1e293b;color:#475569">○ dark</span>`}
+    ${deps.length ? `<div style="margin-top:5px;font-size:9px;color:#334155">deps: ${deps.slice(0,4).join(', ')}${deps.length>4?'…':''}</div>` : ''}
+  `;
+  tip.style.display = 'block';
+  tip.style.left = (e.clientX + 14) + 'px';
+  tip.style.top  = (e.clientY - 10) + 'px';
+}
+function moveTip(e) {
+  tip.style.left = (e.clientX + 14) + 'px';
+  tip.style.top  = (e.clientY - 10) + 'px';
+}
+function hideTip() { tip.style.display = 'none'; }
+
+// ─── Node selection (FK neighbourhood highlight) ──────────────────────────────
+let selected = null;
+function selectNode(id) {
+  if (selected === id) { selected = null; resetHighlight(); return; }
+  selected = id;
+  const connected = new Set([id]);
+  G.links.forEach(l => {
+    if (l.source === id) connected.add(l.target);
+    if (l.target === id) connected.add(l.source);
+  });
+  Object.entries(nodeEls).forEach(([nid, el]) => {
+    el.style.opacity = connected.has(+nid) ? '1' : '0.06';
+  });
+  Object.entries(linkEls).forEach(([k, el]) => {
+    const [s, t] = k.split('-').map(Number);
+    const active = s === id || t === id;
+    el.style.opacity = active ? '1' : '0.02';
+    el.setAttribute('stroke',       active ? '#60a5fa' : '#1e2d45');
+    el.setAttribute('stroke-width', active ? '1.5'     : '0.8');
+  });
+}
+function resetHighlight() {
+  Object.values(nodeEls).forEach(el => el.style.opacity = '1');
+  Object.entries(linkEls).forEach(([k, el]) => {
+    const isCyclic = CYCLIC_PAIRS.has(k);
+    el.style.opacity      = isCyclic ? '0.8' : '0.5';
+    el.setAttribute('stroke',       isCyclic ? '#7c3aed' : '#1e2d45');
+    el.setAttribute('stroke-width', isCyclic ? '1.5'     : '0.8');
+  });
+}
+
+// ─── Controls: domain filter pills ───────────────────────────────────────────
+const ctrl          = document.getElementById('ctrl');
+const domainFilter  = new Set(Object.keys(DC));
+let   litOnly       = false;
+let   searchQ       = '';
+
+Object.entries(DC).forEach(([d, col]) => {
+  const pill = document.createElement('div');
+  pill.className    = 'dp';
+  pill.textContent  = d;
+  pill.dataset.domain = d;
+  pill.style.borderColor = col + '55';
+  pill.style.color       = col;
+  pill.style.background  = col + '15';
+  pill.addEventListener('click', () => {
+    if (domainFilter.has(d)) domainFilter.delete(d); else domainFilter.add(d);
+    pill.classList.toggle('off', !domainFilter.has(d));
+    applyFilters();
+  });
+  ctrl.insertBefore(pill, document.getElementById('litbtn'));
+});
+
+document.getElementById('litbtn').addEventListener('click', function () {
+  litOnly = !litOnly;
+  this.classList.toggle('on', litOnly);
+  applyFilters();
+});
+
+document.getElementById('srch').addEventListener('input', function () {
+  searchQ = this.value.toLowerCase().trim();
+  applyFilters();
+});
+
+function applyFilters() {
+  G.nodes.forEach(n => {
+    const el = nodeEls[n.id]; if (!el) return;
+    const show = domainFilter.has(n.domain)
+              && (!litOnly  || n.lit)
+              && (!searchQ  || n.name.includes(searchQ) || n.domain.toLowerCase().includes(searchQ));
+    el.style.opacity = show ? '1' : '0.04';
+  });
+  G.links.forEach(l => {
+    const le = linkEls[`${l.source}-${l.target}`]; if (!le) return;
+    const sVis = nodeEls[l.source] && parseFloat(nodeEls[l.source].style.opacity || 1) > 0.05;
+    const tVis = nodeEls[l.target] && parseFloat(nodeEls[l.target].style.opacity || 1) > 0.05;
+    le.style.opacity = (sVis && tVis) ? '0.5' : '0.02';
+  });
+}
+
+// ─── Legend ───────────────────────────────────────────────────────────────────
+const legDiv = document.getElementById('leg');
+Object.entries(DC).forEach(([d, col]) => {
+  const li = document.createElement('div');
+  li.className = 'li';
+  li.innerHTML = `<div class="ld" style="background:${col}"></div>${d}`;
+  li.title = 'Click to toggle domain';
+  li.addEventListener('click', () => {
+    const pill = ctrl.querySelector(`[data-domain="${d}"]`);
+    if (pill) pill.click();
+  });
+  legDiv.appendChild(li);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+claim_id,was_status,new_status,attachment_file,verified_by,methodology_note
+CL-001,Missing,CONFIRMED,Screenshots #4.pdf,Pepperdine email (third-party),"Pepperdine sourced via Gust; approximately 100 advanced of 2,300+ submissions (top ~4%)."
+CL-002,Missing,CONFIRMED,Misc_Screenshots_2025_GestaltView.pdf,Bitcoin block 899481 visible,"172 .ots receipts anchor SHA-256 hashes to Bitcoin while 2,200+ refers to artifacts contained in zipped/merged bundles."
+CL-003,Missing,CONFIRMED,Screenshots #4.pdf,Live Founders Network forum screenshot,Nomination by Doug Lessing and acceptance via Kevin Holmes; Dina confirmed investor-readiness.
+CL-004,Missing,CONFIRMED,Screenshots #4.pdf + SRC-B,"OTS receipt June 3, 2025",Tribunal was sequential facilitation across seven platforms; convergence evidence anchored by June 3 OpenTimestamps receipt.
+CL-005,Partial,PARTIAL+,August To September 2025 Screenshots.pdf,Gemini show-thinking visible,Observed first-person show-thinking behavior pending external academic validation.

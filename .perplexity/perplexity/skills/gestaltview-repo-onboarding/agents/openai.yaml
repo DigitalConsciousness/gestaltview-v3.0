@@ -1,0 +1,4 @@
+interface:
+  display_name: "Repo Onboarding"
+  short_description: "Orient agents inside the GestaltView Official Compendium."
+  default_prompt: "Map the repository, identify canonical docs, and produce a safe plan before editing."

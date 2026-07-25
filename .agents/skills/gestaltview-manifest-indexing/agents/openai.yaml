@@ -1,0 +1,4 @@
+interface:
+  display_name: "Manifest Indexing"
+  short_description: "Maintain manifest-layer and retrieval metadata docs."
+  default_prompt: "Work on manifest and index-layer assumptions that shape ingestion and retrieval."

@@ -1,0 +1,86 @@
+name: LLM Provider Selection
+
+on:
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: "Provider to validate"
+        required: true
+        type: choice
+        options:
+          - all
+          - gemini
+          - groq
+          - openai
+        default: all
+  pull_request:
+    paths:
+      - "openai.yaml"
+      - "api/_lib/llmRouter.ts"
+      - "server/agent-trainer/providers.ts"
+      - ".github/workflows/llm-provider-selection.yml"
+
+jobs:
+  selection:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: Production
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - provider: gemini
+            api_key_var: GEMINI_API_KEY
+            model_env: GEMINI_MODEL
+            model_default: gemini-2.0-flash
+          - provider: groq
+            api_key_var: GROQ_API_KEY
+            model_env: GROQ_MODEL
+            model_default: llama-3.3-70b-versatile
+          - provider: openai
+            api_key_var: OPENAI_API_KEY
+            model_env: OPENAI_MODEL
+            model_default: gpt-4o-mini
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate provider selection mapping
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.provider == 'all' || github.event.inputs.provider == matrix.provider
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_MODEL: gemini-2.0-flash
+          GROQ_MODEL: llama-3.3-70b-versatile
+          OPENAI_MODEL: gpt-4o-mini
+        run: |
+          set -eu
+
+          case "${{ matrix.provider }}" in
+            gemini)
+              selected_key="${GEMINI_API_KEY:-}"
+              selected_model="${GEMINI_MODEL}"
+              ;;
+            groq)
+              selected_key="${GROQ_API_KEY:-}"
+              selected_model="${GROQ_MODEL}"
+              ;;
+            openai)
+              selected_key="${OPENAI_API_KEY:-}"
+              selected_model="${OPENAI_MODEL}"
+              ;;
+          esac
+
+          if [ -z "${selected_key}" ]; then
+            echo "::error::Missing required secret for ${{ matrix.provider }} (${{ matrix.api_key_var }})"
+            exit 1
+          fi
+
+          grep -q "${{ matrix.model_default }}" openai.yaml
+          grep -q "${{ matrix.api_key_var }}" openai.yaml
+
+          echo "provider=${{ matrix.provider }}"
+          echo "model=${selected_model}"
+          echo "model_env=${{ matrix.model_env }}"
+          echo "api_key_var=${{ matrix.api_key_var }}"

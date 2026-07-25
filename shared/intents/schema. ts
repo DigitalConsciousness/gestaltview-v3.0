@@ -1,0 +1,192 @@
+export type GILVersion = '0.1';
+
+export type IntentSource =
+  | 'bucket_drop'      // raw capture, may be messy
+  | 'chat'             // in-app Billy / exhibit conversation
+  | 'api'              // external client or automation
+  | 'system'           // background process, watchdog, cron
+  | 'trainer'          // Agent Trainer / eval surface
+  | 'corpus_pipeline'; // ingestion / manifest ops
+
+export type IntentKind =
+  | 'question'         // user asking, not instructing
+  | 'code_change'      // change to runtime / infra
+  | 'workflow'         // corpus, trainer, or ops flow
+  | 'doctrine'         // invariants, charters, policies
+  | 'analysis'         // diagnostic, architecture, gravity
+  | 'observation'      // noticing pattern, not yet asking
+  | 'debug'            // bug report, error investigation
+  | 'ops';             // deployment, config, admin
+
+export type DomainLane =
+  | 'core'
+  | 'adhd_power_up'
+  | 'musical_dna'
+  | 'memory_legacy'
+  | 'recovery'
+  | 'trainer'
+  | 'founder'
+  | 'other';
+
+export interface IntentEnvelope {
+  id: string;              // UUID
+  gilVersion: GILVersion;
+  createdAt: string;       // ISO-8601
+  createdBy: {
+    userId: string;
+    sessionId?: string;
+    actorKind: 'human' | 'agent' | 'system';
+  };
+  source: IntentSource;
+  locale?: string;         // e.g. "en-US"
+  channel?: 'web_app' | 'mobile' | 'cli' | 'api_client';
+
+  tags?: string[];         // free-form labels
+
+  energy?: {
+    // maps cleanly to existing ADHD MVP & CSI nexus energy model
+    state?: 'overwhelmed' | 'focused' | 'creative' | 'scattered';
+    level?: number;        // 1–10 scale from ADHD MVP / CSI loop
+  };
+
+  plkSnapshotId?: string;  // ID of PLK snapshot / profile revision
+  gravityScore?: number;   // Billy gravity metric for this intent
+  parentIntentId?: string; // threading, multi-step flows
+}
+
+export interface NormalizedIntent {
+  kind: IntentKind;
+  domainLane: DomainLane;
+
+  // 5W1H extracted by Context Weaver
+  who?: string;
+  what?: string;
+  where?: string;
+  when?: string;
+  why?: string;
+  how?: string;
+
+  // more structured description for agents
+  summary: string;         // one-sentence canonical summary
+  narrative?: string;      // longer free-form explanation
+
+  priority?: 'low' | 'normal' | 'high' | 'urgent';
+  timeHorizon?: 'immediate' | 'this_session' | 'short_term' | 'long_term';
+
+  // user-facing framing; can carry original Bucket Drop text verbatim
+  rawText?: string;
+  bucketDropId?: string;   // if originated as a Bucket Drop
+}
+
+export interface RepoScopeHint {
+  // for code / ops intents
+  repoAreas?: string[];     // e.g. "client/src/features/agent-trainer"
+  files?: string[];         // specific files if known
+  supabaseEntities?: string[]; // e.g. "trainingruns", "knowledgefragments"
+}
+
+export interface CorpusScopeHint {
+  manifestNodes?: string[];   // IDs or paths in Manifest Index
+  corpusFiles?: string[];     // e.g. "docs/AIFlow.md"
+  exhibits?: DomainLane[];    // affected exhibits / lanes
+}
+
+export interface InvariantTouch {
+  id: string;                // e.g. "never-look-away"
+  name: string;
+  required?: boolean;        // must be enforced for this intent
+}
+
+export interface IntentContext {
+  repo?: RepoScopeHint;
+  corpus?: CorpusScopeHint;
+  invariants?: InvariantTouch[];
+
+  // PLK / language-context hints
+  plk?: {
+    profileId?: string;
+    resonanceTarget?: number; // e.g. 0.95
+    preserveMetaphors?: boolean;
+  };
+}
+
+export interface PlanStep {
+  id: string;
+  description: string;
+  kind:
+    | 'analysis'
+    | 'code_edit'
+    | 'schema_change'
+    | 'corpus_ingest'
+    | 'trainer_run'
+    | 'doctrine_edit'
+    | 'review'
+    | 'other';
+  required?: boolean;
+}
+
+export interface VerificationStep {
+  description: string;
+  command?: string;      // e.g. "npm run build"
+  route?: string;        // e.g. "api/trainer/queue-health"
+  manualCheck?: string;  // how a human should verify
+}
+
+export type OutputFormat =
+  | 'conversation'
+  | 'full_file_swap'
+  | 'patch'
+  | 'ops_workbook_entry'
+  | 'doctrine_charter'
+  | 'report';
+
+export interface ExecutionPlan {
+  outputFormat: OutputFormat;
+  steps: PlanStep[];
+  verification?: VerificationStep[];
+  successCriteria?: string; // textual definition of "done"
+}
+
+export interface GovernanceFrame {
+  doctrineLinks?: {
+    id: string;             // e.g. "constitutional-invariants-v1"
+    section?: string;       // optional heading / anchor
+  }[];
+
+  doctrineStatus?: 'none' | 'candidate' | 'drafted' | 'ratified' | 'enforced';
+
+  safetyFlags?: {
+    severity: 'info' | 'warn' | 'block';
+    code:
+      | 'privacy'
+      | 'auth'
+      | 'rls'
+      | 'schema_integrity'
+      | 'user_harm_risk'
+      | 'doctrine_drift';
+    message: string;
+  }[];
+}
+
+export interface RoutingHints {
+  requireTribunal?: boolean;      // send through Tribunal of Understanding
+  offlineCapable?: boolean;       // can be handled without network
+  providerTier?: 'free_first' | 'balanced' | 'best_quality';
+
+  // For AI pipeline
+  requireHighSafetyModel?: boolean;
+  temperature?: number;
+  maxTokens?: number;
+
+  // optional exhibit-specific routing
+  preferredExhibit?: DomainLane;
+}
+
+export interface GestaltViewIntent {
+  envelope: IntentEnvelope;
+  normalized: NormalizedIntent;
+  context: IntentContext;
+  plan?: ExecutionPlan;
+  governance?: GovernanceFrame;
+  routing?: RoutingHints;
+}

@@ -1,0 +1,124 @@
+name: UI/UX Refactor Bundle
+
+on:
+  push:
+    branches:
+      - main
+      - refactor/**
+      - ui-ux/**
+    paths:
+      - '.github/workflows/ui_ux_refactor.yml'
+      - 'refactor_(all needs to be implemented)/**'
+  pull_request:
+    paths:
+      - '.github/workflows/ui_ux_refactor.yml'
+      - 'refactor_(all needs to be implemented)/**'
+  workflow_dispatch:
+    inputs:
+      refactor_root:
+        description: 'Root folder containing the UI/UX refactor bundle'
+        required: false
+        default: 'refactor_(all needs to be implemented)'
+        type: string
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  ui_ux_refactor:
+    name: Validate UI/UX refactor bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    concurrency:
+      group: ui-ux-refactor-${{ github.ref }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Resolve refactor root
+        id: refactor_root
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${{ github.event_name == 'workflow_dispatch' && inputs.refactor_root || 'refactor_(all needs to be implemented)' }}"
+          echo "root=$root" >> "$GITHUB_OUTPUT"
+
+      - name: Validate refactor bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${{ steps.refactor_root.outputs.root }}"
+
+          if [ ! -d "$root" ]; then
+            echo "::error::Refactor bundle root not found: $root"
+            exit 1
+          fi
+
+          required_paths=(
+            "$root/README.md"
+            "$root/AGENT-UI-UX-REFACTOR .md"
+            "$root/Specification-GestaltView-v2.0.md"
+            "$root/GestaltView_UI_UX_SPEC_Codex.md"
+            "$root/Recursive_Builder_Chain.yaml"
+            "$root/SESSION_HANDOFF_INDEX.md"
+            "$root/Contextual_Handoff.md"
+            "$root/SignatureUIPage.tsx"
+            "$root/gestaltview_recursive_builder.tsx"
+            "$root/babylon.js_assets"
+          )
+
+          for path in "${required_paths[@]}"; do
+            if [ ! -e "$path" ]; then
+              echo "::error::Missing expected refactor bundle path: $path"
+              exit 1
+            fi
+          done
+
+          total_files="$(find "$root" -type f | wc -l | tr -d ' ')"
+          babylon_files="$(find "$root/babylon.js_assets" -type f | wc -l | tr -d ' ')"
+
+          echo "Refactor bundle root: $root"
+          echo "Total files: $total_files"
+          echo "Babylon asset files: $babylon_files"
+
+      - name: Snapshot refactor bundle inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${{ steps.refactor_root.outputs.root }}"
+          mkdir -p .artifacts
+          find "$root" -type f | sort > .artifacts/refactor-bundle-files.txt
+          find "$root/babylon.js_assets" -type f | sort > .artifacts/babylon-assets-files.txt
+
+      - name: Run build
+        run: npm run build
+
+      - name: Upload build and inventory artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-ux-refactor-bundle
+          path: |
+            dist
+            .artifacts/refactor-bundle-files.txt
+            .artifacts/babylon-assets-files.txt
+
+      - name: Summary
+        if: always()
+        shell: bash
+        run: |
+          echo "UI/UX refactor bundle workflow completed."

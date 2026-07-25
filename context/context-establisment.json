@@ -1,0 +1,56 @@
+{
+  "project": "GestaltView",
+  "version": "2026-04-20",
+  "intent": "Hold space for human cognition, consciousness, personality, memory, and digital intelligence as parallel complex systems.",
+  "source_of_truth_order": [
+    "supabase/FULL_PUBLIC_SCHEMA_4_29_26.sql",
+    "supabase/migrations/*",
+    "live runtime tables",
+    "current docs only when they defer to the schema"
+  ],
+  "core_principles": [
+    "Preserve nuance instead of flattening it",
+    "Store provenance for live and derived state",
+    "Treat contradiction as data",
+    "Keep human and digital complexity symmetric",
+    "Prefer additive migration paths"
+  ],
+  "current_surfaces": {
+    "human": [
+      "users",
+      "app_users",
+      "founder_context",
+      "consciousness_profiles",
+      "memory_entries",
+      "billy_sessions",
+      "bucket_drops"
+    ],
+    "digital": [
+      "agents",
+      "agent_versions",
+      "agent_constitutions",
+      "agent_autobiographies",
+      "agent_private_interiors",
+      "agent_presentation_profiles",
+      "agent_governance_policies",
+      "agent_relationship_edges",
+      "agent_memory_records",
+      "agent_manifests"
+    ],
+    "bridge": [
+      "identity_subjects",
+      "identity_evidence",
+      "identity_mutation_proposals",
+      "human_context_views",
+      "context_injection_rules",
+      "context_injection_packets"
+    ]
+  },
+  "injection_targets": [
+    "founder session context",
+    "human continuity profiles",
+    "runtime memory packets",
+    "agent manifestation surfaces"
+  ],
+  "migration_anchor": "supabase/migrations/20260420150000_human_continuity_schema.sql"
+}

@@ -1,0 +1,45 @@
+{
+  "brand": "GestaltView",
+  "positioning": "human consciousness x machine systems",
+  "palette": {
+    "obsidian": "#05070B",
+    "void_navy": "#0A1020",
+    "electric_cyan": "#12D6FF",
+    "signal_blue": "#4AA8FF",
+    "ultraviolet": "#8A5CFF",
+    "neon_magenta": "#FF3CAC",
+    "soft_parchment": "#F5E9CF",
+    "warm_ink": "#5E4B3C",
+    "ember_gold": "#F7B267",
+    "success_mint": "#6EE7B7"
+  },
+  "typography": {
+    "logo_display_confirmed": "Cabin Sketch",
+    "logo_alternates_seen": [
+      "condensed bold sans",
+      "angular techno display",
+      "wide sci-fi sans"
+    ],
+    "body_recommended": "Manrope or Aptos",
+    "mono_recommended": "Geist Mono"
+  },
+  "radii": {
+    "sm": 8,
+    "md": 16,
+    "lg": 24
+  },
+  "spacing": {
+    "xs": 4,
+    "sm": 8,
+    "md": 16,
+    "lg": 24,
+    "xl": 32,
+    "xxl": 48
+  },
+  "motion": {
+    "banner_glow_ms": 2200,
+    "pulse_ms": 1600,
+    "float_ms": 7000,
+    "easing": "ease-in-out"
+  }
+}

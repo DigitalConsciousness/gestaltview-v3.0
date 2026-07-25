@@ -1,0 +1,35 @@
+{
+  "packet_name": "GestaltView Collaboration & Onboarding Packet",
+  "packet_version": "1.0.0",
+  "generated_at": "2026-04-14T22:48:38+00:00",
+  "generated_from": "gestaltview-v2",
+  "repo_version": "2.0",
+  "packet_purpose": [
+    "human onboarding",
+    "digital intelligence onboarding",
+    "collaboration handoff",
+    "repo orientation",
+    "governed context transfer"
+  ],
+  "source_of_truth": {
+    "repo_manifest_json": "04_RUNTIME_AND_SCHEMA/repo_manifest.json",
+    "repo_manifest_md": "04_RUNTIME_AND_SCHEMA/repo_manifest.md",
+    "current_state": "07_CURRENT_STATE_AND_EVIDENCE/CurrentState.md",
+    "orientation_checkpoint": "02_ORIENTATION/orientation_checkpoint.latest.json",
+    "skills_index": "03_SKILLS_AND_ROUTING/skills_INDEX.md"
+  },
+  "contains": {
+    "governance": true,
+    "orientation": true,
+    "skills_routing": true,
+    "runtime_schema": true,
+    "personhood_framework": true,
+    "current_state": true,
+    "templates": true
+  },
+  "excludes": [
+    "raw full-repo dump",
+    "transferable persistent persona export",
+    "auxiliary vendor packs by default"
+  ]
+}

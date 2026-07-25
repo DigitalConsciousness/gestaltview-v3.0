@@ -1,0 +1,16 @@
+# !pip install llama-cpp-python
+
+from llama_cpp import Llama
+
+llm = Llama.from_pretrained(
+	repo_id="yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF",
+	filename="gemma4-coding-Q2_K.gguf",
+)
+llm.create_chat_completion(
+	messages = [
+		{
+			"role": "user",
+			"content": "What is the capital of France?"
+		}
+	]
+)

@@ -1,0 +1,883 @@
+/* MusicalDNAPage.css
+   GestaltView — Musical DNA — Green / Midnight Blue / Woodsy / Aurora Theme
+   © 2026 Keith Soyka / GestaltView */
+
+:root {
+  --dna-bg:           #020c08;
+  --dna-bg-mid:       #041a0e;
+  --dna-bg-panel:     rgba(4, 18, 10, 0.82);
+  --dna-border:       rgba(34, 197, 94, 0.14);
+  --dna-border-glow:  rgba(34, 197, 94, 0.32);
+  --aurora-emerald:   #22ee8d;
+  --aurora-teal:      #0dd9e6;
+  --aurora-purple:    #b81afa;
+  --aurora-amber:     #f59e0b;
+  --wood-light:       #a16207;
+  --wood-mid:         #78350f;
+  --wood-dark:        #451a03;
+  --text-primary:     #e2f5ea;
+  --text-secondary:   rgba(167, 243, 208, 0.65);
+  --text-muted:       rgba(134, 239, 172, 0.35);
+  --text-accent:      var(--aurora-emerald);
+  --radius-card:      14px;
+  --radius-sm:        8px;
+  --transition:       0.22s ease;
+}
+
+.dna-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse 120% 60% at 10% 0%,  rgba(34, 238, 141, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 80%  50% at 90% 10%, rgba(13, 217, 230, 0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 60%  40% at 50% 5%,  rgba(184, 26, 250, 0.05) 0%, transparent 50%),
+    linear-gradient(180deg, #020c08 0%, #041a0e 35%, #061c10 60%, #0a1a08 80%, #0d1a06 100%);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+.dna-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    92deg,
+    transparent 0px, transparent 3px,
+    rgba(34, 197, 94, 0.012) 3px, rgba(34, 197, 94, 0.012) 4px
+  );
+  z-index: 0;
+}
+
+
+.dna-billy-layer {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  width: min(420px, calc(100vw - 1.5rem));
+  max-height: calc(100vh - 2rem);
+  z-index: 1400;
+}
+
+.dna-billy-layer section {
+  box-shadow: 0 0 0 1px rgba(0, 212, 255, 0.22), 0 14px 40px rgba(0, 0, 0, 0.55);
+}
+
+.dna-header {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 4rem 1.5rem 2.25rem;
+}
+
+.dna-eyebrow {
+  display: inline-block;
+  font-family: 'Cabin Sketch', cursive;
+  font-size: clamp(0.78rem, 1.5vw, 0.94rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(34, 238, 141, 0.62);
+  margin-bottom: 0.55rem;
+  font-weight: 400;
+}
+
+.dna-title {
+  font-family: 'Cabin Sketch', cursive;
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.02;
+  margin: 0 0 0.85rem;
+  background: linear-gradient(135deg, var(--aurora-emerald) 0%, var(--aurora-teal) 30%, #ff5459 64%, var(--aurora-emerald) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 28px rgba(34, 238, 141, 0.28));
+}
+
+.dna-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.dna-layout {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 300px 1fr 340px;
+  gap: 1.25rem;
+  padding: 0 1.5rem 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1100px) {
+  .dna-layout { grid-template-columns: 260px 1fr; }
+  .dna-insight-pane { display: none; }
+}
+@media (max-width: 720px) {
+  .dna-layout { grid-template-columns: 1fr; }
+  .dna-playlist { max-height: 260px; }
+}
+
+.dna-playlist { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.dna-track-upload {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: linear-gradient(180deg, rgba(4, 26, 14, 0.95), rgba(2, 12, 8, 0.92));
+  border: 1px solid rgba(34, 197, 94, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(13, 217, 230, 0.04);
+  text-align: left;
+}
+
+.dna-track-upload.compact {
+  margin-top: 0.85rem;
+  padding: 0.85rem;
+  gap: 0.75rem;
+}
+
+.dna-track-upload-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.9rem;
+}
+
+.dna-track-upload-eyebrow {
+  margin: 0 0 0.2rem;
+  color: rgba(13, 217, 230, 0.82);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.dna-track-upload-title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.96rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.dna-track-dropzone {
+  display: grid;
+  gap: 0.35rem;
+  width: 100%;
+  padding: 0.95rem;
+  border-radius: 0.95rem;
+  border: 1px dashed rgba(13, 217, 230, 0.36);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(34, 238, 141, 0.03));
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.dna-track-dropzone:hover {
+  border-color: rgba(34, 238, 141, 0.55);
+  box-shadow: 0 0 0 1px rgba(34, 238, 141, 0.08), 0 0 18px rgba(13, 217, 230, 0.08);
+}
+
+.dna-track-dropzone.active {
+  border-color: var(--aurora-emerald);
+  background: linear-gradient(180deg, rgba(34, 238, 141, 0.08), rgba(13, 217, 230, 0.06));
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(34, 238, 141, 0.12), 0 0 22px rgba(34, 238, 141, 0.12);
+}
+
+.dna-track-dropzone-icon {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(34, 238, 141, 0.12);
+  color: var(--aurora-emerald);
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.dna-track-dropzone-title {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dna-track-dropzone-note {
+  font-size: 0.72rem;
+  color: rgba(167, 243, 208, 0.62);
+  line-height: 1.5;
+}
+
+.dna-track-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.dna-track-selected-file {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dna-track-selected-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.25rem 0.5rem;
+  background: rgba(34, 238, 141, 0.12);
+  color: var(--aurora-emerald);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dna-track-selected-name {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.84rem;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.dna-track-selected-meta {
+  margin: 0.12rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+}
+
+.dna-track-fields {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dna-track-field {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+}
+
+.dna-track-field.full {
+  grid-column: 1 / -1;
+}
+
+.dna-track-input,
+.dna-track-textarea {
+  width: 100%;
+  border: 1px solid rgba(34, 197, 94, 0.18);
+  border-radius: 0.75rem;
+  background: rgba(2, 12, 8, 0.94);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  padding: 0.7rem 0.78rem;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.dna-track-textarea {
+  resize: vertical;
+  min-height: 88px;
+}
+
+.dna-track-input:focus,
+.dna-track-textarea:focus {
+  border-color: rgba(34, 238, 141, 0.6);
+  box-shadow: 0 0 0 3px rgba(34, 238, 141, 0.08);
+  background: rgba(2, 12, 8, 1);
+}
+
+.dna-track-upload-button,
+.dna-track-remove {
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 0.48rem 0.78rem;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition), opacity var(--transition), transform var(--transition);
+}
+
+.dna-track-upload-button {
+  border: 1px solid rgba(13, 217, 230, 0.28);
+  color: #d6fbff;
+  background: rgba(13, 217, 230, 0.08);
+}
+
+.dna-track-upload-button.primary {
+  border-color: transparent;
+  background: linear-gradient(135deg, #1db954 0%, #17a349 100%);
+  color: #fff;
+}
+
+.dna-track-upload-button.secondary {
+  border-color: rgba(13, 217, 230, 0.28);
+  background: rgba(13, 217, 230, 0.08);
+  color: #d6fbff;
+}
+
+.dna-track-upload-button:not(:disabled):hover {
+  transform: translateY(-1px);
+  background: rgba(13, 217, 230, 0.16);
+}
+
+.dna-track-upload-button.primary:not(:disabled):hover {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.dna-track-upload-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
+
+.dna-track-upload-hint {
+  margin: 0;
+  color: rgba(167, 243, 208, 0.62);
+  font-size: 0.75rem;
+  line-height: 1.55;
+}
+
+.dna-track-list-wrap {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.dna-track-list-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  color: rgba(167, 243, 208, 0.7);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.dna-track-list {
+  display: grid;
+  gap: 0.5rem;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 0.2rem;
+}
+
+.dna-track-empty {
+  padding: 0.85rem;
+  border-radius: 0.8rem;
+  border: 1px solid rgba(34, 197, 94, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(167, 243, 208, 0.6);
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.dna-track-item {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.65rem;
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(34, 197, 94, 0.12);
+}
+
+.dna-track-art {
+  width: 46px;
+  height: 46px;
+  border-radius: 0.65rem;
+  object-fit: cover;
+  border: 1px solid rgba(34, 197, 94, 0.18);
+}
+
+.dna-track-meta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.dna-track-title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.84rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dna-track-artist {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.73rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dna-track-note {
+  margin: 0.16rem 0 0;
+  color: rgba(167, 243, 208, 0.56);
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.dna-track-actions {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.dna-track-remove {
+  border: 1px solid rgba(255, 92, 119, 0.28);
+  background: rgba(255, 92, 119, 0.12);
+  color: #ffd0da;
+}
+
+.dna-track-remove:not(:disabled):hover {
+  background: rgba(255, 92, 119, 0.2);
+  border-color: rgba(255, 92, 119, 0.45);
+}
+
+.dna-track-upload-error {
+  margin: 0;
+  padding: 0.82rem 0.9rem;
+  border-radius: 0.8rem;
+  background: rgba(255, 92, 119, 0.08);
+  border: 1px solid rgba(255, 92, 119, 0.25);
+  color: #ffb4c0;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 720px) {
+  .dna-track-upload-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dna-track-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .dna-track-item {
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .dna-track-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+}
+
+.spotify-library-button {
+  border: 1px solid rgba(29, 185, 84, 0.3);
+  border-radius: 999px;
+  background: rgba(29, 185, 84, 0.08);
+  color: #cfffe0;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 0.48rem 0.78rem;
+  transition: background var(--transition), border-color var(--transition), opacity var(--transition);
+}
+
+.spotify-library-button.primary {
+  background: linear-gradient(135deg, #1db954 0%, #17a349 100%);
+  border-color: transparent;
+  color: #fff;
+}
+
+.spotify-library-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.spotify-library-button:not(:disabled):hover {
+  background: rgba(29, 185, 84, 0.18);
+  border-color: rgba(29, 185, 84, 0.5);
+}
+
+.spotify-library-button.primary:not(:disabled):hover {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.spotify-library-select {
+  width: 100%;
+  border: 1px solid rgba(29, 185, 84, 0.28);
+  border-radius: 0.7rem;
+  background: rgba(2, 12, 8, 0.88);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  padding: 0.58rem 0.7rem;
+  outline: none;
+}
+
+.spotify-track-preview {
+  display: grid;
+  gap: 0.35rem;
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 0.2rem;
+}
+
+.spotify-track-preview-row {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+  padding: 0.42rem 0.5rem;
+  border-radius: 0.55rem;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.spotify-track-preview-row span,
+.spotify-track-preview-row small {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spotify-track-preview-row span {
+  color: var(--text-primary);
+  font-size: 0.76rem;
+}
+
+.spotify-track-preview-row small {
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 0.68rem;
+}
+
+.playlist-label {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0 0.25rem 0.5rem;
+  border-bottom: 1px solid var(--dna-border);
+  margin-bottom: 0.25rem;
+}
+
+.playlist-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 240px);
+  padding-right: 0.25rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(34, 197, 94, 0.2) transparent;
+}
+
+.song-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--dna-bg-panel);
+  border: 1px solid var(--dna-border);
+  border-left: 3px solid var(--wood-mid);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  position: relative;
+}
+.song-card:hover {
+  border-color: var(--dna-border-glow);
+  border-left-color: var(--aurora-emerald);
+  background: rgba(4, 28, 16, 0.9);
+}
+.song-card.active {
+  border-color: rgba(34, 238, 141, 0.4);
+  border-left-color: var(--aurora-emerald);
+  background: rgba(6, 32, 18, 0.95);
+  box-shadow: 0 0 20px rgba(34, 238, 141, 0.08), inset 0 0 12px rgba(34, 238, 141, 0.04);
+}
+
+.song-card-art {
+  position: relative;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--dna-border);
+}
+.song-card-art img { width: 100%; height: 100%; object-fit: cover; }
+
+.song-card-playing {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  padding-bottom: 4px;
+  background: rgba(2, 12, 8, 0.55);
+}
+.song-card-playing span {
+  display: block;
+  width: 3px;
+  background: var(--aurora-emerald);
+  border-radius: 2px;
+  animation: bar-bounce 0.8s ease-in-out infinite alternate;
+}
+.song-card-playing span:nth-child(1) { height: 8px;  animation-delay: 0s; }
+.song-card-playing span:nth-child(2) { height: 14px; animation-delay: 0.15s; }
+.song-card-playing span:nth-child(3) { height: 10px; animation-delay: 0.3s; }
+@keyframes bar-bounce { from { transform: scaleY(0.4); } to { transform: scaleY(1.0); } }
+
+.song-card-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.song-card-archetype {
+  font-size: 0.58rem; letter-spacing: 0.08em; color: var(--aurora-teal); opacity: 0.75;
+  text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.song-card-title { font-size: 0.85rem; font-weight: 500; color: var(--text-primary); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.song-card-artist { font-size: 0.75rem; color: var(--text-secondary); margin: 0; }
+.song-card-cluster { font-size: 0.6rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.song-card-provenance { margin: 0.18rem 0 0; font-size: 0.58rem; line-height: 1.4; color: rgba(255,255,255,0.42); }
+
+.song-card-insight-btn {
+  flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid var(--dna-border); background: transparent;
+  color: var(--aurora-emerald); font-size: 0.85rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition); opacity: 0.6;
+}
+.song-card-insight-btn:hover { opacity: 1; border-color: var(--aurora-emerald); box-shadow: 0 0 10px rgba(34, 238, 141, 0.25); }
+
+.dna-center { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; }
+
+.dna-canvas-wrap {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  border: 1px solid var(--dna-border);
+  box-shadow: 0 0 0 1px rgba(34, 238, 141, 0.06), 0 0 40px rgba(34, 238, 141, 0.08), 0 0 80px rgba(13, 217, 230, 0.04), inset 0 0 60px rgba(2, 12, 8, 0.6);
+  outline: 2px solid var(--wood-dark);
+  outline-offset: 3px;
+}
+.dna-canvas { width: 100%; height: 100%; display: block; }
+
+.dna-canvas-overlay { position: absolute; top: 0.75rem; left: 0.75rem; pointer-events: none; z-index: 2; }
+.canvas-mode-label {
+  font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.65rem; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--aurora-emerald); opacity: 0.6;
+  background: rgba(2, 12, 8, 0.6); padding: 0.25rem 0.6rem; border-radius: 4px;
+  border: 1px solid rgba(34, 238, 141, 0.12);
+}
+
+.dna-now-playing {
+  display: flex; align-items: center; gap: 1rem; width: 100%;
+  padding: 0.85rem 1rem; border-radius: var(--radius-sm);
+  background: var(--dna-bg-panel); border: 1px solid var(--dna-border);
+  border-left: 3px solid var(--aurora-emerald);
+}
+.now-playing-art { width: 52px; height: 52px; border-radius: 8px; object-fit: cover; border: 1px solid var(--dna-border); box-shadow: 0 0 16px rgba(34, 238, 141, 0.15); }
+.now-playing-meta { display: flex; flex-direction: column; gap: 2px; }
+.now-playing-archetype { font-size: 0.6rem; letter-spacing: 0.1em; color: var(--aurora-teal); text-transform: uppercase; }
+.now-playing-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); margin: 0; }
+.now-playing-artist { font-size: 0.8rem; color: var(--text-secondary); margin: 0; }
+
+.dna-waveform { display: flex; align-items: flex-end; gap: 3px; height: 56px; width: 100%; padding: 0 0.5rem; }
+.waveform-bar {
+  flex: 1; min-width: 3px; border-radius: 3px 3px 0 0;
+  background: linear-gradient(to top, var(--aurora-emerald) 0%, var(--aurora-teal) 60%, var(--aurora-purple) 100%);
+  opacity: 0.7; transition: height 0.08s ease;
+}
+
+.dna-play-btn {
+  width: 64px; height: 64px; border-radius: 50%;
+  border: 2px solid var(--aurora-emerald); background: rgba(34, 238, 141, 0.08);
+  color: var(--aurora-emerald); font-size: 1.1rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition); box-shadow: 0 0 20px rgba(34, 238, 141, 0.15);
+}
+.dna-play-btn:hover { background: rgba(34, 238, 141, 0.18); box-shadow: 0 0 32px rgba(34, 238, 141, 0.3); transform: scale(1.05); }
+.play-icon { display: block; line-height: 1; }
+
+.dna-mode-selector { display: flex; gap: 0.75rem; width: 100%; justify-content: center; flex-wrap: wrap; }
+.mode-btn {
+  flex: 1; min-width: 120px; max-width: 180px;
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  padding: 0.85rem 0.75rem; border-radius: var(--radius-sm);
+  border: 1px solid var(--dna-border); border-bottom: 2px solid var(--wood-mid);
+  background: var(--dna-bg-panel); color: var(--text-secondary); cursor: pointer;
+  transition: all var(--transition);
+}
+.mode-btn:hover { border-color: var(--dna-border-glow); border-bottom-color: var(--aurora-emerald); color: var(--text-primary); }
+.mode-btn.active { border-color: rgba(34, 238, 141, 0.4); border-bottom-color: var(--aurora-emerald); background: rgba(6, 32, 18, 0.95); color: var(--text-primary); box-shadow: 0 0 18px rgba(34, 238, 141, 0.1); }
+.mode-btn-icon { font-size: 1.3rem; color: var(--aurora-emerald); }
+.mode-btn-label { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: inherit; }
+.mode-btn-desc { font-size: 0.6rem; color: var(--text-muted); text-align: center; line-height: 1.4; }
+
+.dna-insight-toggle {
+  padding: 0.6rem 1.5rem; border-radius: 999px;
+  border: 1px solid var(--dna-border-glow); background: rgba(34, 238, 141, 0.06);
+  color: var(--aurora-emerald); font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.72rem; letter-spacing: 0.12em; cursor: pointer; transition: all var(--transition);
+}
+.dna-insight-toggle:hover { background: rgba(34, 238, 141, 0.14); box-shadow: 0 0 16px rgba(34, 238, 141, 0.2); }
+
+.dna-insight-pane {
+  position: sticky;
+  z-index: 3;
+  z-index: 2;
+  top: 1.5rem;
+  height: fit-content;
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(34, 197, 94, 0.2) transparent;
+}
+
+/* ── InsightWindow — inline panel layout ── */
+.insight-window {
+  position: relative;
+  z-index: 3;
+  background: rgba(4, 18, 10, 0.92);
+  border: 1px solid rgba(34, 197, 94, 0.22);
+  border-left: 3px solid var(--aurora-emerald);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+}
+
+.insight-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1rem 1rem 0.75rem;
+  border-bottom: 1px solid rgba(34, 197, 94, 0.12);
+}
+
+.insight-title-section h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.2rem;
+}
+
+.insight-title-section h3 {
+  font-size: 0.75rem;
+  color: var(--aurora-teal);
+  margin: 0;
+  font-weight: 400;
+}
+
+.insight-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.25rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 0.25rem;
+  transition: color var(--transition);
+}
+.insight-close-btn:hover { color: var(--text-primary); }
+
+.insight-archetype-banner {
+  padding: 0.6rem 1rem;
+  background: rgba(34, 238, 141, 0.04);
+  border-bottom: 1px solid rgba(34, 197, 94, 0.08);
+}
+.insight-archetype-banner p {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin: 0.1rem 0;
+  line-height: 1.4;
+}
+.insight-archetype-banner strong {
+  color: var(--aurora-emerald);
+  font-weight: 600;
+}
+
+.insight-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(34, 197, 94, 0.12);
+}
+
+.insight-tab {
+  flex: 1;
+  padding: 0.6rem 0.4rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+.insight-tab:hover { color: var(--text-secondary); }
+.insight-tab.active {
+  color: var(--aurora-emerald);
+  border-bottom-color: var(--aurora-emerald);
+}
+
+.insight-tab-icon { font-size: 0.9rem; }
+
+.insight-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(34, 197, 94, 0.2) transparent;
+}
+.insight-content p {
+  font-size: 0.78rem;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.insight-mode-guidance {
+  padding: 0.75rem 1rem;
+  background: rgba(34, 238, 141, 0.04);
+  border-top: 1px solid rgba(34, 197, 94, 0.1);
+}
+.insight-mode-guidance h4 {
+  font-size: 0.65rem;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--aurora-emerald);
+  margin: 0 0 0.4rem;
+}
+.insight-mode-guidance p {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+}

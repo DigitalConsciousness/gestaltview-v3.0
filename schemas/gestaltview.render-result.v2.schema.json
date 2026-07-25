@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gestaltview.ai/schemas/gestaltview.render-result.v2.schema.json",
+  "title": "GestaltView Render Result v2",
+  "type": "object",
+  "required": ["ok", "job", "artifacts", "diagnostics", "manifest"],
+  "properties": {
+    "ok": { "type": "boolean" },
+    "reused": { "type": "boolean" },
+    "job": {
+      "type": "object",
+      "required": ["id", "status"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "graphId": { "type": "string" },
+        "status": {
+          "enum": [
+            "queued",
+            "validating",
+            "rendering",
+            "storing",
+            "ready",
+            "failed",
+            "cancelled"
+          ]
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "format", "backend"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "format": { "type": "string" },
+          "backend": { "type": "string" },
+          "mimeType": { "type": "string" },
+          "bytes": { "type": "integer", "minimum": 0 },
+          "hash": { "type": "string" },
+          "targetStatus": {
+            "enum": ["success", "failed", "unsupported", "partial"]
+          }
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "message", "severity", "stage"],
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" },
+          "severity": { "enum": ["fatal", "retryable", "warning"] },
+          "stage": { "type": "string" },
+          "details": { "type": "object" }
+        }
+      }
+    },
+    "manifest": {
+      "type": "object"
+    }
+  }
+}

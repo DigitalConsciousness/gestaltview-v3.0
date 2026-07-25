@@ -1,0 +1,70 @@
+{
+  "compendiumRoot": "../GestaltView-Official-Compendium-v1",
+  "packages": {
+    "core-docs": [
+      "docs",
+      "README.md",
+      "SKILL.md",
+      "docs/ArchitecturalStructure.md",
+      "docs/AIFlow.md",
+      "docs/APIFlow.md",
+      "docs/Workflows.md",
+      "docs/SymbioticWorkflow.md",
+      "docs/OriginStory.md",
+      "docs/CurrentState.md"
+    ],
+    "billy-intelligence": [
+      "Perplexity/billy.py",
+      "Perplexity/BILLYINTEGRATIONDESIGN.md",
+      "Perplexity/BILLYKNOWLEDGEREPODESIGN.md",
+      "Perplexity/Billy111825.txt",
+      "Perplexity/contextweaver.py",
+      "Perplexity/plkengine.py",
+      "Perplexity/plksystem.txt",
+      "Perplexity/keith-plk.tkeithcompletegestaltviewsystem.md.txt"
+    ],
+    "philosophy-narrative": [
+      "Perplexity/gestalt.py.md",
+      "Perplexity/gestaltviewsystem.py.txt",
+      "Perplexity/WellnessWitnessWholeness.md",
+      "Perplexity/OriginStory.md",
+      "ZippedNuanceAndUnderstanding/ComprehensiveSynthesisReportonGestaltViewand.pdf",
+      "ZippedNuanceAndUnderstanding/GettingIttogether.txt",
+      "ZippedNuanceAndUnderstanding/SayWhat!!.txt",
+      "ZippedNuanceAndUnderstanding/The Architecture of Inevitability- A Stewardship Brief on Consciousness-Serving Infrastructure 1-1-1.pdf",
+      "ZippedNuanceAndUnderstanding/Transmuting Nebula Into Global Infrastructure.pdf",
+      "ZippedNuanceAndUnderstanding/AI Safety, Connection, and GestaltView.pdf"
+    ],
+    "technical-architecture": [
+      "Perplexity/aiorchestrator.py",
+      "Perplexity/llmrouter.py",
+      "Perplexity/llmrouterenhanced.py",
+      "Perplexity/genesis-protocol.py.txt",
+      "Perplexity/brain-sparks-core.py.txt",
+      "Perplexity/consciousnessmiddleware.py",
+      "Perplexity/prompttemplatesenhanced.py",
+      "Perplexity/Schema.txt",
+      "Perplexity/PrismaSchema.txt"
+    ],
+    "exhibits-products": [
+      "Perplexity/ADHDPowerUp.md",
+      "Perplexity/SymbioCoder.md",
+      "Perplexity/VibeCober.md",
+      "Perplexity/Neural-Handshake.md",
+      "Perplexity/ResumeRockstar Architecture and Documentation Analysis for a Neurodivergent-Serving AI Resume Platform.md",
+      "Perplexity/Museum of Impossible Things"
+    ],
+    "diligence-evidence": [
+      "ZippedNuanceAndUnderstanding/GestaltView Presentation Outline Research.pdf",
+      "ZippedNuanceAndUnderstanding/ComparativeLiteratureFindingsforGestaltViewVa.pdf",
+      "ZippedNuanceAndUnderstanding/Master Reboot Brain Summary Synthesis.pdf",
+      "Perplexity/Seven Month Emergence Of GestaltView .pdf"
+    ],
+    "skills-framework": [
+      "Perplexity/SKILLS.md.txt",
+      "Perplexity/SKILLSENGINES.md.txt",
+      "Perplexity/SKILLSSTRUCTURE.md.txt",
+      "skills"
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+# GestaltView DIG COG — robots.txt
+# © 2026 Keith Soyka / GestaltView
+
+User-agent: *
+Allow: /
+
+# Utility and non-index targets
+Disallow: /api/
+Disallow: /auth/
+Disallow: /auth/callback
+Disallow: /signin
+Disallow: /welcome
+Disallow: /404
+
+# Canonical sitemap set
+Sitemap: https://gestaltview-di-gsvw.vercel.app/sitemap.xml
+Sitemap: https://gestaltview-di-gsvw.vercel.app/gestaltview_sitemap.txt
+Sitemap: https://gestaltview-di-gsvw.vercel.app/gestaltview_sitemap.xml

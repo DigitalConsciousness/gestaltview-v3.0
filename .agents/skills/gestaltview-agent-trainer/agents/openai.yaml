@@ -1,0 +1,7 @@
+interface:
+  display_name: "GestaltView Agent Trainer"
+  short_description: "Operate the trainer control plane, eval loop, and deployment path."
+  default_prompt: "Use this skill for the GestaltView agent trainer runtime, Supabase lineage, eval packs, provider routing, and compiled agent artifacts."
+
+policy:
+  allow_implicit_invocation: true

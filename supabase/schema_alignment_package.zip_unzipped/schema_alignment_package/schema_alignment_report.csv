@@ -1,0 +1,89 @@
+table,domain,status
+agents,Agent Personhood,ACTIVE
+documents,Knowledge & Corpus,ACTIVE
+users,Identity & Accounts,ACTIVE
+models,Agent Trainer,ACTIVE
+embeddings,Knowledge & Corpus,ACTIVE
+knowledge_fragments,Knowledge & Corpus,ACTIVE
+memory_entries,Billy Runtime,ACTIVE
+bucket_drops,Billy Runtime,ACTIVE
+skill_fragments,Agent Personhood,ACTIVE
+processing_runs,Knowledge & Corpus,ACTIVE
+skills,Agent Personhood,ACTIVE
+founder_context,Billy Runtime,ACTIVE
+agent_memories,Agent Personhood,ACTIVE
+agent_memory_records,Agent Personhood,ACTIVE
+billy_sessions,Billy Runtime,ACTIVE
+musical_dna_analyses,Billy Runtime,ACTIVE
+agent_autobiographies,Agent Personhood,THIN
+agent_constitutions,Agent Personhood,THIN
+approvals,Agent Trainer,THIN
+scenarios,Agent Trainer,THIN
+training_runs,Agent Trainer,THIN
+concepts,Knowledge & Corpus,THIN
+summaries,Knowledge & Corpus,THIN
+tribunal_sessions,Tribunal,THIN
+agent_manifests,Agent Personhood,SCHEMA_ONLY
+agent_relationship_edges,Agent Personhood,SCHEMA_ONLY
+embodiment_mutations,Agent Personhood,SCHEMA_ONLY
+knowledge_assets,Agent Personhood,SCHEMA_ONLY
+knowledge_interpretations,Agent Personhood,SCHEMA_ONLY
+agent_versions,Agent Trainer,SCHEMA_ONLY
+eval_rubrics,Agent Trainer,SCHEMA_ONLY
+model_providers,Agent Trainer,SCHEMA_ONLY
+scenario_sets,Agent Trainer,SCHEMA_ONLY
+trainer_experiments,Agent Trainer,SCHEMA_ONLY
+collaborative_spaces,Billy Runtime,SCHEMA_ONLY
+gate_build_jobs,GATE Commerce,SCHEMA_ONLY
+gate_buyers,GATE Commerce,SCHEMA_ONLY
+gate_orders,GATE Commerce,SCHEMA_ONLY
+gate_package_drafts,GATE Commerce,SCHEMA_ONLY
+app_users,Identity & Accounts,SCHEMA_ONLY
+identity_evidence,Identity Review,SCHEMA_ONLY
+identity_mutation_proposals,Identity Review,SCHEMA_ONLY
+knowledge_tags,Knowledge & Corpus,SCHEMA_ONLY
+loom_annotations,Knowledge & Corpus,SCHEMA_ONLY
+tribunal_events,Tribunal,SCHEMA_ONLY
+agent_code_artifacts,Agent Personhood,DARK
+agent_context_views,Agent Personhood,DARK
+agent_governance_policies,Agent Personhood,DARK
+agent_knowledge_links,Agent Personhood,DARK
+agent_manifest_entries,Agent Personhood,DARK
+agent_preference_nodes,Agent Personhood,DARK
+agent_presentation_profiles,Agent Personhood,DARK
+agent_private_interiors,Agent Personhood,DARK
+agent_relationships,Agent Personhood,DARK
+agent_skill_profiles,Agent Personhood,DARK
+agent_skills,Agent Personhood,DARK
+knowledge_asset_chunks,Agent Personhood,DARK
+knowledge_asset_tags,Agent Personhood,DARK
+deployment_artifacts,Agent Trainer,DARK
+eval_results,Agent Trainer,DARK
+trainer_experiment_sources,Agent Trainer,DARK
+trainer_jobs,Agent Trainer,DARK
+trainer_packaging_candidates,Agent Trainer,DARK
+trainer_policy_flags,Agent Trainer,DARK
+trainer_review_decisions,Agent Trainer,DARK
+training_steps,Agent Trainer,DARK
+collaborative_memory_records,Billy Runtime,DARK
+collaborative_space_members,Billy Runtime,DARK
+consciousness_profiles,Billy Runtime,DARK
+gate_artifacts,GATE Commerce,DARK
+gate_order_items,GATE Commerce,DARK
+gate_support_requests,GATE Commerce,DARK
+identity_contradictions,Identity Review,DARK
+identity_evidence_links,Identity Review,DARK
+identity_review_events,Identity Review,DARK
+identity_rollback_events,Identity Review,DARK
+annotation_concepts,Knowledge & Corpus,DARK
+document_concepts,Knowledge & Corpus,DARK
+ops_workbook_items,Operations & Admin,DARK
+ops_workbook_sync_runs,Operations & Admin,DARK
+tribunal_evidence,Tribunal,DARK
+_deprecated_artifacts,Legacy Commerce,DEPRECATED
+_deprecated_build_jobs,Legacy Commerce,DEPRECATED
+_deprecated_buyers,Legacy Commerce,DEPRECATED
+_deprecated_order_items,Legacy Commerce,DEPRECATED
+_deprecated_orders,Legacy Commerce,DEPRECATED
+_deprecated_package_drafts,Legacy Commerce,DEPRECATED
+_deprecated_support_requests,Legacy Commerce,DEPRECATED

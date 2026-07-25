@@ -1,0 +1,137 @@
+# GestaltView — production-aligned Meticulous replay workflow
+#
+# This builds the Vite client with the same public API origin used in production,
+# then uploads dist/public for deterministic Meticulous session replay.
+# Backend fetch/XHR/WebSocket responses are normally replayed by Meticulous.
+
+name: Meticulous
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+  workflow_dispatch: {}
+
+permissions:
+  actions: write
+  contents: read
+  issues: write
+  pull-requests: write
+  statuses: read
+
+concurrency:
+  group: meticulous-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Meticulous production-aligned replay
+
+    # Required: unlocks secrets and variables stored in
+    # Settings → Environments → Production.
+    environment: Production
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.1
+          run_install: false
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate Meticulous route index
+        run: pnpm run meticulous:routes
+
+      - name: Validate required configuration
+        env:
+          METICULOUS_API_TOKEN: ${{ secrets.METICULOUS_API_TOKEN }}
+          PRODUCTION_ORIGIN: ${{ vars.GESTALTVIEW_PRODUCTION_ORIGIN }}
+        shell: bash
+        run: |
+          if [[ -z "$METICULOUS_API_TOKEN" ]]; then
+            echo "::error::Add METICULOUS_API_TOKEN as a GitHub Actions secret."
+            exit 1
+          fi
+
+          if [[ -z "$PRODUCTION_ORIGIN" ]]; then
+            echo "::error::Add GESTALTVIEW_PRODUCTION_ORIGIN as a GitHub Actions variable, for example https://your-production-domain.vercel.app"
+            exit 1
+          fi
+
+          if [[ ! "$PRODUCTION_ORIGIN" =~ ^https:// ]]; then
+            echo "::error::GESTALTVIEW_PRODUCTION_ORIGIN must be an https:// URL."
+            exit 1
+          fi
+
+          ORIGIN="${PRODUCTION_ORIGIN%/}"
+
+          # The client reads VITE_API_URL directly. It must include /api.
+          echo "VITE_API_URL=${ORIGIN}/api" >> "$GITHUB_ENV"
+
+          # These preserve compatibility with the repo's adjacent API-resolution paths.
+          echo "VITE_API_BASE_URL=${ORIGIN}" >> "$GITHUB_ENV"
+          echo "VITE_BILLY_API_URL=${ORIGIN}" >> "$GITHUB_ENV"
+          echo "VITE_API_PROXY_TARGET=${ORIGIN}" >> "$GITHUB_ENV"
+
+          echo "GestaltView production origin: ${ORIGIN}"
+          echo "GestaltView production API: ${ORIGIN}/api"
+
+      - name: Build GestaltView in production mode
+        env:
+          CI: "true"
+          NODE_ENV: "production"
+          NODE_OPTIONS: "--max-old-space-size=4096"
+
+          # Marks this bundle as a Meticulous replay build. The revised Vite
+          # plugin uses it to avoid recording the replay as another session.
+          METICULOUS_BUILD: "true"
+          VITE_METICULOUS_RECORDING_ENABLED: "false"
+
+          # Optional public production configuration. Add these GitHub values
+          # only if the client requires them during boot.
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SPOTIFY_CLIENT_ID: ${{ vars.VITE_SPOTIFY_CLIENT_ID }}
+          VITE_SPOTIFY_REDIRECT_URI: ${{ vars.VITE_SPOTIFY_REDIRECT_URI }}
+        run: pnpm build
+
+      - name: Verify production-aligned build output
+        shell: bash
+        run: |
+          test -f dist/public/index.html
+          test -d dist/public/assets
+
+          if grep -q "snippet.meticulous.ai" dist/public/index.html; then
+            echo "::error::The Meticulous replay build must not include the session recorder."
+            exit 1
+          fi
+
+          if grep -R --fixed-strings "$VITE_API_URL" dist/public/assets >/dev/null 2>&1; then
+            echo "Confirmed compiled API target: $VITE_API_URL"
+          else
+            echo "::warning::The production API URL was not found literally in built assets. This can be normal if the relevant module was tree-shaken, but verify the first replay carefully."
+          fi
+
+      - name: Upload assets and run Meticulous tests
+        uses: alwaysmeticulous/report-diffs-action/upload-assets@v1
+        with:
+          api-token: ${{ secrets.METICULOUS_API_TOKEN }}
+          app-directory: dist/public
+          rewrites: >-
+            [{"source":"**","destination":"/index.html"}]

@@ -1,0 +1,20 @@
+{
+  "packet_type": "gestaltview_orientation_checkpoint",
+  "packet_version": "2.0.0",
+  "checkpoint_id": "orientation-checkpoint-latest",
+  "generated_at_utc": "2026-06-06T20:42:22+00:00",
+  "spine_ref": "02_ORIENTATION/orientation_spine.v2.json",
+  "delta_ref": "02_ORIENTATION/orientation_delta.current.json",
+  "priority_changes": [
+    "Active blocker: Agent Trainer Page API Errors",
+    "Changed assumption: Orientation should be split into spine, delta, and checkpoint.",
+    "Changed assumption: Embodiment profiles should ingest summaries rather than full packet copies."
+  ],
+  "load_first": [
+    "source_of_truth",
+    "constitutional_layers",
+    "active_blockers",
+    "memory_model",
+    "system_domains"
+  ]
+}

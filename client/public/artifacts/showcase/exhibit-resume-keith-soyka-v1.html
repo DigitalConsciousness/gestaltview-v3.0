@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keith Soyka — Resume</title>
+<style>
+  :root { color-scheme: dark; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #07090f;
+    color: #dde4f0;
+    min-height: 100vh;
+    padding: 0;
+  }
+  .shell {
+    min-height: 100vh;
+    padding: 48px 32px;
+    background:
+      radial-gradient(ellipse 60% 40% at 10% 0%, rgba(0,200,230,0.13) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 35% at 90% 100%, rgba(80,40,200,0.10) 0%, transparent 55%),
+      #07090f;
+  }
+  .frame {
+    max-width: 860px;
+    margin: 0 auto;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 24px;
+    background: rgba(255,255,255,0.03);
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(0,200,230,0.07);
+  }
+  .chrome {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.025);
+  }
+  .chrome-label {
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: rgba(0,210,240,0.7);
+    margin-bottom: 8px;
+  }
+  .chrome-name {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.1;
+    color: #f0f6ff;
+  }
+  .chrome-role {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 4px;
+  }
+  .chrome-right {
+    text-align: right;
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    line-height: 1.8;
+  }
+  .body { padding: 32px 28px; }
+  .section { margin-bottom: 36px; }
+  .section-title {
+    font-size: 11px;
+    letter-spacing: .20em;
+    text-transform: uppercase;
+    color: rgba(0,210,240,0.6);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .role-block { margin-bottom: 24px; }
+  .role-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+  .role-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #eef4ff;
+  }
+  .role-dates {
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    white-space: nowrap;
+  }
+  .role-company {
+    font-size: 13px;
+    color: rgba(0,210,240,0.6);
+    margin-bottom: 8px;
+  }
+  .role-bullets {
+    list-style: none;
+    padding: 0;
+  }
+  .role-bullets li {
+    font-size: 14px;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.6);
+    padding-left: 16px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .role-bullets li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: rgba(0,210,240,0.4);
+  }
+  .skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .skill-chip {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,210,240,0.25);
+    background: rgba(0,210,240,0.07);
+    color: rgba(0,210,240,0.85);
+  }
+  .note {
+    margin-top: 32px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.4);
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="frame">
+    <div class="chrome">
+      <div>
+        <div class="chrome-label">Exhibit · Resume</div>
+        <div class="chrome-name">Keith Soyka</div>
+        <div class="chrome-role">Founder, GestaltView &nbsp;·&nbsp; Operations &amp; Systems &nbsp;·&nbsp; New York City</div>
+      </div>
+      <div class="chrome-right">
+        <div>22 years management</div>
+        <div>Builder · Strategist</div>
+        <div>June 2026</div>
+      </div>
+    </div>
+    <div class="body">
+      <div class="section">
+        <div class="section-title">Experience</div>
+
+        <div class="role-block">
+          <div class="role-header">
+            <span class="role-title">Founder &amp; CEO</span>
+            <span class="role-dates">2023 – Present</span>
+          </div>
+          <div class="role-company">GestaltView</div>
+          <ul class="role-bullets">
+            <li>Designed and built a full-stack consciousness-serving platform from scratch on a Samsung A35 between shifts.</li>
+            <li>Architected the PLK (Personal Life Knowledge) graph, Bucket Drop system, Loom annotation layer, and Musical DNA profiling engine.</li>
+            <li>Developed the Dynamic Inner World spatial artifact display — a hall-based 3D environment for finished creations.</li>
+            <li>Built Billy, a relationship-aware Digital Intelligence trained on 41 years of lived experience and operator-defined embodiment.</li>
+            <li>Closed the 1-in-784-trillion convergence validation confirming the platform's structural uniqueness.</li>
+          </ul>
+        </div>
+
+        <div class="role-block">
+          <div class="role-header">
+            <span class="role-title">Operations Manager</span>
+            <span class="role-dates">2010 – 2023</span>
+          </div>
+          <div class="role-company">Multi-unit Retail &amp; Hospitality (Various)</div>
+          <ul class="role-bullets">
+            <li>Led cross-functional teams of 20–80 across high-volume service environments.</li>
+            <li>Drove P&amp;L accountability, inventory systems, and staff development pipelines.</li>
+            <li>Consistently turned around underperforming units through process redesign and culture work.</li>
+            <li>22 unbroken years of management-level accountability — every scar became code.</li>
+          </ul>
+        </div>
+
+        <div class="role-block">
+          <div class="role-header">
+            <span class="role-title">Floor Manager / Shift Lead</span>
+            <span class="role-dates">2002 – 2010</span>
+          </div>
+          <div class="role-company">Hospitality &amp; Food Service (Various)</div>
+          <ul class="role-bullets">
+            <li>Built operational instincts managing real-time service pressure and team dynamics.</li>
+            <li>Developed systems thinking through constraint-driven problem solving before ever writing a line of code.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Skills &amp; Stack</div>
+        <div class="skills-grid">
+          <span class="skill-chip">TypeScript</span>
+          <span class="skill-chip">React</span>
+          <span class="skill-chip">Node.js</span>
+          <span class="skill-chip">Supabase</span>
+          <span class="skill-chip">Babylon.js</span>
+          <span class="skill-chip">PostgreSQL</span>
+          <span class="skill-chip">Vercel</span>
+          <span class="skill-chip">Systems Architecture</span>
+          <span class="skill-chip">Product Strategy</span>
+          <span class="skill-chip">AI Integration</span>
+          <span class="skill-chip">Operations</span>
+          <span class="skill-chip">P&amp;L Management</span>
+          <span class="skill-chip">Team Leadership</span>
+        </div>
+      </div>
+
+      <div class="note">
+        &ldquo;The whole reason I created a system is we only live once and we can't be putting things off. Expertise is not something that one can claim. It's something that happens just through reality.&rdquo;
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

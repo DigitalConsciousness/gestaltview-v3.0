@@ -1,0 +1,4 @@
+interface:
+  display_name: "Schema Contracts"
+  short_description: "Keep schema, Prisma, runtime types, and tests aligned."
+  default_prompt: "Audit canonical schema surfaces, update contract expectations, and document drift risks."

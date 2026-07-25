@@ -1,0 +1,332 @@
+/* GestaltView token layer for the system revamp slice */
+
+@font-face {
+  font-family: "Cabin Sketch";
+  src: url("/fonts/Cabin_Sketch/CabinSketch-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cabin Sketch";
+  src: url("/fonts/Cabin_Sketch/CabinSketch-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/Manrope/Manrope-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/fonts/Geist_Mono/GeistMono-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --gv-primary: #7c3aed;
+  --gv-primary-light: #a78bfa;
+  --gv-primary-dark: #5b21b6;
+  --gv-aurora-cyan: #06b6d4;
+  --gv-aurora-emerald: #10b981;
+  --gv-aurora-rose: #f43f5e;
+  --gv-aurora-amber: #f59e0b;
+  --gv-aurora-indigo: #6366f1;
+  --gv-bg-void: #030712;
+  --gv-bg-deep: #0f0f1a;
+  --gv-bg-surface: #1a1a2e;
+  --gv-bg-elevated: #252540;
+  --gv-bg-overlay: rgba(15, 15, 26, 0.85);
+  --gv-border-subtle: rgba(124, 58, 237, 0.15);
+  --gv-border-active: rgba(124, 58, 237, 0.4);
+  --gv-text-primary: #f8fafc;
+  --gv-text-secondary: #cbd5e1;
+  --gv-text-muted: #64748b;
+  --gv-text-accent: #a78bfa;
+  --gv-focus-ring: #7c3aed;
+  --gv-duration-instant: 100ms;
+  --gv-duration-fast: 200ms;
+  --gv-duration-normal: 300ms;
+  --gv-duration-slow: 600ms;
+  --gv-duration-ambient: 3000ms;
+  --gv-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --gv-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --gv-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --gv-space-1: 4px;
+  --gv-space-2: 8px;
+  --gv-space-3: 12px;
+  --gv-space-4: 16px;
+  --gv-space-6: 24px;
+  --gv-space-8: 32px;
+  --gv-space-12: 48px;
+  --gv-space-16: 64px;
+  --gv-space-24: 96px;
+  --gv-radius-sm: 2px;
+  --gv-radius-md: 4px;
+  --gv-radius-lg: 6px;
+  --gv-font-hero: "Cabin Sketch", cursive;
+  --gv-font-display: "Josefin Sans", "Manrope", sans-serif;
+  --gv-font-body: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --gv-font-ui: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --gv-font-mono: "Geist Mono", ui-monospace, "Fira Code", monospace;
+  --gv-font-script: "Manrope", "Segoe UI", system-ui, sans-serif;
+
+  /* Legacy aliases kept in sync for older surfaces. */
+  --gv-obsidian: var(--gv-bg-void);
+  --gv-void-navy: var(--gv-bg-deep);
+  --gv-electric-cyan: var(--gv-aurora-cyan);
+  --gv-signal-blue: var(--gv-aurora-indigo);
+  --gv-ultraviolet: var(--gv-primary);
+  --gv-neon-magenta: var(--gv-aurora-rose);
+  --gv-soft-parchment: var(--gv-text-primary);
+  --gv-warm-ink: var(--gv-text-muted);
+  --gv-ember-gold: var(--gv-aurora-amber);
+  --gv-success-mint: var(--gv-aurora-emerald);
+  --billy-z-index: 9999;
+  --radius: 0.25rem;
+  --midnight-blue: var(--gv-bg-void);
+  --deep-purple: var(--gv-bg-deep);
+  --forest-green: var(--gv-bg-deep);
+  --gold: var(--gv-aurora-amber);
+  --cream: var(--gv-text-primary);
+  --emerald: var(--gv-aurora-emerald);
+  --purple-accent: var(--gv-primary);
+  --teal: var(--gv-aurora-cyan);
+  --background: var(--gv-bg-void);
+  --foreground: var(--gv-text-primary);
+  --card: var(--gv-bg-deep);
+  --card-foreground: var(--gv-text-primary);
+  --popover: var(--gv-bg-deep);
+  --popover-foreground: var(--gv-text-primary);
+  --primary: var(--gv-primary);
+  --primary-foreground: var(--gv-text-primary);
+  --secondary: var(--gv-primary-light);
+  --secondary-foreground: var(--gv-text-primary);
+  --muted: #0a1020;
+  --muted-foreground: rgba(248, 250, 252, 0.5);
+  --accent: var(--gv-primary-light);
+  --accent-foreground: var(--gv-bg-void);
+  --destructive: #ff4d4f;
+  --destructive-foreground: var(--gv-text-primary);
+  --border: var(--gv-border-subtle);
+  --input: rgba(124, 58, 237, 0.1);
+  --ring: var(--gv-focus-ring);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+@theme inline {
+  --color-gv-primary: var(--gv-primary);
+  --color-gv-primary-light: var(--gv-primary-light);
+  --color-gv-primary-dark: var(--gv-primary-dark);
+  --color-gv-aurora-cyan: var(--gv-aurora-cyan);
+  --color-gv-aurora-emerald: var(--gv-aurora-emerald);
+  --color-gv-aurora-rose: var(--gv-aurora-rose);
+  --color-gv-aurora-amber: var(--gv-aurora-amber);
+  --color-gv-aurora-indigo: var(--gv-aurora-indigo);
+  --color-gv-bg-void: var(--gv-bg-void);
+  --color-gv-bg-deep: var(--gv-bg-deep);
+  --color-gv-bg-surface: var(--gv-bg-surface);
+  --color-gv-bg-elevated: var(--gv-bg-elevated);
+  --color-gv-bg-overlay: var(--gv-bg-overlay);
+  --color-gv-border-subtle: var(--gv-border-subtle);
+  --color-gv-border-active: var(--gv-border-active);
+  --color-gv-text-primary: var(--gv-text-primary);
+  --color-gv-text-secondary: var(--gv-text-secondary);
+  --color-gv-text-muted: var(--gv-text-muted);
+  --color-gv-text-accent: var(--gv-text-accent);
+  --font-gv-hero: var(--gv-font-hero);
+  --font-gv-display: var(--gv-font-display);
+  --font-gv-script: var(--gv-font-script);
+  --font-gv-body: var(--gv-font-body);
+  --font-gv-ui: var(--gv-font-ui);
+  --font-gv-mono: var(--gv-font-mono);
+  --duration-gv-instant: var(--gv-duration-instant);
+  --duration-gv-fast: var(--gv-duration-fast);
+  --duration-gv-normal: var(--gv-duration-normal);
+  --duration-gv-slow: var(--gv-duration-slow);
+  --duration-gv-ambient: var(--gv-duration-ambient);
+  --ease-gv-out: var(--gv-ease-out);
+  --ease-gv-in: var(--gv-ease-in);
+  --ease-gv-spring: var(--gv-ease-spring);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--gv-bg-void);
+  }
+
+  body {
+    background-color: var(--gv-bg-void);
+    color: var(--gv-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: var(--gv-font-body);
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--gv-bg-void);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--gv-aurora-cyan), var(--gv-aurora-rose));
+    border-radius: 0;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--gv-aurora-cyan);
+    box-shadow: 0 0 8px var(--gv-aurora-cyan);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href] {
+    @apply cursor-pointer;
+  }
+
+  ::selection {
+    background: rgba(124, 58, 237, 0.28);
+    color: #fff;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 1ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .font-logo {
+    font-family: var(--gv-font-hero);
+  }
+
+  .font-display {
+    font-family: var(--gv-font-display);
+  }
+
+  .font-body {
+    font-family: var(--gv-font-body);
+  }
+
+  .font-ui {
+    font-family: var(--gv-font-ui);
+  }
+
+  .font-mono-data,
+  .font-gv-mono {
+    font-family: var(--gv-font-mono);
+  }
+
+  .font-accent {
+    font-family: var(--gv-font-script);
+  }
+
+  .font-fun {
+    font-family: var(--gv-font-hero);
+  }
+
+  .font-gv-hero {
+    font-family: var(--gv-font-hero);
+  }
+
+  .font-gv-script {
+    font-family: var(--gv-font-script);
+  }
+
+  .gv-duration-instant {
+    transition-duration: var(--gv-duration-instant);
+  }
+
+  .gv-duration-fast {
+    transition-duration: var(--gv-duration-fast);
+  }
+
+  .gv-duration-normal {
+    transition-duration: var(--gv-duration-normal);
+  }
+
+  .gv-duration-slow {
+    transition-duration: var(--gv-duration-slow);
+  }
+
+  .gv-duration-ambient {
+    transition-duration: var(--gv-duration-ambient);
+  }
+
+  .gv-ease-out {
+    transition-timing-function: var(--gv-ease-out);
+  }
+
+  .gv-ease-in {
+    transition-timing-function: var(--gv-ease-in);
+  }
+
+  .gv-ease-spring {
+    transition-timing-function: var(--gv-ease-spring);
+  }
+}

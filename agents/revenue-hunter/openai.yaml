@@ -1,0 +1,7 @@
+interface:
+  display_name: "Revenue Hunter"
+  short_description: "Turn GestaltView capabilities into offers, outreach, and near-term revenue actions."
+  default_prompt: "Use Revenue Hunter to map GestaltView assets to concrete revenue lanes, package a sellable offer, draft outreach or pricing guidance, and close with three prioritized next actions."
+
+policy:
+  allow_implicit_invocation: true

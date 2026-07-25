@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cross-Repo Sync"
+  short_description: "Coordinate work across GestaltView repositories."
+  default_prompt: "Plan or document work that spans gestaltview-v2 and the integrated sibling repos."

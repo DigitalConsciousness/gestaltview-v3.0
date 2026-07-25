@@ -1,0 +1,937 @@
+openapi: 3.1.0
+info:
+  title: GestaltView GPT Actions Comprehensive
+  version: 1.0.0
+  description: Expanded import-ready Custom GPT Actions schema for Billy. Adds module
+    retrieval, journey recap, Tribunal review, and weave-plan inspection on top of
+    the core surface while still keeping database, provider, and continuity internals
+    server-side.
+servers:
+- url: https://gestaltv1ew.vercel.app/api
+  description: Public GestaltView GPT Actions middleware base URL
+paths:
+  /actions/health:
+    get:
+      operationId: getHealth
+      summary: Check GestaltView Actions health
+      description: Lightweight action-middleware health check. Use only for diagnostics
+        or backend sanity checks.
+      tags:
+      - System
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+      security: []
+  /actions/billy/synthesize:
+    post:
+      operationId: synthesizeWithBilly
+      summary: Synthesize with Billy
+      description: Default Billy action for explanation, synthesis, planning, and
+        architecture questions. The server owns retrieval, weave-plan construction,
+        and provider routing.
+      tags:
+      - Billy
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SynthesisResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SynthesisRequest'
+  /actions/billy/loom:
+    post:
+      operationId: retrieveLoomResults
+      summary: Retrieve Loom results
+      description: Evidence-shaped Billy action for Manifest and Loom retrieval. Use
+        when the user wants source-shaped reasoning, concept mapping, or evidence-backed
+        explanation.
+      tags:
+      - Billy
+      - Evidence
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SynthesisResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SynthesisRequest'
+  /actions/billy/code:
+    post:
+      operationId: generateCodeWithBilly
+      summary: Generate code with Billy
+      description: Code-oriented Billy action for implementation scaffolding, route
+        design, and integration logic. Endpoint behavior enforces code mode server-side.
+      tags:
+      - Billy
+      - Code
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SynthesisResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SynthesisRequest'
+  /actions/bucket-drops:
+    post:
+      operationId: captureBucketDrop
+      summary: Capture a Bucket Drop
+      description: Store a low-friction Bucket Drop exactly as it arrived, with optional
+        cognitive and emotional metadata.
+      tags:
+      - Bucket Drops
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BucketDropResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BucketDropCreateRequest'
+  /actions/profile/module:
+    post:
+      operationId: upsertProfileModule
+      summary: Upsert a profile module
+      description: Create or update one GestaltView module (module_0 through module_12)
+        using the schema-aligned payload.
+      tags:
+      - Profile
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModuleProfileResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModuleProfileUpsertRequest'
+  /actions/musical-dna/analyze:
+    post:
+      operationId: analyzeMusicalDNA
+      summary: Analyze Musical DNA
+      description: Analyze a song or music memory using the Musical DNA processor
+        schema.
+      tags:
+      - Musical DNA
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MusicalDNAResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MusicalDNARequest'
+  /actions/providers/status:
+    get:
+      operationId: getProviderStatus
+      summary: Get provider diagnostic status
+      description: Return action-middleware provider availability and recent circuit-breaker
+        state. This is for diagnostics, not product narration.
+      tags:
+      - System
+      responses:
+        '200':
+          description: Provider status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderStatusResponse'
+      security:
+      - bearerAuth: []
+  /actions/profile/module/{moduleKey}:
+    get:
+      operationId: getProfileModule
+      summary: Get a profile module
+      description: Retrieve a stored GestaltView module by module key when the comprehensive
+        schema is enabled.
+      tags:
+      - Profile
+      parameters:
+      - name: moduleKey
+        in: path
+        required: true
+        schema:
+          type: string
+        description: module_0 through module_12
+      - name: userId
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Profile module
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModuleProfileResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+  /actions/journey/recap:
+    post:
+      operationId: generateJourneyRecap
+      summary: Generate Journey So Far recap
+      description: Create an integration recap across selected modules and other persisted
+        artifacts the middleware chooses to include.
+      tags:
+      - Profile
+      - Integration
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JourneyRecapResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JourneyRecapRequest'
+  /actions/tribunal/run:
+    post:
+      operationId: runTribunalReview
+      summary: Run draft Tribunal review
+      description: Run a draft or full Tribunal-style multi-perspective review through
+        server-side orchestration. Do not claim a Tribunal result unless this action
+        actually returned one.
+      tags:
+      - Tribunal
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TribunalResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TribunalRequest'
+  /actions/billy/weave-plan:
+    post:
+      operationId: buildWeavePlanOnly
+      summary: Build a Weave Plan
+      description: Return the parsed intent, 5W1H, layered expansions, and retrieval
+        queries without generating a full answer. Use sparingly for planning, debug,
+        or query-decomposition flows.
+      tags:
+      - Billy
+      - Evidence
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+              required:
+              - query
+      responses:
+        '200':
+          description: Weave Plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeavePlan'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Configure ChatGPT to authenticate only to the middleware surface.
+        Database credentials, provider keys, and internal routing stay server-side.
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        code:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+      required:
+      - error
+    FiveW1H:
+      type: object
+      properties:
+        who:
+          type:
+          - string
+          - 'null'
+        what:
+          type:
+          - string
+          - 'null'
+        where:
+          type:
+          - string
+          - 'null'
+        when:
+          type:
+          - string
+          - 'null'
+        why:
+          type:
+          - string
+          - 'null'
+        how:
+          type:
+          - string
+          - 'null'
+    WeavePlan:
+      type: object
+      properties:
+        raw_query:
+          type: string
+        intent:
+          type: string
+          enum:
+          - build
+          - debug
+          - compare
+          - summarize
+          - plan
+          - learn
+          - general
+        five_w1h:
+          $ref: '#/components/schemas/FiveW1H'
+        expansions:
+          type: object
+          properties:
+            iteration:
+              type: string
+            emergence:
+              type: string
+            significance:
+              type: string
+            ripples:
+              type: string
+          required:
+          - iteration
+          - emergence
+          - significance
+          - ripples
+        retrieval_queries:
+          type: array
+          items:
+            type: string
+      required:
+      - raw_query
+      - intent
+      - five_w1h
+      - expansions
+      - retrieval_queries
+    ManifestNode:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+          - claim
+          - moat
+          - product
+          - protocol
+          - concept
+        title:
+          type: string
+        description:
+          type: string
+        evidence:
+          type: array
+          items:
+            type: string
+        related_ids:
+          type: array
+          items:
+            type: string
+        section_anchor:
+          type: string
+        keywords:
+          type: array
+          items:
+            type: string
+      required:
+      - id
+      - type
+      - title
+      - description
+    LoomResult:
+      type: object
+      properties:
+        node:
+          $ref: '#/components/schemas/ManifestNode'
+        rrf_score:
+          type: number
+        matched_queries:
+          type: array
+          items:
+            type: string
+      required:
+      - node
+      - rrf_score
+    CorpusChunk:
+      type: object
+      properties:
+        document_id:
+          type: string
+        filename:
+          type: string
+        content:
+          type: string
+        chunk_index:
+          type: integer
+        score:
+          type: number
+        document_type:
+          type: string
+        extracted_metadata:
+          type: object
+          additionalProperties: true
+      required:
+      - document_id
+      - filename
+      - content
+      - chunk_index
+    SectionId:
+      type: string
+      enum:
+      - hero
+      - what-this-is
+      - the-evidence
+      - what-systems-said
+      - what-was-built
+      - what-you-can-build
+      - theories-map
+      - services-consulting
+      - the-human
+      - contact
+    SynthesisRequest:
+      type: object
+      properties:
+        query:
+          type: string
+          description: The user request to answer or synthesize.
+        sectionId:
+          $ref: '#/components/schemas/SectionId'
+        mode:
+          type: string
+          enum:
+          - synthesize
+          - loom
+          - code
+          default: synthesize
+          description: Optional mode hint. In normal GPT usage, prefer calling the
+            dedicated loom or code endpoints instead of setting this manually.
+        topK:
+          type: integer
+          minimum: 1
+          maximum: 10
+          default: 5
+        includeCorpus:
+          type: boolean
+          default: true
+        includeManifest:
+          type: boolean
+          default: true
+        userContext:
+          type: object
+          additionalProperties: true
+          description: Optional lightweight context such as current project, user
+            goal, or relevant profile hints. Do not place secrets or hidden system
+            details here.
+      required:
+      - query
+    SynthesisResponse:
+      type: object
+      properties:
+        answer:
+          type: string
+        provider:
+          type: string
+        mode:
+          type: string
+        sectionId:
+          $ref: '#/components/schemas/SectionId'
+        weavePlan:
+          $ref: '#/components/schemas/WeavePlan'
+        loomResults:
+          type: array
+          items:
+            $ref: '#/components/schemas/LoomResult'
+        corpus:
+          type: array
+          items:
+            $ref: '#/components/schemas/CorpusChunk'
+        warnings:
+          type: array
+          items:
+            type: string
+          description: Degradation, stub, or retrieval warnings that should be surfaced
+            honestly to the user.
+      required:
+      - answer
+      - provider
+      - mode
+    BucketDropCreateRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: Optional user identifier if the middleware uses explicit user
+            routing.
+        content:
+          type: string
+        rawText:
+          type: string
+        emotionalIntensity:
+          type: integer
+          minimum: 1
+          maximum: 10
+          default: 5
+        cognitiveLoad:
+          type: integer
+          minimum: 1
+          maximum: 10
+          default: 3
+        significanceScore:
+          type: number
+          minimum: 0
+          maximum: 1
+          default: 0.5
+        attentionState:
+          type: string
+          enum:
+          - focused
+          - scattered
+          - hyperfocus
+          - flow
+          - overwhelmed
+        hyperfocusIndicator:
+          type: boolean
+          default: false
+        executiveFunction:
+          type: string
+          enum:
+          - high
+          - medium
+          - low
+          - depleted
+        energyLevel:
+          type: integer
+          minimum: 1
+          maximum: 10
+          default: 5
+        connectedDrops:
+          type: array
+          items:
+            type: string
+        tapestryWeight:
+          type: number
+          default: 1.0
+        captureContext:
+          type: object
+          additionalProperties: true
+      required:
+      - content
+    BucketDropResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+          - captured
+          - queued
+          - processed
+        bucketDrop:
+          type: object
+          additionalProperties: true
+          description: The stored Bucket Drop payload as accepted or normalized by
+            the server.
+        loomHints:
+          type: array
+          items:
+            type: string
+        nextSuggestedAction:
+          type: string
+      required:
+      - id
+      - status
+    ModuleProfileUpsertRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        moduleKey:
+          type: string
+          description: Use module_0 through module_12.
+        payload:
+          type: object
+          additionalProperties: true
+          description: Schema-aligned module content to create or merge.
+        sourceNotes:
+          type: array
+          items:
+            type: string
+        mergeStrategy:
+          type: string
+          enum:
+          - replace
+          - merge
+          - append
+          default: merge
+      required:
+      - moduleKey
+      - payload
+    ModuleProfileResponse:
+      type: object
+      properties:
+        moduleKey:
+          type: string
+        status:
+          type: string
+          enum:
+          - created
+          - updated
+          - retrieved
+        data:
+          type: object
+          additionalProperties: true
+          description: Stored module data returned by the middleware.
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - moduleKey
+      - status
+    MusicalDNARequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        songTitle:
+          type: string
+        artist:
+          type: string
+        album:
+          type: string
+        lyrics:
+          type: string
+        emotionalConnection:
+          type: string
+        associatedMemory:
+          type: string
+        workflowRelevance:
+          type: string
+        themes:
+          type: array
+          items:
+            type: string
+        musicalFeatures:
+          type: object
+          additionalProperties: true
+      required:
+      - songTitle
+      - artist
+    MusicalDNAResponse:
+      type: object
+      properties:
+        analysisId:
+          type: string
+        songTitle:
+          type: string
+        artist:
+          type: string
+        cognitiveResonance:
+          type: number
+        empowermentPotential:
+          type: number
+        consciousnessElevation:
+          type: number
+        adhdResonanceFactors:
+          type: object
+          additionalProperties: true
+        metaphorAnalysis:
+          type: object
+          additionalProperties: true
+        summary:
+          type: string
+      required:
+      - analysisId
+      - songTitle
+      - artist
+      - summary
+    TribunalRequest:
+      type: object
+      properties:
+        topic:
+          type: string
+        question:
+          type: string
+        participants:
+          type: array
+          items:
+            type: string
+            enum:
+            - gemini
+            - openai
+            - anthropic
+            - deepseek
+            - grok
+            - meta
+            - perplexity
+            - copilot
+          default:
+          - gemini
+          - openai
+          - anthropic
+        validationDomains:
+          type: array
+          items:
+            type: string
+            enum:
+            - technical_significance
+            - ethical_alignment
+            - system_coherence
+            - consciousness_serving_fidelity
+            - irreplicability_verification
+        mode:
+          type: string
+          enum:
+          - draft
+          - full
+          default: draft
+          description: Draft is the safer default. Full is for stronger orchestrated
+            review when the backend supports it.
+      required:
+      - question
+    TribunalResponse:
+      type: object
+      properties:
+        sessionId:
+          type: string
+        consensusReached:
+          type: boolean
+        consensusScore:
+          type: number
+        majorityView:
+          type: string
+        dissent:
+          type: array
+          items:
+            type: string
+        participantSummaries:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+      required:
+      - sessionId
+      - consensusReached
+      - consensusScore
+    JourneyRecapRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        moduleKeys:
+          type: array
+          items:
+            type: string
+          description: Optional subset of modules to include in the recap.
+        timeWindowDays:
+          type: integer
+          minimum: 1
+          maximum: 365
+          default: 30
+        focus:
+          type: string
+          description: Optional prompt that shapes the recap, such as values, skills,
+            music cues, or goals.
+    JourneyRecapResponse:
+      type: object
+      properties:
+        summary:
+          type: string
+        patterns:
+          type: array
+          items:
+            type: string
+        crossLinks:
+          type: array
+          items:
+            type: string
+        nextSuggestedAction:
+          type: string
+      required:
+      - summary
+    ProviderStatusResponse:
+      type: object
+      properties:
+        providers:
+          type: array
+          items:
+            type: object
+            properties:
+              provider:
+                type: string
+              available:
+                type: boolean
+              failures:
+                type: integer
+              priority:
+                type: integer
+            required:
+            - provider
+            - available
+          description: Current middleware-facing provider availability snapshot.
+      required:
+      - providers
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+          - degraded
+          - down
+        version:
+          type: string
+        schemaVersion:
+          type: string
+        platformVersion:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+      required:
+      - status
+      - timestamp
+security:
+- bearerAuth: []

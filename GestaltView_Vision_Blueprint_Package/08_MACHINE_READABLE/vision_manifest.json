@@ -1,0 +1,25 @@
+{
+  "package": "GestaltView Authentic Vision Blueprint Package",
+  "version": "0.3-authentic-contextual-lens",
+  "generated_at": "2026-06-01T17:25:13+00:00",
+  "core_loop": [
+    "capture_as_is",
+    "preserve_original",
+    "place_spatially",
+    "approve_compression",
+    "synthesize_with_evidence",
+    "create_or_export_with_consent"
+  ],
+  "rooms": [
+    "Sanctuary",
+    "Blackboard Room",
+    "Dynamic Inner World",
+    "External Scaffold",
+    "Creation Corner",
+    "Your Living Legacy",
+    "Embodiment Studio",
+    "Digital Intelligence Academy",
+    "GATE"
+  ],
+  "source_note": "contextual_lens.zip was requested but not present in mounted archive; contextual anchoring checkpoint was used as available framing source."
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Exhibit Prototyping"
+  short_description: "Build GestaltView prototype surfaces safely."
+  default_prompt: "Work on exhibit-style UI and prototype modules while preserving canonical boundaries."

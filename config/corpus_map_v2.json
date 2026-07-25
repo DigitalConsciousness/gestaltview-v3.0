@@ -1,0 +1,89 @@
+{
+  "version": "2.0",
+  "embedding_model": "Snowflake/snowflake-arctic-embed-m",
+  "embedding_dim": 768,
+  "chunk_size": 512,
+  "chunk_overlap": 64,
+  "sections": [
+    {
+      "id": "philosophy",
+      "label": "Philosophy",
+      "document_type": "philosophy",
+      "paths": ["corpus/philosophy"],
+      "extensions": [".md", ".txt"],
+      "tags": ["philosophy", "gestaltview", "principles"]
+    },
+    {
+      "id": "protocols",
+      "label": "Protocols",
+      "document_type": "protocol",
+      "paths": ["corpus/protocols"],
+      "extensions": [".md", ".txt"],
+      "tags": ["protocol", "process", "behavior"]
+    },
+    {
+      "id": "invariants",
+      "label": "Invariants",
+      "document_type": "invariant",
+      "paths": ["corpus/invariants"],
+      "extensions": [".md", ".txt"],
+      "tags": ["invariant", "constraint", "rule"]
+    },
+    {
+      "id": "analysis",
+      "label": "Analysis",
+      "document_type": "analysis",
+      "paths": ["corpus/analysis"],
+      "extensions": [".md", ".txt"],
+      "tags": ["analysis", "research", "reasoning"]
+    },
+    {
+      "id": "diligence",
+      "label": "Diligence",
+      "document_type": "diligence",
+      "paths": ["corpus/diligence", "scripts/diligence"],
+      "extensions": [".md", ".txt", ".pdf"],
+      "tags": ["diligence", "due-diligence", "audit"]
+    },
+    {
+      "id": "schema",
+      "label": "Schema",
+      "document_type": "schema",
+      "paths": ["corpus/schema"],
+      "extensions": [".md", ".sql", ".txt"],
+      "tags": ["schema", "database", "structure"]
+    },
+    {
+      "id": "transcripts",
+      "label": "Transcripts",
+      "document_type": "transcript",
+      "paths": ["corpus/transcripts"],
+      "extensions": [".md", ".txt"],
+      "tags": ["transcript", "conversation", "session"]
+    },
+    {
+      "id": "skills",
+      "label": "Skills",
+      "document_type": "skill",
+      "paths": ["corpus/skills"],
+      "extensions": [".md", ".txt"],
+      "tags": ["skill", "capability", "competency"]
+    },
+    {
+      "id": "embodiment_profiles",
+      "label": "Embodiment Profiles",
+      "document_type": "embodiment_profile",
+      "paths": ["corpus/embodiment_profiles"],
+      "extensions": [".md", ".txt", ".yaml", ".yml"],
+      "tags": ["embodiment", "agent", "identity"]
+    },
+    {
+      "id": "products",
+      "label": "Products",
+      "document_type": "product",
+      "paths": ["corpus/products"],
+      "extensions": [".md", ".txt", ".ts", ".tsx", ".py", ".js"],
+      "tags": ["product", "code", "application", "feature"]
+    }
+  ]
+}

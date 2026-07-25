@@ -1,0 +1,19 @@
+{
+  "version": "1.0",
+  "collaborator_types": [
+    "human",
+    "digital_intelligence"
+  ],
+  "required_steps": [
+    "read_governance_foundation",
+    "absorb_orientation_checkpoint",
+    "review_current_focus_and_blockers",
+    "confirm_access_boundary",
+    "record_handoff_state"
+  ],
+  "minimum_outputs": [
+    "collaborator_profile",
+    "absorption_record",
+    "task_scope_record"
+  ]
+}

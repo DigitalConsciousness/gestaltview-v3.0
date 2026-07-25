@@ -1,0 +1,4 @@
+interface:
+  display_name: "Billy Runtime Sync"
+  short_description: "Maintain the Billy runtime contract and sync boundaries."
+  default_prompt: "Audit Billy runtime-related files, compare schema/runtime expectations, and update tests or docs carefully."

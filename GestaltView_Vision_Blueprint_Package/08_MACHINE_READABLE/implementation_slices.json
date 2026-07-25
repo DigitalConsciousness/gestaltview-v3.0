@@ -1,0 +1,57 @@
+[
+  {
+    "slice": 0,
+    "name": "Context lock",
+    "deliverable": "Repo docs include read-first package"
+  },
+  {
+    "slice": 1,
+    "name": "Shared capture model",
+    "deliverable": "Typed capture/orb/artifact contracts"
+  },
+  {
+    "slice": 2,
+    "name": "Service seam",
+    "deliverable": "captureRouting/scaffoldStorage/innerWorldStorage modules"
+  },
+  {
+    "slice": 3,
+    "name": "Blackboard capture",
+    "deliverable": "multimodal-ready capture queue"
+  },
+  {
+    "slice": 4,
+    "name": "Dynamic Inner World",
+    "deliverable": "six-surface spatial room"
+  },
+  {
+    "slice": 5,
+    "name": "External Scaffold",
+    "deliverable": "approval lifecycle"
+  },
+  {
+    "slice": 6,
+    "name": "Creation Corner",
+    "deliverable": "artifact forge with provenance"
+  },
+  {
+    "slice": 7,
+    "name": "Ambient emergence",
+    "deliverable": "non-invasive coherence suggestions"
+  },
+  {
+    "slice": 8,
+    "name": "Billy room awareness",
+    "deliverable": "mode-aware assist"
+  },
+  {
+    "slice": 9,
+    "name": "Persistence",
+    "deliverable": "Supabase migration after local seam stability"
+  },
+  {
+    "slice": 10,
+    "name": "Governance/package",
+    "deliverable": "DI identity boundaries enforced"
+  }
+]

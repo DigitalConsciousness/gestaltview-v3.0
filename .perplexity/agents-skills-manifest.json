@@ -1,0 +1,661 @@
+{
+  "_meta": {
+    "name": "gestaltview-v2-skills-manifest",
+    "generated_at": "2026-06-24",
+    "root": ".agents/skills/",
+    "description": "Strict curated manifest for the high-signal GestaltView skills library aligned to the live runtime and Vision Blueprint Package.",
+    "source_of_truth": "manifest.skills is the curated top-level catalog used by local generators; Vision Blueprint, Creation Layer, and repo-owned runtime skills define canonical routing while generic, vendor, and overlapping skills remain auxiliary unless explicitly re-promoted.",
+    "human_index": ".agents/skills/INDEX.md",
+    "generator_scope": "Top-level entries in manifest.skills plus repo-local helpers under .agents/skills/skills/*/SKILL.md"
+  },
+  "summary": {
+    "top_level_skill_count": 53,
+    "highlighted_core_skill_count": 25,
+    "skills_with_agents": 28,
+    "skills_with_scripts": 10,
+    "skills_with_references": 37,
+    "skills_with_assets": 9,
+    "skills_with_nested_skill_dirs": 0,
+    "all_top_level_skill_count_on_disk": 126,
+    "uncataloged_top_level_skill_count": 73,
+    "all_top_level_skills_with_agents": 51,
+    "all_top_level_skills_with_scripts": 43,
+    "all_top_level_skills_with_references": 79,
+    "all_top_level_skills_with_assets": 31
+  },
+  "highlighted_core": {
+    "_note": "If rebuilding the Supabase skill corpus under tight storage limits, start with these high-signal hybrid entrypoints, including the Vision Blueprint and Creation Layer spine, before considering the broader curated library.",
+    "skills": [
+      "skills-keeper",
+      "skill-creator",
+      "skill-installer",
+      "gestaltview-suite-orchestrator",
+      "gestaltview-ecosystem-orchestrator",
+      "gestaltview-repo-onboarding",
+      "gestaltview-vision-blueprint",
+      "gestaltview-codex",
+      "gestaltview-app-runtime",
+      "gestaltview-blackboard-room",
+      "gestaltview-workflow-operations",
+      "gestaltview-billy-intelligence",
+      "gestaltview-billy-voice",
+      "gestaltview-schema-supabase",
+      "gestaltview-agent-trainer",
+      "gestaltview-admin-trainer-personhood",
+      "gestaltview-corpus-ingestion",
+      "gestaltview-manifest-index",
+      "gestaltview-cross-repo-workflows",
+      "gestaltview-knowledge-curation",
+      "gestaltview-revenue-pricing",
+      "gestaltview-strategy-executive",
+      "gestaltview-exhibit-prototyping",
+      "gestaltview-creation-layer",
+      "gestaltview-timeline-evidence"
+    ]
+  },
+  "auxiliary_top_level_skill_groups": {
+    "_note": "These top-level skill folders exist on disk but are intentionally excluded from the strict curated manifest used by local generators.",
+    "demoted_general_tooling": [
+      "agent-development",
+      "gh-issues",
+      "hook-development",
+      "iterative-retrieval",
+      "jupyter-notebook"
+    ],
+    "demoted_vendor_platform_and_reference_workflows": [
+      "ai-ml-api-automation",
+      "chatgpt-apps",
+      "cloudflare-deploy",
+      "figma",
+      "figma-implement-design",
+      "notion-knowledge-capture",
+      "notion-meeting-intelligence",
+      "notion-research-documentation",
+      "notion-spec-to-implementation",
+      "openai-docs",
+      "playwright",
+      "playwright-interactive",
+      "research-gpt",
+      "vercel-deploy"
+    ],
+    "demoted_media_and_document_utilities": [
+      "doc",
+      "imagegen",
+      "pdf",
+      "screenshot",
+      "slides",
+      "sora",
+      "speech",
+      "spreadsheet",
+      "transcribe"
+    ],
+    "demoted_repo_skills_due_to_overlap_or_name_drift": [
+      "gestaltview-cli-agent",
+      "gestaltview-generate-wiki"
+    ],
+    "general_foundations": [
+      "advanced-evaluation",
+      "bdi-mental-states",
+      "brainstorming",
+      "context-compression",
+      "context-degradation",
+      "context-fundamentals",
+      "context-optimization",
+      "evaluation",
+      "memory-systems",
+      "tool-design",
+      "using-superpowers"
+    ],
+    "execution_and_collaboration_workflows": [
+      "dispatching-parallel-agents",
+      "executing-plans",
+      "finishing-a-development-branch",
+      "hosted-agents",
+      "multi-agent-patterns",
+      "project-development",
+      "subagent-driven-development",
+      "systematic-debugging",
+      "test-driven-development",
+      "verification-before-completion",
+      "writing-plans"
+    ],
+    "python_deploy_and_review_specializations": [
+      "python-background-jobs",
+      "python-configuration",
+      "python-patterns",
+      "python-resource-management",
+      "render-deploy",
+      "using-git-worktrees",
+      "receiving-code-review",
+      "requesting-code-review"
+    ],
+    "hugging_face_and_model_ecosystem": [
+      "hf-cli",
+      "huggingface-community-evals",
+      "huggingface-datasets",
+      "huggingface-gradio",
+      "huggingface-jobs",
+      "huggingface-llm-trainer",
+      "huggingface-paper-publisher",
+      "huggingface-papers",
+      "huggingface-trackio",
+      "huggingface-vision-trainer"
+    ],
+    "publishing_and_templates": [
+      "markdown-to-epub",
+      "template"
+    ]
+  },
+  "entrypoints": {
+    "gestaltview_multi_domain": "gestaltview-suite-orchestrator",
+    "gestaltview_suite_router": "gestaltview-ecosystem-orchestrator",
+    "repo_orientation": "gestaltview-repo-onboarding",
+    "codex_workflow": "gestaltview-codex",
+    "repo_mapping": "gestaltview-repo-map",
+    "runtime_app_work": "gestaltview-app-runtime",
+    "blackboard_room_runtime": "gestaltview-blackboard-room",
+    "supabase_and_schema": "gestaltview-schema-supabase",
+    "billy_runtime_and_intelligence": "gestaltview-billy-intelligence",
+    "billy_voice_runtime": "gestaltview-billy-voice",
+    "agent_training": "gestaltview-agent-trainer",
+    "admin_trainer_personhood": "gestaltview-admin-trainer-personhood",
+    "manifest_and_retrieval": "gestaltview-manifest-index",
+    "workflow_and_validation": "gestaltview-workflow-operations",
+    "skill_library_stewardship": "skills-keeper",
+    "skill_creation": "skill-creator",
+    "skill_installation": "skill-installer",
+    "vision_blueprint_alignment": "gestaltview-vision-blueprint",
+    "creation_layer_runtime": "gestaltview-creation-layer"
+  },
+  "categories": {
+    "ecosystem_and_orientation": [
+      "gestaltview-agents-context",
+      "gestaltview-context-architecture",
+      "gestaltview-vision-blueprint",
+      "gestaltview-ecosystem-orchestrator",
+      "gestaltview-suite-orchestrator",
+      "gestaltview-repo-onboarding",
+      "gestaltview-codex",
+      "gestaltview-repo-map",
+      "gestaltview-workflow-operations",
+      "gestaltview-current-state",
+      "gestaltview-current-state-maintenance",
+      "gestaltview-cross-repo-sync",
+      "gestaltview-cross-repo-workflows",
+      "gestaltview-mcp-connector"
+    ],
+    "runtime_billy_data_and_schema": [
+      "gestaltview-admin-trainer-personhood",
+      "gestaltview-agent-trainer",
+      "gestaltview-ai-routing",
+      "gestaltview-blackboard-room",
+      "gestaltview-app-runtime",
+      "gestaltview-billy-api",
+      "gestaltview-billy-intelligence",
+      "gestaltview-billy-runtime-sync",
+      "gestaltview-billy-voice",
+      "gestaltview-corpus-ingestion",
+      "gestaltview-manifest-index",
+      "gestaltview-manifest-indexing",
+      "gestaltview-schema-contracts",
+      "gestaltview-schema-supabase",
+      "gestaltview-gpt-actions"
+    ],
+    "product_lanes_and_exhibits": [
+      "gestaltview-addiction-recovery",
+      "gestaltview-adhd-power-up",
+      "gestaltview-apps-portfolio",
+      "gestaltview-artifact-creator",
+      "gestaltview-creation-layer",
+      "gestaltview-exhibit-prototyping",
+      "gestaltview-insight-bot",
+      "gestaltview-resume-rockstar",
+      "gestaltview-symbiocoder",
+      "gestaltview-transcript-synthesis",
+      "gestaltview-ui-archive",
+      "gestaltview-user-profile"
+    ],
+    "strategy_marketing_and_evidence": [
+      "gestaltview-digital-intelligence-collaboration",
+      "gestaltview-diligence-packaging",
+      "gestaltview-executive-summary",
+      "gestaltview-knowledge-curation",
+      "gestaltview-marketing-social",
+      "gestaltview-revenue-pricing",
+      "gestaltview-strategy-executive",
+      "gestaltview-timeline-diligence",
+      "gestaltview-timeline-evidence"
+    ],
+    "skill_stewardship": [
+      "skill-creator",
+      "skill-installer",
+      "skills-keeper"
+    ]
+  },
+  "bundles": {
+    "_note": "No nested-skill bundles are part of the strict curated catalog. Auxiliary bundles remain on disk but are intentionally excluded from normal routing."
+  },
+  "archives": {
+    "root": "skills/archive",
+    "variant_skill_dirs": [
+      {
+        "path": "archive/variants/gestaltview-digital-intelligence-collaboration-#2",
+        "canonical_replacement": "gestaltview-digital-intelligence-collaboration"
+      },
+      {
+        "path": "archive/variants/gestaltview-marketing-social-#2",
+        "canonical_replacement": "gestaltview-marketing-social"
+      }
+    ],
+    "exact_duplicate_files": [
+      "gestaltview-context-architecture/archive/duplicates/design-system (2).md",
+      "gestaltview-context-architecture/archive/duplicates/mission-and-invariants (2).md",
+      "gestaltview-context-architecture/archive/duplicates/product-surface-map (2).md",
+      "gestaltview-context-architecture/archive/duplicates/runtime-architecture (2).md",
+      "gestaltview-gpt-actions/archive/duplicates/actions-map (2).md",
+      "gestaltview-gpt-actions/archive/duplicates/openai (2).yaml"
+    ],
+    "draft_skill_files": [
+      "gestaltview-context-architecture/archive/drafts/SKILL-2026-03-24-draft.md",
+      "gestaltview-gpt-actions/archive/drafts/SKILL-2026-03-24-draft.md",
+      "gestaltview-marketing-social/archive/drafts/SKILL-2026-03-24-draft.md",
+      "gestaltview-suite-orchestrator/archive/drafts/SKILL-2026-03-24-draft.md"
+    ]
+  },
+  "canonical_pairs": {
+    "prefer_for_multi_domain_gestaltview_work": [
+      "gestaltview-suite-orchestrator",
+      "gestaltview-ecosystem-orchestrator"
+    ],
+    "prefer_for_manifest_or_retrieval_work": [
+      "gestaltview-manifest-index",
+      "gestaltview-manifest-indexing"
+    ],
+    "prefer_for_repo_state_work": [
+      "gestaltview-current-state-maintenance",
+      "gestaltview-current-state"
+    ],
+    "prefer_for_cross_repo_execution": [
+      "gestaltview-cross-repo-workflows",
+      "gestaltview-cross-repo-sync"
+    ],
+    "prefer_for_skill_library_work": [
+      "skills-keeper",
+      "skill-creator",
+      "skill-installer"
+    ]
+  },
+  "anomalies": {
+    "root_catalog_entrypoint_conflicts": [
+      {
+        "path": "skills/SKILL.md",
+        "declared_name": "hf-mcp",
+        "note": "Root skills/SKILL.md is a standalone skill document, not the catalog entrypoint. Use INDEX.md or manifest.json for catalog orientation."
+      }
+    ],
+    "folder_to_declared_name_mismatches": [
+      {
+        "folder": "gestaltview-artifact-creator",
+        "declared_name": "web-artifacts-builder"
+      }
+    ],
+    "nested_vs_top_level_skill_duplicates": [
+      {
+        "declared_name": "python-background-jobs",
+        "top_level_folder": "python-background-jobs",
+        "nested_folder": "gestaltview-cli-agent/python-background-jobs"
+      },
+      {
+        "declared_name": "python-configuration",
+        "top_level_folder": "python-configuration",
+        "nested_folder": "gestaltview-cli-agent/python-configuration"
+      },
+      {
+        "declared_name": "python-patterns",
+        "top_level_folder": "python-patterns",
+        "nested_folder": "gestaltview-cli-agent/python-patterns"
+      },
+      {
+        "declared_name": "python-resource-management",
+        "top_level_folder": "python-resource-management",
+        "nested_folder": "gestaltview-cli-agent/python-resource-management"
+      },
+      {
+        "declared_name": "render-deploy",
+        "top_level_folder": "render-deploy",
+        "nested_folder": "gestaltview-cli-agent/render-deploy"
+      }
+    ],
+    "duplicate_files_present": [],
+    "demoted_from_curated_manifest": [
+      {
+        "folder": "gestaltview-cli-agent",
+        "reason": "Declared name is python-code-style and the folder bundles nested generic python skills that overlap auxiliary top-level skills."
+      },
+      {
+        "folder": "gestaltview-generate-wiki",
+        "reason": "Declared name is wiki and the scope is better treated as auxiliary documentation tooling than a canonical GestaltView skill entrypoint."
+      }
+    ]
+  },
+  "skills": [
+    {
+      "folder": "gestaltview-addiction-recovery",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-addiction-recovery",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-adhd-power-up",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-adhd-power-up",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-admin-trainer-personhood",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-admin-trainer-personhood",
+      "last_reviewed": "2026-04-10"
+    },
+    {
+      "folder": "gestaltview-agent-trainer",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-agent-trainer",
+      "last_reviewed": "2026-03-30"
+    },
+    {
+      "folder": "gestaltview-agents-context",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-agents-context",
+      "last_reviewed": null
+    },
+    {
+      "folder": "gestaltview-ai-routing",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-ai-routing",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-blackboard-room",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-blackboard-room",
+      "last_reviewed": "2026-06-24"
+    },
+    {
+      "folder": "gestaltview-app-runtime",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-app-runtime",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-apps-portfolio",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-apps-portfolio",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-artifact-creator",
+      "category": "gestaltview",
+      "declared_name": "web-artifacts-builder",
+      "last_reviewed": null
+    },
+    {
+      "folder": "gestaltview-billy-api",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-billy-api",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-billy-intelligence",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-billy-intelligence",
+      "last_reviewed": "2026-03-29"
+    },
+    {
+      "folder": "gestaltview-billy-runtime-sync",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-billy-runtime-sync",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-billy-voice",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-billy-voice",
+      "last_reviewed": "2026-03-29"
+    },
+    {
+      "folder": "gestaltview-codex",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-codex",
+      "last_reviewed": "2026-05-16"
+    },
+    {
+      "folder": "gestaltview-context-architecture",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-context-architecture",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-corpus-ingestion",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-corpus-ingestion",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-creation-layer",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-creation-layer",
+      "last_reviewed": "2026-06-01"
+    },
+    {
+      "folder": "gestaltview-cross-repo-sync",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-cross-repo-sync",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-cross-repo-workflows",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-cross-repo-workflows",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-current-state",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-current-state",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-current-state-maintenance",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-current-state-maintenance",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-digital-intelligence-collaboration",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-digital-intelligence-collaboration",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-diligence-packaging",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-diligence-packaging",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-ecosystem-orchestrator",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-ecosystem-orchestrator",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-executive-summary",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-executive-summary",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-exhibit-prototyping",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-exhibit-prototyping",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-gpt-actions",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-gpt-actions",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-insight-bot",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-insight-bot",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-knowledge-curation",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-knowledge-curation",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-manifest-index",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-manifest-index",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-manifest-indexing",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-manifest-indexing",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-marketing-social",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-marketing-social",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-mcp-connector",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-mcp-connector",
+      "last_reviewed": null
+    },
+    {
+      "folder": "gestaltview-repo-map",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-repo-map",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-repo-onboarding",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-repo-onboarding",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-resume-rockstar",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-resume-rockstar",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-revenue-pricing",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-revenue-pricing",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-schema-contracts",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-schema-contracts",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-schema-supabase",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-schema-supabase",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-strategy-executive",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-strategy-executive",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-suite-orchestrator",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-suite-orchestrator",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-symbiocoder",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-symbiocoder",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-timeline-diligence",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-timeline-diligence",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-timeline-evidence",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-timeline-evidence",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-transcript-synthesis",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-transcript-synthesis",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-ui-archive",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-ui-archive",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-user-profile",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-user-profile",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "gestaltview-vision-blueprint",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-vision-blueprint",
+      "last_reviewed": "2026-06-01"
+    },
+    {
+      "folder": "gestaltview-workflow-operations",
+      "category": "gestaltview",
+      "declared_name": "gestaltview-workflow-operations",
+      "last_reviewed": "2026-03-24"
+    },
+    {
+      "folder": "skill-creator",
+      "category": "skill_stewardship",
+      "declared_name": "skill-creator",
+      "last_reviewed": null
+    },
+    {
+      "folder": "skill-installer",
+      "category": "skill_stewardship",
+      "declared_name": "skill-installer",
+      "last_reviewed": null
+    },
+    {
+      "folder": "skills-keeper",
+      "category": "skill_stewardship",
+      "declared_name": "skills-keeper",
+      "last_reviewed": "2026-03-28"
+    }
+  ]
+}
