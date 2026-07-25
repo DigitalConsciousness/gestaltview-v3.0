@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-16T15:29:37.512Z",
-  "sourceRoot": "/workspaces/effective-fortnight",
+  "generatedAt": "2026-07-25T02:05:55.889Z",
+  "sourceRoot": "/workspaces/gestaltview-v3.0",
   "generatedManifestRefreshed": true,
   "files": [
     {
@@ -18,25 +18,25 @@
     {
       "source": "docs/gestaltview-v2.manifest.json",
       "target": ".perplexity/REPO_MANIFEST.json",
-      "sha256": "a58a775ba19a5b1d483500154221d5e5b2001ef3a3f558f0d25a1e6c3b4b5338",
+      "sha256": "1160d033da576470e6e1ebfed9384f1603850a34fa0459d405a13dce1ae41817",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.md",
       "target": ".perplexity/REPO_MANIFEST.md",
-      "sha256": "be56396e762aa691d449f136afc95dcfa2ce740ea3cb2da61e139631b54a89bb",
+      "sha256": "119e17a40e8779d48d417f37c336fab53744153abd8d9cf7165a96ebaaf85f7c",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.json",
       "target": ".perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.json",
-      "sha256": "a58a775ba19a5b1d483500154221d5e5b2001ef3a3f558f0d25a1e6c3b4b5338",
+      "sha256": "1160d033da576470e6e1ebfed9384f1603850a34fa0459d405a13dce1ae41817",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.md",
       "target": ".perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.md",
-      "sha256": "be56396e762aa691d449f136afc95dcfa2ce740ea3cb2da61e139631b54a89bb",
+      "sha256": "119e17a40e8779d48d417f37c336fab53744153abd8d9cf7165a96ebaaf85f7c",
       "inSync": true
     },
     {

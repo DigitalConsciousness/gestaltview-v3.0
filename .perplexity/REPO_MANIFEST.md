@@ -1,9 +1,9 @@
 # GestaltView v2 — Repository Manifest
 
-> Generated: `2026-07-16T15:29:37.365034+00:00`
+> Generated: `2026-07-25T02:05:55.805808+00:00`
 > Branch: `main`
-> Commit: `8a4a4d32c86d`
-> 8a4a4d3 commit
+> Commit: `cb641c993100`
+> cb641c9 commit
 
 ---
 
@@ -11,13 +11,13 @@
 
 | Metric | Value |
 |---|---|
-| Total files | 1482 |
-| Total size | 15371.0 KB |
+| Total files | 1481 |
+| Total size | 15364.9 KB |
 | Routes | 115 |
 | API endpoints | 204 |
 | Canonical docs | 162 |
 | Test inventory | 187 |
-| Uncommitted files | 16 |
+| Uncommitted files | 0 |
 
 ### Files by Category
 
@@ -34,7 +34,7 @@
 - **route**: 2
 - **script**: 69
 - **shared**: 109
-- **source**: 261
+- **source**: 260
 - **style**: 6
 - **test**: 182
 
@@ -687,7 +687,7 @@
 | `docs/embodiment/EMBODIMENT_OPEN_QUESTIONS.md` | 216 | 1425 bytes |
 | `docs/embodiment/EMBODIMENT_RUNTIME_GAP_MATRIX.md` | 367 | 2192 bytes |
 | `docs/embodiment/PROFILE_DISTINCTIVENESS_MATRIX.md` | 311 | 1901 bytes |
-| `docs/gestaltview-v2.manifest.md` | 4666 | 45546 bytes |
+| `docs/gestaltview-v2.manifest.md` | 4664 | 45745 bytes |
 | `docs/license.md` | 793 | 5556 bytes |
 | `docs/md-refresh-status-2026-03-24.md` | 200 | 1899 bytes |
 | `docs/operation-render/CODEX_FULL_SWEEP_HANDOFF.md` | 251 | 2600 bytes |
@@ -758,26 +758,7 @@
 
 ## Git Status
 
-16 uncommitted change(s):
-
-```
-M .snapshots/sponsors.md
- D agent/skills/meticulous-cli-update/SKILL.md
- D agent/skills/meticulous-cli/SKILL.md
- D agent/skills/meticulous-cli/references/auth.md
- D agent/skills/meticulous-cli/references/debug.md
- D agent/skills/meticulous-cli/references/download.md
- D agent/skills/meticulous-cli/references/local.md
- D agent/skills/meticulous-cli/references/project.md
- D agent/skills/meticulous-cli/references/schema.md
- D agent/skills/meticulous-cli/references/simulate.md
- D agent/skills/meticulous-iterative-dev/SKILL.md
- D agent/skills/meticulous-review/SKILL.md
- D agent/skills/meticulous-simulate-and-diff/SKILL.md
- D agent/skills/meticulous-test/SKILL.md
- D agent/skills/meticulous-use-session-data/SKILL.md
-?? skills/
-```
+✓ Working tree clean.
 
 ---
 
