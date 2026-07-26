@@ -1,3 +1,30 @@
+# CurrentState — Render pipeline v2 live reconciliation prepared (2026-07-26)
+
+**Scope of this pass:** Completed the Phase 0 production read-only baseline and prepared the forward-only Phase 1 reconciliation required by `specs/launch/GestaltView_Inside_Out_Convergence_SPEC_2026-07-25.md`. Production DDL remains unapplied.
+
+## What is now locally proven
+
+- Generated `supabase/migrations/20260726132511_render_pipeline_v2_live_reconciliation.sql` with the installed Supabase CLI rather than renaming, repairing, or marking the skipped July 13 migration.
+- Added `supabase/verification/render_pipeline_contract_v2.sql`, which runs inside a read-only transaction and reports the render columns, lifecycle constraint, indexes, RLS and policies, owner-null counts, lifecycle counts, incomplete receipts, duplicate projections, and private bucket state.
+- Added a matching emergency recovery script and disposable PostgreSQL fixtures under `supabase/tests/`.
+- Proved a v1-shaped fixture upgrades additively: one legacy `completed` job becomes `ready`, its artifact receives the safe MIME/byte/default receipt fields, and the legacy Inner World artifact remains present.
+- Proved the reconciliation is safe after the historical `202607130001_render_pipeline_contract_v2.sql` has already run; repeated columns and indexes no-op while the lifecycle contract remains valid.
+- The verification query intentionally reports the legacy fixture receipt as incomplete because no storage path or content hash exists. The migration does not fabricate durable proof for legacy bytes.
+
+## Live read-only evidence
+
+- Supabase migration history ends at `20260717014354`; `202607130001_render_pipeline_contract_v2.sql` is absent.
+- The live render tables remain v1-shaped with zero `render_jobs` and zero `render_artifacts`.
+- The 63 existing `inner_world_artifacts` remain present.
+- RLS remains enabled on all three tables and `codex-exports` remains private.
+
+## Remaining rollout gates
+
+- The full Supabase local stack could not initialize in this Codespace because its service images exhausted the 32 GB filesystem. The failed empty stack and downloaded images were removed; the lightweight PostgreSQL fixture was used instead.
+- Run the versioned migration and verification SQL on an approved Supabase development branch or equivalently provisioned clean environment before production review.
+- Do not apply production DDL until the outside guide approves the Phase 1 evidence packet.
+- Creation Corner, projection behavior, Founder Runtime, and corpus lifecycle were not changed in this slice.
+
 # CurrentState — Creation Corner handoff and workbench restoration (2026-07-25)
 
 **Scope of this pass:** Restored the richer blueprint synthesis workbench to Creation Corner and made incoming blueprint handoffs visibly activate their intended source.
