@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-07-25T06:34:00.071890+00:00",
+    "generated_at": "2026-07-25T09:25:21.450439+00:00",
     "generator": "scripts/generate_repo_manifest.py",
     "repo": "gestaltview-v2",
     "version": "2.0",
@@ -74,16 +74,16 @@
     ]
   },
   "summary": {
-    "total_files": 1483,
-    "total_size_bytes": 15756834,
-    "total_size_kb": 15387.5,
+    "total_files": 1484,
+    "total_size_bytes": 15769516,
+    "total_size_kb": 15399.9,
     "files_by_category": {
       "doc": 146,
       "other": 22,
       "data": 16,
       "source": 261,
       "config": 16,
-      "test": 183,
+      "test": 184,
       "api": 210,
       "canonical": 11,
       "component": 253,
@@ -98,49 +98,18 @@
     "routes_count": 115,
     "api_endpoints_count": 204,
     "canonical_docs_count": 162,
-    "test_scripts_count": 188,
+    "test_scripts_count": 189,
     "git_branch": "main",
-    "git_commit": "cb657bc18b6a",
-    "git_dirty_files": 32
+    "git_commit": "d44abedd9b2a",
+    "git_dirty_files": 1
   },
   "git": {
     "branch": "main",
-    "commit_sha": "cb657bc18b6a93b82fb0e1040706c04718e152be",
-    "commit_message": "cb657bc commit",
-    "commit_date": "2026-07-25T06:28:54Z",
+    "commit_sha": "d44abedd9b2a10d84f88e624d18e80a953507191",
+    "commit_message": "d44abed commit",
+    "commit_date": "2026-07-25T06:49:09Z",
     "dirty_files": [
-      "D \". agents/skills/verifiable-code-delivery/SKILL.md\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/baseline-observations.md\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/evals.json\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/api-schema/api/openapi.json\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/api-schema/command-output.txt\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/api-schema/migrations/20260716_add_status.sql\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/api-schema/package.json\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/express-startup/applied-change.diff\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/express-startup/command-output.txt\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/express-startup/contracts/startup.json\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/express-startup/package.json\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/express-startup/server/start.ts\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/implementation-review/command-output.txt\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/implementation-review/handoff.md\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/implementation-review/package.json\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/implementation-review/src/formatter.ts\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/nonexistent-type-check/command-output.txt\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/nonexistent-type-check/contracts/public-api.json\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/nonexistent-type-check/package.json\"",
-      " D \". agents/skills/verifiable-code-delivery/evals/fixtures/nonexistent-type-check/src/types.ts\"",
-      " D \". agents/skills/verifiable-code-delivery/references/source-export.json\"",
-      " D \". agents/skills/verifiable-code-delivery/scripts/check_scripts.py\"",
-      " D \". agents/skills/verifiable-code-delivery/scripts/verify_delivery.py\"",
-      " D \". agents/skills/verifiable-code-delivery/tests/test_evals.py\"",
-      " D \". agents/skills/verifiable-code-delivery/tests/test_validators.py\"",
-      " M .perplexity/DIRECTORY_INDEX.md",
-      " M .perplexity/MANIFEST.json",
-      " M .perplexity/README.md",
-      "?? .perplexity/COLLABORATOR.md",
-      "?? .perplexity/scripts/",
-      "?? .perplexity/tests/",
-      "?? .snapshots/snapshot-2026-07-25T06_27_18_323Z.md"
+      "M .vscode/mcp.json"
     ]
   },
   "dependencies": {
@@ -1849,6 +1818,7 @@
     "client/src/tests/blackboard-recap-artifacts.test.ts",
     "client/src/tests/bucket-drops.test.ts",
     "client/src/tests/creation-corner-artifacts.test.ts",
+    "client/src/tests/creation-corner-blueprint-handoff.test.ts",
     "client/src/tests/creation-corner-freeform.test.ts",
     "client/src/tests/creation-corner-intake-controls.test.ts",
     "client/src/tests/creation-corner-orchestration.test.ts",
@@ -2286,10 +2256,10 @@
     {
       "path": "docs/CurrentState.md",
       "category": "doc",
-      "size_bytes": 554021,
-      "sha256": "1872f6e7c3afedd2de0078dbd64daa006d93aef0b280f141576d0feed3e9227d",
-      "last_modified": "2026-07-16T15:53:27+00:00",
-      "word_count": 67980
+      "size_bytes": 556788,
+      "sha256": "51e7c360ffd3133b1549409c24d34ee05277ca4e2d56bad3adc02e84b94edd4b",
+      "last_modified": "2026-07-25T06:46:37.258805+00:00",
+      "word_count": 68330
     },
     {
       "path": "docs/Deep_Dive_Into_GestaltView_By_Perplexity.md",
@@ -2590,10 +2560,10 @@
     {
       "path": "docs/Workflows.md",
       "category": "doc",
-      "size_bytes": 5787,
-      "sha256": "26fc6b3bea3acfe0f3d3a81b8067f4d623db641dfc0d64d216e8f6f478891321",
-      "last_modified": "2026-07-16T15:53:27+00:00",
-      "word_count": 719
+      "size_bytes": 6045,
+      "sha256": "d001b581b1cf8c232d174d37b11ffc3781dbf4aea2f0231c0f3181916aad97ab",
+      "last_modified": "2026-07-25T06:35:03.965849+00:00",
+      "word_count": 759
     },
     {
       "path": "docs/adr/001-manifest-schema-contract.md",
@@ -2718,10 +2688,10 @@
     {
       "path": "docs/gestaltview-v2.manifest.md",
       "category": "doc",
-      "size_bytes": 45117,
-      "sha256": "632cea7bdb9c9746c39aa91519ecfba24922517979348b0df3dd2818c68e9a70",
-      "last_modified": "2026-07-25T06:27:50.566876+00:00",
-      "word_count": 4639
+      "size_bytes": 47489,
+      "sha256": "36669b006cf24265dea0cd5061035b9cbabb652487b8ad3be886422b04642d2d",
+      "last_modified": "2026-07-25T06:34:00.114853+00:00",
+      "word_count": 4723
     },
     {
       "path": "docs/license.md",
@@ -3378,14 +3348,14 @@
       "category": "data",
       "size_bytes": 599058,
       "sha256": "0fd2034137bc77935d961451903fead55f1e60e454974b14e06332876185b013",
-      "last_modified": "2026-07-25T02:49:22.696661+00:00"
+      "last_modified": "2026-07-25T09:25:00.465203+00:00"
     },
     {
       "path": "package.json",
       "category": "data",
-      "size_bytes": 7520,
-      "sha256": "f964deca797be80480e9b4e1cbdb5fd8d44e45161ca75ed1a0a1feb85eccfb57",
-      "last_modified": "2026-07-25T02:49:22.111660+00:00"
+      "size_bytes": 7684,
+      "sha256": "9c6d8b969a8c9407a1bf48787f5653fc9233b64ad93e9fdad28885e58bc7d37c",
+      "last_modified": "2026-07-25T06:34:45.557850+00:00"
     },
     {
       "path": "playwright.config.ts",
@@ -3399,7 +3369,7 @@
       "category": "config",
       "size_bytes": 400625,
       "sha256": "d04ecc753874001b583bb5f0f53de9cd1a72b6e999324678f0683191c7b6e0ad",
-      "last_modified": "2026-07-25T05:33:25.340082+00:00"
+      "last_modified": "2026-07-25T09:19:45.353216+00:00"
     },
     {
       "path": "pnpm-workspace.yaml",
@@ -6253,9 +6223,9 @@
     {
       "path": "client/src/components/Scaffold.tsx",
       "category": "component",
-      "size_bytes": 41968,
-      "sha256": "3b1b763243b004afee5d0c4f449adc3d32c14334097f481fca7675dd620c6238",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 42117,
+      "sha256": "3e9c875d00cfa44869165f05b7c657dc8c2c184204f2db984dcd0b887ab70219",
+      "last_modified": "2026-07-25T06:45:17.867810+00:00"
     },
     {
       "path": "client/src/components/ScrapbookPanel.tsx",
@@ -9112,9 +9082,9 @@
     {
       "path": "client/src/pages/CreationCornerPage.tsx",
       "category": "page",
-      "size_bytes": 48482,
-      "sha256": "a57a09fda8ffd0a0e7a714d0c53c00ddf92b4a774b7049b593af0fd114a5e4cb",
-      "last_modified": "2026-07-25T05:43:51.689042+00:00"
+      "size_bytes": 49447,
+      "sha256": "1c4bfd8ae95219b6e094a4b34dd0da46bd348bc23d6fefcbb5f9e3d083ea915f",
+      "last_modified": "2026-07-25T06:45:18.102810+00:00"
     },
     {
       "path": "client/src/pages/DashboardPage.tsx",
@@ -9605,6 +9575,13 @@
       "size_bytes": 3372,
       "sha256": "0a84c00084243a6901ce3b99c891ba541e96aa8ed3b36cda0c57b685361dc79e",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "client/src/tests/creation-corner-blueprint-handoff.test.ts",
+      "category": "test",
+      "size_bytes": 1839,
+      "sha256": "31c7a13237034881fbdda6609cf46b5fd19a9b3d1aec97c51ea943d90ce8abfb",
+      "last_modified": "2026-07-25T06:45:18.310810+00:00"
     },
     {
       "path": "client/src/tests/creation-corner-freeform.test.ts",
@@ -11144,9 +11121,9 @@
     {
       "path": "scripts/sync-perplexity-collaboration.mjs",
       "category": "script",
-      "size_bytes": 4463,
-      "sha256": "90e920adfd464dd928df6457c61fc9f0ba44c276ed2c0597cc801713c818a48e",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 5928,
+      "sha256": "051620129a76ec6e1b04506422aa9a59aee6133b3d84804ffe18fb3f3867c69e",
+      "last_modified": "2026-07-25T06:35:03.761849+00:00"
     },
     {
       "path": "scripts/synthesize_corpus.py",
@@ -11818,10 +11795,10 @@
     {
       "path": "docs/CurrentState.md",
       "category": "doc",
-      "size_bytes": 554021,
-      "sha256": "1872f6e7c3afedd2de0078dbd64daa006d93aef0b280f141576d0feed3e9227d",
-      "last_modified": "2026-07-16T15:53:27+00:00",
-      "word_count": 67980
+      "size_bytes": 556788,
+      "sha256": "51e7c360ffd3133b1549409c24d34ee05277ca4e2d56bad3adc02e84b94edd4b",
+      "last_modified": "2026-07-25T06:46:37.258805+00:00",
+      "word_count": 68330
     },
     {
       "path": "docs/Deep_Dive_Into_GestaltView_By_Perplexity.md",
@@ -12129,10 +12106,10 @@
     {
       "path": "docs/Workflows.md",
       "category": "doc",
-      "size_bytes": 5787,
-      "sha256": "26fc6b3bea3acfe0f3d3a81b8067f4d623db641dfc0d64d216e8f6f478891321",
-      "last_modified": "2026-07-16T15:53:27+00:00",
-      "word_count": 719
+      "size_bytes": 6045,
+      "sha256": "d001b581b1cf8c232d174d37b11ffc3781dbf4aea2f0231c0f3181916aad97ab",
+      "last_modified": "2026-07-25T06:35:03.965849+00:00",
+      "word_count": 759
     },
     {
       "path": "docs/adr/001-manifest-schema-contract.md",
@@ -12257,17 +12234,17 @@
     {
       "path": "docs/gestaltview-v2.manifest.json",
       "category": "data",
-      "size_bytes": 490295,
-      "sha256": "f2cf50d8e7ef995f7be788aa3cec7edf746c4e2546a76042d5cfd17d27396b2e",
-      "last_modified": "2026-07-25T06:27:50.564876+00:00"
+      "size_bytes": 492998,
+      "sha256": "0c0e554561530a1402417815da595df092505dabfe97ba2dacaba8064f2c7b0a",
+      "last_modified": "2026-07-25T06:34:00.111853+00:00"
     },
     {
       "path": "docs/gestaltview-v2.manifest.md",
       "category": "doc",
-      "size_bytes": 45117,
-      "sha256": "632cea7bdb9c9746c39aa91519ecfba24922517979348b0df3dd2818c68e9a70",
-      "last_modified": "2026-07-25T06:27:50.566876+00:00",
-      "word_count": 4639
+      "size_bytes": 47489,
+      "sha256": "36669b006cf24265dea0cd5061035b9cbabb652487b8ad3be886422b04642d2d",
+      "last_modified": "2026-07-25T06:34:00.114853+00:00",
+      "word_count": 4723
     },
     {
       "path": "docs/license.md",

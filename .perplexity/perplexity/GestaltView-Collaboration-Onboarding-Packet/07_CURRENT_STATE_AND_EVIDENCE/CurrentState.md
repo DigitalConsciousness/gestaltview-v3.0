@@ -1,3 +1,23 @@
+# CurrentState — Creation Corner handoff and workbench restoration (2026-07-25)
+
+**Scope of this pass:** Restored the richer blueprint synthesis workbench to Creation Corner and made incoming blueprint handoffs visibly activate their intended source.
+
+### What changed
+
+- Mounted the existing generative blueprint workbench on the live Creation Corner route while retaining the newer forge, Codex preview, and NextGen render pipeline.
+- Added the incoming blueprint ID to local handoff events so an open Creation Corner selects the newly sent Blackboard blueprint instead of silently keeping an older selection active.
+- Kept Dynamic Inner World routing behind its existing explicit destination and send controls.
+- Added focused regression coverage for blueprint persistence and active-handoff identity.
+
+### Validation performed
+
+- Focused Creation Corner and Blackboard artifact run: 4 files and 7 tests passed.
+- Changed TypeScript/TSX files passed isolated TypeScript syntax transpilation.
+- `git diff --check` passed.
+- Full `tsc`/Vite build attempts were terminated by the current workspace environment with `SIGTERM`; no compiler diagnostic was emitted before termination.
+
+---
+
 # CurrentState — Provider-neutral Digital Intelligence collaborator context (2026-07-25)
 
 **Scope of this pass:** Made the default `.perplexity/` collaboration context portable across Digital Intelligence providers, directory names, checkout locations, current working directories, and repository payload names.

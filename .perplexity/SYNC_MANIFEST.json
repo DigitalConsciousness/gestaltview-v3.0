@@ -1,44 +1,44 @@
 {
-  "generatedAt": "2026-07-25T06:35:39.212Z",
+  "generatedAt": "2026-07-25T09:25:21.623Z",
   "contextContract": "gestaltview.di-context.v1",
   "sourceRoot": ".",
   "payloadRoot": "perplexity",
-  "generatedManifestRefreshed": false,
+  "generatedManifestRefreshed": true,
   "files": [
     {
       "source": "docs/CurrentState.md",
       "target": "CurrentState.md",
-      "sha256": "be13f40794f9e8384225a8136ca3737ff4d5e52739937db643780b20ca1ed38a",
+      "sha256": "51e7c360ffd3133b1549409c24d34ee05277ca4e2d56bad3adc02e84b94edd4b",
       "inSync": true
     },
     {
       "source": "docs/CurrentState.md",
       "target": "perplexity/GestaltView-Collaboration-Onboarding-Packet/07_CURRENT_STATE_AND_EVIDENCE/CurrentState.md",
-      "sha256": "be13f40794f9e8384225a8136ca3737ff4d5e52739937db643780b20ca1ed38a",
+      "sha256": "51e7c360ffd3133b1549409c24d34ee05277ca4e2d56bad3adc02e84b94edd4b",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.json",
       "target": "REPO_MANIFEST.json",
-      "sha256": "0c0e554561530a1402417815da595df092505dabfe97ba2dacaba8064f2c7b0a",
+      "sha256": "54a33e6306546f27a1b2a537e717bdab105d4374812e07fcffcd40df3bbfbabb",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.md",
       "target": "REPO_MANIFEST.md",
-      "sha256": "36669b006cf24265dea0cd5061035b9cbabb652487b8ad3be886422b04642d2d",
+      "sha256": "f2ca7b836a471dc1188a61e81db94441ba9b8f5b13fe641b73a93080cf42de36",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.json",
       "target": "perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.json",
-      "sha256": "0c0e554561530a1402417815da595df092505dabfe97ba2dacaba8064f2c7b0a",
+      "sha256": "54a33e6306546f27a1b2a537e717bdab105d4374812e07fcffcd40df3bbfbabb",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.md",
       "target": "perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.md",
-      "sha256": "36669b006cf24265dea0cd5061035b9cbabb652487b8ad3be886422b04642d2d",
+      "sha256": "f2ca7b836a471dc1188a61e81db94441ba9b8f5b13fe641b73a93080cf42de36",
       "inSync": true
     },
     {
