@@ -12,6 +12,9 @@
 - Strengthened projection so downloaded HTML must match the durable receipt byte count and SHA-256 before an Inner World record can be created.
 - Replaced Creation Corner's direct legacy render request with `submitNextGenRender`, preserved clearly labeled local previews and retry behavior, removed automatic Inner World insertion, and exposed **Project to Inner World** only after durable `ready`.
 - Preserved `source_ref` and `content_ref` through the Inner World API/client adapter, classified displayed artifacts as verified projection, server legacy, local draft, manual import, or unknown legacy, and surfaced render job/artifact provenance only for verified projections.
+- Added `tests/e2e/creation-corner-render-projection.spec.ts`, a deterministic Chromium fixture proving the browser-visible sequence `local preview → versioned render request → ready receipt → idempotent retry → explicit projection → expected Inner World marker`.
+- Added a separately gated live Phase 5 harness and runbook. It signs in two disposable Supabase users, exchanges their sessions into app cookies, verifies real ledger/storage/projection rows from a trusted runner, downloads the owner-signed artifact and recomputes SHA-256, proves API and direct-RLS cross-owner denial, verifies idempotent job/projection reuse, captures the Dynamic Inner World marker, and can clean up only its exact disposable namespace.
+- Added `phase5:proof:browser` and `phase5:proof:live` scripts plus a committable secret-free `.env.phase5.example`. Remote and production targets are hard opt-ins; production remains an explicit post-preview approval gate.
 
 ## Verification and gates
 
@@ -22,7 +25,8 @@
 - Phase 0 orientation checks currently report missing `.orientation` packet files, missing `artifacts/latest.zip`/README continuity evidence, and stale collaborator mirrors. These pre-existing repository evidence gaps were not silently repaired as part of the render slice.
 - Phase 2's local acceptance matrix is covered. Preview/development infrastructure proof and production smoke remain separately gated.
 - Phases 3 and 4 are implemented locally with focused contract coverage. Existing server and local records remain read-time adapted; no legacy artifact was rewritten or deleted.
-- Phase 5 still requires an approved preview/development environment for the complete browser-visible storage/retrieval/projection proof.
+- Phase 5's deterministic browser contract passes in Chromium and writes `output/playwright/creation-corner-render-projection-proof.png`.
+- The deterministic browser fixture intercepts APIs and therefore is not proof of real Supabase rows, private object storage, signed retrieval, or RLS. The new live harness is ready to capture that evidence once an approved preview/development URL, two disposable identities, and trusted runner credentials are supplied; it has not been executed against external infrastructure in this pass. Production smoke remains separately gated.
 
 ---
 

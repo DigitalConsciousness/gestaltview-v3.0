@@ -58,6 +58,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "phase5:proof:browser": "playwright test tests/e2e/creation-corner-render-projection.spec.ts --project=chromium",
+    "phase5:proof:live": "playwright test tests/e2e/creation-corner-render-projection.live.spec.ts --project=chromium",
     "test:full-report": "bash scripts/run-comprehensive-tests.sh",
     "embodiments:check-generated": "node scripts/build-embodiment-artifacts.mjs --check",
     "operation-render:validate": "node scripts/validate-operation-render-sweep.mjs"

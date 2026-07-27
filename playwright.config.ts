@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL = process.env.VITE_API_BASE || process.env.PLAYWRIGHT_BASE_URL || "http://localhost:5173";
+const baseURL = process.env.VITE_API_BASE || process.env.PLAYWRIGHT_BASE_URL || "http://127.0.0.1:3000";
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -15,7 +15,7 @@ export default defineConfig({
     video: "retain-on-failure",
   },
   webServer: {
-    command: "pnpm dev --host 127.0.0.1",
+    command: "node node_modules/vite/bin/vite.js --host 127.0.0.1",
     url: baseURL,
     reuseExistingServer: true,
     timeout: 120_000,
