@@ -15,6 +15,11 @@ Dynamic Inner World path.
 3. Copy `.env.phase5.example` to an ignored local environment file and supply the
    preview URL, Supabase URL, publishable key, both test-user credentials, and a
    service-role key available only to the trusted test process.
+   If the preview uses Vercel Deployment Protection, generate an Automation
+   Bypass secret in the Vercel project settings and set
+   `VERCEL_AUTOMATION_BYPASS_SECRET` in that ignored file. The runner sends it
+   only as Vercel's protection-bypass header and asks Vercel to set the bypass
+   cookie for subsequent browser requests.
 4. Keep `PHASE5_ALLOW_PRODUCTION=false`. A production smoke is a separate approval
    gate after preview passes.
 
