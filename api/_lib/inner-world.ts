@@ -191,6 +191,7 @@ export async function buildInnerWorldFilePayload(row: {
 export function buildInnerWorldArtifactPayload(row: {
   id: string;
   source_ref?: string | null;
+  content_ref?: Record<string, unknown> | null;
   user_id: string;
   title: string;
   summary: string;
@@ -208,6 +209,8 @@ export function buildInnerWorldArtifactPayload(row: {
 }): Record<string, unknown> {
   return {
     id: row.source_ref ?? row.id,
+    sourceRef: row.source_ref ?? undefined,
+    contentRef: row.content_ref ?? undefined,
     userId: row.user_id,
     title: row.title,
     summary: row.summary,

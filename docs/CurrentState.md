@@ -1,6 +1,6 @@
 # CurrentState — Render contract v2 boundary proof continued (2026-07-27)
 
-**Scope of this pass:** Re-ran the Inside-Out Convergence baseline, independently verified the recorded Phase 1 PostgreSQL fixtures, and began the Phase 2 server proof without applying production DDL.
+**Scope of this pass:** Re-ran the Inside-Out Convergence baseline, independently verified the recorded Phase 1 PostgreSQL fixtures, completed the local Phase 2 server proof, and converged Creation Corner on the canonical Phase 3 render/projection path without applying production DDL.
 
 ## What changed
 
@@ -8,6 +8,10 @@
 - Kept the temporary observed Creation Corner legacy translation, which now explicitly produces the same versioned internal request.
 - Added an API integration fixture proving unauthenticated rejection, a supported deterministic HTML render with real nonzero bytes and a matching SHA-256 receipt, and a required unsupported target that durably prevents `ready`.
 - Added client and parser regressions proving versioned canonical submission and rejection of unversioned canonical envelopes.
+- Added owner-scoped status and projection integration coverage, including signed retrieval, cross-owner denial, non-ready rejection, idempotent projection, and source-reference preservation.
+- Strengthened projection so downloaded HTML must match the durable receipt byte count and SHA-256 before an Inner World record can be created.
+- Replaced Creation Corner's direct legacy render request with `submitNextGenRender`, preserved clearly labeled local previews and retry behavior, removed automatic Inner World insertion, and exposed **Project to Inner World** only after durable `ready`.
+- Preserved `source_ref` and `content_ref` through the Inner World API/client adapter, classified displayed artifacts as verified projection, server legacy, local draft, manual import, or unknown legacy, and surfaced render job/artifact provenance only for verified projections.
 
 ## Verification and gates
 
@@ -16,7 +20,9 @@
 - Migration SHA-256: `0a24680d9e651675a07dee7ec06034ccd749832de9f7bdcc2005d7af16f574ec`.
 - Production Supabase remains unchanged and requires explicit approval.
 - Phase 0 orientation checks currently report missing `.orientation` packet files, missing `artifacts/latest.zip`/README continuity evidence, and stale collaborator mirrors. These pre-existing repository evidence gaps were not silently repaired as part of the render slice.
-- Phase 2 remains partial: owner-scoped status retrieval, cross-owner denial, and projection integration fixtures are still required before Creation Corner UI convergence may begin.
+- Phase 2's local acceptance matrix is covered. Preview/development infrastructure proof and production smoke remain separately gated.
+- Phases 3 and 4 are implemented locally with focused contract coverage. Existing server and local records remain read-time adapted; no legacy artifact was rewritten or deleted.
+- Phase 5 still requires an approved preview/development environment for the complete browser-visible storage/retrieval/projection proof.
 
 ---
 

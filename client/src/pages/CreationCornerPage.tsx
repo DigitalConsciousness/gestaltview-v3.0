@@ -45,10 +45,8 @@ import {
   mergeCreationCornerBlueprints,
 } from "@/lib/creationCornerContent";
 import {
-  appendInnerWorldArtifact,
   appendUserFile,
   createUserFileRecord,
-  type InnerWorldArtifactRecord,
 } from "@/lib/innerWorldFiles";
 import { uploadUserFileToServer } from "@/lib/fileStorage";
 import { readCreationCornerUpload } from "@/lib/creationCornerIntake";
@@ -57,11 +55,14 @@ import GestaltRenderSurface from "@/components/rendering/GestaltRenderSurface";
 import { artifactsToSceneGraph } from "@/lib/rendering/fromArtifacts";
 import type { GestaltSceneGraph } from "@/lib/rendering/sceneGraph";
 import { renderArtifact } from "@/lib/renderingClient";
-import { parseNextGenRenderResponse } from "@/lib/nextGenRenderClient";
+import {
+  submitNextGenRender,
+  type RenderEngineReceipt,
+} from "@/lib/nextGenRenderClient";
+import { projectRenderToInnerWorld } from "@/lib/renderProjectionClient";
 import {
   buildCreationCornerHtml,
   buildCreationCornerExportFile,
-  buildCreationCornerInnerWorldArtifact,
   type CreationCornerExportFormat,
 } from "@/lib/creationCornerArtifacts";
 import type { CodexArtifact } from "@shared/codex/contracts";
@@ -74,6 +75,19 @@ type ArtifactType = CreationCornerLegacyArtifactType;
 type SynthesisStyle = CreationCornerLegacySynthesisStyle;
 
 type Destination = CreationCornerLegacyDestination;
+
+type RenderLedgerState =
+  | "local_preview"
+  | "submitting"
+  | "validating"
+  | "queued"
+  | "rendering"
+  | "storing"
+  | "ready"
+  | "failed"
+  | "cancelled"
+  | "projection_pending"
+  | "projected";
 
 function mapCreationCornerArtifactIntent(
   artifactType: ArtifactType,
@@ -193,15 +207,6 @@ const DESTINATIONS: { value: Destination; label: string }[] = [
 
 const API_BASE = (import.meta as any).env?.VITE_API_URL ?? "/api";
 
-function appendResultToInnerWorld(result: ArtifactResult, userId: string): void {
-  if (!result.codex?.artifact) {
-    throw new Error("Artifact has no Codex manifest. Try synthesizing again.");
-  }
-  const artifact: InnerWorldArtifactRecord = buildCreationCornerInnerWorldArtifact(result, userId);
-
-  appendInnerWorldArtifact(artifact);
-}
-
 // ─── Local codex manifest builder (used when API is unavailable) ─────────────
 
 function buildLocalCodexManifest(
@@ -250,7 +255,8 @@ export default function CreationCornerPage() {
   const [isRenderingExports, setIsRenderingExports] = useState(false);
   const [isSynthesizing, setIsSynthesizing] = useState(false);
   const [synthError, setSynthError] = useState<string | null>(null);
-  const [nextGenRenderResult, setNextGenRenderResult] = useState<unknown>(null);
+  const [nextGenRenderResult, setNextGenRenderResult] = useState<RenderEngineReceipt | null>(null);
+  const [renderLedgerState, setRenderLedgerState] = useState<RenderLedgerState | null>(null);
   const [isNextGenRendering, setIsNextGenRendering] = useState(false);
 
   // ── DI chat ──────────────────────────────────────────────────────────────
@@ -400,6 +406,8 @@ export default function CreationCornerPage() {
     setIsSynthesizing(true);
     setSynthError(null);
     setResult(null);
+    setNextGenRenderResult(null);
+    setRenderLedgerState(null);
 
     try {
       const synthesisSourceCaptureIds = selectedBlueprint?.sourceOrbIds ?? [];
@@ -517,7 +525,7 @@ export default function CreationCornerPage() {
         generationMode = "codex-forge";
       } catch {
         codexResult = buildLocalCodexManifest(codexDraft);
-        warnings.push("Codex API offline — artifact rendered from local engine. All formats available for download.");
+        warnings.push("Codex API offline — local preview remains available, but no durable render receipt exists yet.");
       }
 
       const data: ArtifactResult = {
@@ -561,14 +569,10 @@ export default function CreationCornerPage() {
       data.previewHtml = previewHtml;
 
       setResult(data);
+      setRenderLedgerState("local_preview");
 
       if (safeDestination === "dynamic_inner_world") {
-        try {
-          appendResultToInnerWorld(data, user?.id ?? "anonymous");
-          toast.success("Sent spatial scene to Dynamic Inner World.");
-        } catch (routeError: any) {
-          toast.info(routeError.message ?? "Artifact stayed in Creation Corner with its Codex manifest.");
-        }
+        toast.info("Inner World selected. Create a durable render, then project it explicitly.");
       } else if (artifactType === "session_recap") {
         toast.success("Session Recap forged and saved to Creation Corner.");
       } else {
@@ -686,33 +690,67 @@ export default function CreationCornerPage() {
 
     setIsNextGenRendering(true);
     setNextGenRenderResult(null);
+    setRenderLedgerState("submitting");
 
     try {
-      const response = await fetch(`${API_BASE}/render/engine`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          jobId: `creation_corner_${result?.id ?? Date.now()}`,
-          graph: nextGenSceneGraph,
-          metadata: { sourceRoom: "CreationCorner" },
-        }),
+      const payload = await submitNextGenRender({
+        sceneGraph: nextGenSceneGraph,
+        targets: [
+          {
+            format: "html",
+            mimeType: "text/html; charset=utf-8",
+            destinationIntent:
+              destination === "dynamic_inner_world" ? "project" : "preview",
+            required: true,
+          },
+        ],
+        idempotencyKey: `creation-corner:${result?.id ?? nextGenSceneGraph.graphId}:html`,
       });
-      const payload = await parseNextGenRenderResponse(
-        response,
-        `creation_corner_${result?.id ?? Date.now()}`,
-      );
       setNextGenRenderResult(payload);
-      if (!response.ok || payload?.ok === false) {
+      const serverState = payload.job?.status as RenderLedgerState | undefined;
+      setRenderLedgerState(serverState ?? (payload.ok ? "ready" : "failed"));
+      if (!payload.ok || payload.job?.status === "failed") {
         toast.warning("NextGen render returned diagnostics. Review the manifest below.");
         return;
       }
-      toast.success("NextGen render manifest created.");
+      toast.success(
+        payload.job?.status === "ready"
+          ? "Durable render receipt verified."
+          : `Render ledger state: ${payload.job?.status ?? "submitted"}.`,
+      );
     } catch (error) {
       const message = error instanceof Error ? error.message : "NextGen render failed.";
-      setNextGenRenderResult({ ok: false, error: message });
+      setNextGenRenderResult({
+        ok: false,
+        error: { code: "RENDER_SUBMISSION_FAILED", message },
+      });
+      setRenderLedgerState("failed");
       toast.error(message);
     } finally {
       setIsNextGenRendering(false);
+    }
+  };
+
+  const handleProjectToInnerWorld = async () => {
+    const renderJobId = nextGenRenderResult?.job?.id;
+    if (!result || renderLedgerState !== "ready" || !renderJobId) return;
+
+    setRenderLedgerState("projection_pending");
+    try {
+      const projection = await projectRenderToInnerWorld({
+        renderJobId,
+        title: result.title,
+        summary: result.content?.slice(0, 1_000),
+      });
+      setRenderLedgerState("projected");
+      toast.success(
+        projection.idempotent
+          ? "Verified projection is available in Dynamic Inner World."
+          : "Projected to Dynamic Inner World.",
+      );
+    } catch (error) {
+      setRenderLedgerState("ready");
+      toast.error(error instanceof Error ? error.message : "Projection failed.");
     }
   };
 
@@ -1010,10 +1048,48 @@ export default function CreationCornerPage() {
                             disabled={isNextGenRendering}
                             className="rounded-lg border border-cyan-300/25 bg-cyan-300/10 px-3 py-1.5 text-xs font-semibold text-cyan-100 hover:bg-cyan-300/20 disabled:cursor-not-allowed disabled:opacity-60"
                           >
-                            {isNextGenRendering ? "Rendering scene graph..." : "Create NextGen render manifest"}
+                            {isNextGenRendering
+                              ? "Submitting to render ledger..."
+                              : renderLedgerState === "failed"
+                                ? "Retry durable render"
+                                : "Create durable render"}
                           </button>
+                          {renderLedgerState === "ready" &&
+                          destination === "dynamic_inner_world" ? (
+                            <button
+                              type="button"
+                              onClick={handleProjectToInnerWorld}
+                              className="rounded-lg border border-purple-300/25 bg-purple-300/10 px-3 py-1.5 text-xs font-semibold text-purple-100 hover:bg-purple-300/20"
+                            >
+                              Project to Inner World
+                            </button>
+                          ) : null}
+                          {renderLedgerState === "projection_pending" ? (
+                            <span className="text-xs text-purple-200">
+                              Writing projection receipt…
+                            </span>
+                          ) : null}
+                          {renderLedgerState === "projected" ? (
+                            <span className="text-xs font-semibold text-emerald-300">
+                              Projected with durable receipt
+                            </span>
+                          ) : null}
                           <span className="text-xs text-gv-text-muted">Scene graph preview preserves nodes, provenance, diagnostics, and export targets before server orchestration.</span>
                         </div>
+                        {renderLedgerState === "local_preview" ||
+                        renderLedgerState === "failed" ? (
+                          <p className="mt-3 rounded-lg border border-amber-300/20 bg-amber-300/10 px-3 py-2 text-xs text-amber-100">
+                            Local preview — not yet saved to the render ledger
+                          </p>
+                        ) : null}
+                        {renderLedgerState &&
+                        !["local_preview", "failed", "projected"].includes(
+                          renderLedgerState,
+                        ) ? (
+                          <p className="mt-3 text-xs text-cyan-100">
+                            Render ledger: {renderLedgerState.replaceAll("_", " ")}
+                          </p>
+                        ) : null}
                         {nextGenRenderResult ? (
                           <pre className="mt-3 max-h-72 overflow-auto rounded-lg border border-white/10 bg-black/40 p-3 text-[11px] text-cyan-50">
                             {JSON.stringify(nextGenRenderResult, null, 2)}

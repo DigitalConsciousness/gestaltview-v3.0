@@ -244,4 +244,139 @@ describe("render engine durable contract", () => {
     });
     expect(jobs[0]?.status).toBe("failed");
   });
+
+  it("keeps an optional unsupported target as a warning without falsifying its status", async () => {
+    vi.doMock("../../api/_lib/auth.js", () => ({
+      getAuthUser: vi.fn().mockResolvedValue({
+        id: OWNER_ID,
+        email: "owner@example.com",
+      }),
+    }));
+    const jobs: Array<Record<string, unknown>> = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
+        const url = String(input);
+        const method = init?.method ?? "GET";
+        if (url.includes("/rest/v1/render_jobs?") && method === "GET") {
+          return jsonResponse([]);
+        }
+        if (url.endsWith("/rest/v1/render_jobs") && method === "POST") {
+          jobs.push(JSON.parse(String(init?.body)));
+          return jsonResponse({}, 201);
+        }
+        if (url.includes("/rest/v1/render_jobs?") && method === "PATCH") {
+          Object.assign(jobs[0], JSON.parse(String(init?.body)));
+          return new Response(null, { status: 204 });
+        }
+        throw new Error(`Unexpected optional-target proof request: ${method} ${url}`);
+      }),
+    );
+    const { default: handler } = await import("../../api/render/engine.js");
+    const { res, capture } = responseCapture();
+
+    await handler(
+      {
+        method: "POST",
+        headers: {},
+        body: {
+          contractVersion: "gestaltview.render-request.v2",
+          sourceFamily: "scene_graph",
+          content: "# Optional target proof",
+          targets: [
+            {
+              format: "mp4",
+              mimeType: "video/mp4",
+              destinationIntent: "download",
+              required: false,
+            },
+          ],
+        },
+      } as VercelRequest,
+      res,
+    );
+
+    expect(capture.statusCode).toBe(200);
+    expect(capture.body).toMatchObject({
+      ok: true,
+      job: { status: "ready" },
+      diagnostics: [
+        {
+          code: "TARGET_PLANNED_NOT_WIRED",
+          severity: "warning",
+          details: { format: "mp4", required: false, targetStatus: "unsupported" },
+        },
+      ],
+      manifest: {
+        targetReceipts: [{ format: "mp4", required: false, status: "unsupported" }],
+      },
+    });
+  });
+
+  it("returns the existing owner job for the same canonical idempotency input", async () => {
+    vi.doMock("../../api/_lib/auth.js", () => ({
+      getAuthUser: vi.fn().mockResolvedValue({
+        id: OWNER_ID,
+        email: "owner@example.com",
+      }),
+    }));
+    const fetchMock = vi.fn(async (input: string | URL | Request) => {
+      const url = String(input);
+      if (url.includes("/rest/v1/render_jobs?")) {
+        expect(url).toContain(`user_id=eq.${OWNER_ID}`);
+        return jsonResponse([
+          {
+            id: "55555555-5555-4555-8555-555555555555",
+            status: "ready",
+            graph_id: "existing-graph",
+            diagnostics: [],
+            manifest: { contract: "gestaltview.render-result.v2" },
+          },
+        ]);
+      }
+      if (url.includes("/rest/v1/render_artifacts?")) {
+        return jsonResponse([
+          {
+            id: ARTIFACT_ID,
+            format: "html",
+            backend: "gestalt-document-backend",
+            byte_size: 12,
+            mime_type: "text/html",
+            content_hash: "a".repeat(64),
+            target_status: "success",
+          },
+        ]);
+      }
+      throw new Error(`Unexpected idempotency proof request: ${url}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const { default: handler } = await import("../../api/render/engine.js");
+    const { res, capture } = responseCapture();
+
+    await handler(
+      {
+        method: "POST",
+        headers: {},
+        body: {
+          contractVersion: "gestaltview.render-request.v2",
+          sourceFamily: "scene_graph",
+          content: "# Stable input",
+          idempotencyKey: "stable-client-key",
+        },
+      } as VercelRequest,
+      res,
+    );
+
+    expect(capture.statusCode).toBe(200);
+    expect(capture.body).toMatchObject({
+      ok: true,
+      reused: true,
+      job: {
+        id: "55555555-5555-4555-8555-555555555555",
+        status: "ready",
+      },
+      artifacts: [{ id: ARTIFACT_ID, hash: "a".repeat(64) }],
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
 });

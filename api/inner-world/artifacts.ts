@@ -9,9 +9,9 @@ import {
 } from "../_lib/inner-world.js";
 
 const PRIMARY_SELECT =
-  "id,source_ref,user_id,title,summary,source_file_id,source_file_ref,html,thumbnail_url,origin_room,origin_di_id,evidence_node_ids,tags,status,created_at,updated_at";
+  "id,source_ref,content_ref,user_id,title,summary,source_file_id,source_file_ref,html,thumbnail_url,origin_room,origin_di_id,evidence_node_ids,tags,status,created_at,updated_at";
 const FALLBACK_SELECT =
-  "id,source_ref,user_id,title,summary,source_file_id,source_file_ref,html,thumbnail_url,origin_room,evidence_node_ids,tags,status,created_at,updated_at";
+  "id,source_ref,content_ref,user_id,title,summary,source_file_id,source_file_ref,html,thumbnail_url,origin_room,evidence_node_ids,tags,status,created_at,updated_at";
 
 function getPaginationValue(value: string | string[] | undefined, fallback: number): number {
   const raw = Array.isArray(value) ? value[0] : value;
@@ -134,7 +134,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         },
         { onConflict: "source_ref" },
       )
-      .select("id,source_ref,user_id,title,summary,source_file_id,source_file_ref,html,thumbnail_url,origin_room,origin_di_id,evidence_node_ids,tags,status,created_at,updated_at")
+      .select("id,source_ref,content_ref,user_id,title,summary,source_file_id,source_file_ref,html,thumbnail_url,origin_room,origin_di_id,evidence_node_ids,tags,status,created_at,updated_at")
       .single();
 
     if (error || !data) {

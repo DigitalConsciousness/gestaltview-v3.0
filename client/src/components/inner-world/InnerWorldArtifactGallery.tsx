@@ -5,6 +5,8 @@ import { ArtifactViewSurface } from "@/components/inner-world/ArtifactViewSurfac
 import { cn } from "@/lib/utils";
 import {
   artifactStatusLabel,
+  artifactOriginLabel,
+  classifyInnerWorldArtifactOrigin,
   classifyInnerWorldArtifactView,
   roomOriginLabel,
   type InnerWorldArtifactRecord,
@@ -33,6 +35,9 @@ export function InnerWorldArtifactGallery({
     [artifacts, selectedArtifactId],
   );
   const selectedArtifactKind = selectedArtifact ? getArtifactKindLabel(selectedArtifact) : null;
+  const selectedArtifactOrigin = selectedArtifact
+    ? classifyInnerWorldArtifactOrigin(selectedArtifact)
+    : null;
 
   return (
     <section className={cn("rounded-[2rem] border border-white/10 bg-white/[0.04] p-4", className)}>
@@ -87,6 +92,24 @@ export function InnerWorldArtifactGallery({
                 <span className="text-[10px] uppercase tracking-[0.22em] text-white/42">Status</span>
                 <span>{artifactStatusLabel(selectedArtifact.status)}</span>
               </div>
+              {selectedArtifactOrigin ? (
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[10px] uppercase tracking-[0.22em] text-white/42">Provenance</span>
+                  <span>{artifactOriginLabel(selectedArtifactOrigin)}</span>
+                </div>
+              ) : null}
+              {selectedArtifactOrigin === "render_projection_verified" ? (
+                <>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[10px] uppercase tracking-[0.22em] text-white/42">Render job</span>
+                    <span className="max-w-[16rem] truncate">{String(selectedArtifact.contentRef?.renderJobId)}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[10px] uppercase tracking-[0.22em] text-white/42">Render artifact</span>
+                    <span className="max-w-[16rem] truncate">{String(selectedArtifact.contentRef?.renderArtifactId)}</span>
+                  </div>
+                </>
+              ) : null}
             </div>
 
             <div className="mt-4 flex flex-wrap gap-2">
@@ -114,6 +137,7 @@ export function InnerWorldArtifactGallery({
         {artifacts.map((artifact, index) => {
           const spanClass = artifactSpanClasses[index % artifactSpanClasses.length];
           const isSelected = artifact.id === selectedArtifactId;
+          const artifactOrigin = classifyInnerWorldArtifactOrigin(artifact);
           return (
             <motion.button
               key={artifact.id}
@@ -144,6 +168,7 @@ export function InnerWorldArtifactGallery({
                   <span className="rounded-full border border-white/10 bg-black/20 px-2.5 py-1">{artifact.sourceFileId ? "File-backed" : "Standalone"}</span>
                   <span className="rounded-full border border-cyan-200/18 bg-cyan-200/10 px-2.5 py-1 text-cyan-50">{getArtifactKindLabel(artifact)}</span>
                   <span className="rounded-full border border-white/10 bg-black/20 px-2.5 py-1">{artifactStatusLabel(artifact.status)}</span>
+                  <span className="rounded-full border border-purple-200/18 bg-purple-200/10 px-2.5 py-1 text-purple-50">{artifactOriginLabel(artifactOrigin)}</span>
                   {artifact.tags[0] ? <span className="rounded-full border border-white/10 bg-black/20 px-2.5 py-1">{artifact.tags[0]}</span> : null}
                 </div>
 
@@ -228,6 +253,23 @@ export function InnerWorldArtifactGallery({
                       <span className="text-[10px] uppercase tracking-[0.22em] text-white/42">Status</span>
                       <span>{artifactStatusLabel(selectedArtifact.status)}</span>
                     </div>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-[10px] uppercase tracking-[0.22em] text-white/42">Provenance</span>
+                      <span>{artifactOriginLabel(classifyInnerWorldArtifactOrigin(selectedArtifact))}</span>
+                    </div>
+                    {classifyInnerWorldArtifactOrigin(selectedArtifact) ===
+                    "render_projection_verified" ? (
+                      <>
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="text-[10px] uppercase tracking-[0.22em] text-white/42">Render job</span>
+                          <span className="max-w-[14rem] truncate">{String(selectedArtifact.contentRef?.renderJobId)}</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="text-[10px] uppercase tracking-[0.22em] text-white/42">Render artifact</span>
+                          <span className="max-w-[14rem] truncate">{String(selectedArtifact.contentRef?.renderArtifactId)}</span>
+                        </div>
+                      </>
+                    ) : null}
                   </div>
 
                   <div className="mt-4 flex flex-wrap gap-2">

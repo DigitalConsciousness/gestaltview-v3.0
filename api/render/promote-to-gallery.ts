@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { z } from "zod";
 import { getAuthUser } from "../_lib/auth.js";
@@ -46,7 +47,10 @@ function encodeStoragePath(path: string): string {
   return path.split("/").map((segment) => encodeURIComponent(segment)).join("/");
 }
 
-async function downloadStoredHtml(bucket: string, path: string): Promise<string> {
+async function downloadStoredHtml(
+  bucket: string,
+  path: string,
+): Promise<{ html: string; byteSize: number; contentHash: string }> {
   const response = await supabaseRequest(
     `/storage/v1/object/authenticated/${encodeURIComponent(bucket)}/${encodeStoragePath(path)}`,
     { method: "GET" },
@@ -58,7 +62,11 @@ async function downloadStoredHtml(bucket: string, path: string): Promise<string>
   if (bytes.byteLength > MAX_PROJECTED_HTML_BYTES) {
     throw new Error("Stored HTML exceeds the gallery projection limit.");
   }
-  return new TextDecoder().decode(bytes);
+  return {
+    html: new TextDecoder().decode(bytes),
+    byteSize: bytes.byteLength,
+    contentHash: createHash("sha256").update(bytes).digest("hex"),
+  };
 }
 
 function parseJsonObject(value: unknown): Record<string, unknown> {
@@ -143,14 +151,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const artifactResponse = await supabaseRequest(
-      `/rest/v1/render_artifacts?render_job_id=eq.${encodeURIComponent(body.renderJobId)}&user_id=eq.${encodeURIComponent(userId)}&select=id,format,mime_type,backend,storage_bucket,storage_path,byte_size,metadata&order=created_at.asc`,
+      `/rest/v1/render_artifacts?render_job_id=eq.${encodeURIComponent(body.renderJobId)}&user_id=eq.${encodeURIComponent(userId)}&select=id,format,mime_type,backend,storage_bucket,storage_path,byte_size,content_hash,target_status,metadata&order=created_at.asc`,
     );
     if (!artifactResponse.ok) throw new Error("Render artifact lookup failed.");
     const artifacts = (await artifactResponse.json()) as Array<Record<string, unknown>>;
     const htmlArtifacts = artifacts.filter(
       (artifact) =>
         String(artifact.mime_type ?? "").startsWith("text/html") &&
-        TRUSTED_HTML_BACKENDS.has(String(artifact.backend ?? "")),
+        TRUSTED_HTML_BACKENDS.has(String(artifact.backend ?? "")) &&
+        String(artifact.target_status ?? "") === "success" &&
+        Number(artifact.byte_size ?? 0) > 0 &&
+        /^[a-f0-9]{64}$/i.test(String(artifact.content_hash ?? "")) &&
+        Boolean(String(artifact.storage_path ?? "")),
     );
 
     const projectedIds: string[] = [];
@@ -180,7 +192,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         skipped.push({ artifactId, reason: "Artifact has no durable storage path." });
         continue;
       }
-      const html = await downloadStoredHtml(bucket, storagePath);
+      const downloaded = await downloadStoredHtml(bucket, storagePath);
+      if (
+        downloaded.byteSize !== Number(artifact.byte_size) ||
+        downloaded.contentHash !== String(artifact.content_hash).toLowerCase()
+      ) {
+        skipped.push({
+          artifactId,
+          reason: "Stored bytes do not match the durable render receipt.",
+        });
+        continue;
+      }
+      const html = downloaded.html;
       if (!/<!doctype html|<html[\s>]/i.test(html)) {
         skipped.push({ artifactId, reason: "Stored artifact is not a complete HTML document." });
         continue;

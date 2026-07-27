@@ -32,6 +32,13 @@ export type InnerWorldArtifactStatus =
   | "active"
   | "archived";
 
+export type InnerWorldArtifactOrigin =
+  | "render_projection_verified"
+  | "server_legacy"
+  | "local_draft"
+  | "manual_import"
+  | "unknown_legacy";
+
 export type InnerWorldArtifactRecord = {
   id: string;
   userId: string;
@@ -47,6 +54,9 @@ export type InnerWorldArtifactRecord = {
   evidenceNodeIds: string[];
   tags: string[];
   status?: InnerWorldArtifactStatus;
+  sourceRef?: string;
+  contentRef?: Record<string, unknown>;
+  originKind?: InnerWorldArtifactOrigin;
 };
 
 export type ArtifactViewKind = "html" | "markdown" | "json_scene_graph" | "audio" | "image" | "raw";
@@ -91,6 +101,8 @@ export type PersistedArtifactPayload = {
   evidenceNodeIds: string[];
   tags: string[];
   status?: InnerWorldArtifactStatus | null;
+  sourceRef?: string | null;
+  contentRef?: Record<string, unknown> | null;
 };
 
 export const FILE_STORAGE_KEYS = {
@@ -256,6 +268,40 @@ export function artifactStatusLabel(status?: InnerWorldArtifactStatus | null): s
   }
 
   return GALLERY_STATUS_LABELS[status] ?? status;
+}
+
+export function classifyInnerWorldArtifactOrigin(
+  artifact: Pick<
+    InnerWorldArtifactRecord,
+    "originKind" | "sourceRef" | "contentRef" | "sourceFileId"
+  >,
+): InnerWorldArtifactOrigin {
+  if (artifact.originKind) return artifact.originKind;
+  if (
+    artifact.sourceRef?.startsWith("render-artifact:") &&
+    typeof artifact.contentRef?.renderJobId === "string" &&
+    typeof artifact.contentRef?.renderArtifactId === "string"
+  ) {
+    return "render_projection_verified";
+  }
+  if (artifact.sourceRef) return "server_legacy";
+  if (artifact.sourceFileId) return "manual_import";
+  return "local_draft";
+}
+
+export function artifactOriginLabel(origin: InnerWorldArtifactOrigin): string {
+  switch (origin) {
+    case "render_projection_verified":
+      return "Verified render projection";
+    case "server_legacy":
+      return "Server legacy";
+    case "local_draft":
+      return "Local draft";
+    case "manual_import":
+      return "Manual import";
+    default:
+      return "Unknown legacy";
+  }
 }
 
 export function isMuseumVisibleArtifact(artifact: Pick<InnerWorldArtifactRecord, "status">): boolean {
@@ -822,7 +868,7 @@ function normalizeServerFile(record: PersistedFilePayload): UserFileRecord {
 }
 
 function normalizeServerArtifact(record: PersistedArtifactPayload): InnerWorldArtifactRecord {
-  return {
+  const artifact: InnerWorldArtifactRecord = {
     id: record.id,
     userId: record.userId,
     title: record.title,
@@ -837,6 +883,12 @@ function normalizeServerArtifact(record: PersistedArtifactPayload): InnerWorldAr
     evidenceNodeIds: record.evidenceNodeIds,
     tags: record.tags,
     status: record.status ?? undefined,
+    sourceRef: record.sourceRef ?? undefined,
+    contentRef: record.contentRef ?? undefined,
+  };
+  return {
+    ...artifact,
+    originKind: classifyInnerWorldArtifactOrigin(artifact),
   };
 }
 

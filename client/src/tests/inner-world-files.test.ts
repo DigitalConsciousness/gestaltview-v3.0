@@ -5,6 +5,8 @@ import {
   archiveInnerWorldArtifact,
   clearInnerWorldArtifact,
   artifactStatusLabel,
+  artifactOriginLabel,
+  classifyInnerWorldArtifactOrigin,
   classifyInnerWorldArtifactView,
   isGalleryStagingStatus,
   isMuseumVisibleArtifact,
@@ -94,5 +96,35 @@ describe("inner world artifact lifecycle storage", () => {
 
     expect(result.kind).toBe("raw");
     expect(result.primaryRenderable).toBe(false);
+  });
+
+  it("only labels a render projection verified when durable source identifiers survive", () => {
+    const verified = classifyInnerWorldArtifactOrigin(
+      artifact("projection", {
+        sourceRef: "render-artifact:44444444-4444-4444-8444-444444444444",
+        contentRef: {
+          renderJobId: "33333333-3333-4333-8333-333333333333",
+          renderArtifactId: "44444444-4444-4444-8444-444444444444",
+        },
+      }),
+    );
+    const incomplete = classifyInnerWorldArtifactOrigin(
+      artifact("incomplete", {
+        sourceRef: "render-artifact:legacy-without-receipt",
+      }),
+    );
+
+    expect(verified).toBe("render_projection_verified");
+    expect(artifactOriginLabel(verified)).toBe("Verified render projection");
+    expect(incomplete).toBe("server_legacy");
+  });
+
+  it("keeps local drafts and manual imports conservatively classified", () => {
+    expect(classifyInnerWorldArtifactOrigin(artifact("local"))).toBe("local_draft");
+    expect(
+      classifyInnerWorldArtifactOrigin(
+        artifact("import", { sourceFileId: "file-1" }),
+      ),
+    ).toBe("manual_import");
   });
 });
