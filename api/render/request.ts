@@ -14,6 +14,7 @@ const targetSchema = z.object({
 }).strict();
 
 const requestSchema = z.object({
+  contractVersion: z.literal("gestaltview.render-request.v2"),
   sourceFamily: z.enum([
     "scene_graph",
     "generated_artifact",
@@ -57,6 +58,7 @@ export function parseRequestBody(req: VercelRequest): RenderEngineRequest {
   const translated =
     !record.sourceFamily && record.graph
       ? {
+          contractVersion: "gestaltview.render-request.v2",
           sourceFamily: "scene_graph",
           sceneGraph: record.graph,
           targets: record.targets,

@@ -122,6 +122,7 @@ export async function submitNextGenRender(input: {
       ...(input.idempotencyKey ? { "Idempotency-Key": input.idempotencyKey } : {}),
     },
     body: JSON.stringify({
+      contractVersion: "gestaltview.render-request.v2",
       sourceFamily: "scene_graph",
       sceneGraph: input.sceneGraph,
       targets: input.targets,

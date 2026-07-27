@@ -14,6 +14,7 @@ describe("render request parsing", () => {
       body: { jobId: "legacy-job", graph, metadata: { room: "creation-corner" } },
     } as VercelRequest);
     expect(parsed).toMatchObject({
+      contractVersion: "gestaltview.render-request.v2",
       sourceFamily: "scene_graph",
       sceneGraph: graph,
       idempotencyKey: "legacy:legacy-job",
@@ -23,6 +24,7 @@ describe("render request parsing", () => {
   it("normalizes canonical target defaults", () => {
     const parsed = parseRequestBody({
       body: {
+        contractVersion: "gestaltview.render-request.v2",
         sourceFamily: "scene_graph",
         content: "# Hello",
         targets: [{ format: "HTML", mimeType: "text/html" }],
@@ -39,9 +41,21 @@ describe("render request parsing", () => {
     expect(() =>
       parseRequestBody({
         body: {
+          contractVersion: "gestaltview.render-request.v2",
           sourceFamily: "scene_graph",
           content: "# Hello",
           unexpected: true,
+        },
+      } as VercelRequest),
+    ).toThrow("The render request is invalid.");
+  });
+
+  it("rejects an unversioned canonical envelope", () => {
+    expect(() =>
+      parseRequestBody({
+        body: {
+          sourceFamily: "scene_graph",
+          content: "# Hello",
         },
       } as VercelRequest),
     ).toThrow("The render request is invalid.");

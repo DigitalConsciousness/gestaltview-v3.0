@@ -1,3 +1,25 @@
+# CurrentState — Render contract v2 boundary proof continued (2026-07-27)
+
+**Scope of this pass:** Re-ran the Inside-Out Convergence baseline, independently verified the recorded Phase 1 PostgreSQL fixtures, and began the Phase 2 server proof without applying production DDL.
+
+## What changed
+
+- Made `contractVersion: "gestaltview.render-request.v2"` an exact, required field at the strict server parser, JSON Schema, and canonical browser client boundaries.
+- Kept the temporary observed Creation Corner legacy translation, which now explicitly produces the same versioned internal request.
+- Added an API integration fixture proving unauthenticated rejection, a supported deterministic HTML render with real nonzero bytes and a matching SHA-256 receipt, and a required unsupported target that durably prevents `ready`.
+- Added client and parser regressions proving versioned canonical submission and rejection of unversioned canonical envelopes.
+
+## Verification and gates
+
+- The Phase 1 v1-upgrade, read-only verification, and emergency recovery assertions passed in isolated PostgreSQL 17 with the legacy job/artifact/Inner World rows preserved.
+- The forward reconciliation also passed after the historical July 13 v2 migration had already run.
+- Migration SHA-256: `0a24680d9e651675a07dee7ec06034ccd749832de9f7bdcc2005d7af16f574ec`.
+- Production Supabase remains unchanged and requires explicit approval.
+- Phase 0 orientation checks currently report missing `.orientation` packet files, missing `artifacts/latest.zip`/README continuity evidence, and stale collaborator mirrors. These pre-existing repository evidence gaps were not silently repaired as part of the render slice.
+- Phase 2 remains partial: owner-scoped status retrieval, cross-owner denial, and projection integration fixtures are still required before Creation Corner UI convergence may begin.
+
+---
+
 # CurrentState — Render pipeline v2 live reconciliation prepared (2026-07-26)
 
 **Scope of this pass:** Completed the Phase 0 production read-only baseline and prepared the forward-only Phase 1 reconciliation required by `specs/launch/GestaltView_Inside_Out_Convergence_SPEC_2026-07-25.md`. Production DDL remains unapplied.

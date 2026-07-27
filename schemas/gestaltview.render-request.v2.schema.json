@@ -4,8 +4,11 @@
   "title": "GestaltView Render Request v2",
   "type": "object",
   "additionalProperties": false,
-  "required": ["sourceFamily"],
+  "required": ["contractVersion", "sourceFamily"],
   "properties": {
+    "contractVersion": {
+      "const": "gestaltview.render-request.v2"
+    },
     "sourceFamily": {
       "enum": [
         "scene_graph",
