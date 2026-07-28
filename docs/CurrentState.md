@@ -8054,3 +8054,28 @@ For ChatGPT Actions import, use the schema URL rooted at `https://gestaltview-v2
 ## CurrentState — Architecture Audit (2026-06-10)
 
 Ran the requested top-to-bottom architecture and functional audit across the live `gestaltview-v2.0` workspace, starting from `docs/CurrentState.md`, `vercel.json`, `middleware.ts`, `supabase/migrations/`, and the `api/` tree. The full report is recorded at `audits/audit_report_2026-06-10.md` and flags the highest-priority follow-ups as identity derivation hardening for Billy/Bucket Drop/gen-engine/Creation Corner, Codex drain atomic job claiming, Transcriptory failed/concurrent capture handling, GATE Stripe raw-body verification, production CORS fail-closed behavior, and removal/clarification of tracked build output and overlapping agent/worker surfaces.
+# CurrentState — Phase 6 shared runtime handoff contract (2026-07-27)
+
+Phase 6 now has a local, reviewable implementation package. The live schema-fit
+audit is recorded in `docs/launch/phase6-schema-fit-audit-2026-07-27.md`.
+Inspection covered all 18 tables required by the convergence spec, including
+live columns, policies, indexes, triggers, estimated rows, and repository use.
+No production DDL or data mutation was performed.
+
+The audit found no safe existing home for a cross-room lifecycle receipt.
+`runtime_handoffs` and append-only `runtime_handoff_events` are therefore
+proposed as narrow reference/lifecycle tables. The shared Zod contract, guarded
+API, and browser client are implemented under `shared/handoffs/`,
+`api/runtime-handoffs/`, and `client/src/lib/runtimeHandoffClient.ts`.
+
+Local verification:
+
+- `pnpm exec tsc --noEmit`
+- focused handoff contract/API tests
+- migration source-contract tests
+
+Production migration application remains explicitly gated on outside approval.
+Phase 7 room adapters must not begin claiming durable transfers until this
+migration has been reviewed and applied in an approved environment.
+
+---
