@@ -4,6 +4,7 @@ import { Link, useRoute } from "wouter";
 import { useSEO } from "@/hooks/useSEO";
 import {
   fetchGateOrder,
+  payApprovedGateOrder,
   redeemGateArtifactAccess,
   regenerateGateBuild,
 } from "@/lib/gateApi";
@@ -29,7 +30,7 @@ function formatCurrency(cents: number): string {
 }
 
 function isTerminal(status: GateOrderDetail["order"]["orderStatus"]): boolean {
-  return status === "delivered" || status === "failed" || status === "review_requested";
+  return status === "delivered" || status === "failed";
 }
 
 export default function GATEOrderStatusPage() {
@@ -42,6 +43,7 @@ export default function GATEOrderStatusPage() {
   const [orderDetail, setOrderDetail] = useState<GateOrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [paying, setPaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [accessKeyInputs, setAccessKeyInputs] = useState<Record<string, string>>({});
   const [accessKeyErrors, setAccessKeyErrors] = useState<Record<string, string | null>>({});
@@ -108,6 +110,26 @@ export default function GATEOrderStatusPage() {
   const latestBuildJob = orderDetail?.buildJobs
     .slice()
     .sort((left, right) => right.buildVersion - left.buildVersion)[0];
+
+  async function handleApprovedQuotePayment() {
+    setPaying(true);
+    setError(null);
+
+    try {
+      const checkout = await payApprovedGateOrder(orderId, { accessToken });
+      if (!checkout.url) {
+        throw new Error("The approved payment link is unavailable.");
+      }
+      window.location.assign(checkout.url);
+    } catch (paymentError) {
+      setError(
+        paymentError instanceof Error
+          ? paymentError.message
+          : "Unable to open the approved payment link."
+      );
+      setPaying(false);
+    }
+  }
 
   async function handleRegenerate() {
     if (!latestBuildJob) return;
@@ -259,6 +281,40 @@ export default function GATEOrderStatusPage() {
                     </p>
                   </div>
                 </div>
+
+                {orderDetail.order.orderStatus === "review_requested" ? (
+                  <div className="mt-8 rounded-[24px] border border-[rgba(247,178,103,0.28)] bg-[rgba(247,178,103,0.07)] p-5">
+                    <p className="text-xs font-mono uppercase tracking-[0.18em] text-amber-200">
+                      Founder review in progress
+                    </p>
+                    <p className="mt-3 text-sm leading-6 text-slate-200">
+                      Keith is reviewing the relationship brief. Your firm scope and
+                      full-payment quote will appear here when it is approved.
+                    </p>
+                  </div>
+                ) : null}
+
+                {orderDetail.order.orderStatus === "awaiting_payment" ? (
+                  <div className="mt-8 rounded-[24px] border border-[rgba(18,214,255,0.3)] bg-[rgba(18,214,255,0.07)] p-5">
+                    <p className="text-xs font-mono uppercase tracking-[0.18em] text-[var(--gv-electric-cyan)]">
+                      Firm quote approved
+                    </p>
+                    <p className="mt-3 text-sm leading-6 text-slate-200">
+                      The reviewed scope is ready. Full payment of{" "}
+                      <strong>{formatCurrency(orderDetail.order.totalCents)}</strong>{" "}
+                      begins the governed build. Alternative terms remain a
+                      case-by-case founder exception.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => void handleApprovedQuotePayment()}
+                      disabled={paying}
+                      className="mt-5 inline-flex rounded-full bg-[linear-gradient(90deg,var(--gv-neon-magenta),#ff74c6)] px-5 py-3 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-[0_0_28px_rgba(255,60,172,0.24)] disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {paying ? "Opening secure payment…" : "Pay approved quote"}
+                    </button>
+                  </div>
+                ) : null}
 
                 <div className="mt-8 space-y-3">
                   <p className="text-xs font-mono uppercase tracking-[0.18em] text-slate-500">
