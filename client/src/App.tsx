@@ -42,7 +42,6 @@ const ExhibitsIndex = lazy(() => import("./pages/ExhibitsIndex"));
 const ContinuumCodexPage = lazy(() => import("./pages/ContinuumCodexPage"));
 const AgentTrainerPage = lazy(() => import("./features/agent-trainer/AgentTrainerPage"));
 const AgentTrainerPricing = lazy(() => import("./pages/AgentTrainerPricing"));
-const GATEPackageBuilderPage = lazy(() => import("./pages/GATEPackageBuilderPage"));
 const CollaboratorRequisitionPage = lazy(
   () => import("./pages/CollaboratorRequisitionPage")
 );
