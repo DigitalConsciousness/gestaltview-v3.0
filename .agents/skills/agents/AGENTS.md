@@ -33,6 +33,8 @@ These skills are:
  - gestaltview-gen-render-engine -> "gestaltview-gen-render-engine/SKILL.md"
  - gestaltview-gpt-actions -> "gestaltview-gpt-actions/SKILL.md"
  - gestaltview-insight-bot -> "gestaltview-insight-bot/SKILL.md"
+ - gestaltview-layered-audit -> "gestaltview-layered-audit/SKILL.md"
+ - gestaltview-refine-skills -> "gestaltview-refine-skills/SKILL.md"
  - gestaltview-knowledge-curation -> "gestaltview-knowledge-curation/SKILL.md"
  - gestaltview-manifest-index -> "gestaltview-manifest-index/SKILL.md"
  - gestaltview-manifest-indexing -> "gestaltview-manifest-indexing/SKILL.md"
@@ -95,6 +97,8 @@ gestaltview-exhibit-prototyping: `Build or refine exhibit-heavy and showcase-ori
 gestaltview-gen-render-engine: `Inspect, implement, or repair the GestaltView render/artifact pipeline in `gestaltview-di/gestaltview_v3.1` — the path from a semantic source or scene graph to a rendered artifact, Supabase ledger row, private storage object, and Gallery projection. Use this skill whenever a Creation Corner artifact shows raw Markdown/JSON, a filepath string, or duplicated text; whenever `render_jobs`/`render_artifacts` stay empty despite a claimed API success; whenever request/schema/status shapes disagree between client, API, and database; whenever the `repetitionRatio` presentation gate blocks `report_document`/`session_recap` output; or when adding/verifying a render target. Every capability claim must be labeled verified, partial, planned, or unsupported — never assume artifact-class or provider claims are live without checking current repo and Supabase state.`
 gestaltview-gpt-actions: `Maintain the action-mode and OpenAPI contract surface that lives inside `gestaltview-v2`. Use this skill for `api/GPT/`, action package docs, `api/actions/[...path].ts`, and action-facing request or response behavior.`
 gestaltview-insight-bot: `Work on the Insight-Bot lane as it currently exists in `gestaltview-v2`. Use this skill for the local insight window surface, supporting docs, and portfolio-level framing of Insight-Bot inside the ecosystem.`
+gestaltview-layered-audit: `Audit GestaltView code, schema, UI, documentation, claims, governance, commercial, workflow, or skill surfaces when alignment, drift, evidence, incomplete work, provenance, safety, or next steps need review.`
+gestaltview-refine-skills: `Create or refine GestaltView skills when their triggers, context loading, initiative, evidence claims, disagreement duties, continuity receipts, or runtime alignment need improvement.`
 gestaltview-knowledge-curation: `Curate repo-local knowledge assets, canonical docs, and snapshot outputs that shape understanding of `gestaltview-v2`. Use this skill when organizing `client/src/canonical`, wiki outputs, manifests, and other local knowledge surfaces that feed people or retrieval systems.`
 gestaltview-manifest-index: `Work on the implementation side of GestaltView's retrieval layer in `gestaltview-v2`. Use this skill for fragment tables, embedding dimensions, search RPCs, and tools that retrieve grounded context into Billy or related consumers.`
 gestaltview-manifest-indexing: `Maintain the metadata and navigation side of GestaltView's manifest layer in `gestaltview-v2`. Use this skill for repo manifests, route inventories, doc indexes, and the files that turn the repo into navigable context.`

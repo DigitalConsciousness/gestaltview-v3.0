@@ -1,0 +1,12 @@
+interface:
+  display_name: GestaltView Layered Audit
+  short_description: Audit lineage, evidence, operation, and next bridges
+  default_prompt: Use $gestaltview-layered-audit to audit this surface through faithful
+    translation and demonstrated operation.
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
