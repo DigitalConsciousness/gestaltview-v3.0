@@ -25,10 +25,19 @@ Priority 2 (self-serve ZIP) can later relax the founder-review gate for eligible
 
 The buyer shapes the work, relationship, context, memory contract, deployment, and delivery. The experience exposes embodiment profile, character study, biography, skills, quirks, provenance, boundaries, and learning rules for review. It does not describe a persistent identity as a commodity.
 
+## Executable quote-to-payment transition
+
+1. The requisition checkout creates a `review_requested` order and returns a private buyer link whose access token remains in the URL fragment.
+2. Keith opens Founder Runtime and uses the firm-quote control to approve the scope, total, and payment terms. The server requires a signed founder/admin session.
+3. The order changes to `awaiting_payment`. The buyer page polls through review and reveals the approved amount.
+4. The buyer submits the access token in a request header, not the URL, and opens a one-time Stripe Checkout session for the persisted approved total.
+5. Stripe's verified webhook marks the order paid, queues the build, and carries the founder-approved quote into the package manifest and tracked delivery.
+
 ## Security boundary
 
 - Browser roles receive no direct access to GATE tables or the artifact bucket.
-- Order status requires an unguessable buyer token; only its SHA-256 hash is persisted.
+- Order status requires an unguessable buyer token; only its SHA-256 hash is persisted. Browser API requests send the token in `X-Gate-Order-Token`, keeping it out of request URLs and referrers.
+- Firm quote issuance requires the existing signed founder/admin session; no browser-bundled admin key is used.
 - Stripe webhook verification remains mandatory.
 - Generated ZIPs are stored in a private Supabase bucket.
 - The legacy public deliverables policy is removed because the table has no ownership column.
@@ -41,11 +50,13 @@ Required in the production runtime:
 - SUPABASE_SERVICE_ROLE_KEY
 - STRIPE_SECRET_KEY
 - STRIPE_GATE_WEBHOOK_SECRET
-- GATE_ADMIN_KEY
 - GATE_STORAGE_BUCKET=generated-zips
+- SESSION_SECRET
+- FOUNDER_ADMIN_EMAILS
 
 Optional:
 
+- GATE_ADMIN_KEY (server-to-server compatibility only; never expose it as a VITE variable)
 - GATE_SIGNED_URL_TTL_SECONDS (defaults to 3600)
 
 ## Deployment gate
