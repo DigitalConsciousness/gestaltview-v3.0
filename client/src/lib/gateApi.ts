@@ -2,11 +2,13 @@ import {
   GateCheckoutResponseSchema,
   GateDraftAnalysisSchema,
   GateOrderDetailSchema,
+  GateOrderSchema,
   GateRedeemAccessResponseSchema,
   type GateCheckoutRequest,
   type GateDraftAnalysis,
   type GateOrderDetail,
   type GateOrderPaymentRequest,
+  type GateQuoteApprovalRequest,
   type GateRedeemAccessRequest,
   type GateRedeemAccessResponse,
   type GateSidekickMessageRequest,
@@ -170,6 +172,21 @@ export async function fetchGateOrder(
       method: "GET",
     },
     (body) => GateOrderDetailSchema.parse((body as { order: unknown }).order)
+  );
+}
+
+export async function approveGateOrderQuote(
+  orderId: string,
+  input: GateQuoteApprovalRequest
+): Promise<ReturnType<typeof GateOrderSchema.parse>> {
+  return requestGate(
+    `/api/gate/orders/${orderId}/quote`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    },
+    (body) => GateOrderSchema.parse((body as { order: unknown }).order)
   );
 }
 
