@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-25T09:25:21.623Z",
+  "generatedAt": "2026-07-28T03:57:58.715Z",
   "contextContract": "gestaltview.di-context.v1",
   "sourceRoot": ".",
   "payloadRoot": "perplexity",
@@ -8,37 +8,37 @@
     {
       "source": "docs/CurrentState.md",
       "target": "CurrentState.md",
-      "sha256": "51e7c360ffd3133b1549409c24d34ee05277ca4e2d56bad3adc02e84b94edd4b",
+      "sha256": "c8c1e102d21f370a5c560b094f6bb5e3e3d48a56864e77237e60ce8d402f68c3",
       "inSync": true
     },
     {
       "source": "docs/CurrentState.md",
       "target": "perplexity/GestaltView-Collaboration-Onboarding-Packet/07_CURRENT_STATE_AND_EVIDENCE/CurrentState.md",
-      "sha256": "51e7c360ffd3133b1549409c24d34ee05277ca4e2d56bad3adc02e84b94edd4b",
+      "sha256": "c8c1e102d21f370a5c560b094f6bb5e3e3d48a56864e77237e60ce8d402f68c3",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.json",
       "target": "REPO_MANIFEST.json",
-      "sha256": "54a33e6306546f27a1b2a537e717bdab105d4374812e07fcffcd40df3bbfbabb",
+      "sha256": "36b6bb30c7c3a7df547103eb1f3e266aaa45d9d5cbeb8068229f925a5fb6fc74",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.md",
       "target": "REPO_MANIFEST.md",
-      "sha256": "f2ca7b836a471dc1188a61e81db94441ba9b8f5b13fe641b73a93080cf42de36",
+      "sha256": "48c3e96332ae22500f8b042c7986064596489f85bf21b918d6231c5d7d59d7b5",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.json",
       "target": "perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.json",
-      "sha256": "54a33e6306546f27a1b2a537e717bdab105d4374812e07fcffcd40df3bbfbabb",
+      "sha256": "36b6bb30c7c3a7df547103eb1f3e266aaa45d9d5cbeb8068229f925a5fb6fc74",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.md",
       "target": "perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.md",
-      "sha256": "f2ca7b836a471dc1188a61e81db94441ba9b8f5b13fe641b73a93080cf42de36",
+      "sha256": "48c3e96332ae22500f8b042c7986064596489f85bf21b918d6231c5d7d59d7b5",
       "inSync": true
     },
     {

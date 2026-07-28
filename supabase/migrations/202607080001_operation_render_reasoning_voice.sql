@@ -134,17 +134,23 @@ alter table public.field_continuity_events enable row level security;
 
 -- Founder/admin/service-role policies should be adapted to existing auth model.
 -- Conservative default: authenticated users can read their own user-scoped rows where user_id is present.
-create policy if not exists "Users can read own reasoning sessions"
+drop policy if exists "Users can read own reasoning sessions"
+  on public.reasoning_sessions;
+create policy "Users can read own reasoning sessions"
 on public.reasoning_sessions for select
 to authenticated
 using (user_id = auth.uid());
 
-create policy if not exists "Users can read own voice sessions"
+drop policy if exists "Users can read own voice sessions"
+  on public.voice_session_audit;
+create policy "Users can read own voice sessions"
 on public.voice_session_audit for select
 to authenticated
 using (user_id = auth.uid());
 
-create policy if not exists "Users can read own field continuity events"
+drop policy if exists "Users can read own field continuity events"
+  on public.field_continuity_events;
+create policy "Users can read own field continuity events"
 on public.field_continuity_events for select
 to authenticated
 using (user_id = auth.uid());

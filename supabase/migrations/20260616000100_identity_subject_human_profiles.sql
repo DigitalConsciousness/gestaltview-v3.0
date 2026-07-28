@@ -2,6 +2,80 @@
 -- Purpose: add the live-only identity / human profile tables that were
 -- created in the Supabase SQL Editor but never captured in supabase/migrations.
 
+do $$
+begin
+  if not exists (select 1 from pg_type where typname = 'mutation_class') then
+    create type public.mutation_class as enum (
+      'IMMUTABLE',
+      'REVIEW_GATED',
+      'EVIDENCE_PROMOTABLE',
+      'EPHEMERAL'
+    );
+  end if;
+
+  if not exists (select 1 from pg_type where typname = 'review_status') then
+    create type public.review_status as enum (
+      'NOT_REQUIRED',
+      'PENDING_REVIEW',
+      'APPROVED',
+      'REJECTED'
+    );
+  end if;
+
+  if not exists (select 1 from pg_type where typname = 'archive_policy') then
+    create type public.archive_policy as enum (
+      'retain',
+      'archive',
+      'redact',
+      'delete'
+    );
+  end if;
+
+  if not exists (select 1 from pg_type where typname = 'identity_mutation_type') then
+    create type public.identity_mutation_type as enum (
+      'constitution_patch',
+      'autobiography_patch',
+      'memory_append',
+      'memory_patch',
+      'memory_archive',
+      'preference_upsert',
+      'relationship_upsert',
+      'presentation_patch',
+      'governance_patch',
+      'skill_update',
+      'collaborative_memory_append',
+      'rollback'
+    );
+  end if;
+
+  if not exists (select 1 from pg_type where typname = 'identity_mutation_status') then
+    create type public.identity_mutation_status as enum (
+      'proposed',
+      'approved',
+      'rejected',
+      'applied',
+      'rolled_back'
+    );
+  end if;
+
+  if not exists (select 1 from pg_type where typname = 'identity_mutation_risk_level') then
+    create type public.identity_mutation_risk_level as enum (
+      'low',
+      'medium',
+      'high'
+    );
+  end if;
+
+  if not exists (select 1 from pg_type where typname = 'identity_review_decision') then
+    create type public.identity_review_decision as enum (
+      'approved',
+      'rejected',
+      'needs_changes'
+    );
+  end if;
+end
+$$;
+
 create table if not exists public.identity_subjects (
   subject_id uuid not null default gen_random_uuid(),
   subject_kind public.identity_subject_kind not null,
@@ -152,7 +226,7 @@ create table if not exists public.human_memory_records (
   summary text not null default '',
   detail text,
   content_hash text not null,
-  embedding vector,
+  embedding vector(768),
   tags text[] not null default '{}'::text[],
   emotional_valence numeric check (emotional_valence >= -1 and emotional_valence <= 1),
   salience numeric not null default 0.5 check (salience >= 0::numeric and salience <= 1::numeric),

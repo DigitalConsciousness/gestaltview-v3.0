@@ -20,14 +20,23 @@
 
 do $$
 declare
-  legacy_buyers_count     integer;
-  legacy_orders_count     integer;
-  legacy_drafts_count     integer;
+  legacy_buyers_count integer := 0;
+  legacy_orders_count integer := 0;
+  legacy_drafts_count integer := 0;
 begin
-  -- Count rows in legacy tables before renaming
-  select count(*) into legacy_buyers_count     from public.buyers;
-  select count(*) into legacy_orders_count     from public.orders;
-  select count(*) into legacy_drafts_count     from public.package_drafts;
+  -- A clean migration replay does not contain every legacy table. Count only
+  -- tables that are actually present before the conditional renames below.
+  if to_regclass('public.buyers') is not null then
+    execute 'select count(*) from public.buyers' into legacy_buyers_count;
+  end if;
+
+  if to_regclass('public.orders') is not null then
+    execute 'select count(*) from public.orders' into legacy_orders_count;
+  end if;
+
+  if to_regclass('public.package_drafts') is not null then
+    execute 'select count(*) from public.package_drafts' into legacy_drafts_count;
+  end if;
 
   if legacy_buyers_count > 0 or legacy_orders_count > 0 or legacy_drafts_count > 0 then
     raise notice '⚠️  Legacy commerce tables have rows: buyers=%, orders=%, package_drafts=%. '

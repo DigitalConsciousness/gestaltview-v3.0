@@ -1,3 +1,62 @@
+# CurrentState — Render contract v2 boundary proof continued (2026-07-27)
+
+**Scope of this pass:** Re-ran the Inside-Out Convergence baseline, independently verified the recorded Phase 1 PostgreSQL fixtures, completed the local Phase 2 server proof, and converged Creation Corner on the canonical Phase 3 render/projection path without applying production DDL.
+
+## What changed
+
+- Made `contractVersion: "gestaltview.render-request.v2"` an exact, required field at the strict server parser, JSON Schema, and canonical browser client boundaries.
+- Kept the temporary observed Creation Corner legacy translation, which now explicitly produces the same versioned internal request.
+- Added an API integration fixture proving unauthenticated rejection, a supported deterministic HTML render with real nonzero bytes and a matching SHA-256 receipt, and a required unsupported target that durably prevents `ready`.
+- Added client and parser regressions proving versioned canonical submission and rejection of unversioned canonical envelopes.
+- Added owner-scoped status and projection integration coverage, including signed retrieval, cross-owner denial, non-ready rejection, idempotent projection, and source-reference preservation.
+- Strengthened projection so downloaded HTML must match the durable receipt byte count and SHA-256 before an Inner World record can be created.
+- Replaced Creation Corner's direct legacy render request with `submitNextGenRender`, preserved clearly labeled local previews and retry behavior, removed automatic Inner World insertion, and exposed **Project to Inner World** only after durable `ready`.
+- Preserved `source_ref` and `content_ref` through the Inner World API/client adapter, classified displayed artifacts as verified projection, server legacy, local draft, manual import, or unknown legacy, and surfaced render job/artifact provenance only for verified projections.
+- Added `tests/e2e/creation-corner-render-projection.spec.ts`, a deterministic Chromium fixture proving the browser-visible sequence `local preview → versioned render request → ready receipt → idempotent retry → explicit projection → expected Inner World marker`.
+- Added a separately gated live Phase 5 harness and runbook. It signs in two disposable Supabase users, exchanges their sessions into app cookies, verifies real ledger/storage/projection rows from a trusted runner, downloads the owner-signed artifact and recomputes SHA-256, proves API and direct-RLS cross-owner denial, verifies idempotent job/projection reuse, captures the Dynamic Inner World marker, and can clean up only its exact disposable namespace.
+- Added `phase5:proof:browser` and `phase5:proof:live` scripts plus a committable secret-free `.env.phase5.example`. Remote and production targets are hard opt-ins; production remains an explicit post-preview approval gate.
+
+## Verification and gates
+
+- The Phase 1 v1-upgrade, read-only verification, and emergency recovery assertions passed in isolated PostgreSQL 17 with the legacy job/artifact/Inner World rows preserved.
+- The forward reconciliation also passed after the historical July 13 v2 migration had already run.
+- Migration SHA-256: `0a24680d9e651675a07dee7ec06034ccd749832de9f7bdcc2005d7af16f574ec`.
+- Production Supabase remains unchanged and requires explicit approval.
+- Phase 0 orientation checks currently report missing `.orientation` packet files, missing `artifacts/latest.zip`/README continuity evidence, and stale collaborator mirrors. These pre-existing repository evidence gaps were not silently repaired as part of the render slice.
+- Phase 2's local acceptance matrix is covered. Preview/development infrastructure proof and production smoke remain separately gated.
+- Phases 3 and 4 are implemented locally with focused contract coverage. Existing server and local records remain read-time adapted; no legacy artifact was rewritten or deleted.
+- Phase 5's deterministic browser contract passes in Chromium and writes `output/playwright/creation-corner-render-projection-proof.png`.
+- The deterministic browser fixture intercepts APIs and therefore is not proof of real Supabase rows, private object storage, signed retrieval, or RLS. The new live harness is ready to capture that evidence once an approved preview/development URL, two disposable identities, and trusted runner credentials are supplied; it has not been executed against external infrastructure in this pass. Production smoke remains separately gated.
+
+---
+
+# CurrentState — Render pipeline v2 live reconciliation prepared (2026-07-26)
+
+**Scope of this pass:** Completed the Phase 0 production read-only baseline and prepared the forward-only Phase 1 reconciliation required by `specs/launch/GestaltView_Inside_Out_Convergence_SPEC_2026-07-25.md`. Production DDL remains unapplied.
+
+## What is now locally proven
+
+- Generated `supabase/migrations/20260726132511_render_pipeline_v2_live_reconciliation.sql` with the installed Supabase CLI rather than renaming, repairing, or marking the skipped July 13 migration.
+- Added `supabase/verification/render_pipeline_contract_v2.sql`, which runs inside a read-only transaction and reports the render columns, lifecycle constraint, indexes, RLS and policies, owner-null counts, lifecycle counts, incomplete receipts, duplicate projections, and private bucket state.
+- Added a matching emergency recovery script and disposable PostgreSQL fixtures under `supabase/tests/`.
+- Proved a v1-shaped fixture upgrades additively: one legacy `completed` job becomes `ready`, its artifact receives the safe MIME/byte/default receipt fields, and the legacy Inner World artifact remains present.
+- Proved the reconciliation is safe after the historical `202607130001_render_pipeline_contract_v2.sql` has already run; repeated columns and indexes no-op while the lifecycle contract remains valid.
+- The verification query intentionally reports the legacy fixture receipt as incomplete because no storage path or content hash exists. The migration does not fabricate durable proof for legacy bytes.
+
+## Live read-only evidence
+
+- Supabase migration history ends at `20260717014354`; `202607130001_render_pipeline_contract_v2.sql` is absent.
+- The live render tables remain v1-shaped with zero `render_jobs` and zero `render_artifacts`.
+- The 63 existing `inner_world_artifacts` remain present.
+- RLS remains enabled on all three tables and `codex-exports` remains private.
+
+## Remaining rollout gates
+
+- The full Supabase local stack could not initialize in this Codespace because its service images exhausted the 32 GB filesystem. The failed empty stack and downloaded images were removed; the lightweight PostgreSQL fixture was used instead.
+- Run the versioned migration and verification SQL on an approved Supabase development branch or equivalently provisioned clean environment before production review.
+- Do not apply production DDL until the outside guide approves the Phase 1 evidence packet.
+- Creation Corner, projection behavior, Founder Runtime, and corpus lifecycle were not changed in this slice.
+
 # CurrentState — Creation Corner handoff and workbench restoration (2026-07-25)
 
 **Scope of this pass:** Restored the richer blueprint synthesis workbench to Creation Corner and made incoming blueprint handoffs visibly activate their intended source.
@@ -7995,3 +8054,28 @@ For ChatGPT Actions import, use the schema URL rooted at `https://gestaltview-v2
 ## CurrentState — Architecture Audit (2026-06-10)
 
 Ran the requested top-to-bottom architecture and functional audit across the live `gestaltview-v2.0` workspace, starting from `docs/CurrentState.md`, `vercel.json`, `middleware.ts`, `supabase/migrations/`, and the `api/` tree. The full report is recorded at `audits/audit_report_2026-06-10.md` and flags the highest-priority follow-ups as identity derivation hardening for Billy/Bucket Drop/gen-engine/Creation Corner, Codex drain atomic job claiming, Transcriptory failed/concurrent capture handling, GATE Stripe raw-body verification, production CORS fail-closed behavior, and removal/clarification of tracked build output and overlapping agent/worker surfaces.
+# CurrentState — Phase 6 shared runtime handoff contract (2026-07-27)
+
+Phase 6 now has a local, reviewable implementation package. The live schema-fit
+audit is recorded in `docs/launch/phase6-schema-fit-audit-2026-07-27.md`.
+Inspection covered all 18 tables required by the convergence spec, including
+live columns, policies, indexes, triggers, estimated rows, and repository use.
+No production DDL or data mutation was performed.
+
+The audit found no safe existing home for a cross-room lifecycle receipt.
+`runtime_handoffs` and append-only `runtime_handoff_events` are therefore
+proposed as narrow reference/lifecycle tables. The shared Zod contract, guarded
+API, and browser client are implemented under `shared/handoffs/`,
+`api/runtime-handoffs/`, and `client/src/lib/runtimeHandoffClient.ts`.
+
+Local verification:
+
+- `pnpm exec tsc --noEmit`
+- focused handoff contract/API tests
+- migration source-contract tests
+
+Production migration application remains explicitly gated on outside approval.
+Phase 7 room adapters must not begin claiming durable transfers until this
+migration has been reviewed and applied in an approved environment.
+
+---

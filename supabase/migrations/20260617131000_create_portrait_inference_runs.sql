@@ -20,11 +20,25 @@ create table if not exists public.portrait_inference_runs (
   completed_at timestamptz
 );
 
-alter table public.profile_portraits
-  add constraint profile_portraits_inference_run_id_fkey
-  foreign key (inference_run_id)
-  references public.portrait_inference_runs(id)
-  on delete cascade;
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint c
+    join pg_class r on r.oid = c.conrelid
+    join pg_namespace n on n.oid = r.relnamespace
+    where n.nspname = 'public'
+      and r.relname = 'profile_portraits'
+      and c.conname = 'profile_portraits_inference_run_id_fkey'
+  ) then
+    alter table public.profile_portraits
+      add constraint profile_portraits_inference_run_id_fkey
+      foreign key (inference_run_id)
+      references public.portrait_inference_runs(id)
+      on delete cascade;
+  end if;
+end
+$$;
 
 create index if not exists portrait_inference_runs_user_id_idx
   on public.portrait_inference_runs (user_id);

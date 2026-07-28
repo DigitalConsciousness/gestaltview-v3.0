@@ -1,9 +1,9 @@
 # GestaltView v2 — Repository Manifest
 
-> Generated: `2026-07-25T09:25:21.450439+00:00`
+> Generated: `2026-07-28T03:57:58.268078+00:00`
 > Branch: `main`
-> Commit: `d44abedd9b2a`
-> d44abed commit
+> Commit: `99a410970dc5`
+> 99a4109 commit
 
 ---
 
@@ -11,32 +11,32 @@
 
 | Metric | Value |
 |---|---|
-| Total files | 1484 |
-| Total size | 15399.9 KB |
+| Total files | 1504 |
+| Total size | 15524.7 KB |
 | Routes | 115 |
-| API endpoints | 204 |
-| Canonical docs | 162 |
-| Test inventory | 189 |
-| Uncommitted files | 1 |
+| API endpoints | 206 |
+| Canonical docs | 163 |
+| Test inventory | 199 |
+| Uncommitted files | 13 |
 
 ### Files by Category
 
-- **api**: 210
+- **api**: 213
 - **canonical**: 11
 - **component**: 253
 - **config**: 16
 - **data**: 16
-- **doc**: 146
-- **migration**: 94
+- **doc**: 147
+- **migration**: 98
 - **orientation**: 7
 - **other**: 22
 - **page**: 78
 - **route**: 2
 - **script**: 69
-- **shared**: 109
-- **source**: 261
+- **shared**: 110
+- **source**: 262
 - **style**: 6
-- **test**: 184
+- **test**: 194
 
 ---
 
@@ -200,7 +200,7 @@
 | `/api/_lib/diMemoryPipeline` | `api/_lib/diMemoryPipeline.ts` | 4313 bytes |
 | `/api/_lib/embeddings` | `api/_lib/embeddings.ts` | 7905 bytes |
 | `/api/_lib/identityMemoryWriter` | `api/_lib/identityMemoryWriter.ts` | 6230 bytes |
-| `/api/_lib/inner-world` | `api/_lib/inner-world.ts` | 7311 bytes |
+| `/api/_lib/inner-world` | `api/_lib/inner-world.ts` | 7449 bytes |
 | `/api/_lib/llmRouter` | `api/_lib/llmRouter.ts` | 22580 bytes |
 | `/api/_lib/memory` | `api/_lib/memory.ts` | 18755 bytes |
 | `/api/_lib/profileIngestion` | `api/_lib/profileIngestion.ts` | 19920 bytes |
@@ -294,7 +294,7 @@
 | `/api/gen-engine/resonance` | `api/gen-engine/resonance.ts` | 725 bytes |
 | `/api/gravity` | `api/gravity.ts` | 3095 bytes |
 | `/api/health/supabase` | `api/health/supabase.ts` | 3642 bytes |
-| `/api/inner-world/artifacts` | `api/inner-world/artifacts.ts` | 4913 bytes |
+| `/api/inner-world/artifacts` | `api/inner-world/artifacts.ts` | 4949 bytes |
 | `/api/inner-world/artifacts/[id]` | `api/inner-world/artifacts/[id].ts` | 1491 bytes |
 | `/api/inner-world/files` | `api/inner-world/files.ts` | 4731 bytes |
 | `/api/inner-world/files/[id]` | `api/inner-world/files/[id].ts` | 2430 bytes |
@@ -330,13 +330,15 @@
 | `/api/render/decide` | `api/render/decide.ts` | 4164 bytes |
 | `/api/render/engine` | `api/render/engine.ts` | 22739 bytes |
 | `/api/render/idempotency` | `api/render/idempotency.ts` | 2027 bytes |
-| `/api/render/promote-to-gallery` | `api/render/promote-to-gallery.ts` | 9607 bytes |
-| `/api/render/request` | `api/render/request.ts` | 2933 bytes |
+| `/api/render/promote-to-gallery` | `api/render/promote-to-gallery.ts` | 10446 bytes |
+| `/api/render/request` | `api/render/request.ts` | 3056 bytes |
 | `/api/render/status` | `api/render/status.ts` | 5780 bytes |
 | `/api/render/user-id` | `api/render/user-id.ts` | 1526 bytes |
 | `/api/resume-rockstar/analyze` | `api/resume-rockstar/analyze.ts` | 1067 bytes |
 | `/api/resume-rockstar/enhance` | `api/resume-rockstar/enhance.ts` | 5802 bytes |
 | `/api/resume-rockstar/score-section` | `api/resume-rockstar/score-section.ts` | 1863 bytes |
+| `/api/runtime-handoffs` | `api/runtime-handoffs/index.ts` | 3156 bytes |
+| `/api/runtime-handoffs/[id]` | `api/runtime-handoffs/[id].ts` | 3973 bytes |
 | `/api/sanctuary/journal` | `api/sanctuary/journal.ts` | 3046 bytes |
 | `/api/sanctuary/journals` | `api/sanctuary/journals.ts` | 40 bytes |
 | `/api/sanctuary/scrapbook` | `api/sanctuary/scrapbook.ts` | 6998 bytes |
@@ -493,6 +495,7 @@
 - `client/src/tests/creation-corner-freeform.test.ts`
 - `client/src/tests/creation-corner-intake-controls.test.ts`
 - `client/src/tests/creation-corner-orchestration.test.ts`
+- `client/src/tests/creation-corner-render-handoff.test.ts`
 - `client/src/tests/creation-corner-upload-intake.test.ts`
 - `client/src/tests/dashboard-overview.test.ts`
 - `client/src/tests/dom-capture-export.test.ts`
@@ -552,11 +555,18 @@
 - `shared/gravity/protocol.test.ts`
 - `shared/orchestration/execution.test.ts`
 - `shared/orchestration/workers.test.ts`
+- `tests/api/inner-world-artifact-payload.test.ts`
+- `tests/api/render-engine.integration.test.ts`
 - `tests/api/render-idempotency.test.ts`
+- `tests/api/render-projection.integration.test.ts`
 - `tests/api/render-request.test.ts`
+- `tests/api/render-status.integration.test.ts`
 - `tests/api/render-user-id.test.ts`
+- `tests/api/runtime-handoffs.integration.test.ts`
 - `tests/e2e/auth.spec.ts`
 - `tests/e2e/billy-chat.spec.ts`
+- `tests/e2e/creation-corner-render-projection.live.spec.ts`
+- `tests/e2e/creation-corner-render-projection.spec.ts`
 - `tests/e2e/creation-corner.spec.ts`
 - `tests/e2e/musical-dna.spec.ts`
 - `tests/e2e/resume-rockstar.spec.ts`
@@ -564,6 +574,7 @@
 - `tests/gate-compatibility.test.ts`
 - `tests/inner-world-timeline.test.ts`
 - `tests/meticulous-route-coverage.test.ts`
+- `tests/migrations/runtime-handoffs-v1.test.ts`
 - `tests/nextgen-document-renderer.test.ts`
 - `tests/nextgen-orchestration.test.ts`
 - `tests/orchestration-routing.test.ts`
@@ -573,6 +584,7 @@
 - `tests/profile-upload-ingestion.test.ts`
 - `tests/rendering/decide.test.ts`
 - `tests/room-runtime-alignment.test.ts`
+- `tests/runtime-handoffs/contracts.test.ts`
 - `tests/shared/orchestration/execution.test.ts`
 - `tests/test_voice_profiles.py`
 - `tests/unit/genEngineCore.test.ts`
@@ -635,7 +647,7 @@
 | `docs/ContinuityStack.md` | 412 | 3070 bytes |
 | `docs/CoreOSWorkflowAndKnowledgeSynthesis.md` | 518 | 4371 bytes |
 | `docs/CurrentState.CoreOSAddendum-2026-05-07.md` | 245 | 1795 bytes |
-| `docs/CurrentState.md` | 68330 | 556788 bytes |
+| `docs/CurrentState.md` | 69381 | 565010 bytes |
 | `docs/Deep_Dive_Into_GestaltView_By_Perplexity.md` | 6422 | 44705 bytes |
 | `docs/DirectoryMapAndWorkflow.md` | 532 | 3791 bytes |
 | `docs/GIL_Protocol.md` | 265 | 2414 bytes |
@@ -689,7 +701,8 @@
 | `docs/embodiment/EMBODIMENT_OPEN_QUESTIONS.md` | 216 | 1425 bytes |
 | `docs/embodiment/EMBODIMENT_RUNTIME_GAP_MATRIX.md` | 367 | 2192 bytes |
 | `docs/embodiment/PROFILE_DISTINCTIVENESS_MATRIX.md` | 311 | 1901 bytes |
-| `docs/gestaltview-v2.manifest.md` | 4723 | 47489 bytes |
+| `docs/gestaltview-v2.manifest.md` | 4638 | 45155 bytes |
+| `docs/launch/phase6-schema-fit-audit-2026-07-27.md` | 922 | 9484 bytes |
 | `docs/license.md` | 793 | 5556 bytes |
 | `docs/md-refresh-status-2026-03-24.md` | 200 | 1899 bytes |
 | `docs/operation-render/CODEX_FULL_SWEEP_HANDOFF.md` | 251 | 2600 bytes |
@@ -760,10 +773,22 @@
 
 ## Git Status
 
-1 uncommitted change(s):
+13 uncommitted change(s):
 
 ```
-M .vscode/mcp.json
+M supabase/config.toml
+ M supabase/migrations/20260330115505_trainer_security_hardening.sql
+ M supabase/migrations/20260330120000_trainer_core.sql
+ M supabase/migrations/20260410200000_resolve_legacy_tables_rls.sql
+ M supabase/migrations/20260420150000_human_continuity_schema.sql
+ M supabase/migrations/20260429120000_gestaltview_module_registry.sql
+ M supabase/migrations/20260601000300_profile_pipeline_v1_backfill.sql
+ M supabase/migrations/20260616000100_identity_subject_human_profiles.sql
+ M supabase/migrations/20260617131000_create_portrait_inference_runs.sql
+ M supabase/migrations/20260617133000_create_portrait_helper_functions.sql
+ M supabase/migrations/202607080001_operation_render_reasoning_voice.sql
+?? supabase/migrations/20260728030146_defer_trainer_security_hardening_until_core_exists.sql
+?? supabase/migrations/20260728030522_deferred_human_continuity_repair.sql
 ```
 
 ---

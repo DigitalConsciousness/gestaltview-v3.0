@@ -57,9 +57,25 @@ create table if not exists agent_versions (
   created_at timestamptz not null default now()
 );
 
-alter table agents
-  add constraint agents_active_version_fk
-  foreign key (active_version_id) references agent_versions(version_id);
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint constraint_row
+    join pg_class relation_row
+      on relation_row.oid = constraint_row.conrelid
+    join pg_namespace namespace_row
+      on namespace_row.oid = relation_row.relnamespace
+    where namespace_row.nspname = 'public'
+      and relation_row.relname = 'agents'
+      and constraint_row.conname = 'agents_active_version_fk'
+  ) then
+    alter table public.agents
+      add constraint agents_active_version_fk
+      foreign key (active_version_id) references public.agent_versions(version_id);
+  end if;
+end
+$$;
 
 create table if not exists scenario_sets (
   scenario_set_id uuid primary key default gen_random_uuid(),

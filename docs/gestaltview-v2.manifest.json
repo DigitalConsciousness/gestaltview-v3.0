@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-07-25T09:25:21.450439+00:00",
+    "generated_at": "2026-07-28T03:57:58.268078+00:00",
     "generator": "scripts/generate_repo_manifest.py",
     "repo": "gestaltview-v2",
     "version": "2.0",
@@ -74,42 +74,54 @@
     ]
   },
   "summary": {
-    "total_files": 1484,
-    "total_size_bytes": 15769516,
-    "total_size_kb": 15399.9,
+    "total_files": 1504,
+    "total_size_bytes": 15897249,
+    "total_size_kb": 15524.7,
     "files_by_category": {
-      "doc": 146,
+      "doc": 147,
       "other": 22,
       "data": 16,
-      "source": 261,
+      "source": 262,
       "config": 16,
-      "test": 184,
-      "api": 210,
+      "test": 194,
+      "api": 213,
       "canonical": 11,
       "component": 253,
       "style": 6,
       "page": 78,
       "route": 2,
-      "shared": 109,
+      "shared": 110,
       "script": 69,
       "orientation": 7,
-      "migration": 94
+      "migration": 98
     },
     "routes_count": 115,
-    "api_endpoints_count": 204,
-    "canonical_docs_count": 162,
-    "test_scripts_count": 189,
+    "api_endpoints_count": 206,
+    "canonical_docs_count": 163,
+    "test_scripts_count": 199,
     "git_branch": "main",
-    "git_commit": "d44abedd9b2a",
-    "git_dirty_files": 1
+    "git_commit": "99a410970dc5",
+    "git_dirty_files": 13
   },
   "git": {
     "branch": "main",
-    "commit_sha": "d44abedd9b2a10d84f88e624d18e80a953507191",
-    "commit_message": "d44abed commit",
-    "commit_date": "2026-07-25T06:49:09Z",
+    "commit_sha": "99a410970dc56ba2947728d588d6eb288c0d06d0",
+    "commit_message": "99a4109 commit",
+    "commit_date": "2026-07-28T02:54:47Z",
     "dirty_files": [
-      "M .vscode/mcp.json"
+      "M supabase/config.toml",
+      " M supabase/migrations/20260330115505_trainer_security_hardening.sql",
+      " M supabase/migrations/20260330120000_trainer_core.sql",
+      " M supabase/migrations/20260410200000_resolve_legacy_tables_rls.sql",
+      " M supabase/migrations/20260420150000_human_continuity_schema.sql",
+      " M supabase/migrations/20260429120000_gestaltview_module_registry.sql",
+      " M supabase/migrations/20260601000300_profile_pipeline_v1_backfill.sql",
+      " M supabase/migrations/20260616000100_identity_subject_human_profiles.sql",
+      " M supabase/migrations/20260617131000_create_portrait_inference_runs.sql",
+      " M supabase/migrations/20260617133000_create_portrait_helper_functions.sql",
+      " M supabase/migrations/202607080001_operation_render_reasoning_voice.sql",
+      "?? supabase/migrations/20260728030146_defer_trainer_security_hardening_until_core_exists.sql",
+      "?? supabase/migrations/20260728030522_deferred_human_continuity_repair.sql"
     ]
   },
   "dependencies": {
@@ -767,7 +779,7 @@
     {
       "endpoint": "/api/_lib/inner-world",
       "handler_file": "api/_lib/inner-world.ts",
-      "size_bytes": "7311"
+      "size_bytes": "7449"
     },
     {
       "endpoint": "/api/_lib/llmRouter",
@@ -1237,7 +1249,7 @@
     {
       "endpoint": "/api/inner-world/artifacts",
       "handler_file": "api/inner-world/artifacts.ts",
-      "size_bytes": "4913"
+      "size_bytes": "4949"
     },
     {
       "endpoint": "/api/inner-world/artifacts/[id]",
@@ -1417,12 +1429,12 @@
     {
       "endpoint": "/api/render/promote-to-gallery",
       "handler_file": "api/render/promote-to-gallery.ts",
-      "size_bytes": "9607"
+      "size_bytes": "10446"
     },
     {
       "endpoint": "/api/render/request",
       "handler_file": "api/render/request.ts",
-      "size_bytes": "2933"
+      "size_bytes": "3056"
     },
     {
       "endpoint": "/api/render/status",
@@ -1448,6 +1460,16 @@
       "endpoint": "/api/resume-rockstar/score-section",
       "handler_file": "api/resume-rockstar/score-section.ts",
       "size_bytes": "1863"
+    },
+    {
+      "endpoint": "/api/runtime-handoffs",
+      "handler_file": "api/runtime-handoffs/index.ts",
+      "size_bytes": "3156"
+    },
+    {
+      "endpoint": "/api/runtime-handoffs/[id]",
+      "handler_file": "api/runtime-handoffs/[id].ts",
+      "size_bytes": "3973"
     },
     {
       "endpoint": "/api/sanctuary/journal",
@@ -1822,6 +1844,7 @@
     "client/src/tests/creation-corner-freeform.test.ts",
     "client/src/tests/creation-corner-intake-controls.test.ts",
     "client/src/tests/creation-corner-orchestration.test.ts",
+    "client/src/tests/creation-corner-render-handoff.test.ts",
     "client/src/tests/creation-corner-upload-intake.test.ts",
     "client/src/tests/dashboard-overview.test.ts",
     "client/src/tests/dom-capture-export.test.ts",
@@ -1881,11 +1904,18 @@
     "shared/gravity/protocol.test.ts",
     "shared/orchestration/execution.test.ts",
     "shared/orchestration/workers.test.ts",
+    "tests/api/inner-world-artifact-payload.test.ts",
+    "tests/api/render-engine.integration.test.ts",
     "tests/api/render-idempotency.test.ts",
+    "tests/api/render-projection.integration.test.ts",
     "tests/api/render-request.test.ts",
+    "tests/api/render-status.integration.test.ts",
     "tests/api/render-user-id.test.ts",
+    "tests/api/runtime-handoffs.integration.test.ts",
     "tests/e2e/auth.spec.ts",
     "tests/e2e/billy-chat.spec.ts",
+    "tests/e2e/creation-corner-render-projection.live.spec.ts",
+    "tests/e2e/creation-corner-render-projection.spec.ts",
     "tests/e2e/creation-corner.spec.ts",
     "tests/e2e/musical-dna.spec.ts",
     "tests/e2e/resume-rockstar.spec.ts",
@@ -1893,6 +1923,7 @@
     "tests/gate-compatibility.test.ts",
     "tests/inner-world-timeline.test.ts",
     "tests/meticulous-route-coverage.test.ts",
+    "tests/migrations/runtime-handoffs-v1.test.ts",
     "tests/nextgen-document-renderer.test.ts",
     "tests/nextgen-orchestration.test.ts",
     "tests/orchestration-routing.test.ts",
@@ -1902,6 +1933,7 @@
     "tests/profile-upload-ingestion.test.ts",
     "tests/rendering/decide.test.ts",
     "tests/room-runtime-alignment.test.ts",
+    "tests/runtime-handoffs/contracts.test.ts",
     "tests/shared/orchestration/execution.test.ts",
     "tests/test_voice_profiles.py",
     "tests/unit/genEngineCore.test.ts",
@@ -2256,10 +2288,10 @@
     {
       "path": "docs/CurrentState.md",
       "category": "doc",
-      "size_bytes": 556788,
-      "sha256": "51e7c360ffd3133b1549409c24d34ee05277ca4e2d56bad3adc02e84b94edd4b",
-      "last_modified": "2026-07-25T06:46:37.258805+00:00",
-      "word_count": 68330
+      "size_bytes": 565010,
+      "sha256": "c8c1e102d21f370a5c560b094f6bb5e3e3d48a56864e77237e60ce8d402f68c3",
+      "last_modified": "2026-07-27T22:33:56.221309+00:00",
+      "word_count": 69381
     },
     {
       "path": "docs/Deep_Dive_Into_GestaltView_By_Perplexity.md",
@@ -2688,10 +2720,18 @@
     {
       "path": "docs/gestaltview-v2.manifest.md",
       "category": "doc",
-      "size_bytes": 47489,
-      "sha256": "36669b006cf24265dea0cd5061035b9cbabb652487b8ad3be886422b04642d2d",
-      "last_modified": "2026-07-25T06:34:00.114853+00:00",
-      "word_count": 4723
+      "size_bytes": 45155,
+      "sha256": "f2ca7b836a471dc1188a61e81db94441ba9b8f5b13fe641b73a93080cf42de36",
+      "last_modified": "2026-07-25T09:25:21.602202+00:00",
+      "word_count": 4638
+    },
+    {
+      "path": "docs/launch/phase6-schema-fit-audit-2026-07-27.md",
+      "category": "doc",
+      "size_bytes": 9484,
+      "sha256": "985e8b4cb70f1b634194b4b4b3e0b030767e34ebf2ceca43a6fc9f191a636202",
+      "last_modified": "2026-07-27T22:37:44.771321+00:00",
+      "word_count": 922
     },
     {
       "path": "docs/license.md",
@@ -3302,13 +3342,6 @@
       "last_modified": "2026-07-16T15:53:27+00:00"
     },
     {
-      "path": "constants.ts",
-      "category": "source",
-      "size_bytes": 108,
-      "sha256": "656cb912cafb2f5f6e30515fdd948d72ab85617c3050dd9a1d534bc9c265ef0e",
-      "last_modified": "2026-07-16T15:53:27+00:00"
-    },
-    {
       "path": "instrument.d.ts",
       "category": "source",
       "size_bytes": 689,
@@ -3353,16 +3386,16 @@
     {
       "path": "package.json",
       "category": "data",
-      "size_bytes": 7684,
-      "sha256": "9c6d8b969a8c9407a1bf48787f5653fc9233b64ad93e9fdad28885e58bc7d37c",
-      "last_modified": "2026-07-25T06:34:45.557850+00:00"
+      "size_bytes": 7922,
+      "sha256": "d16f769432504202b1e31a5d5ee353f0312114a96a98d7882d73ea1ac7ce1875",
+      "last_modified": "2026-07-27T19:35:26.910920+00:00"
     },
     {
       "path": "playwright.config.ts",
       "category": "source",
-      "size_bytes": 794,
-      "sha256": "206d9bf2bc6e273bc11647e0bebb3943527e0ad5a4bf14b5a9beffc5805be92e",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 820,
+      "sha256": "2ea77d21ac75f18cb25b01235120d291c270cd014d88c4b545fca1b559f00ba2",
+      "last_modified": "2026-07-27T19:40:15.754909+00:00"
     },
     {
       "path": "pnpm-lock.yaml",
@@ -4091,9 +4124,9 @@
     {
       "path": "api/_lib/inner-world.ts",
       "category": "api",
-      "size_bytes": 7311,
-      "sha256": "b3eccc74f6fa7faf5988a605ac8e884b8684c5f4dcc9aa9d4a74874e52abb8af",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 7449,
+      "sha256": "f42eb241ca148d0639ab58f2eb76334054280d040c703921f6e07cf723c120a6",
+      "last_modified": "2026-07-27T19:12:16.912973+00:00"
     },
     {
       "path": "api/_lib/llmRouter.ts",
@@ -4798,9 +4831,9 @@
     {
       "path": "api/inner-world/artifacts.ts",
       "category": "api",
-      "size_bytes": 4913,
-      "sha256": "cb8f1e85c142dee8a8680ca909c9eea8e16f14202d6cdfa138562f829bbe0030",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 4949,
+      "sha256": "1cb62e5cb83b422db1deda235d30f941eaa53b50d0d0a307f9afbb897161dd65",
+      "last_modified": "2026-07-27T19:10:56.581977+00:00"
     },
     {
       "path": "api/inner-world/files/[id]/share.ts",
@@ -5043,16 +5076,16 @@
     {
       "path": "api/render/promote-to-gallery.ts",
       "category": "api",
-      "size_bytes": 9607,
-      "sha256": "2754b5d6cccf91497715d87ded50d7d9c428ec7c49e15ca952865c16d4c3d526",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 10446,
+      "sha256": "b8fc187e0b3e632b2267bbfe3bc89cde9e746db1f536d4e9067f6a6c4312bd27",
+      "last_modified": "2026-07-27T19:05:16.977990+00:00"
     },
     {
       "path": "api/render/request.ts",
       "category": "api",
-      "size_bytes": 2933,
-      "sha256": "5024b802c41ef2ed042f6f555747ff2239d5df84c564cad11d09fef28599e816",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 3056,
+      "sha256": "dfb679180385db28bfce04e7c24d057805e640c4b78e75a4536e29db01db89f6",
+      "last_modified": "2026-07-27T18:58:11.753006+00:00"
     },
     {
       "path": "api/render/status.ts",
@@ -5088,6 +5121,27 @@
       "size_bytes": 1863,
       "sha256": "06b7aad40f633fb74a5163573611c562f58f4fce920e612c61e80127815cb4eb",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "api/runtime-handoffs/[id].ts",
+      "category": "api",
+      "size_bytes": 3973,
+      "sha256": "fa2eca24085411249773764d08cf264a49eb0a669e68ac5f17eabe185fbda383",
+      "last_modified": "2026-07-27T22:37:44.188321+00:00"
+    },
+    {
+      "path": "api/runtime-handoffs/_shared.ts",
+      "category": "api",
+      "size_bytes": 4707,
+      "sha256": "844367a1d1fa8f976330f8d78b7a89a8e9de199fb3c18e72dce51923e6f820e8",
+      "last_modified": "2026-07-27T22:37:43.784321+00:00"
+    },
+    {
+      "path": "api/runtime-handoffs/index.ts",
+      "category": "api",
+      "size_bytes": 3156,
+      "sha256": "3c5e7d7c41ee8034c6504b8c4897cbb38f11436f7d0e1e5c65009b98274365b7",
+      "last_modified": "2026-07-27T22:37:44.022321+00:00"
     },
     {
       "path": "api/sanctuary/journal.ts",
@@ -6643,9 +6697,9 @@
     {
       "path": "client/src/components/inner-world/InnerWorldArtifactGallery.tsx",
       "category": "component",
-      "size_bytes": 15348,
-      "sha256": "7aa049ded864c8157d001541c810086b752106059fa330d3567099d780e7e3fa",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 18179,
+      "sha256": "d5bef499dcbaa7518f4d8d8661ab47437a2143c0c0c53ec59a3cf5853de84882",
+      "last_modified": "2026-07-27T19:10:57.027977+00:00"
     },
     {
       "path": "client/src/components/inner-world/InnerWorldInspector.tsx",
@@ -8029,9 +8083,9 @@
     {
       "path": "client/src/lib/innerWorldFiles.ts",
       "category": "source",
-      "size_bytes": 32973,
-      "sha256": "d083c9e1077078d069a757185d8305c98e2e26a473bfc3e0c6259a73cb1a2eb3",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 34544,
+      "sha256": "6311cae64a298ff7ddba06fe824601291f16189d9108df126abef529e7024f6b",
+      "last_modified": "2026-07-27T19:10:56.801977+00:00"
     },
     {
       "path": "client/src/lib/insightsContent.ts",
@@ -8099,9 +8153,9 @@
     {
       "path": "client/src/lib/nextGenRenderClient.ts",
       "category": "source",
-      "size_bytes": 5270,
-      "sha256": "2ce3e2b588e035b540c30fd1ed6232f71e2feeb2d46e0401c223867bd7ee1264",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 5326,
+      "sha256": "781a49de6802b83c620b9f792554f57648a0d7d364abb021baca4e12dcac905c",
+      "last_modified": "2026-07-27T18:58:11.982006+00:00"
     },
     {
       "path": "client/src/lib/orchestratorClient.ts",
@@ -8186,6 +8240,13 @@
       "size_bytes": 4643,
       "sha256": "d67d3aa94455a05acf94846d09aa2d082da4633874bb792334bdd0024c1c091a",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "client/src/lib/renderProjectionClient.ts",
+      "category": "source",
+      "size_bytes": 1169,
+      "sha256": "c0c7208aa98822381fca7b7e3a9795c61ff4d07341a22e378a2d62ef7a7a1c5e",
+      "last_modified": "2026-07-27T19:07:43.076984+00:00"
     },
     {
       "path": "client/src/lib/rendering/ArtifactExportViewer.tsx",
@@ -8606,6 +8667,13 @@
       "size_bytes": 3882,
       "sha256": "64b50c1242bd6cbb052a770f50089723acb1a8c333f250cacacaae70fc0dfa55",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "client/src/lib/runtimeHandoffClient.ts",
+      "category": "source",
+      "size_bytes": 2073,
+      "sha256": "42cd593caf7ffe958f72cc25aae1995a135d228037521a5fc0f142778b55780c",
+      "last_modified": "2026-07-27T22:37:44.227321+00:00"
     },
     {
       "path": "client/src/lib/sanctuaryContent.ts",
@@ -9082,9 +9150,9 @@
     {
       "path": "client/src/pages/CreationCornerPage.tsx",
       "category": "page",
-      "size_bytes": 49447,
-      "sha256": "1c4bfd8ae95219b6e094a4b34dd0da46bd348bc23d6fefcbb5f9e3d083ea915f",
-      "last_modified": "2026-07-25T06:45:18.102810+00:00"
+      "size_bytes": 52678,
+      "sha256": "2a4382933ae444f5dd45d8a72380c738508dc7560d74468f9cc354c66fd89e4f",
+      "last_modified": "2026-07-27T19:07:43.568984+00:00"
     },
     {
       "path": "client/src/pages/DashboardPage.tsx",
@@ -9605,6 +9673,13 @@
       "last_modified": "2026-07-16T15:53:27+00:00"
     },
     {
+      "path": "client/src/tests/creation-corner-render-handoff.test.ts",
+      "category": "test",
+      "size_bytes": 2726,
+      "sha256": "d7795a6479d7463d3acff8ddc4c2915681edfa6309aac3f9038fe17308783180",
+      "last_modified": "2026-07-27T19:09:00.318981+00:00"
+    },
+    {
       "path": "client/src/tests/creation-corner-upload-intake.test.ts",
       "category": "test",
       "size_bytes": 971,
@@ -9705,9 +9780,9 @@
     {
       "path": "client/src/tests/inner-world-files.test.ts",
       "category": "test",
-      "size_bytes": 3759,
-      "sha256": "d86410390d0531a8c37a73c7d995addb6464bc942fcac3d7c498b973d5ad85de",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 4930,
+      "sha256": "53c470a6bf669388ad949712319e91eeb38f90aad8552c4a7644d9c543f0d20f",
+      "last_modified": "2026-07-27T19:11:55.289974+00:00"
     },
     {
       "path": "client/src/tests/inner-world-placement.test.ts",
@@ -9775,9 +9850,9 @@
     {
       "path": "client/src/tests/nextgen-render-client.test.ts",
       "category": "test",
-      "size_bytes": 1152,
-      "sha256": "17345548d318d89eeba4ac26d2b9d62db0d83e4d11a0ba1dd3d975b990b0f122",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 2102,
+      "sha256": "f1e42a8101100e7d1060ef4667e06629a8272fde87903e31b802b550dbd87e15",
+      "last_modified": "2026-07-27T18:59:48.227002+00:00"
     },
     {
       "path": "client/src/tests/personas.test.ts",
@@ -10296,6 +10371,13 @@
       "size_bytes": 11504,
       "sha256": "7b6842f769c6bcb9aa32ba80e66c397d8083ecc76ea9fa29e7add5c1933e894e",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "shared/handoffs/contracts.ts",
+      "category": "shared",
+      "size_bytes": 5576,
+      "sha256": "851d2136b06906cad4553867a4b743cf8f377e1ced2b31b40d282df65ed894d3",
+      "last_modified": "2026-07-27T22:37:43.384321+00:00"
     },
     {
       "path": "shared/identityPolicy.ts",
@@ -11795,10 +11877,10 @@
     {
       "path": "docs/CurrentState.md",
       "category": "doc",
-      "size_bytes": 556788,
-      "sha256": "51e7c360ffd3133b1549409c24d34ee05277ca4e2d56bad3adc02e84b94edd4b",
-      "last_modified": "2026-07-25T06:46:37.258805+00:00",
-      "word_count": 68330
+      "size_bytes": 565010,
+      "sha256": "c8c1e102d21f370a5c560b094f6bb5e3e3d48a56864e77237e60ce8d402f68c3",
+      "last_modified": "2026-07-27T22:33:56.221309+00:00",
+      "word_count": 69381
     },
     {
       "path": "docs/Deep_Dive_Into_GestaltView_By_Perplexity.md",
@@ -12234,17 +12316,25 @@
     {
       "path": "docs/gestaltview-v2.manifest.json",
       "category": "data",
-      "size_bytes": 492998,
-      "sha256": "0c0e554561530a1402417815da595df092505dabfe97ba2dacaba8064f2c7b0a",
-      "last_modified": "2026-07-25T06:34:00.111853+00:00"
+      "size_bytes": 490664,
+      "sha256": "54a33e6306546f27a1b2a537e717bdab105d4374812e07fcffcd40df3bbfbabb",
+      "last_modified": "2026-07-25T09:25:21.595202+00:00"
     },
     {
       "path": "docs/gestaltview-v2.manifest.md",
       "category": "doc",
-      "size_bytes": 47489,
-      "sha256": "36669b006cf24265dea0cd5061035b9cbabb652487b8ad3be886422b04642d2d",
-      "last_modified": "2026-07-25T06:34:00.114853+00:00",
-      "word_count": 4723
+      "size_bytes": 45155,
+      "sha256": "f2ca7b836a471dc1188a61e81db94441ba9b8f5b13fe641b73a93080cf42de36",
+      "last_modified": "2026-07-25T09:25:21.602202+00:00",
+      "word_count": 4638
+    },
+    {
+      "path": "docs/launch/phase6-schema-fit-audit-2026-07-27.md",
+      "category": "doc",
+      "size_bytes": 9484,
+      "sha256": "985e8b4cb70f1b634194b4b4b3e0b030767e34ebf2ceca43a6fc9f191a636202",
+      "last_modified": "2026-07-27T22:37:44.771321+00:00",
+      "word_count": 922
     },
     {
       "path": "docs/license.md",
@@ -12928,16 +13018,16 @@
     {
       "path": "supabase/migrations/20260330115505_trainer_security_hardening.sql",
       "category": "migration",
-      "size_bytes": 1292,
-      "sha256": "a0e96fd428eef21042c18b740724b52b88d9b68375991579c6139d58c0084ec4",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 354,
+      "sha256": "1f93b377d6ba04b8006dac648a946361e5e44ff388a862f3e81213df228c8037",
+      "last_modified": "2026-07-28T03:02:06.882098+00:00"
     },
     {
       "path": "supabase/migrations/20260330120000_trainer_core.sql",
       "category": "migration",
-      "size_bytes": 12164,
-      "sha256": "f000fa82594c71bcb0d37a9ce3ca27e256f0c4155cadc61b7175a121c6821e82",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 12619,
+      "sha256": "546a5cbad6cf6834cca8c0fa4eab8125bc3e8c27d3884889b47ae82f45a04893",
+      "last_modified": "2026-07-28T03:44:36.049010+00:00"
     },
     {
       "path": "supabase/migrations/20260330120830_trainer_rls_policies.sql",
@@ -12984,9 +13074,9 @@
     {
       "path": "supabase/migrations/20260410200000_resolve_legacy_tables_rls.sql",
       "category": "migration",
-      "size_bytes": 12670,
-      "sha256": "23ef809ad398ea46974a10a7f4f851ad77237904f2745f4f1c2248a1b114e318",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 12995,
+      "sha256": "1cf7a4da8a39d5622b635c95846ec6460567c233687ce47bbd96032e463c379a",
+      "last_modified": "2026-07-28T03:03:56.675094+00:00"
     },
     {
       "path": "supabase/migrations/20260410213000_workbook_and_experiment_governance.sql",
@@ -13068,9 +13158,9 @@
     {
       "path": "supabase/migrations/20260420150000_human_continuity_schema.sql",
       "category": "migration",
-      "size_bytes": 19599,
-      "sha256": "d7f927e7cb62ef5be7613ccd10811bdec135e63ab6450cfb540ef5014adfe86e",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 309,
+      "sha256": "0be659aa40ff7befb9af230aa2f3ef552588ef8ff5fb27f18e6e23366cbc45a8",
+      "last_modified": "2026-07-28T03:05:33.360091+00:00"
     },
     {
       "path": "supabase/migrations/20260427100000_trainer_hyperagent_integration.sql",
@@ -13089,9 +13179,9 @@
     {
       "path": "supabase/migrations/20260429120000_gestaltview_module_registry.sql",
       "category": "migration",
-      "size_bytes": 14867,
-      "sha256": "b6f4b13dcf1bf439b006adb00a91b27fd6d77fbe294455dac05cc5f30bba1f40",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 16375,
+      "sha256": "50059e1acdcc962b1f068bfe31dcaa11334693c40441a57a0aca829be5daa1ec",
+      "last_modified": "2026-07-28T03:09:36.772083+00:00"
     },
     {
       "path": "supabase/migrations/20260430143000_workspaces_documents_persistence.sql",
@@ -13229,9 +13319,9 @@
     {
       "path": "supabase/migrations/20260601000300_profile_pipeline_v1_backfill.sql",
       "category": "migration",
-      "size_bytes": 6208,
-      "sha256": "22c99f0c9e7b15f464e0439c4c0a071682cd42ff6e86b810f50521cf4533f6eb",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 6238,
+      "sha256": "97f5341ddc0667bd3bea77caa29904350a2cceac5cd037ba21fb2f5c1ae24893",
+      "last_modified": "2026-07-28T03:11:51.243078+00:00"
     },
     {
       "path": "supabase/migrations/20260601000400_profile_pipeline_v1_rpc_helpers.sql",
@@ -13327,9 +13417,9 @@
     {
       "path": "supabase/migrations/20260616000100_identity_subject_human_profiles.sql",
       "category": "migration",
-      "size_bytes": 15650,
-      "sha256": "390c6081f039f9fd8b055a6cd01954df38f79c89253ee96940e00000f956c9fc",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 17501,
+      "sha256": "3c910ca5b579d268ea6a88609b1f57aae8e377a26fbb096783a9ac95e4b84b8a",
+      "last_modified": "2026-07-28T03:19:28.520062+00:00"
     },
     {
       "path": "supabase/migrations/20260616000200_runtime_contract_backfill.sql",
@@ -13348,9 +13438,9 @@
     {
       "path": "supabase/migrations/20260617131000_create_portrait_inference_runs.sql",
       "category": "migration",
-      "size_bytes": 2904,
-      "sha256": "f5cf0593f8a254969afecf3357571574307ee176115138c4ea576af0d3bcb015",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 3248,
+      "sha256": "66a3ee40be76467b966b9a0e2d52450cec101f62e2cd9968aebf26a9fe5a61aa",
+      "last_modified": "2026-07-28T03:48:03.550003+00:00"
     },
     {
       "path": "supabase/migrations/20260617132000_create_portrait_inference_queue.sql",
@@ -13362,9 +13452,9 @@
     {
       "path": "supabase/migrations/20260617133000_create_portrait_helper_functions.sql",
       "category": "migration",
-      "size_bytes": 6451,
-      "sha256": "68d4f60a0d2531230d5b1d7d52a71b2e0de16b1b3a5687a49934b9ac39b07239",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 4268,
+      "sha256": "127427139ca11109b4e5dcc5447d91d446237fea857f1700ab63457ec0c4fd8e",
+      "last_modified": "2026-07-28T03:31:52.185036+00:00"
     },
     {
       "path": "supabase/migrations/20260617134000_create_portrait_bucket_drop_trigger.sql",
@@ -13453,9 +13543,9 @@
     {
       "path": "supabase/migrations/202607080001_operation_render_reasoning_voice.sql",
       "category": "migration",
-      "size_bytes": 6990,
-      "sha256": "d7ea163c4c114efb4b381b4648b130bdd1e296c56bee377662a8636e034d6460",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 7237,
+      "sha256": "22a74d9d83983b73de627a42ade25654f834d04da3ca62ca9976ce4430f7c9a4",
+      "last_modified": "2026-07-28T03:16:31.295068+00:00"
     },
     {
       "path": "supabase/migrations/20260709000000_july_8_runtime_hotfix.sql",
@@ -13486,6 +13576,48 @@
       "last_modified": "2026-07-16T15:53:27+00:00"
     },
     {
+      "path": "supabase/migrations/20260726132511_render_pipeline_v2_live_reconciliation.sql",
+      "category": "migration",
+      "size_bytes": 3931,
+      "sha256": "0a24680d9e651675a07dee7ec06034ccd749832de9f7bdcc2005d7af16f574ec",
+      "last_modified": "2026-07-26T13:26:09.927793+00:00"
+    },
+    {
+      "path": "supabase/migrations/20260727222849_runtime_handoffs_v1.sql",
+      "category": "migration",
+      "size_bytes": 5949,
+      "sha256": "25bbb4d17fe5d193187dc2c58951233d309d7bd8c7c0c953de21c462d3473103",
+      "last_modified": "2026-07-27T22:37:04.520319+00:00"
+    },
+    {
+      "path": "supabase/migrations/20260728030146_defer_trainer_security_hardening_until_core_exists.sql",
+      "category": "migration",
+      "size_bytes": 1476,
+      "sha256": "c80788c8b0de0dfc9590816e64c75e9e1e4d60ede069200f2e813bc49acd47fd",
+      "last_modified": "2026-07-28T03:02:07.066098+00:00"
+    },
+    {
+      "path": "supabase/migrations/20260728030522_deferred_human_continuity_repair.sql",
+      "category": "migration",
+      "size_bytes": 20148,
+      "sha256": "99f0caf540d4f0c2433fc06237a22edf2c5bb17c014b607fb52234fffee7a35a",
+      "last_modified": "2026-07-28T03:19:29.069062+00:00"
+    },
+    {
+      "path": "tests/api/inner-world-artifact-payload.test.ts",
+      "category": "test",
+      "size_bytes": 1468,
+      "sha256": "299ac3b18e1a97c930e3295a98934852e006ab4eb80d7b00e6a9e85949f6ca91",
+      "last_modified": "2026-07-27T19:11:55.637974+00:00"
+    },
+    {
+      "path": "tests/api/render-engine.integration.test.ts",
+      "category": "test",
+      "size_bytes": 12314,
+      "sha256": "9e7ac2a75a3d7bec20388012569a2be36dee56baa59fe0126a5724a0d6b4417f",
+      "last_modified": "2026-07-27T19:05:57.441988+00:00"
+    },
+    {
       "path": "tests/api/render-idempotency.test.ts",
       "category": "test",
       "size_bytes": 981,
@@ -13493,11 +13625,25 @@
       "last_modified": "2026-07-16T15:53:27+00:00"
     },
     {
+      "path": "tests/api/render-projection.integration.test.ts",
+      "category": "test",
+      "size_bytes": 9242,
+      "sha256": "c2e0d31e8dda0231561ea80d573494a0bffa62ecd68c28d4161dba23739cea00",
+      "last_modified": "2026-07-27T19:05:17.726990+00:00"
+    },
+    {
       "path": "tests/api/render-request.test.ts",
       "category": "test",
-      "size_bytes": 1445,
-      "sha256": "82bdb044a2663945186570fb3c219524540091ee785e193e310ff938f147e39f",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 1898,
+      "sha256": "d852fb561720dfb71d96af394fb3ae814f3d14974d0e6df8eda967f629455585",
+      "last_modified": "2026-07-27T18:58:12.497006+00:00"
+    },
+    {
+      "path": "tests/api/render-status.integration.test.ts",
+      "category": "test",
+      "size_bytes": 4484,
+      "sha256": "cb7ff65c57655b875c2842d8b0ae66d90360d99c1abdf26d3c7d330aeb5f86fe",
+      "last_modified": "2026-07-27T19:05:17.319990+00:00"
     },
     {
       "path": "tests/api/render-user-id.test.ts",
@@ -13505,6 +13651,13 @@
       "size_bytes": 2091,
       "sha256": "c1ae73aa63cf40b98302a4fe83e4171bf46dcbc0750c2d1f34e22e373ddf2664",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "tests/api/runtime-handoffs.integration.test.ts",
+      "category": "test",
+      "size_bytes": 7131,
+      "sha256": "4e33ad6d372c494518bc59de0b9649f3e6e6470644a36442e974178c9f0a6aca",
+      "last_modified": "2026-07-27T22:39:05.559325+00:00"
     },
     {
       "path": "tests/e2e/auth.spec.ts",
@@ -13519,6 +13672,20 @@
       "size_bytes": 1327,
       "sha256": "834ee6f45fe4444aecdcf430ac24567182307ace120be13509f3e6551c7fe269",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "tests/e2e/creation-corner-render-projection.live.spec.ts",
+      "category": "test",
+      "size_bytes": 19735,
+      "sha256": "a11ba0f5e4e889f59ac831e57ed929a3ab4f55607848316fefc197c7ff813a33",
+      "last_modified": "2026-07-27T20:55:06.306350+00:00"
+    },
+    {
+      "path": "tests/e2e/creation-corner-render-projection.spec.ts",
+      "category": "test",
+      "size_bytes": 6792,
+      "sha256": "6b0713275d3ed3934cb26a81dd2b2f5b17edeb1269e32894763d1001c844cc9a",
+      "last_modified": "2026-07-27T19:43:10.347902+00:00"
     },
     {
       "path": "tests/e2e/creation-corner.spec.ts",
@@ -13568,6 +13735,13 @@
       "size_bytes": 708,
       "sha256": "591d37869e56a8389ba5da89bee35e9d5fc8029fe432687f16434619f515e167",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "tests/migrations/runtime-handoffs-v1.test.ts",
+      "category": "test",
+      "size_bytes": 1683,
+      "sha256": "bdafd3419ba7f8db64e787a902a016218c7ef75879a869d7947b2c05a58b03a0",
+      "last_modified": "2026-07-27T22:37:44.397321+00:00"
     },
     {
       "path": "tests/nextgen-document-renderer.test.ts",
@@ -13631,6 +13805,13 @@
       "size_bytes": 3949,
       "sha256": "70d9410e45a594decf0c306930769a0c3a717431ac4bd64739e1e9f2edec9839",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "tests/runtime-handoffs/contracts.test.ts",
+      "category": "test",
+      "size_bytes": 3058,
+      "sha256": "ea601660b58fd1a54d6c0383633fd15bec5502e964ed3d6d25d60ac9d03677f2",
+      "last_modified": "2026-07-27T22:37:44.296321+00:00"
     },
     {
       "path": "tests/shared/orchestration/execution.test.ts",

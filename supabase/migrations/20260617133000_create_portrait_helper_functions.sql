@@ -42,86 +42,19 @@ begin
   where user_id = p_user_id::text;
 
   if to_regclass('public.knowledge_fragments') is not null then
-    if exists (
-      select 1
-      from information_schema.columns
-      where table_schema = 'public'
-        and table_name = 'knowledge_fragments'
-        and column_name = 'created_by'
-    ) then
-      execute 'select count(*)::integer from public.knowledge_fragments where created_by = $1'
-        into v_fragment_count
-        using p_user_id::text;
-    elsif exists (
-      select 1
-      from information_schema.columns
-      where table_schema = 'public'
-        and table_name = 'knowledge_fragments'
-        and column_name = 'auth_user_id'
-    ) then
-      execute 'select count(*)::integer from public.knowledge_fragments where auth_user_id = $1'
-        into v_fragment_count
-        using p_user_id;
-    elsif exists (
-      select 1
-      from information_schema.columns
-      where table_schema = 'public'
-        and table_name = 'knowledge_fragments'
-        and column_name = 'user_id'
-    ) then
-      execute 'select count(*)::integer from public.knowledge_fragments where user_id = $1'
-        into v_fragment_count
-        using p_user_id::text;
-    end if;
+    select count(*)::integer
+      into v_fragment_count
+    from public.knowledge_fragments fragments
+    where coalesce(
+      to_jsonb(fragments)->>'created_by',
+      to_jsonb(fragments)->>'auth_user_id',
+      to_jsonb(fragments)->>'user_id'
+    ) = p_user_id::text;
   end if;
 
-  if to_regclass('public.gravity_reports') is not null then
-    if exists (
-      select 1
-      from information_schema.columns
-      where table_schema = 'public'
-        and table_name = 'gravity_reports'
-        and column_name = 'user_id'
-    ) then
-      execute 'select count(*)::integer from public.gravity_reports where user_id = $1'
-        into v_gravity_report_count
-        using p_user_id::text;
-    elsif exists (
-      select 1
-      from information_schema.columns
-      where table_schema = 'public'
-        and table_name = 'gravity_reports'
-        and column_name = 'auth_user_id'
-    ) then
-      execute 'select count(*)::integer from public.gravity_reports where auth_user_id = $1'
-        into v_gravity_report_count
-        using p_user_id;
-    end if;
-  end if;
-
-  if to_regclass('public.agent_memories') is not null then
-    if exists (
-      select 1
-      from information_schema.columns
-      where table_schema = 'public'
-        and table_name = 'agent_memories'
-        and column_name = 'user_id'
-    ) then
-      execute 'select count(*)::integer from public.agent_memories where user_id = $1'
-        into v_agent_memory_count
-        using p_user_id::text;
-    elsif exists (
-      select 1
-      from information_schema.columns
-      where table_schema = 'public'
-        and table_name = 'agent_memories'
-        and column_name = 'auth_user_id'
-    ) then
-      execute 'select count(*)::integer from public.agent_memories where auth_user_id = $1'
-        into v_agent_memory_count
-        using p_user_id;
-    end if;
-  end if;
+  -- gravity_reports and agent_memories are not part of the canonical
+  -- migration schema. Keep their contribution at zero until those tables
+  -- receive explicit contracts and ownership columns.
 
   if to_regclass('public.founder_context') is not null then
     select count(*)::integer

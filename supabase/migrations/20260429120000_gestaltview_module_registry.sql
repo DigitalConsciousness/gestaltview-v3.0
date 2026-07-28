@@ -7,6 +7,48 @@
 
 create extension if not exists pgcrypto;
 
+do $$
+begin
+  if not exists (select 1 from pg_type where typname = 'identity_subject_kind') then
+    create type public.identity_subject_kind as enum (
+      'human',
+      'agent',
+      'group',
+      'workspace',
+      'session',
+      'artifact',
+      'system'
+    );
+  end if;
+end
+$$;
+
+-- Module profiles require the canonical subject registry. This table was
+-- previously captured only in the later live-schema reconciliation migration,
+-- which made a clean replay fail here.
+create table if not exists public.identity_subjects (
+  subject_id uuid not null default gen_random_uuid(),
+  subject_kind public.identity_subject_kind not null,
+  auth_user_id uuid unique,
+  app_user_id text unique,
+  agent_id uuid unique,
+  display_name text not null,
+  canonical_name text not null default '',
+  description text not null default '',
+  status text not null default 'active'
+    check (status in ('active', 'pending', 'paused', 'archived')),
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  constraint identity_subjects_pkey primary key (subject_id),
+  constraint identity_subjects_auth_user_id_fkey
+    foreign key (auth_user_id) references auth.users(id),
+  constraint identity_subjects_app_user_id_fkey
+    foreign key (app_user_id) references public.app_users(id),
+  constraint identity_subjects_agent_id_fkey
+    foreign key (agent_id) references public.agents(agent_id)
+);
+
 create or replace function public.touch_updated_at()
 returns trigger
 language plpgsql

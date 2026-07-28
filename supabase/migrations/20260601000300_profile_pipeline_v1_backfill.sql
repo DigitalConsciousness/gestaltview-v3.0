@@ -13,7 +13,7 @@ begin
   if to_regclass('public.bucket_drops') is not null then
     execute $sql$
       insert into public.capture_events (
-        id,
+        capture_id,
         user_id,
         room,
         source_type,
@@ -132,7 +132,7 @@ begin
      and to_regclass('public.user_profile_ingestion_runs') is not null then
     execute $sql$
       insert into public.identity_claims (
-        id,
+        claim_id,
         user_id,
         claim_text,
         review_state,
@@ -160,7 +160,7 @@ begin
       join public.profile_pipeline_runs canonical_run on canonical_run.run_id = run.run_id
       where not exists (
         select 1 from public.identity_claims canonical
-        where canonical.id = dimension.dimension_id
+        where canonical.claim_id = dimension.dimension_id
       )
     $sql$;
   end if;
@@ -171,7 +171,7 @@ begin
   if to_regclass('public.profile_ingestion_sources') is not null then
     execute $sql$
       insert into public.profile_pipeline_run_links (
-        id,
+        link_id,
         run_id,
         object_type,
         object_id,
@@ -194,7 +194,7 @@ begin
       from public.profile_ingestion_sources source
       where not exists (
         select 1 from public.profile_pipeline_run_links canonical
-        where canonical.id = source.source_link_id
+        where canonical.link_id = source.source_link_id
       )
         and exists (
           select 1 from public.profile_pipeline_runs run
