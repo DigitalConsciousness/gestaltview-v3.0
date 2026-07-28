@@ -218,7 +218,13 @@ function syncDraftQueryParam(draftId: string | null) {
   );
 }
 
-export default function GATEEntrypointWizard() {
+type GATEEntrypointWizardProps = {
+  founderReviewOnly?: boolean;
+};
+
+export default function GATEEntrypointWizard({
+  founderReviewOnly = false,
+}: GATEEntrypointWizardProps) {
   const [, setLocation] = useLocation();
   const { isAdmin } = useAuth();
   const [stepIndex, setStepIndex] = useState(0);
@@ -698,6 +704,7 @@ export default function GATEEntrypointWizard() {
         draftId: savedDraftId,
         ...(buyerEmail ? { buyerEmail } : {}),
         ...(companyName ? { companyName } : {}),
+        requestFounderReview: founderReviewOnly,
         mockPayment:
           isAdmin ||
           window.location.hostname === "localhost" ||
@@ -1355,6 +1362,8 @@ export default function GATEEntrypointWizard() {
                 >
                   {loading === "checkout"
                     ? "Processing…"
+                    : founderReviewOnly
+                      ? "Submit for Founder Review"
                     : isAdmin
                       ? "Generate Package (Admin)"
                     : analysis.compatibility.checkoutMode === "request_review"
