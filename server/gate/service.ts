@@ -1,4 +1,9 @@
-import { randomUUID, createHash } from "node:crypto";
+import {
+  createHash,
+  randomBytes,
+  randomUUID,
+  timingSafeEqual,
+} from "node:crypto";
 import { promises as fs } from "node:fs";
 
 import { gateTierCatalogById } from "../../config/gateCatalog.js";
@@ -48,6 +53,7 @@ import {
   getGateBuildJobRecord,
   getGateBuyerById,
   getGateDraftRecord,
+  getGateOrderAccessTokenHash,
   getGateOrderRecord,
   insertGateBuildJob,
   insertGateDraft,
@@ -70,6 +76,40 @@ import { GATE_LOCAL_STORAGE_BUCKET } from "./constants.js";
 
 function nowIso(): string {
   return new Date().toISOString();
+}
+
+const localGateOrderAccessHashes = new Map<string, string>();
+
+function hashGateAccessToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
+}
+
+function accessHashesMatch(expected: string, actual: string): boolean {
+  const expectedBytes = Buffer.from(expected, "hex");
+  const actualBytes = Buffer.from(actual, "hex");
+  return (
+    expectedBytes.length === actualBytes.length &&
+    expectedBytes.length > 0 &&
+    timingSafeEqual(expectedBytes, actualBytes)
+  );
+}
+
+async function assertGateOrderAccess(
+  orderId: string,
+  accessToken: string
+): Promise<void> {
+  const token = accessToken.trim();
+  if (!token) {
+    throw new Error("Order access denied.");
+  }
+
+  const expectedHash = hasGateSupabaseConfig()
+    ? await getGateOrderAccessTokenHash(orderId)
+    : localGateOrderAccessHashes.get(orderId) ?? null;
+  const actualHash = hashGateAccessToken(token);
+  if (!expectedHash || !accessHashesMatch(expectedHash, actualHash)) {
+    throw new Error("Order access denied.");
+  }
 }
 
 function sortUnique(values: string[]): string[] {
@@ -762,6 +802,7 @@ export async function createGateOrderForCheckout(
   analysis: GateDraftAnalysis;
   buyer: GateBuyer;
   order: GateOrder;
+  accessToken: string;
   supportRequest: GateSupportRequest | null;
 }> {
   const input = GateCheckoutRequestSchema.parse(payload);
@@ -803,10 +844,13 @@ export async function createGateOrderForCheckout(
       analysis.sidekick
     );
     const { order, items } = createOrderFromAnalysis(refreshedAnalysis, buyer);
+    const accessToken = randomBytes(32).toString("base64url");
+    const accessTokenHash = hashGateAccessToken(accessToken);
     const savedOrder = await insertGateOrder(order, {
       buyerEmail: buyer.email,
       companyName: input.companyName?.trim() || savedDraft.companyName,
       productName: "GestaltView Bespoke Package",
+      accessTokenHash,
     });
     await insertGateOrderItems(items);
 
@@ -830,6 +874,7 @@ export async function createGateOrderForCheckout(
       analysis: refreshedAnalysis,
       buyer,
       order: savedOrder,
+      accessToken,
       supportRequest,
     };
   }
@@ -879,6 +924,8 @@ export async function createGateOrderForCheckout(
   );
   state.sidekickByDraftId[nextDraft.id] = refreshedAnalysis.sidekick;
   const { order, items } = createOrderFromAnalysis(refreshedAnalysis, buyer);
+  const accessToken = randomBytes(32).toString("base64url");
+  localGateOrderAccessHashes.set(order.id, hashGateAccessToken(accessToken));
   state.orders.push(order);
   state.orderItems.push(...items);
 
@@ -901,6 +948,7 @@ export async function createGateOrderForCheckout(
     analysis: refreshedAnalysis,
     buyer,
     order,
+    accessToken,
     supportRequest,
   };
 }
@@ -1423,7 +1471,12 @@ export async function regenerateGateBuildJob(buildJobId: string): Promise<GateBu
   return regenerateGateBuildForOrder(buildJob.orderId);
 }
 
-export async function getGateOrderDetail(orderId: string): Promise<GateOrderDetail> {
+export async function getGateOrderDetail(
+  orderId: string,
+  accessToken: string
+): Promise<GateOrderDetail> {
+  await assertGateOrderAccess(orderId, accessToken);
+
   if (hasGateSupabaseConfig()) {
     const order = await getGateOrderRecord(orderId);
     if (!order) {
