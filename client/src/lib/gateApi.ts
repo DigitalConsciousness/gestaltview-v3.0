@@ -167,9 +167,10 @@ export async function fetchGateOrder(
   }
 
   return requestGate(
-    `/api/gate/orders/${orderId}?access=${encodeURIComponent(accessToken)}`,
+    `/api/gate/orders/${orderId}`,
     {
       method: "GET",
+      headers: { "X-Gate-Order-Token": accessToken },
     },
     (body) => GateOrderDetailSchema.parse((body as { order: unknown }).order)
   );
