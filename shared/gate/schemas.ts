@@ -575,6 +575,7 @@ export const GateCheckoutRequestSchema = z.object({
   companyName: z.string().trim().max(160).optional(),
   successUrl: z.string().url().optional(),
   cancelUrl: z.string().url().optional(),
+  requestFounderReview: z.boolean().default(false),
   mockPayment: z.boolean().optional(),
 });
 
