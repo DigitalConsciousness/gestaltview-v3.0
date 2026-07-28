@@ -91,7 +91,13 @@ function resolvePathSegments(req: VercelRequest): string[] {
 function allowOptions(req: VercelRequest, res: VercelResponse): boolean {
   applyCorsHeaders(req, res, {
     methods: ["GET", "POST", "PATCH", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Stripe-Signature", "X-Gate-Admin-Key"],
+    allowHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Stripe-Signature",
+      "X-Gate-Admin-Key",
+      "X-Gate-Order-Token",
+    ],
   });
 
   if (req.method === "OPTIONS") {
@@ -484,8 +490,10 @@ async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     if (segments.length === 2 && segments[0] === "orders" && req.method === "GET") {
+      const headerToken = req.headers["x-gate-order-token"];
       const accessToken =
-        typeof req.query.access === "string" ? req.query.access.trim() : "";
+        (typeof headerToken === "string" ? headerToken.trim() : "") ||
+        (typeof req.query.access === "string" ? req.query.access.trim() : "");
       if (!accessToken) {
         sendJson(res, 401, { error: "Order access token is required." });
         return;
