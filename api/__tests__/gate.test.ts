@@ -283,11 +283,23 @@ describe("GATE API", () => {
       redirectUrl: expect.stringContaining("/agent-trainer/orders/"),
     });
 
-    const orderId = (checkoutRes.body as { orderId: string }).orderId;
+    const { orderId, accessToken } = checkoutRes.body as {
+      orderId: string;
+      accessToken: string;
+    };
+
+    const unauthorizedReq = createReq({
+      method: "GET",
+      path: ["orders", orderId],
+    });
+    const unauthorizedRes = createRes();
+    await gateHandler(unauthorizedReq as never, unauthorizedRes as never);
+    expect(unauthorizedRes.statusCode).toBe(401);
 
     const orderReq = createReq({
       method: "GET",
       path: ["orders", orderId],
+      query: { access: accessToken },
     });
     const orderRes = createRes();
     await gateHandler(orderReq as never, orderRes as never);
@@ -439,10 +451,14 @@ describe("GATE API", () => {
     const checkoutRes = createRes();
     await gateHandler(checkoutReq as never, checkoutRes as never);
 
-    const orderId = (checkoutRes.body as { orderId: string }).orderId;
+    const { orderId, accessToken } = checkoutRes.body as {
+      orderId: string;
+      accessToken: string;
+    };
     const orderReq = createReq({
       method: "GET",
       path: ["orders", orderId],
+      query: { access: accessToken },
     });
     const orderRes = createRes();
     await gateHandler(orderReq as never, orderRes as never);
@@ -577,10 +593,14 @@ describe("GATE API", () => {
       orderId: expect.any(String),
     });
 
-    const orderId = (checkoutRes.body as { orderId: string }).orderId;
+    const { orderId, accessToken } = checkoutRes.body as {
+      orderId: string;
+      accessToken: string;
+    };
     const orderReq = createReq({
       method: "GET",
       path: ["orders", orderId],
+      query: { access: accessToken },
     });
     const orderRes = createRes();
     await gateHandler(orderReq as never, orderRes as never);
@@ -635,10 +655,14 @@ describe("GATE API", () => {
       orderId: expect.any(String),
     });
 
-    const orderId = (checkoutRes.body as { orderId: string }).orderId;
+    const { orderId, accessToken } = checkoutRes.body as {
+      orderId: string;
+      accessToken: string;
+    };
     const orderReq = createReq({
       method: "GET",
       path: ["orders", orderId],
+      query: { access: accessToken },
     });
     const orderRes = createRes();
     await gateHandler(orderReq as never, orderRes as never);
@@ -752,13 +776,17 @@ describe("GATE API", () => {
     await gateCheckoutHandler(checkoutReq as never, checkoutRes as never);
 
     expect(checkoutRes.statusCode).toBe(202);
-    const orderId = (checkoutRes.body as { orderId: string }).orderId;
+    const { orderId, accessToken } = checkoutRes.body as {
+      orderId: string;
+      accessToken: string;
+    };
 
     const orderReq = createReq({
       method: "GET",
       path: [],
       query: {
         id: orderId,
+        access: accessToken,
       },
     });
     const orderRes = createRes();
@@ -788,6 +816,7 @@ describe("GATE API", () => {
       path: [],
       query: {
         id: orderId,
+        access: accessToken,
       },
       body: {
         key: orderAccessKey,
