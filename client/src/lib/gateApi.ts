@@ -6,6 +6,7 @@ import {
   type GateCheckoutRequest,
   type GateDraftAnalysis,
   type GateOrderDetail,
+  type GateOrderPaymentRequest,
   type GateRedeemAccessRequest,
   type GateRedeemAccessResponse,
   type GateSidekickMessageRequest,
@@ -169,6 +170,21 @@ export async function fetchGateOrder(
       method: "GET",
     },
     (body) => GateOrderDetailSchema.parse((body as { order: unknown }).order)
+  );
+}
+
+export async function payApprovedGateOrder(
+  orderId: string,
+  input: GateOrderPaymentRequest
+): Promise<ReturnType<typeof GateCheckoutResponseSchema.parse>> {
+  return requestGate(
+    `/api/gate/orders/${orderId}/pay`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    },
+    (body) => GateCheckoutResponseSchema.parse(body)
   );
 }
 
