@@ -449,8 +449,7 @@ function resolveOrderPaymentStatus(orderStatus: GateOrder["orderStatus"]): GateO
 function hydrateOrderForDetail(
   order: GateOrder,
   draft: PackageConfigDraft,
-  analysis: GateDraftAnalysis,
-  items: GateOrderItem[]
+  analysis: GateDraftAnalysis
 ): GateOrder {
   const resolvedSubtotalCents =
     order.subtotalCents > 0 ? order.subtotalCents : analysis.quote.subtotalCents;
@@ -1646,8 +1645,7 @@ export async function getGateOrderDetail(
     const hydratedOrder = hydrateOrderForDetail(
       order,
       draftRecord.draft,
-      analysis,
-      items
+      analysis
     );
 
     return GateOrderDetailSchema.parse({
@@ -1687,7 +1685,7 @@ export async function getGateOrderDetail(
   const supportRequests = state.supportRequests.filter(
     (request) => request.orderId === order.id || request.packageDraftId === draft.id
   );
-  const hydratedOrder = hydrateOrderForDetail(order, draft, analysis, items);
+  const hydratedOrder = hydrateOrderForDetail(order, draft, analysis);
 
   return GateOrderDetailSchema.parse({
     order: hydratedOrder,
