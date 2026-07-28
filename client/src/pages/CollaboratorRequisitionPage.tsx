@@ -233,7 +233,7 @@ export default function CollaboratorRequisitionPage() {
               Technical choices remain visible, but they follow the relationship instead of leading it.
             </p>
           </div>
-          <GATEEntrypointWizard />
+          <GATEEntrypointWizard founderReviewOnly />
         </section>
       </div>
     </main>
