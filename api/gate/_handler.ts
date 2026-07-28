@@ -113,6 +113,11 @@ function isProductionLikeEnvironment(): boolean {
 }
 
 function isAdminRequest(req: VercelRequest): boolean {
+  const auth = requireFounderOrAdmin(req);
+  if (!("status" in auth)) {
+    return true;
+  }
+
   const configuredKey = process.env.GATE_ADMIN_KEY?.trim() || "";
   if (!configuredKey) {
     return !isProductionLikeEnvironment();
