@@ -123,7 +123,7 @@ async function handleCheckout(req: VercelRequest, res: VercelResponse) {
       accessToken,
       url: null,
       sessionId: null,
-      redirectUrl: `/agent-trainer/orders/${order.id}?access=${encodeURIComponent(
+      redirectUrl: `/agent-trainer/orders/${order.id}#access=${encodeURIComponent(
         accessToken
       )}`,
     });
@@ -139,9 +139,7 @@ async function handleCheckout(req: VercelRequest, res: VercelResponse) {
   const successBase =
     body.successUrl ??
     `${origin}/agent-trainer/orders/${order.id}?success=1&session_id={CHECKOUT_SESSION_ID}`;
-  const successUrl = `${successBase}${
-    successBase.includes("?") ? "&" : "?"
-  }access=${encodeURIComponent(accessToken)}`;
+  const successUrl = `${successBase}#access=${encodeURIComponent(accessToken)}`;
   const cancelUrl =
     body.cancelUrl ??
     `${origin}/agent-trainer/package-builder?draft=${analysis.draft.id}&canceled=true`;
@@ -175,7 +173,7 @@ async function handleCheckout(req: VercelRequest, res: VercelResponse) {
       accessToken,
       url: null,
       sessionId: "simulated-session",
-      redirectUrl: `/agent-trainer/orders/${order.id}?access=${encodeURIComponent(
+      redirectUrl: `/agent-trainer/orders/${order.id}#access=${encodeURIComponent(
         accessToken
       )}`,
     });
