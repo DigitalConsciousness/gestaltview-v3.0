@@ -155,9 +155,16 @@ export async function checkoutGateDraft(
   );
 }
 
-export async function fetchGateOrder(orderId: string): Promise<GateOrderDetail> {
+export async function fetchGateOrder(
+  orderId: string,
+  accessToken: string
+): Promise<GateOrderDetail> {
+  if (!accessToken.trim()) {
+    throw new Error("This order link is missing its buyer access token.");
+  }
+
   return requestGate(
-    `/api/gate/orders/${orderId}`,
+    `/api/gate/orders/${orderId}?access=${encodeURIComponent(accessToken)}`,
     {
       method: "GET",
     },
