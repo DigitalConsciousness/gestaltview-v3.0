@@ -16,12 +16,6 @@ import {
   type PackageConfigDraftPatch,
 } from "@shared/gate/schemas";
 
-function gateAdminHeaders(): Record<string, string> {
-  const key = import.meta.env.VITE_GATE_ADMIN_KEY ?? "";
-  if (!key) return {};
-  return { "X-Gate-Admin-Key": key };
-}
-
 async function readJson(response: Response): Promise<unknown> {
   const contentType = response.headers.get("content-type") || "";
   if (contentType.includes("application/json")) {
@@ -142,7 +136,6 @@ export async function checkoutGateDraft(
 }> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...(input.mockPayment ? gateAdminHeaders() : {}),
   };
 
   return requestGate(
@@ -226,7 +219,7 @@ export async function regenerateGateBuild(buildJobId: string): Promise<void> {
     `/api/gate/build-jobs/${buildJobId}/regenerate`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/json", ...gateAdminHeaders() },
+      headers: { "Content-Type": "application/json" },
       body: "{}",
     },
     () => undefined
