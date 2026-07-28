@@ -2,17 +2,17 @@
 
 This file is the human-readable companion to [manifest.json](./manifest.json). It keeps the `.agents/skills/` tree opinionated instead of permissive: the curated catalog should surface the smallest high-signal library that covers the live GestaltView runtime and the consolidated Vision Blueprint Package.
 
-Last indexed: `2026-07-25`
+Last indexed: `2026-07-28`
 
 ## Snapshot
 
-- `55` top-level skills are in the strict curated manifest.
-- `26` of those are the highlighted core for a lean skill-corpus rebuild.
-- `136` top-level folders on disk contain `SKILL.md`.
+- `57` top-level skills are in the strict curated manifest.
+- `28` of those are the highlighted core for a lean skill-corpus rebuild.
+- `138` top-level folders on disk contain `SKILL.md`.
 - `81` top-level skill folders remain on disk but are auxiliary, experimental, vendor-specific, generic, or overlapping.
-- `28` canonical skills include `agents/`.
+- `30` canonical skills include `agents/`.
 - `12` canonical skills include `scripts/`.
-- `39` canonical skills include `references/` or `reference/`.
+- `41` canonical skills include `references/` or `reference/`.
 - `9` canonical skills include `assets/`.
 
 ## Catalog Policy
@@ -40,6 +40,8 @@ Use this set first when rebuilding the Supabase skill corpus under tight storage
 - `gestaltview-vision-blueprint`
 - `gestaltview-codex`
 - `gestaltview-app-runtime`
+- `gestaltview-layered-audit`
+- `gestaltview-refine-skills`
 - `gestaltview-blackboard-room`
 - `gestaltview-workflow-operations`
 - `gestaltview-billy-intelligence`
@@ -69,6 +71,8 @@ Use this set first when rebuilding the Supabase skill corpus under tight storage
 - Use `gestaltview-repo-onboarding` or `gestaltview-repo-map` for fast repo orientation.
 - Use `gestaltview-codex` when you need deep analysis of the live codebase before choosing a path.
 - Use `gestaltview-app-runtime` for live app work.
+- Use `gestaltview-layered-audit` to distinguish originating intention from demonstrated operation and evidence.
+- Use `gestaltview-refine-skills` to create or revise GestaltView skills as bounded, provenance-aware collaboration contracts.
 - Use `gestaltview-blackboard-room` when Blackboard capture, Tribunal recap, DI routing, or room-transition logic is in scope.
 - Use `gestaltview-billy-intelligence` for Billy behavior, retrieval, and grounding.
 - Use `gestaltview-schema-supabase` for Supabase, auth, retrieval tables, and migrations.
@@ -144,6 +148,8 @@ Use this set first when rebuilding the Supabase skill corpus under tight storage
 
 ### Skill Stewardship
 
+- `gestaltview-layered-audit`
+- `gestaltview-refine-skills`
 - `skill-creator`
 - `skill-installer`
 - `skills-keeper`
@@ -263,6 +269,7 @@ These folders are still available on disk. They are excluded from canonical rout
 - `gestaltview-vision-blueprint` and `gestaltview-creation-layer` are now canonical because the current runtime must align to `GestaltView_Vision_Blueprint_Package/` rather than only older compendium or route-map assumptions.
 - `gestaltview-blackboard-room` is now canonical because the capture-first room model, Tribunal recap, and downstream handoff logic need a dedicated room-oriented entrypoint.
 - `gestaltview-gen-render-engine` is canonical because the live render-job, artifact-storage, presentation-gate, and Gallery projection path needs a dedicated evidence-first repair and verification entrypoint.
+- `gestaltview-layered-audit` and `gestaltview-refine-skills` are canonical because runtime and skill-library work need evidence-calibrated audit and provenance-aware refinement contracts.
 - `verifiable-code-delivery` is canonical because its complete skill, validators, evals, references, and tests provide a bounded evidence-backed delivery contract for repository handoffs.
 - Nested Python-skill duplicates still exist under auxiliary `gestaltview-cli-agent`; they are documented as residual overlap, not part of the curated core.
 

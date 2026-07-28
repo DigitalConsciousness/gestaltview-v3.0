@@ -1,3 +1,22 @@
+# CurrentState — Runtime skill layered audit and refinement (2026-07-28)
+
+**Scope of this pass:** Installed the user-provided `gestaltview-layered-audit` and `gestaltview-refine-skills` packages, used both on the canonical GestaltView v3 app-runtime skill, and made no production or user-visible runtime mutation.
+
+## Known / Attempted / Observed / Changed
+
+- **Known:** The live route registry, package scripts, auth boundary, LLM router, existing runtime skill, skill catalog, and recent CurrentState evidence conventions were inspected.
+- **Attempted:** Ran the two-pass lineage/operation audit, then refined the runtime skill as a bounded collaboration contract with progressive context and explicit evidence states.
+- **Observed:** The earlier skill had useful runtime anchors but still named `gestaltview-v2`, loaded broad/Billy-specific context by default, and did not distinguish existence, execution, persistence, reopening, or observed behavior.
+- **Changed:** Added both skills to the canonical catalog, updated the runtime skill for GestaltView v3, and recorded the full audit at `docs/audits/gestaltview-app-runtime-layered-audit-2026-07-28.md`.
+
+## Evidence boundary
+
+- This pass establishes repository artifact and structural-validation evidence only.
+- No preview, production deployment, production Supabase state, or end-user outcome was exercised or claimed.
+- The refined skill should be forward-tested on the next representative runtime patch; that later receipt should label unit, build, intercepted browser, preview, and production evidence separately.
+
+---
+
 # CurrentState — Relationship-first collaborator requisition prepared (2026-07-28)
 
 **Scope of this pass:** Converted the approved custom-collaborator launch design into a reviewable Priority 1 implementation without applying production DDL.

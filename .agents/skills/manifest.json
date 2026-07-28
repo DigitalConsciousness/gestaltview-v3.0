@@ -1,7 +1,7 @@
 {
   "_meta": {
     "name": "gestaltview-v2-skills-manifest",
-    "generated_at": "2026-07-25",
+    "generated_at": "2026-07-28",
     "root": ".agents/skills/",
     "description": "Strict curated manifest for the high-signal GestaltView skills library aligned to the live runtime and Vision Blueprint Package.",
     "source_of_truth": "manifest.skills is the curated top-level catalog used by local generators; Vision Blueprint, Creation Layer, and repo-owned runtime skills define canonical routing while generic, vendor, and overlapping skills remain auxiliary unless explicitly re-promoted.",
@@ -9,18 +9,18 @@
     "generator_scope": "Top-level entries in manifest.skills plus repo-local helpers under .agents/skills/skills/*/SKILL.md"
   },
   "summary": {
-    "top_level_skill_count": 55,
-    "highlighted_core_skill_count": 26,
-    "skills_with_agents": 28,
+    "top_level_skill_count": 57,
+    "highlighted_core_skill_count": 28,
+    "skills_with_agents": 30,
     "skills_with_scripts": 12,
-    "skills_with_references": 39,
+    "skills_with_references": 41,
     "skills_with_assets": 9,
     "skills_with_nested_skill_dirs": 0,
-    "all_top_level_skill_count_on_disk": 136,
+    "all_top_level_skill_count_on_disk": 138,
     "uncataloged_top_level_skill_count": 81,
-    "all_top_level_skills_with_agents": 51,
+    "all_top_level_skills_with_agents": 53,
     "all_top_level_skills_with_scripts": 45,
-    "all_top_level_skills_with_references": 79,
+    "all_top_level_skills_with_references": 85,
     "all_top_level_skills_with_assets": 32
   },
   "highlighted_core": {
@@ -51,7 +51,9 @@
       "gestaltview-exhibit-prototyping",
       "gestaltview-creation-layer",
       "gestaltview-gen-render-engine",
-      "gestaltview-timeline-evidence"
+      "gestaltview-timeline-evidence",
+      "gestaltview-layered-audit",
+      "gestaltview-refine-skills"
     ]
   },
   "auxiliary_top_level_skill_groups": {
@@ -168,7 +170,9 @@
     "vision_blueprint_alignment": "gestaltview-vision-blueprint",
     "creation_layer_runtime": "gestaltview-creation-layer",
     "gen_render_engine": "gestaltview-gen-render-engine",
-    "code_delivery_verification": "verifiable-code-delivery"
+    "code_delivery_verification": "verifiable-code-delivery",
+    "layered_audit": "gestaltview-layered-audit",
+    "gestaltview_skill_refinement": "gestaltview-refine-skills"
   },
   "categories": {
     "ecosystem_and_orientation": [
@@ -233,7 +237,9 @@
     "skill_stewardship": [
       "skill-creator",
       "skill-installer",
-      "skills-keeper"
+      "skills-keeper",
+      "gestaltview-layered-audit",
+      "gestaltview-refine-skills"
     ],
     "delivery_and_verification": [
       "verifiable-code-delivery"
@@ -675,6 +681,18 @@
       "category": "delivery_and_verification",
       "declared_name": "verifiable-code-delivery",
       "last_reviewed": "2026-07-17"
+    },
+    {
+      "folder": "gestaltview-layered-audit",
+      "category": "skill_stewardship",
+      "declared_name": "gestaltview-layered-audit",
+      "last_reviewed": "2026-07-28"
+    },
+    {
+      "folder": "gestaltview-refine-skills",
+      "category": "skill_stewardship",
+      "declared_name": "gestaltview-refine-skills",
+      "last_reviewed": "2026-07-28"
     }
   ]
 }

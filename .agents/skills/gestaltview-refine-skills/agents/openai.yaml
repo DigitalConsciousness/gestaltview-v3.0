@@ -1,0 +1,12 @@
+interface:
+  display_name: GestaltView Refine Skills
+  short_description: Create skills that preserve context and improve cycles
+  default_prompt: Use $gestaltview-refine-skills to create or refine this skill through
+    the GestaltView layered lens.
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
