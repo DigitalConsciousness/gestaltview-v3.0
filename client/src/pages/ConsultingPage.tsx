@@ -129,15 +129,17 @@ export default function ConsultingPage() {
 
         <div className="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6">
           <p className="max-w-xl text-sm leading-relaxed text-white/55">
-            If you want the work, start with a scope conversation. If you want the thesis, read the page. If you want the partnership, respect the governance first.
+            Start with an asynchronous relationship brief. Keith reviews the work,
+            issues a firm scope and quote, and requests a call only when the request
+            genuinely needs one.
           </p>
-          <a
-            href="mailto:keithsoyka@gmail.com?subject=GestaltView%20Consulting"
+          <Link
+            href="/collaborator-requisition"
             className="inline-flex items-center gap-2 rounded-full border border-[#00E5FF]/25 bg-[#00E5FF]/10 px-5 py-3 text-sm font-semibold text-[#C8F8FF]"
           >
-            Contact Keith
+            Begin collaborator requisition
             <ArrowRight className="h-4 w-4" />
-          </a>
+          </Link>
         </div>
       </div>
     </main>

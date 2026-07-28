@@ -2,22 +2,19 @@ import {
   GateCheckoutResponseSchema,
   GateDraftAnalysisSchema,
   GateOrderDetailSchema,
+  GateOrderSchema,
   GateRedeemAccessResponseSchema,
   type GateCheckoutRequest,
   type GateDraftAnalysis,
   type GateOrderDetail,
+  type GateOrderPaymentRequest,
+  type GateQuoteApprovalRequest,
   type GateRedeemAccessRequest,
   type GateRedeemAccessResponse,
   type GateSidekickMessageRequest,
   type PackageConfigDraftInput,
   type PackageConfigDraftPatch,
 } from "@shared/gate/schemas";
-
-function gateAdminHeaders(): Record<string, string> {
-  const key = import.meta.env.VITE_GATE_ADMIN_KEY ?? "";
-  if (!key) return {};
-  return { "X-Gate-Admin-Key": key };
-}
 
 async function readJson(response: Response): Promise<unknown> {
   const contentType = response.headers.get("content-type") || "";
@@ -139,7 +136,6 @@ export async function checkoutGateDraft(
 }> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...(input.mockPayment ? gateAdminHeaders() : {}),
   };
 
   return requestGate(
@@ -155,13 +151,51 @@ export async function checkoutGateDraft(
   );
 }
 
-export async function fetchGateOrder(orderId: string): Promise<GateOrderDetail> {
+export async function fetchGateOrder(
+  orderId: string,
+  accessToken: string
+): Promise<GateOrderDetail> {
+  if (!accessToken.trim()) {
+    throw new Error("This order link is missing its buyer access token.");
+  }
+
   return requestGate(
     `/api/gate/orders/${orderId}`,
     {
       method: "GET",
+      headers: { "X-Gate-Order-Token": accessToken },
     },
     (body) => GateOrderDetailSchema.parse((body as { order: unknown }).order)
+  );
+}
+
+export async function approveGateOrderQuote(
+  orderId: string,
+  input: GateQuoteApprovalRequest
+): Promise<ReturnType<typeof GateOrderSchema.parse>> {
+  return requestGate(
+    `/api/gate/orders/${orderId}/quote`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    },
+    (body) => GateOrderSchema.parse((body as { order: unknown }).order)
+  );
+}
+
+export async function payApprovedGateOrder(
+  orderId: string,
+  input: GateOrderPaymentRequest
+): Promise<ReturnType<typeof GateCheckoutResponseSchema.parse>> {
+  return requestGate(
+    `/api/gate/orders/${orderId}/pay`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    },
+    (body) => GateCheckoutResponseSchema.parse(body)
   );
 }
 
@@ -185,7 +219,7 @@ export async function regenerateGateBuild(buildJobId: string): Promise<void> {
     `/api/gate/build-jobs/${buildJobId}/regenerate`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/json", ...gateAdminHeaders() },
+      headers: { "Content-Type": "application/json" },
       body: "{}",
     },
     () => undefined

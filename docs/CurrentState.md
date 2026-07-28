@@ -1,3 +1,26 @@
+# CurrentState — Relationship-first collaborator requisition prepared (2026-07-28)
+
+**Scope of this pass:** Converted the approved custom-collaborator launch design into a reviewable Priority 1 implementation without applying production DDL.
+
+## What changed
+
+- Added the relationship-first requisition route and redirected the existing package-builder front door through it.
+- Made identity, embodiment, skills, provenance, boundaries, memory contract, founder review, scoped payment, and tracked delivery visible in the buyer journey.
+- Preserved Priority 2 by keeping the underlying self-serve builder reusable while forcing Priority 1 requisitions into founder review.
+- Added per-order buyer access tokens, persisted only as SHA-256 hashes, and required the token for order-status reads.
+- Moved buyer tokens to URL fragments so they do not enter request logs or referrer headers.
+- Changed the GATE Stripe webhook path to verify the exact raw request bytes.
+- Added a server-only GATE schema migration, private generated-ZIP bucket, indexes, RLS, service-role grants, and removal of the unsafe legacy public deliverables read policy.
+- Added focused GATE regressions for missing-token rejection and founder-review enforcement.
+- Documented the launch contract and production deployment gate in `docs/launch/relationship-first-requisition.md`.
+
+## Verification performed
+
+- Executed the full migration inside a transaction against the connected GestaltView Supabase project and rolled it back; PostgreSQL accepted the DDL with no persisted changes.
+- Production migration application, Stripe test-mode purchase, build execution, private artifact retrieval, deployment, and browser E2E remain gated on branch verification and review.
+
+---
+
 # CurrentState — Render contract v2 boundary proof continued (2026-07-27)
 
 **Scope of this pass:** Re-ran the Inside-Out Convergence baseline, independently verified the recorded Phase 1 PostgreSQL fixtures, completed the local Phase 2 server proof, and converged Creation Corner on the canonical Phase 3 render/projection path without applying production DDL.

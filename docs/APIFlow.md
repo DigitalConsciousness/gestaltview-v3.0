@@ -23,7 +23,7 @@ This document is the current reference for `gestaltview-v2.0`'s API surface: rou
 | `/api/diligence` | `GET` | Structured diligence datasets from local report files | None |
 | `/api/diligence/ots` | `GET` | OTS index dataset from `diligence/exports/ots_index.csv` | None |
 | `/api/documents` | `GET` | Document index and repository document utilities | None |
-| `/api/gate/*` | `GET`, `POST` | GATE package, draft, checkout, order, and support flows | Mixed; most routes are founder/admin or customer-auth gated |
+| `/api/gate/*` | `GET`, `POST`, `PATCH` | GATE requisition, draft, review, checkout, order, build, and delivery flows | Draft UUID is a pre-order capability; order reads require the buyer access token; build/admin actions require server-side admin authorization; Stripe webhook requires raw-body signature verification |
 | `/api/gravity` | `POST` | Gravity scoring and related diagnostic helpers | None |
 | `/api/health/supabase` | `GET` | Supabase connectivity/readiness check | None |
 | `/api/keep-alive` | `GET` | Runtime keep-alive ping | None |
@@ -281,6 +281,18 @@ Response:
 
 - `200` audio stream (`audio/mpeg`) on success
 - JSON error payload on failure
+
+### 5.4 Relationship-first GATE requisition
+
+Priority 1 uses these state-changing routes:
+
+- `POST /api/gate/checkout` with `requestFounderReview: true`: creates a private `review_requested` order and buyer access token.
+- `POST /api/gate/orders/:id/quote`: founder/admin session only; persists the approved total, scope summary, and payment terms, then advances the order to `awaiting_payment`.
+- `POST /api/gate/orders/:id/pay`: buyer-token authorized; creates Stripe Checkout for the persisted approved total.
+- `POST /api/gate/webhooks/stripe`: raw-body signature verification; marks the order paid and starts the governed build.
+- `GET /api/gate/orders/:id`: requires `X-Gate-Order-Token`; returns quote, build, support, and private-artifact state.
+
+Buyer tokens originate in the URL fragment so they are not sent in navigation requests. Client API calls move them into the dedicated request header. Only SHA-256 token hashes are stored.
 
 ---
 

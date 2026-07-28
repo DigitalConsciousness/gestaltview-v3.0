@@ -3,6 +3,7 @@ import { ArrowLeft, Activity, Bot, Mic, PlayCircle, ShieldCheck, Sparkles } from
 import { useAuth } from "@/contexts/AuthContext";
 import { useSEO, PAGE_SEO } from "@/hooks/useSEO";
 import { useBillyRuntimeReadiness } from "@/hooks/useBillyRuntimeReadiness";
+import { FounderRequisitionQuotePanel } from "@/components/FounderRequisitionQuotePanel";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { TopNav } from "@/components/TopNav";
 
@@ -145,6 +146,8 @@ export default function FounderRuntimePage() {
             </p>
           </GlassCard>
         </section>
+
+        <FounderRequisitionQuotePanel />
       </div>
     </main>
   );

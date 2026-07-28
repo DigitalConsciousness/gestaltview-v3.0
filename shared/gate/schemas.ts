@@ -575,12 +575,30 @@ export const GateCheckoutRequestSchema = z.object({
   companyName: z.string().trim().max(160).optional(),
   successUrl: z.string().url().optional(),
   cancelUrl: z.string().url().optional(),
+  requestFounderReview: z.boolean().optional(),
   mockPayment: z.boolean().optional(),
+});
+
+export const GateQuoteApprovalRequestSchema = z.object({
+  totalCents: z.number().int().min(100).max(10_000_000),
+  scopeSummary: z.string().trim().min(10).max(4000),
+  paymentTerms: z
+    .string()
+    .trim()
+    .max(2000)
+    .default("Full payment of the approved quote is due before the build begins."),
+});
+
+export const GateOrderPaymentRequestSchema = z.object({
+  accessToken: z.string().trim().min(32),
+  successUrl: z.string().url().optional(),
+  cancelUrl: z.string().url().optional(),
 });
 
 export const GateCheckoutResponseSchema = z.object({
   mode: z.enum(["stripe", "simulated", "manual_review"]),
   orderId: z.string(),
+  accessToken: z.string().min(32),
   url: z.string().url().nullable().default(null),
   sessionId: z.string().nullable().default(null),
   redirectUrl: z.string().nullable().default(null),
@@ -682,6 +700,12 @@ export type GateSupportRequest = z.infer<typeof GateSupportRequestSchema>;
 export type GateOrder = z.infer<typeof GateOrderSchema>;
 export type GateOrderDetail = z.infer<typeof GateOrderDetailSchema>;
 export type GateCheckoutRequest = z.infer<typeof GateCheckoutRequestSchema>;
+export type GateQuoteApprovalRequest = z.infer<
+  typeof GateQuoteApprovalRequestSchema
+>;
+export type GateOrderPaymentRequest = z.infer<
+  typeof GateOrderPaymentRequestSchema
+>;
 export type GateCheckoutResponse = z.infer<typeof GateCheckoutResponseSchema>;
 export type GateRedeemAccessRequest = z.infer<typeof GateRedeemAccessRequestSchema>;
 export type GateRedeemAccessResponse = z.infer<typeof GateRedeemAccessResponseSchema>;

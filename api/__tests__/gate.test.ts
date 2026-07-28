@@ -11,6 +11,7 @@ import gateDraftByIdHandler from "../gate/draft";
 import gateDraftsHandler from "../gate/drafts";
 import gateOrderByIdHandler from "../gate/order";
 import gateOrderRedeemHandler from "../gate/order-redeem";
+import { createAdminSessionToken } from "../_lib/auth";
 import { DEFAULT_GATE_EMBODIMENT_PROFILE_SLUG } from "../../shared/gate/schemas";
 
 type MockRes = {
@@ -84,6 +85,7 @@ const originalGateEnv = {
   GATE_SIGNED_URL_TTL_SECONDS: process.env.GATE_SIGNED_URL_TTL_SECONDS,
   NODE_ENV: process.env.NODE_ENV,
   VERCEL_ENV: process.env.VERCEL_ENV,
+  SESSION_SECRET: process.env.SESSION_SECRET,
 };
 
 function restoreEnvValue(
@@ -114,6 +116,7 @@ beforeEach(async () => {
   delete process.env.GATE_SIGNED_URL_TTL_SECONDS;
   process.env.NODE_ENV = "test";
   delete process.env.VERCEL_ENV;
+  delete process.env.SESSION_SECRET;
   await fs.rm(gateDataDir, { recursive: true, force: true });
 });
 
@@ -134,6 +137,7 @@ afterEach(async () => {
   );
   restoreEnvValue("NODE_ENV", originalGateEnv.NODE_ENV);
   restoreEnvValue("VERCEL_ENV", originalGateEnv.VERCEL_ENV);
+  restoreEnvValue("SESSION_SECRET", originalGateEnv.SESSION_SECRET);
 });
 
 describe("GATE API", () => {
@@ -283,11 +287,23 @@ describe("GATE API", () => {
       redirectUrl: expect.stringContaining("/agent-trainer/orders/"),
     });
 
-    const orderId = (checkoutRes.body as { orderId: string }).orderId;
+    const { orderId, accessToken } = checkoutRes.body as {
+      orderId: string;
+      accessToken: string;
+    };
+
+    const unauthorizedReq = createReq({
+      method: "GET",
+      path: ["orders", orderId],
+    });
+    const unauthorizedRes = createRes();
+    await gateHandler(unauthorizedReq as never, unauthorizedRes as never);
+    expect(unauthorizedRes.statusCode).toBe(401);
 
     const orderReq = createReq({
       method: "GET",
       path: ["orders", orderId],
+      query: { access: accessToken },
     });
     const orderRes = createRes();
     await gateHandler(orderReq as never, orderRes as never);
@@ -439,10 +455,14 @@ describe("GATE API", () => {
     const checkoutRes = createRes();
     await gateHandler(checkoutReq as never, checkoutRes as never);
 
-    const orderId = (checkoutRes.body as { orderId: string }).orderId;
+    const { orderId, accessToken } = checkoutRes.body as {
+      orderId: string;
+      accessToken: string;
+    };
     const orderReq = createReq({
       method: "GET",
       path: ["orders", orderId],
+      query: { access: accessToken },
     });
     const orderRes = createRes();
     await gateHandler(orderReq as never, orderRes as never);
@@ -577,10 +597,14 @@ describe("GATE API", () => {
       orderId: expect.any(String),
     });
 
-    const orderId = (checkoutRes.body as { orderId: string }).orderId;
+    const { orderId, accessToken } = checkoutRes.body as {
+      orderId: string;
+      accessToken: string;
+    };
     const orderReq = createReq({
       method: "GET",
       path: ["orders", orderId],
+      query: { access: accessToken },
     });
     const orderRes = createRes();
     await gateHandler(orderReq as never, orderRes as never);
@@ -635,10 +659,14 @@ describe("GATE API", () => {
       orderId: expect.any(String),
     });
 
-    const orderId = (checkoutRes.body as { orderId: string }).orderId;
+    const { orderId, accessToken } = checkoutRes.body as {
+      orderId: string;
+      accessToken: string;
+    };
     const orderReq = createReq({
       method: "GET",
       path: ["orders", orderId],
+      query: { access: accessToken },
     });
     const orderRes = createRes();
     await gateHandler(orderReq as never, orderRes as never);
@@ -692,6 +720,141 @@ describe("GATE API", () => {
           buyerEmail: "khttps://gestaltviewai.gumroad.com/l/gestaltview_agent",
         },
       },
+    });
+  });
+
+  it("routes relationship-first requisitions to founder review before payment", async () => {
+    const draftReq = createReq({
+      method: "POST",
+      path: ["drafts"],
+      body: {
+        companyName: "Relationship First Studio",
+        buyerEmail: "hello@relationship-first.test",
+        useCaseSlug: "developer-tools-assistant",
+        tier: "STUDIO",
+        backend: "supabase",
+        deliverySurfaces: ["web", "cli"],
+        themePresetId: "cyberpunk-neon",
+      },
+    });
+    const draftRes = createRes();
+    await gateHandler(draftReq as never, draftRes as never);
+    const draftId = (draftRes.body as { analysis: { draft: { id: string } } }).analysis
+      .draft.id;
+
+    const checkoutReq = createReq({
+      method: "POST",
+      path: ["checkout"],
+      body: {
+        draftId,
+        requestFounderReview: true,
+        mockPayment: true,
+      },
+    });
+    const checkoutRes = createRes();
+    await gateHandler(checkoutReq as never, checkoutRes as never);
+
+    expect(checkoutRes.statusCode).toBe(202);
+    expect(checkoutRes.body).toMatchObject({
+      mode: "manual_review",
+      orderId: expect.any(String),
+      accessToken: expect.any(String),
+      redirectUrl: expect.stringContaining("#access="),
+    });
+
+    const { orderId, accessToken } = checkoutRes.body as {
+      orderId: string;
+      accessToken: string;
+    };
+    const orderReq = createReq({
+      method: "GET",
+      path: ["orders", orderId],
+      query: { access: accessToken },
+    });
+    const orderRes = createRes();
+    await gateHandler(orderReq as never, orderRes as never);
+
+    expect(orderRes.statusCode).toBe(200);
+    expect(orderRes.body).toMatchObject({
+      order: {
+        order: {
+          orderStatus: "review_requested",
+          paymentStatus: "review_requested",
+        },
+        compatibility: {
+          checkoutMode: "request_review",
+          requiresManualReview: true,
+        },
+      },
+    });
+
+    process.env.SESSION_SECRET = "gate-founder-quote-test-secret";
+    const founderSession = createAdminSessionToken(
+      "keithsoyka@gmail.com",
+      "keith"
+    );
+    const quoteReq = createReq({
+      method: "POST",
+      path: ["orders", orderId, "quote"],
+      headers: {
+        cookie: `gv_admin_session=${founderSession}`,
+      },
+      body: {
+        totalCents: 275000,
+        scopeSummary:
+          "A governed collaborator with web and CLI surfaces, explicit memory boundaries, and tracked acceptance.",
+        paymentTerms: "Full payment before the governed build begins.",
+      },
+    });
+    const quoteRes = createRes();
+    await gateHandler(quoteReq as never, quoteRes as never);
+
+    expect(quoteRes.statusCode).toBe(200);
+    expect(quoteRes.body).toMatchObject({
+      order: {
+        id: orderId,
+        totalCents: 275000,
+        orderStatus: "awaiting_payment",
+        paymentStatus: "awaiting_payment",
+      },
+    });
+
+    const approvedOrderReq = createReq({
+      method: "GET",
+      path: ["orders", orderId],
+      headers: {
+        "x-gate-order-token": accessToken,
+      },
+    });
+    const approvedOrderRes = createRes();
+    await gateHandler(approvedOrderReq as never, approvedOrderRes as never);
+
+    expect(approvedOrderRes.statusCode).toBe(200);
+    expect(approvedOrderRes.body).toMatchObject({
+      order: {
+        order: {
+          totalCents: 275000,
+          orderStatus: "awaiting_payment",
+        },
+        supportRequests: expect.arrayContaining([
+          expect.objectContaining({
+            summary: "Firm scope and quote approved.",
+          }),
+        ]),
+      },
+    });
+
+    const paymentReq = createReq({
+      method: "POST",
+      path: ["orders", orderId, "pay"],
+      body: { accessToken },
+    });
+    const paymentRes = createRes();
+    await gateHandler(paymentReq as never, paymentRes as never);
+
+    expect(paymentRes.statusCode).toBe(503);
+    expect(paymentRes.body).toMatchObject({
+      error: "gate_payment_not_configured",
     });
   });
 
@@ -752,13 +915,17 @@ describe("GATE API", () => {
     await gateCheckoutHandler(checkoutReq as never, checkoutRes as never);
 
     expect(checkoutRes.statusCode).toBe(202);
-    const orderId = (checkoutRes.body as { orderId: string }).orderId;
+    const { orderId, accessToken } = checkoutRes.body as {
+      orderId: string;
+      accessToken: string;
+    };
 
     const orderReq = createReq({
       method: "GET",
       path: [],
       query: {
         id: orderId,
+        access: accessToken,
       },
     });
     const orderRes = createRes();
@@ -788,6 +955,7 @@ describe("GATE API", () => {
       path: [],
       query: {
         id: orderId,
+        access: accessToken,
       },
       body: {
         key: orderAccessKey,

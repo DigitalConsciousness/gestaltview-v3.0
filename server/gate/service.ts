@@ -1,4 +1,9 @@
-import { randomUUID, createHash } from "node:crypto";
+import {
+  createHash,
+  randomBytes,
+  randomUUID,
+  timingSafeEqual,
+} from "node:crypto";
 import { promises as fs } from "node:fs";
 
 import { gateTierCatalogById } from "../../config/gateCatalog.js";
@@ -16,6 +21,7 @@ import {
   GateBuildJobSchema,
   GateBuyerSchema,
   GateCheckoutRequestSchema,
+  GateQuoteApprovalRequestSchema,
   GateRedeemAccessRequestSchema,
   GateSidekickMessageRequestSchema,
   GateSidekickStateSchema,
@@ -48,6 +54,7 @@ import {
   getGateBuildJobRecord,
   getGateBuyerById,
   getGateDraftRecord,
+  getGateOrderAccessTokenHash,
   getGateOrderRecord,
   insertGateBuildJob,
   insertGateDraft,
@@ -70,6 +77,40 @@ import { GATE_LOCAL_STORAGE_BUCKET } from "./constants.js";
 
 function nowIso(): string {
   return new Date().toISOString();
+}
+
+const localGateOrderAccessHashes = new Map<string, string>();
+
+function hashGateAccessToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
+}
+
+function accessHashesMatch(expected: string, actual: string): boolean {
+  const expectedBytes = Buffer.from(expected, "hex");
+  const actualBytes = Buffer.from(actual, "hex");
+  return (
+    expectedBytes.length === actualBytes.length &&
+    expectedBytes.length > 0 &&
+    timingSafeEqual(expectedBytes, actualBytes)
+  );
+}
+
+async function assertGateOrderAccess(
+  orderId: string,
+  accessToken: string
+): Promise<void> {
+  const token = accessToken.trim();
+  if (!token) {
+    throw new Error("Order access denied.");
+  }
+
+  const expectedHash = hasGateSupabaseConfig()
+    ? await getGateOrderAccessTokenHash(orderId)
+    : localGateOrderAccessHashes.get(orderId) ?? null;
+  const actualHash = hashGateAccessToken(token);
+  if (!expectedHash || !accessHashesMatch(expectedHash, actualHash)) {
+    throw new Error("Order access denied.");
+  }
 }
 
 function sortUnique(values: string[]): string[] {
@@ -164,6 +205,35 @@ function analyzeGateDraftWithSidekick(
   return GateDraftAnalysisSchema.parse({
     ...analyzeGateDraft(draft),
     sidekick: syncedSidekick,
+  });
+}
+
+function applyFounderReviewRequirement(
+  analysis: GateDraftAnalysis,
+  required: boolean
+): GateDraftAnalysis {
+  if (!required) {
+    return analysis;
+  }
+
+  return GateDraftAnalysisSchema.parse({
+    ...analysis,
+    compatibility: {
+      ...analysis.compatibility,
+      requiresManualReview: true,
+      checkoutMode: "request_review",
+      findings: [
+        ...analysis.compatibility.findings,
+        {
+          id: "founder-review-required",
+          severity: "info",
+          message:
+            "This relationship-first collaborator requisition receives founder review before a payment link is issued.",
+          resolution:
+            "Keith reviews the collaboration brief and returns a firm scope and quote.",
+        },
+      ],
+    },
   });
 }
 
@@ -376,25 +446,55 @@ function resolveOrderPaymentStatus(orderStatus: GateOrder["orderStatus"]): GateO
   return "paid";
 }
 
+function resolveQuoteForOrder(
+  quote: GateDraftAnalysis["quote"],
+  order: GateOrder
+): GateDraftAnalysis["quote"] {
+  if (
+    quote.subtotalCents === order.subtotalCents &&
+    quote.totalCents === order.totalCents
+  ) {
+    return quote;
+  }
+
+  const adjustmentCents = order.totalCents - quote.totalCents;
+  return {
+    ...quote,
+    subtotalCents: order.subtotalCents,
+    totalCents: order.totalCents,
+    breakdown:
+      adjustmentCents === 0
+        ? quote.breakdown
+        : [
+            ...quote.breakdown,
+            {
+              code: "founder-reviewed-scope",
+              label: "Founder-reviewed scope adjustment",
+              amountCents: adjustmentCents,
+              quantity: 1,
+              kind: adjustmentCents < 0 ? "discount" : "addon",
+            },
+          ],
+    notes: [
+      ...quote.notes,
+      "This total reflects the founder-reviewed scope approved for this order.",
+    ],
+  };
+}
+
 function hydrateOrderForDetail(
   order: GateOrder,
   draft: PackageConfigDraft,
-  analysis: GateDraftAnalysis,
-  items: GateOrderItem[]
+  analysis: GateDraftAnalysis
 ): GateOrder {
-  const itemTotalCents = items.reduce(
-    (sum, item) => sum + item.unitPriceCents * item.quantity,
-    0
-  );
-  const fallbackSubtotal =
+  const resolvedSubtotalCents =
     order.subtotalCents > 0 ? order.subtotalCents : analysis.quote.subtotalCents;
-  const fallbackTotal =
+  const resolvedTotalCents =
     order.totalCents > 0 ? order.totalCents : analysis.quote.totalCents;
-  const resolvedTotalCents = items.length > 0 ? itemTotalCents : fallbackTotal;
 
   return GateOrderSchema.parse({
     ...order,
-    subtotalCents: items.length > 0 ? itemTotalCents : fallbackSubtotal,
+    subtotalCents: resolvedSubtotalCents,
     totalCents: resolvedTotalCents,
     paymentStatus: resolveOrderPaymentStatus(order.orderStatus),
     configHash: order.configHash || draft.configHash,
@@ -762,6 +862,7 @@ export async function createGateOrderForCheckout(
   analysis: GateDraftAnalysis;
   buyer: GateBuyer;
   order: GateOrder;
+  accessToken: string;
   supportRequest: GateSupportRequest | null;
 }> {
   const input = GateCheckoutRequestSchema.parse(payload);
@@ -798,15 +899,18 @@ export async function createGateOrderForCheckout(
       buyer.id,
       analysis.sidekick
     );
-    const refreshedAnalysis = analyzeGateDraftWithSidekick(
-      savedDraft,
-      analysis.sidekick
+    const refreshedAnalysis = applyFounderReviewRequirement(
+      analyzeGateDraftWithSidekick(savedDraft, analysis.sidekick),
+      input.requestFounderReview
     );
     const { order, items } = createOrderFromAnalysis(refreshedAnalysis, buyer);
+    const accessToken = randomBytes(32).toString("base64url");
+    const accessTokenHash = hashGateAccessToken(accessToken);
     const savedOrder = await insertGateOrder(order, {
       buyerEmail: buyer.email,
       companyName: input.companyName?.trim() || savedDraft.companyName,
       productName: "GestaltView Bespoke Package",
+      accessTokenHash,
     });
     await insertGateOrderItems(items);
 
@@ -830,6 +934,7 @@ export async function createGateOrderForCheckout(
       analysis: refreshedAnalysis,
       buyer,
       order: savedOrder,
+      accessToken,
       supportRequest,
     };
   }
@@ -873,12 +978,17 @@ export async function createGateOrderForCheckout(
   });
 
   state.drafts[draftIndex] = nextDraft;
-  const refreshedAnalysis = analyzeGateDraftWithSidekick(
-    nextDraft,
-    state.sidekickByDraftId[nextDraft.id] ?? null
+  const refreshedAnalysis = applyFounderReviewRequirement(
+    analyzeGateDraftWithSidekick(
+      nextDraft,
+      state.sidekickByDraftId[nextDraft.id] ?? null
+    ),
+    input.requestFounderReview
   );
   state.sidekickByDraftId[nextDraft.id] = refreshedAnalysis.sidekick;
   const { order, items } = createOrderFromAnalysis(refreshedAnalysis, buyer);
+  const accessToken = randomBytes(32).toString("base64url");
+  localGateOrderAccessHashes.set(order.id, hashGateAccessToken(accessToken));
   state.orders.push(order);
   state.orderItems.push(...items);
 
@@ -901,8 +1011,127 @@ export async function createGateOrderForCheckout(
     analysis: refreshedAnalysis,
     buyer,
     order,
+    accessToken,
     supportRequest,
   };
+}
+
+export async function approveGateOrderQuote(
+  orderId: string,
+  payload: unknown
+): Promise<{ order: GateOrder; supportRequest: GateSupportRequest }> {
+  const input = GateQuoteApprovalRequestSchema.parse(payload);
+
+  if (hasGateSupabaseConfig()) {
+    const order = await getGateOrderRecord(orderId);
+    if (!order) {
+      throw new Error("Order not found.");
+    }
+    if (
+      order.orderStatus !== "review_requested" &&
+      order.orderStatus !== "awaiting_payment"
+    ) {
+      throw new Error("Only reviewed orders can receive a firm quote.");
+    }
+
+    const draftRecord = await getGateDraftRecord(order.packageDraftId);
+    if (!draftRecord) {
+      throw new Error("Order draft not found.");
+    }
+
+    const savedOrder = await updateGateOrderRecord(
+      GateOrderSchema.parse({
+        ...order,
+        stripeCheckoutSessionId: null,
+        subtotalCents: input.totalCents,
+        totalCents: input.totalCents,
+        paymentStatus: "awaiting_payment",
+        orderStatus: "awaiting_payment",
+        updatedAt: nowIso(),
+      })
+    );
+    const savedDraft = await updateGateDraftRecord(
+      PackageConfigDraftSchema.parse({
+        ...draftRecord.draft,
+        priceSnapshotCents: input.totalCents,
+        status: "awaiting_payment",
+        updatedAt: nowIso(),
+      }),
+      order.buyerId,
+      synchronizeGateSidekickState(
+        {
+          ...draftRecord.draft,
+          priceSnapshotCents: input.totalCents,
+          status: "awaiting_payment",
+          updatedAt: nowIso(),
+        },
+        draftRecord.sidekickState
+      )
+    );
+    const supportRequest = await insertGateSupportRequestRecord(
+      createSupportRequest(
+        savedDraft,
+        savedOrder,
+        "Firm scope and quote approved.",
+        `${input.scopeSummary}\n\nPayment terms: ${input.paymentTerms}`
+      )
+    );
+
+    return { order: savedOrder, supportRequest };
+  }
+
+  const state = await loadGateState();
+  const orderIndex = state.orders.findIndex((entry) => entry.id === orderId);
+  if (orderIndex < 0) {
+    throw new Error("Order not found.");
+  }
+  const order = state.orders[orderIndex]!;
+  if (
+    order.orderStatus !== "review_requested" &&
+    order.orderStatus !== "awaiting_payment"
+  ) {
+    throw new Error("Only reviewed orders can receive a firm quote.");
+  }
+
+  const draftIndex = state.drafts.findIndex(
+    (entry) => entry.id === order.packageDraftId
+  );
+  if (draftIndex < 0) {
+    throw new Error("Order draft not found.");
+  }
+
+  const savedOrder = GateOrderSchema.parse({
+    ...order,
+    stripeCheckoutSessionId: null,
+    subtotalCents: input.totalCents,
+    totalCents: input.totalCents,
+    paymentStatus: "awaiting_payment",
+    orderStatus: "awaiting_payment",
+    updatedAt: nowIso(),
+  });
+  const savedDraft = PackageConfigDraftSchema.parse({
+    ...state.drafts[draftIndex],
+    priceSnapshotCents: input.totalCents,
+    status: "awaiting_payment",
+    updatedAt: nowIso(),
+  });
+  const supportRequest = createSupportRequest(
+    savedDraft,
+    savedOrder,
+    "Firm scope and quote approved.",
+    `${input.scopeSummary}\n\nPayment terms: ${input.paymentTerms}`
+  );
+
+  state.orders[orderIndex] = savedOrder;
+  state.drafts[draftIndex] = savedDraft;
+  state.sidekickByDraftId[savedDraft.id] = synchronizeGateSidekickState(
+    savedDraft,
+    state.sidekickByDraftId[savedDraft.id] ?? null
+  );
+  state.supportRequests.push(supportRequest);
+  await saveGateState(state);
+
+  return { order: savedOrder, supportRequest };
 }
 
 export async function attachStripeSessionToOrder(
@@ -1094,7 +1323,7 @@ export async function runGateBuildJob(buildJobId: string): Promise<GateBuildJob>
         order: provisioningOrder,
         buildJob: runningJob,
         compatibility: analysis.compatibility,
-        quote: analysis.quote,
+        quote: resolveQuoteForOrder(analysis.quote, provisioningOrder),
         sidekick: analysis.sidekick,
       });
 
@@ -1242,7 +1471,7 @@ export async function runGateBuildJob(buildJobId: string): Promise<GateBuildJob>
       order: state.orders[orderIndex],
       buildJob: runningJob,
       compatibility: analysis.compatibility,
-      quote: analysis.quote,
+      quote: resolveQuoteForOrder(analysis.quote, state.orders[orderIndex]!),
       sidekick: analysis.sidekick,
     });
 
@@ -1423,7 +1652,12 @@ export async function regenerateGateBuildJob(buildJobId: string): Promise<GateBu
   return regenerateGateBuildForOrder(buildJob.orderId);
 }
 
-export async function getGateOrderDetail(orderId: string): Promise<GateOrderDetail> {
+export async function getGateOrderDetail(
+  orderId: string,
+  accessToken: string
+): Promise<GateOrderDetail> {
+  await assertGateOrderAccess(orderId, accessToken);
+
   if (hasGateSupabaseConfig()) {
     const order = await getGateOrderRecord(orderId);
     if (!order) {
@@ -1447,8 +1681,7 @@ export async function getGateOrderDetail(orderId: string): Promise<GateOrderDeta
     const hydratedOrder = hydrateOrderForDetail(
       order,
       draftRecord.draft,
-      analysis,
-      items
+      analysis
     );
 
     return GateOrderDetailSchema.parse({
@@ -1456,7 +1689,7 @@ export async function getGateOrderDetail(orderId: string): Promise<GateOrderDeta
       buyer,
       draft: draftRecord.draft,
       compatibility: analysis.compatibility,
-      quote: analysis.quote,
+      quote: resolveQuoteForOrder(analysis.quote, hydratedOrder),
       recommendations: analysis.recommendations,
       deliverables: analysis.deliverables,
       items,
@@ -1488,14 +1721,14 @@ export async function getGateOrderDetail(orderId: string): Promise<GateOrderDeta
   const supportRequests = state.supportRequests.filter(
     (request) => request.orderId === order.id || request.packageDraftId === draft.id
   );
-  const hydratedOrder = hydrateOrderForDetail(order, draft, analysis, items);
+  const hydratedOrder = hydrateOrderForDetail(order, draft, analysis);
 
   return GateOrderDetailSchema.parse({
     order: hydratedOrder,
     buyer,
     draft,
     compatibility: analysis.compatibility,
-    quote: analysis.quote,
+    quote: resolveQuoteForOrder(analysis.quote, hydratedOrder),
     recommendations: analysis.recommendations,
     deliverables: analysis.deliverables,
     items,

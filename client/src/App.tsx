@@ -42,7 +42,9 @@ const ExhibitsIndex = lazy(() => import("./pages/ExhibitsIndex"));
 const ContinuumCodexPage = lazy(() => import("./pages/ContinuumCodexPage"));
 const AgentTrainerPage = lazy(() => import("./features/agent-trainer/AgentTrainerPage"));
 const AgentTrainerPricing = lazy(() => import("./pages/AgentTrainerPricing"));
-const GATEPackageBuilderPage = lazy(() => import("./pages/GATEPackageBuilderPage"));
+const CollaboratorRequisitionPage = lazy(
+  () => import("./pages/CollaboratorRequisitionPage")
+);
 const GATEOrderStatusPage = lazy(() => import("./pages/GATEOrderStatusPage"));
 const HostedAgentTrainerPage = lazy(() => import("./pages/HostedAgentTrainerPage"));
 const Pricing = lazy(() => import("./pages/Pricing"));
@@ -164,7 +166,14 @@ function Router() {
       <Route path="/codex" component={CodexPage} />
       <Route path="/agent-trainer/runtime" component={HostedAgentTrainerPage} />
       <Route path="/agent-trainer/pricing" component={AgentTrainerPricing} />
-      <Route path="/agent-trainer/package-builder" component={GATEPackageBuilderPage} />
+      <Route
+        path="/agent-trainer/package-builder"
+        component={CollaboratorRequisitionPage}
+      />
+      <Route
+        path="/collaborator-requisition"
+        component={CollaboratorRequisitionPage}
+      />
       <Route path="/agent-trainer/orders/:id" component={GATEOrderStatusPage} />
       {/* Protected: admin / founder-allowlist only */}
       <Route
