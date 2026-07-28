@@ -21,6 +21,7 @@ import {
   GateBuildJobSchema,
   GateBuyerSchema,
   GateCheckoutRequestSchema,
+  GateQuoteApprovalRequestSchema,
   GateRedeemAccessRequestSchema,
   GateSidekickMessageRequestSchema,
   GateSidekickStateSchema,
@@ -451,19 +452,14 @@ function hydrateOrderForDetail(
   analysis: GateDraftAnalysis,
   items: GateOrderItem[]
 ): GateOrder {
-  const itemTotalCents = items.reduce(
-    (sum, item) => sum + item.unitPriceCents * item.quantity,
-    0
-  );
-  const fallbackSubtotal =
+  const resolvedSubtotalCents =
     order.subtotalCents > 0 ? order.subtotalCents : analysis.quote.subtotalCents;
-  const fallbackTotal =
+  const resolvedTotalCents =
     order.totalCents > 0 ? order.totalCents : analysis.quote.totalCents;
-  const resolvedTotalCents = items.length > 0 ? itemTotalCents : fallbackTotal;
 
   return GateOrderSchema.parse({
     ...order,
-    subtotalCents: items.length > 0 ? itemTotalCents : fallbackSubtotal,
+    subtotalCents: resolvedSubtotalCents,
     totalCents: resolvedTotalCents,
     paymentStatus: resolveOrderPaymentStatus(order.orderStatus),
     configHash: order.configHash || draft.configHash,
@@ -983,6 +979,124 @@ export async function createGateOrderForCheckout(
     accessToken,
     supportRequest,
   };
+}
+
+export async function approveGateOrderQuote(
+  orderId: string,
+  payload: unknown
+): Promise<{ order: GateOrder; supportRequest: GateSupportRequest }> {
+  const input = GateQuoteApprovalRequestSchema.parse(payload);
+
+  if (hasGateSupabaseConfig()) {
+    const order = await getGateOrderRecord(orderId);
+    if (!order) {
+      throw new Error("Order not found.");
+    }
+    if (
+      order.orderStatus !== "review_requested" &&
+      order.orderStatus !== "awaiting_payment"
+    ) {
+      throw new Error("Only reviewed orders can receive a firm quote.");
+    }
+
+    const draftRecord = await getGateDraftRecord(order.packageDraftId);
+    if (!draftRecord) {
+      throw new Error("Order draft not found.");
+    }
+
+    const savedOrder = await updateGateOrderRecord(
+      GateOrderSchema.parse({
+        ...order,
+        stripeCheckoutSessionId: null,
+        subtotalCents: input.totalCents,
+        totalCents: input.totalCents,
+        paymentStatus: "awaiting_payment",
+        orderStatus: "awaiting_payment",
+        updatedAt: nowIso(),
+      })
+    );
+    const savedDraft = await updateGateDraftRecord(
+      PackageConfigDraftSchema.parse({
+        ...draftRecord.draft,
+        priceSnapshotCents: input.totalCents,
+        status: "awaiting_payment",
+        updatedAt: nowIso(),
+      }),
+      order.buyerId,
+      synchronizeGateSidekickState(
+        {
+          ...draftRecord.draft,
+          priceSnapshotCents: input.totalCents,
+          status: "awaiting_payment",
+          updatedAt: nowIso(),
+        },
+        draftRecord.sidekickState
+      )
+    );
+    const supportRequest = await insertGateSupportRequestRecord(
+      createSupportRequest(
+        savedDraft,
+        savedOrder,
+        "Firm scope and quote approved.",
+        `${input.scopeSummary}\n\nPayment terms: ${input.paymentTerms}`
+      )
+    );
+
+    return { order: savedOrder, supportRequest };
+  }
+
+  const state = await loadGateState();
+  const orderIndex = state.orders.findIndex((entry) => entry.id === orderId);
+  if (orderIndex < 0) {
+    throw new Error("Order not found.");
+  }
+  const order = state.orders[orderIndex]!;
+  if (
+    order.orderStatus !== "review_requested" &&
+    order.orderStatus !== "awaiting_payment"
+  ) {
+    throw new Error("Only reviewed orders can receive a firm quote.");
+  }
+
+  const draftIndex = state.drafts.findIndex(
+    (entry) => entry.id === order.packageDraftId
+  );
+  if (draftIndex < 0) {
+    throw new Error("Order draft not found.");
+  }
+
+  const savedOrder = GateOrderSchema.parse({
+    ...order,
+    stripeCheckoutSessionId: null,
+    subtotalCents: input.totalCents,
+    totalCents: input.totalCents,
+    paymentStatus: "awaiting_payment",
+    orderStatus: "awaiting_payment",
+    updatedAt: nowIso(),
+  });
+  const savedDraft = PackageConfigDraftSchema.parse({
+    ...state.drafts[draftIndex],
+    priceSnapshotCents: input.totalCents,
+    status: "awaiting_payment",
+    updatedAt: nowIso(),
+  });
+  const supportRequest = createSupportRequest(
+    savedDraft,
+    savedOrder,
+    "Firm scope and quote approved.",
+    `${input.scopeSummary}\n\nPayment terms: ${input.paymentTerms}`
+  );
+
+  state.orders[orderIndex] = savedOrder;
+  state.drafts[draftIndex] = savedDraft;
+  state.sidekickByDraftId[savedDraft.id] = synchronizeGateSidekickState(
+    savedDraft,
+    state.sidekickByDraftId[savedDraft.id] ?? null
+  );
+  state.supportRequests.push(supportRequest);
+  await saveGateState(state);
+
+  return { order: savedOrder, supportRequest };
 }
 
 export async function attachStripeSessionToOrder(
