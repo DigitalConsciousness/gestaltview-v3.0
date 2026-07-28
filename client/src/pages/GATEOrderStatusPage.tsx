@@ -35,6 +35,10 @@ function isTerminal(status: GateOrderDetail["order"]["orderStatus"]): boolean {
 export default function GATEOrderStatusPage() {
   const [match, params] = useRoute<{ id: string }>("/agent-trainer/orders/:id");
   const orderId = params?.id ?? "";
+  const accessToken =
+    typeof window === "undefined"
+      ? ""
+      : new URLSearchParams(window.location.search).get("access")?.trim() ?? "";
   const [orderDetail, setOrderDetail] = useState<GateOrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -68,7 +72,7 @@ export default function GATEOrderStatusPage() {
         } else {
           setLoading(true);
         }
-        const order = await fetchGateOrder(orderId);
+        const order = await fetchGateOrder(orderId, accessToken);
         if (!cancelled) {
           setOrderDetail(order);
           setError(null);
@@ -99,7 +103,7 @@ export default function GATEOrderStatusPage() {
       cancelled = true;
       window.clearInterval(interval);
     };
-  }, [match, orderId, orderDetail?.order.orderStatus]);
+  }, [accessToken, match, orderId, orderDetail?.order.orderStatus]);
 
   const latestBuildJob = orderDetail?.buildJobs
     .slice()
@@ -112,7 +116,7 @@ export default function GATEOrderStatusPage() {
 
     try {
       await regenerateGateBuild(latestBuildJob.id);
-      const order = await fetchGateOrder(orderId);
+      const order = await fetchGateOrder(orderId, accessToken);
       setOrderDetail(order);
     } catch (regenerateError) {
       setError(
