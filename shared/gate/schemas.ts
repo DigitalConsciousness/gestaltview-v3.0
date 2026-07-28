@@ -581,6 +581,7 @@ export const GateCheckoutRequestSchema = z.object({
 export const GateCheckoutResponseSchema = z.object({
   mode: z.enum(["stripe", "simulated", "manual_review"]),
   orderId: z.string(),
+  accessToken: z.string().min(32),
   url: z.string().url().nullable().default(null),
   sessionId: z.string().nullable().default(null),
   redirectUrl: z.string().nullable().default(null),
