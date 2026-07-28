@@ -282,6 +282,18 @@ Response:
 - `200` audio stream (`audio/mpeg`) on success
 - JSON error payload on failure
 
+### 5.4 Relationship-first GATE requisition
+
+Priority 1 uses these state-changing routes:
+
+- `POST /api/gate/checkout` with `requestFounderReview: true`: creates a private `review_requested` order and buyer access token.
+- `POST /api/gate/orders/:id/quote`: founder/admin session only; persists the approved total, scope summary, and payment terms, then advances the order to `awaiting_payment`.
+- `POST /api/gate/orders/:id/pay`: buyer-token authorized; creates Stripe Checkout for the persisted approved total.
+- `POST /api/gate/webhooks/stripe`: raw-body signature verification; marks the order paid and starts the governed build.
+- `GET /api/gate/orders/:id`: requires `X-Gate-Order-Token`; returns quote, build, support, and private-artifact state.
+
+Buyer tokens originate in the URL fragment so they are not sent in navigation requests. Client API calls move them into the dedicated request header. Only SHA-256 token hashes are stored.
+
 ---
 
 ## 6. Diligence and OTS data path
