@@ -23,7 +23,7 @@ This document is the current reference for `gestaltview-v2.0`'s API surface: rou
 | `/api/diligence` | `GET` | Structured diligence datasets from local report files | None |
 | `/api/diligence/ots` | `GET` | OTS index dataset from `diligence/exports/ots_index.csv` | None |
 | `/api/documents` | `GET` | Document index and repository document utilities | None |
-| `/api/gate/*` | `GET`, `POST` | GATE package, draft, checkout, order, and support flows | Mixed; most routes are founder/admin or customer-auth gated |
+| `/api/gate/*` | `GET`, `POST`, `PATCH` | GATE requisition, draft, review, checkout, order, build, and delivery flows | Draft UUID is a pre-order capability; order reads require the buyer access token; build/admin actions require server-side admin authorization; Stripe webhook requires raw-body signature verification |
 | `/api/gravity` | `POST` | Gravity scoring and related diagnostic helpers | None |
 | `/api/health/supabase` | `GET` | Supabase connectivity/readiness check | None |
 | `/api/keep-alive` | `GET` | Runtime keep-alive ping | None |
