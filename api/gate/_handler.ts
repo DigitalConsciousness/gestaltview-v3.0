@@ -77,15 +77,19 @@ function isAdminRequest(req: VercelRequest): boolean {
 }
 
 async function handleCheckout(req: VercelRequest, res: VercelResponse) {
-  const { analysis, buyer, order } = await createGateOrderForCheckout(req.body ?? {});
+  const { analysis, buyer, order, accessToken } =
+    await createGateOrderForCheckout(req.body ?? {});
 
   if (analysis.compatibility.checkoutMode === "request_review") {
     sendJson(res, 202, {
       mode: "manual_review",
       orderId: order.id,
+      accessToken,
       url: null,
       sessionId: null,
-      redirectUrl: `/agent-trainer/orders/${order.id}`,
+      redirectUrl: `/agent-trainer/orders/${order.id}?access=${encodeURIComponent(
+        accessToken
+      )}`,
     });
     return;
   }
@@ -96,9 +100,12 @@ async function handleCheckout(req: VercelRequest, res: VercelResponse) {
     mockPayment?: boolean;
   };
   const origin = nowOrigin(req);
-  const successUrl =
+  const successBase =
     body.successUrl ??
     `${origin}/agent-trainer/orders/${order.id}?success=1&session_id={CHECKOUT_SESSION_ID}`;
+  const successUrl = `${successBase}${
+    successBase.includes("?") ? "&" : "?"
+  }access=${encodeURIComponent(accessToken)}`;
   const cancelUrl =
     body.cancelUrl ??
     `${origin}/agent-trainer/package-builder?draft=${analysis.draft.id}&canceled=true`;
@@ -129,9 +136,12 @@ async function handleCheckout(req: VercelRequest, res: VercelResponse) {
     sendJson(res, 202, {
       mode: "simulated",
       orderId: order.id,
+      accessToken,
       url: null,
       sessionId: "simulated-session",
-      redirectUrl: `/agent-trainer/orders/${order.id}`,
+      redirectUrl: `/agent-trainer/orders/${order.id}?access=${encodeURIComponent(
+        accessToken
+      )}`,
     });
     return;
   }
@@ -176,6 +186,7 @@ async function handleCheckout(req: VercelRequest, res: VercelResponse) {
   sendJson(res, 200, {
     mode: "stripe",
     orderId: order.id,
+    accessToken,
     url: session.url,
     sessionId: session.id,
     redirectUrl: null,
@@ -322,7 +333,14 @@ async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     if (segments.length === 2 && segments[0] === "orders" && req.method === "GET") {
-      const order = await getGateOrderDetail(segments[1]!);
+      const accessToken =
+        typeof req.query.access === "string" ? req.query.access.trim() : "";
+      if (!accessToken) {
+        sendJson(res, 401, { error: "Order access token is required." });
+        return;
+      }
+
+      const order = await getGateOrderDetail(segments[1]!, accessToken);
       sendJson(res, 200, { order });
       return;
     }
@@ -388,8 +406,9 @@ async function handler(req: VercelRequest, res: VercelResponse) {
 
     sendJson(res, 404, { error: "Unknown GATE endpoint." });
   } catch (error) {
-    sendJson(res, 500, {
-      error: error instanceof Error ? error.message : "GATE request failed.",
+    const message = error instanceof Error ? error.message : "GATE request failed.";
+    sendJson(res, message === "Order access denied." ? 401 : 500, {
+      error: message,
     });
   }
 }
