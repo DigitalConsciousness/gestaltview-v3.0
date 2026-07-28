@@ -232,6 +232,7 @@ function orderInsertPayload(
     buyerEmail: string;
     companyName?: string;
     productName?: string;
+    accessTokenHash: string;
   }
 ): Record<string, unknown> {
   return {
@@ -239,6 +240,7 @@ function orderInsertPayload(
     customer_email: input.buyerEmail,
     customer_name: input.companyName?.trim() || null,
     product_name: input.productName?.trim() || "GestaltView Bespoke Package",
+    access_token_hash: input.accessTokenHash,
     stripe_checkout_session_id: order.stripeCheckoutSessionId,
     stripe_payment_intent_id: order.stripePaymentIntentId,
     currency: order.currency,
@@ -480,6 +482,7 @@ export async function insertGateOrder(
     buyerEmail: string;
     companyName?: string;
     productName?: string;
+    accessTokenHash: string;
   }
 ): Promise<GateOrder> {
   const supabase = getGateSupabaseAdmin();
@@ -519,6 +522,22 @@ export async function getGateOrderRecord(id: string): Promise<GateOrder | null> 
     throw new Error(asErrorMessage(error, "Failed to load order."));
   }
   return data ? mapOrderRow(data as Record<string, unknown>) : null;
+}
+
+export async function getGateOrderAccessTokenHash(id: string): Promise<string | null> {
+  const supabase = getGateSupabaseAdmin();
+  const { data, error } = await supabase
+    .from(GATE_TABLES.orders)
+    .select("access_token_hash")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) {
+    throw new Error(asErrorMessage(error, "Failed to read order access state."));
+  }
+
+  return typeof data?.access_token_hash === "string"
+    ? data.access_token_hash
+    : null;
 }
 
 export async function insertGateOrderItems(items: GateOrderItem[]): Promise<void> {
