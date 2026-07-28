@@ -1,12 +1,14 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import Stripe from "stripe";
 
+import { requireFounderOrAdmin } from "../_lib/auth.js";
 import { applyCorsHeaders } from "../_lib/cors.js";
 import { sendJson } from "../_lib/response.js";
 import { withSentryVercelHandler } from "../_lib/sentry.js";
 import {
   attachStripeSessionToOrder,
   applyGateSidekickAction,
+  approveGateOrderQuote,
   createGateDraft,
   createGateOrderForCheckout,
   createGateSupportRequest,
@@ -21,6 +23,7 @@ import {
   updateGateDraft,
   validateGateDraft,
 } from "../../server/gate/service.js";
+import { GateOrderPaymentRequestSchema } from "../../shared/gate/schemas.js";
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY?.trim() || "";
 const stripeWebhookSecret = process.env.STRIPE_GATE_WEBHOOK_SECRET?.trim() || "";
@@ -227,6 +230,86 @@ async function handleCheckout(req: VercelRequest, res: VercelResponse) {
   });
 }
 
+async function handleApprovedQuotePayment(
+  req: VercelRequest,
+  res: VercelResponse,
+  orderId: string
+) {
+  const input = GateOrderPaymentRequestSchema.parse(req.body ?? {});
+  const detail = await getGateOrderDetail(orderId, input.accessToken);
+  if (
+    detail.order.orderStatus !== "awaiting_payment" ||
+    detail.order.paymentStatus !== "awaiting_payment"
+  ) {
+    sendJson(res, 409, {
+      error: "This order is not awaiting payment.",
+    });
+    return;
+  }
+  if (!stripe) {
+    sendJson(res, 503, {
+      error: "gate_payment_not_configured",
+      message: "GATE checkout requires Stripe configuration.",
+    });
+    return;
+  }
+
+  const origin = nowOrigin(req);
+  const successBase =
+    input.successUrl ??
+    `${origin}/agent-trainer/orders/${orderId}?success=1&session_id={CHECKOUT_SESSION_ID}`;
+  const successUrl = `${successBase}#access=${encodeURIComponent(input.accessToken)}`;
+  const cancelUrl =
+    input.cancelUrl ??
+    `${origin}/agent-trainer/orders/${orderId}#access=${encodeURIComponent(
+      input.accessToken
+    )}`;
+  const buyerEmail = detail.buyer?.email ?? detail.draft.buyerEmail;
+  if (!buyerEmail) {
+    throw new Error("The approved quote is missing its buyer email.");
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    client_reference_id: orderId,
+    customer_email: buyerEmail,
+    success_url: successUrl,
+    cancel_url: cancelUrl,
+    line_items: [
+      {
+        quantity: 1,
+        price_data: {
+          currency: detail.order.currency,
+          unit_amount: detail.order.totalCents,
+          product_data: {
+            name: `GestaltView Custom Collaborator · ${
+              detail.draft.companyName ?? buyerEmail
+            }`,
+            description: "Founder-reviewed scope and governed collaborator build",
+          },
+        },
+      },
+    ],
+    metadata: {
+      order_id: orderId,
+      draft_id: detail.draft.id,
+      config_hash: detail.draft.configHash,
+      buyer_email: buyerEmail,
+      quote_type: "founder_reviewed",
+    },
+  });
+
+  await attachStripeSessionToOrder(orderId, session.id);
+  sendJson(res, 200, {
+    mode: "stripe",
+    orderId,
+    accessToken: input.accessToken,
+    url: session.url,
+    sessionId: session.id,
+    redirectUrl: null,
+  });
+}
+
 async function handleStripeWebhook(
   req: VercelRequest,
   res: VercelResponse,
@@ -371,6 +454,32 @@ async function handler(req: VercelRequest, res: VercelResponse) {
     ) {
       const analysis = await validateGateDraft(segments[1]!);
       sendJson(res, 200, { analysis });
+      return;
+    }
+
+    if (
+      segments.length === 3 &&
+      segments[0] === "orders" &&
+      segments[2] === "quote" &&
+      req.method === "POST"
+    ) {
+      const auth = requireFounderOrAdmin(req);
+      if ("status" in auth) {
+        sendJson(res, auth.status, auth.body);
+        return;
+      }
+      const quote = await approveGateOrderQuote(segments[1]!, req.body ?? {});
+      sendJson(res, 200, quote);
+      return;
+    }
+
+    if (
+      segments.length === 3 &&
+      segments[0] === "orders" &&
+      segments[2] === "pay" &&
+      req.method === "POST"
+    ) {
+      await handleApprovedQuotePayment(req, res, segments[1]!);
       return;
     }
 
