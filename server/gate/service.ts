@@ -207,6 +207,35 @@ function analyzeGateDraftWithSidekick(
   });
 }
 
+function applyFounderReviewRequirement(
+  analysis: GateDraftAnalysis,
+  required: boolean
+): GateDraftAnalysis {
+  if (!required) {
+    return analysis;
+  }
+
+  return GateDraftAnalysisSchema.parse({
+    ...analysis,
+    compatibility: {
+      ...analysis.compatibility,
+      requiresManualReview: true,
+      checkoutMode: "request_review",
+      findings: [
+        ...analysis.compatibility.findings,
+        {
+          id: "founder-review-required",
+          severity: "info",
+          message:
+            "This relationship-first collaborator requisition receives founder review before a payment link is issued.",
+          resolution:
+            "Keith reviews the collaboration brief and returns a firm scope and quote.",
+        },
+      ],
+    },
+  });
+}
+
 function hydrateDraft(input: PackageConfigDraftInput): PackageConfigDraft {
   const normalized = normalizeDraftInput(input);
   const createdAt = nowIso();
@@ -839,9 +868,9 @@ export async function createGateOrderForCheckout(
       buyer.id,
       analysis.sidekick
     );
-    const refreshedAnalysis = analyzeGateDraftWithSidekick(
-      savedDraft,
-      analysis.sidekick
+    const refreshedAnalysis = applyFounderReviewRequirement(
+      analyzeGateDraftWithSidekick(savedDraft, analysis.sidekick),
+      input.requestFounderReview
     );
     const { order, items } = createOrderFromAnalysis(refreshedAnalysis, buyer);
     const accessToken = randomBytes(32).toString("base64url");
@@ -918,9 +947,12 @@ export async function createGateOrderForCheckout(
   });
 
   state.drafts[draftIndex] = nextDraft;
-  const refreshedAnalysis = analyzeGateDraftWithSidekick(
-    nextDraft,
-    state.sidekickByDraftId[nextDraft.id] ?? null
+  const refreshedAnalysis = applyFounderReviewRequirement(
+    analyzeGateDraftWithSidekick(
+      nextDraft,
+      state.sidekickByDraftId[nextDraft.id] ?? null
+    ),
+    input.requestFounderReview
   );
   state.sidekickByDraftId[nextDraft.id] = refreshedAnalysis.sidekick;
   const { order, items } = createOrderFromAnalysis(refreshedAnalysis, buyer);
