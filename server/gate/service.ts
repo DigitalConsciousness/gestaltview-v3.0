@@ -1728,7 +1728,7 @@ export async function getGateOrderDetail(
     buyer,
     draft,
     compatibility: analysis.compatibility,
-    quote: analysis.quote,
+    quote: resolveQuoteForOrder(analysis.quote, hydratedOrder),
     recommendations: analysis.recommendations,
     deliverables: analysis.deliverables,
     items,
