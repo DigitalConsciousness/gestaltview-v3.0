@@ -1,3 +1,9 @@
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 import { delegateGateRequest } from "./_delegate.js";
