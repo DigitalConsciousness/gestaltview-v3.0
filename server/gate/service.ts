@@ -446,6 +446,42 @@ function resolveOrderPaymentStatus(orderStatus: GateOrder["orderStatus"]): GateO
   return "paid";
 }
 
+function resolveQuoteForOrder(
+  quote: GateDraftAnalysis["quote"],
+  order: GateOrder
+): GateDraftAnalysis["quote"] {
+  if (
+    quote.subtotalCents === order.subtotalCents &&
+    quote.totalCents === order.totalCents
+  ) {
+    return quote;
+  }
+
+  const adjustmentCents = order.totalCents - quote.totalCents;
+  return {
+    ...quote,
+    subtotalCents: order.subtotalCents,
+    totalCents: order.totalCents,
+    breakdown:
+      adjustmentCents === 0
+        ? quote.breakdown
+        : [
+            ...quote.breakdown,
+            {
+              code: "founder-reviewed-scope",
+              label: "Founder-reviewed scope adjustment",
+              amountCents: adjustmentCents,
+              quantity: 1,
+              kind: adjustmentCents < 0 ? "discount" : "addon",
+            },
+          ],
+    notes: [
+      ...quote.notes,
+      "This total reflects the founder-reviewed scope approved for this order.",
+    ],
+  };
+}
+
 function hydrateOrderForDetail(
   order: GateOrder,
   draft: PackageConfigDraft,
@@ -1287,7 +1323,7 @@ export async function runGateBuildJob(buildJobId: string): Promise<GateBuildJob>
         order: provisioningOrder,
         buildJob: runningJob,
         compatibility: analysis.compatibility,
-        quote: analysis.quote,
+        quote: resolveQuoteForOrder(analysis.quote, provisioningOrder),
         sidekick: analysis.sidekick,
       });
 
@@ -1435,7 +1471,7 @@ export async function runGateBuildJob(buildJobId: string): Promise<GateBuildJob>
       order: state.orders[orderIndex],
       buildJob: runningJob,
       compatibility: analysis.compatibility,
-      quote: analysis.quote,
+      quote: resolveQuoteForOrder(analysis.quote, state.orders[orderIndex]!),
       sidekick: analysis.sidekick,
     });
 
@@ -1653,7 +1689,7 @@ export async function getGateOrderDetail(
       buyer,
       draft: draftRecord.draft,
       compatibility: analysis.compatibility,
-      quote: analysis.quote,
+      quote: resolveQuoteForOrder(analysis.quote, hydratedOrder),
       recommendations: analysis.recommendations,
       deliverables: analysis.deliverables,
       items,
