@@ -31,6 +31,42 @@ const stripe = stripeSecretKey
     })
   : null;
 
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+async function readRawRequestBody(req: VercelRequest): Promise<Buffer> {
+  if (Buffer.isBuffer(req.body)) {
+    return req.body;
+  }
+  if (typeof req.body === "string") {
+    return Buffer.from(req.body);
+  }
+  if (req.body && typeof req.body === "object") {
+    return Buffer.from(JSON.stringify(req.body));
+  }
+
+  const chunks: Buffer[] = [];
+  for await (const chunk of req) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+  return Buffer.concat(chunks);
+}
+
+function parseJsonRequestBody(rawBody: Buffer): unknown {
+  if (rawBody.length === 0) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(rawBody.toString("utf8"));
+  } catch {
+    throw new Error("Request body must be valid JSON.");
+  }
+}
+
 function nowOrigin(req: VercelRequest): string {
   const forwardedProto =
     (req.headers["x-forwarded-proto"] as string | undefined)?.split(",")[0]?.trim() ||
@@ -193,7 +229,11 @@ async function handleCheckout(req: VercelRequest, res: VercelResponse) {
   });
 }
 
-async function handleStripeWebhook(req: VercelRequest, res: VercelResponse) {
+async function handleStripeWebhook(
+  req: VercelRequest,
+  res: VercelResponse,
+  rawBody: Buffer
+) {
   if (!stripe || !stripeWebhookSecret) {
     sendJson(res, 400, { error: "Stripe webhook configuration is missing." });
     return;
@@ -205,13 +245,10 @@ async function handleStripeWebhook(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  const payload =
-    typeof req.body === "string" ? req.body : JSON.stringify(req.body ?? {});
-
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(
-      Buffer.from(payload),
+      rawBody,
       signature,
       stripeWebhookSecret
     );
@@ -257,19 +294,26 @@ async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const segments = resolvePathSegments(req);
-
-    if (segments.length === 1 && segments[0] === "checkout" && req.method === "POST") {
-      await handleCheckout(req, res);
-      return;
-    }
-
-    if (
+    const isStripeWebhook =
       segments.length === 2 &&
       segments[0] === "webhooks" &&
       segments[1] === "stripe" &&
-      req.method === "POST"
-    ) {
-      await handleStripeWebhook(req, res);
+      req.method === "POST";
+    const needsBody =
+      req.method === "POST" || req.method === "PATCH" || isStripeWebhook;
+    const rawBody = needsBody ? await readRawRequestBody(req) : Buffer.alloc(0);
+
+    if (isStripeWebhook) {
+      await handleStripeWebhook(req, res, rawBody);
+      return;
+    }
+
+    if (needsBody) {
+      req.body = parseJsonRequestBody(rawBody);
+    }
+
+    if (segments.length === 1 && segments[0] === "checkout" && req.method === "POST") {
+      await handleCheckout(req, res);
       return;
     }
 
