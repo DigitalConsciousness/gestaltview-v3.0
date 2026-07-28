@@ -38,7 +38,7 @@ export default function GATEOrderStatusPage() {
   const accessToken =
     typeof window === "undefined"
       ? ""
-      : new URLSearchParams(window.location.search).get("access")?.trim() ?? "";
+      : new URLSearchParams(window.location.hash.slice(1)).get("access")?.trim() ?? "";
   const [orderDetail, setOrderDetail] = useState<GateOrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
