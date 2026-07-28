@@ -719,6 +719,72 @@ describe("GATE API", () => {
     });
   });
 
+  it("routes relationship-first requisitions to founder review before payment", async () => {
+    const draftReq = createReq({
+      method: "POST",
+      path: ["drafts"],
+      body: {
+        companyName: "Relationship First Studio",
+        buyerEmail: "hello@relationship-first.test",
+        useCaseSlug: "developer-tools-assistant",
+        tier: "STUDIO",
+        backend: "supabase",
+        deliverySurfaces: ["web", "cli"],
+        themePresetId: "cyberpunk-neon",
+      },
+    });
+    const draftRes = createRes();
+    await gateHandler(draftReq as never, draftRes as never);
+    const draftId = (draftRes.body as { analysis: { draft: { id: string } } }).analysis
+      .draft.id;
+
+    const checkoutReq = createReq({
+      method: "POST",
+      path: ["checkout"],
+      body: {
+        draftId,
+        requestFounderReview: true,
+        mockPayment: true,
+      },
+    });
+    const checkoutRes = createRes();
+    await gateHandler(checkoutReq as never, checkoutRes as never);
+
+    expect(checkoutRes.statusCode).toBe(202);
+    expect(checkoutRes.body).toMatchObject({
+      mode: "manual_review",
+      orderId: expect.any(String),
+      accessToken: expect.any(String),
+      redirectUrl: expect.stringContaining("#access="),
+    });
+
+    const { orderId, accessToken } = checkoutRes.body as {
+      orderId: string;
+      accessToken: string;
+    };
+    const orderReq = createReq({
+      method: "GET",
+      path: ["orders", orderId],
+      query: { access: accessToken },
+    });
+    const orderRes = createRes();
+    await gateHandler(orderReq as never, orderRes as never);
+
+    expect(orderRes.statusCode).toBe(200);
+    expect(orderRes.body).toMatchObject({
+      order: {
+        order: {
+          orderStatus: "review_requested",
+          paymentStatus: "review_requested",
+        },
+        compatibility: {
+          checkoutMode: "request_review",
+          requiresManualReview: true,
+        },
+      },
+    });
+  });
+
   it("supports the explicit Vercel route files used for deployed GATE requests", async () => {
     const createReqBody = createReq({
       method: "POST",
