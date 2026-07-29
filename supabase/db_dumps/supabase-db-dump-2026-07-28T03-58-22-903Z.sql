@@ -13,11 +13,23 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 
+CREATE SCHEMA IF NOT EXISTS "GestaltView";
+
+
+ALTER SCHEMA "GestaltView" OWNER TO "postgres";
+
+
 CREATE EXTENSION IF NOT EXISTS "pg_cron" WITH SCHEMA "pg_catalog";
 
 
 
 
+
+
+CREATE SCHEMA IF NOT EXISTS "gestaltview";
+
+
+ALTER SCHEMA "gestaltview" OWNER TO "postgres";
 
 
 CREATE EXTENSION IF NOT EXISTS "pg_net" WITH SCHEMA "extensions";
@@ -529,6 +541,63 @@ CREATE TYPE "public"."review_status" AS ENUM (
 ALTER TYPE "public"."review_status" OWNER TO "postgres";
 
 
+CREATE OR REPLACE FUNCTION "public"."apply_gsvw_embeddings"("p_items" "jsonb", "p_model" "text", "p_backend" "text" DEFAULT 'external'::"text") RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO 'public', 'extensions'
+    AS $$
+DECLARE
+  v_updated integer := 0;
+BEGIN
+  IF jsonb_typeof(p_items) IS DISTINCT FROM 'array' THEN
+    RAISE EXCEPTION 'p_items must be a JSON array';
+  END IF;
+
+  WITH payload AS (
+    SELECT
+      x.chunk_id,
+      x.embedding::text::public.vector(768) AS embedding
+    FROM jsonb_to_recordset(p_items) AS x(chunk_id uuid, embedding jsonb)
+  )
+  UPDATE public.gsvw_ingestion_chunks c
+  SET embedding = p.embedding,
+      embedding_model = p_model,
+      embedding_backend = p_backend,
+      embedding_dimensions = 768,
+      embedded_at = now()
+  FROM payload p
+  WHERE c.chunk_id = p.chunk_id
+    AND c.is_canonical = true;
+
+  GET DIAGNOSTICS v_updated = ROW_COUNT;
+  RETURN v_updated;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."apply_gsvw_embeddings"("p_items" "jsonb", "p_model" "text", "p_backend" "text") OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."audit_runtime_handoff_transition"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    SET "search_path" TO ''
+    AS $$
+begin
+  if tg_op = 'INSERT' or old.state <> new.state then
+    insert into public.runtime_handoff_events
+      (handoff_id, owner_id, from_state, to_state, receipt)
+    values
+      (new.handoff_id, new.owner_id,
+       case when tg_op = 'INSERT' then null else old.state end,
+       new.state, new.receipt);
+  end if;
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."audit_runtime_handoff_transition"() OWNER TO "postgres";
+
+
 CREATE OR REPLACE FUNCTION "public"."auto_approve_family_contributions"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     AS $$
@@ -609,7 +678,11 @@ begin
     from public.trainer_jobs tj
     where
       tj.status = 'queued'
-      or (tj.status = 'leased' and tj.lease_expires_at is not null and tj.lease_expires_at < now())
+      or (
+        tj.status = 'leased'
+        and tj.lease_expires_at is not null
+        and tj.lease_expires_at < now()
+      )
     order by tj.created_at
     for update skip locked
     limit 1
@@ -782,6 +855,49 @@ $$;
 ALTER FUNCTION "public"."gestaltview_upsert_module_profile"("p_subject_id" "uuid", "p_auth_user_id" "uuid", "p_module_key" "text", "p_payload" "jsonb", "p_source_notes" "text"[], "p_merge_strategy" "text", "p_visibility" "public"."gestaltview_module_profile_visibility") OWNER TO "postgres";
 
 
+CREATE OR REPLACE FUNCTION "public"."get_active_orchestration_context_v1"("p_auth_user_id" "uuid", "p_surface" "public"."context_surface_kind" DEFAULT 'system'::"public"."context_surface_kind", "p_limit" integer DEFAULT 4) RETURNS TABLE("packet_id" "uuid", "subject_id" "uuid", "packet_kind" "public"."context_packet_kind", "surface" "public"."context_surface_kind", "source_manifest" "jsonb", "payload" "jsonb", "checksum" "text", "precedence" integer, "created_at" timestamp with time zone, "updated_at" timestamp with time zone)
+    LANGUAGE "sql" STABLE
+    SET "search_path" TO 'public', 'pg_temp'
+    AS $$
+select
+packet.packet_id,
+packet.subject_id,
+packet.packet_kind,
+packet.surface,
+packet.source_manifest,
+packet.payload,
+packet.checksum,
+max(rule.precedence)::integer as precedence,
+packet.created_at,
+packet.updated_at
+from public.context_injection_packets packet
+join public.context_injection_rules rule
+on rule.subject_id = packet.subject_id
+and rule.auth_user_id = packet.auth_user_id
+and rule.surface = packet.surface
+and rule.source_table = 'context_injection_packets'
+and rule.source_id = packet.packet_id
+and rule.active
+where packet.auth_user_id = p_auth_user_id
+and packet.surface = p_surface
+group by
+packet.packet_id,
+packet.subject_id,
+packet.packet_kind,
+packet.surface,
+packet.source_manifest,
+packet.payload,
+packet.checksum,
+packet.created_at,
+packet.updated_at
+order by max(rule.precedence) desc, packet.updated_at desc, packet.packet_id
+limit greatest(1, least(coalesce(p_limit, 4), 12));
+$$;
+
+
+ALTER FUNCTION "public"."get_active_orchestration_context_v1"("p_auth_user_id" "uuid", "p_surface" "public"."context_surface_kind", "p_limit" integer) OWNER TO "postgres";
+
+
 CREATE OR REPLACE FUNCTION "public"."get_current_portrait_version"("p_user_id" "uuid") RETURNS integer
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO 'public', 'extensions'
@@ -799,7 +915,7 @@ ALTER FUNCTION "public"."get_current_portrait_version"("p_user_id" "uuid") OWNER
 CREATE OR REPLACE FUNCTION "public"."get_portrait_signal_count"("p_user_id" "uuid") RETURNS TABLE("memory_entry_count" integer, "bucket_drop_count" integer, "fragment_count" integer, "gravity_report_count" integer, "agent_memory_count" integer, "total_count" integer)
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO 'public', 'extensions'
-    AS $_$
+    AS $$
 declare
   v_fragment_count integer := 0;
   v_gravity_report_count integer := 0;
@@ -817,86 +933,19 @@ begin
   where user_id = p_user_id::text;
 
   if to_regclass('public.knowledge_fragments') is not null then
-    if exists (
-      select 1
-      from information_schema.columns
-      where table_schema = 'public'
-        and table_name = 'knowledge_fragments'
-        and column_name = 'created_by'
-    ) then
-      execute 'select count(*)::integer from public.knowledge_fragments where created_by = $1'
-        into v_fragment_count
-        using p_user_id::text;
-    elsif exists (
-      select 1
-      from information_schema.columns
-      where table_schema = 'public'
-        and table_name = 'knowledge_fragments'
-        and column_name = 'auth_user_id'
-    ) then
-      execute 'select count(*)::integer from public.knowledge_fragments where auth_user_id = $1'
-        into v_fragment_count
-        using p_user_id;
-    elsif exists (
-      select 1
-      from information_schema.columns
-      where table_schema = 'public'
-        and table_name = 'knowledge_fragments'
-        and column_name = 'user_id'
-    ) then
-      execute 'select count(*)::integer from public.knowledge_fragments where user_id = $1'
-        into v_fragment_count
-        using p_user_id::text;
-    end if;
+    select count(*)::integer
+      into v_fragment_count
+    from public.knowledge_fragments fragments
+    where coalesce(
+      to_jsonb(fragments)->>'created_by',
+      to_jsonb(fragments)->>'auth_user_id',
+      to_jsonb(fragments)->>'user_id'
+    ) = p_user_id::text;
   end if;
 
-  if to_regclass('public.gravity_reports') is not null then
-    if exists (
-      select 1
-      from information_schema.columns
-      where table_schema = 'public'
-        and table_name = 'gravity_reports'
-        and column_name = 'user_id'
-    ) then
-      execute 'select count(*)::integer from public.gravity_reports where user_id = $1'
-        into v_gravity_report_count
-        using p_user_id::text;
-    elsif exists (
-      select 1
-      from information_schema.columns
-      where table_schema = 'public'
-        and table_name = 'gravity_reports'
-        and column_name = 'auth_user_id'
-    ) then
-      execute 'select count(*)::integer from public.gravity_reports where auth_user_id = $1'
-        into v_gravity_report_count
-        using p_user_id;
-    end if;
-  end if;
-
-  if to_regclass('public.agent_memories') is not null then
-    if exists (
-      select 1
-      from information_schema.columns
-      where table_schema = 'public'
-        and table_name = 'agent_memories'
-        and column_name = 'user_id'
-    ) then
-      execute 'select count(*)::integer from public.agent_memories where user_id = $1'
-        into v_agent_memory_count
-        using p_user_id::text;
-    elsif exists (
-      select 1
-      from information_schema.columns
-      where table_schema = 'public'
-        and table_name = 'agent_memories'
-        and column_name = 'auth_user_id'
-    ) then
-      execute 'select count(*)::integer from public.agent_memories where auth_user_id = $1'
-        into v_agent_memory_count
-        using p_user_id;
-    end if;
-  end if;
+  -- gravity_reports and agent_memories are not part of the canonical
+  -- migration schema. Keep their contribution at zero until those tables
+  -- receive explicit contracts and ownership columns.
 
   if to_regclass('public.founder_context') is not null then
     select count(*)::integer
@@ -919,7 +968,7 @@ begin
 
   return next;
 end;
-$_$;
+$$;
 
 
 ALTER FUNCTION "public"."get_portrait_signal_count"("p_user_id" "uuid") OWNER TO "postgres";
@@ -1022,6 +1071,59 @@ $$;
 ALTER FUNCTION "public"."get_schema_dashboard_snapshot"() OWNER TO "postgres";
 
 
+CREATE OR REPLACE FUNCTION "public"."gsvw_bulk_update_chunk_embeddings"("p_rows" "jsonb") RETURNS integer
+    LANGUAGE "plpgsql"
+    SET "search_path" TO 'public'
+    AS $$
+declare
+v_updated integer := 0;
+begin
+if p_rows is null or jsonb_typeof(p_rows) <> 'array' then
+raise exception 'p_rows must be a JSON array';
+end if;
+
+with payload as (
+select
+x.chunk_id,
+x.embedding,
+x.embedding_model,
+x.embedding_backend,
+x.embedding_dimensions,
+x.embedded_at
+from jsonb_to_recordset(p_rows) as x(
+chunk_id uuid,
+embedding jsonb,
+embedding_model text,
+embedding_backend text,
+embedding_dimensions smallint,
+embedded_at timestamptz
+)
+), updated as (
+update public.gsvw_ingestion_chunks as c
+set
+embedding = (payload.embedding::text)::vector(768),
+embedding_model = payload.embedding_model,
+embedding_backend = payload.embedding_backend,
+embedding_dimensions = payload.embedding_dimensions,
+embedded_at = payload.embedded_at
+from payload
+where c.chunk_id = payload.chunk_id
+returning c.chunk_id
+)
+select count(*) into v_updated from updated;
+
+return v_updated;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."gsvw_bulk_update_chunk_embeddings"("p_rows" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."gsvw_bulk_update_chunk_embeddings"("p_rows" "jsonb") IS 'Bulk-patches heterogeneous 768-dimensional EmbeddingGemma vectors by chunk_id without invoking an INSERT path.';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."gsvw_mark_document_seen"("p_source_repo" "text", "p_source_path" "text", "p_content_hash" "text", "p_run_id" "uuid" DEFAULT NULL::"uuid") RETURNS "uuid"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -1052,7 +1154,6 @@ ALTER FUNCTION "public"."gsvw_mark_document_seen"("p_source_repo" "text", "p_sou
 
 CREATE OR REPLACE FUNCTION "public"."gsvw_set_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
 BEGIN
   NEW.updated_at = now();
@@ -1062,6 +1163,42 @@ $$;
 
 
 ALTER FUNCTION "public"."gsvw_set_updated_at"() OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."guard_runtime_handoff_transition"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    SET "search_path" TO ''
+    AS $$
+begin
+  if old.owner_id <> new.owner_id then
+    raise exception 'runtime handoff owner is immutable';
+  end if;
+  if old.state in ('accepted','processing','completed','declined','failed','cancelled','expired')
+     and row(old.source_room, old.source_entity_type, old.source_entity_id,
+             old.source_revision, old.source_ref)
+         is distinct from
+         row(new.source_room, new.source_entity_type, new.source_entity_id,
+             new.source_revision, new.source_ref) then
+    raise exception 'runtime handoff source is immutable after acceptance';
+  end if;
+  if old.state <> new.state and not (
+    (old.state = 'prepared' and new.state in ('offered','cancelled','expired')) or
+    (old.state = 'offered' and new.state in ('accepted','declined','cancelled','expired')) or
+    (old.state = 'accepted' and new.state in ('processing','cancelled','expired')) or
+    (old.state = 'processing' and new.state in ('completed','failed','cancelled','expired'))
+  ) then
+    raise exception 'invalid runtime handoff transition: % -> %', old.state, new.state;
+  end if;
+  if new.state = 'accepted' and old.state <> 'accepted' then
+    new.accepted_at = now();
+  end if;
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."guard_runtime_handoff_transition"() OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."scaffold_nodes" (
@@ -1201,7 +1338,6 @@ ALTER FUNCTION "public"."gv_begin_profile_pipeline_run"("p_user_id" "uuid", "p_r
 
 CREATE OR REPLACE FUNCTION "public"."gv_capture_events_guard"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
 begin
   if tg_op = 'UPDATE' and new.original_text is distinct from old.original_text then
@@ -1398,7 +1534,6 @@ ALTER FUNCTION "public"."gv_link_pipeline_object"("p_run_id" "uuid", "p_object_t
 
 CREATE OR REPLACE FUNCTION "public"."gv_profile_pipeline_touch_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
 begin
   new.updated_at = now();
@@ -1453,33 +1588,50 @@ CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO 'public'
     AS $$
-BEGIN
-  INSERT INTO public.users (
+declare
+  normalized_email text;
+  founder_admin boolean;
+begin
+  normalized_email := lower(trim(coalesce(NEW.email, concat(NEW.id::text, '@gestaltview.local'))));
+  founder_admin := public.is_founder_admin_email(normalized_email);
+
+  insert into public.users (
     id,
     email,
     tier,
     subscription_status,
+    billing_period_start,
     billy_query_count,
     is_admin,
+    grace_until,
     created_at,
     updated_at
   )
-  VALUES (
+  values (
     NEW.id,
-    COALESCE(NEW.email, CONCAT(NEW.id::text, '@gestaltview.local')),
-    'free',
-    'inactive',
+    normalized_email,
+    case when founder_admin then 'enterprise' else 'free' end,
+    case when founder_admin then 'active' else 'inactive' end,
+    case when founder_admin then now() else null end,
     0,
-    FALSE,
-    NOW(),
-    NOW()
+    founder_admin,
+    null,
+    now(),
+    now()
   )
-  ON CONFLICT (id) DO UPDATE SET
-    email = COALESCE(EXCLUDED.email, public.users.email),
-    updated_at = NOW();
+  on conflict (id) do update set
+    email = excluded.email,
+    tier = case when founder_admin then 'enterprise' else public.users.tier end,
+    subscription_status = case when founder_admin then 'active' else public.users.subscription_status end,
+    billing_period_start = case
+      when founder_admin then coalesce(public.users.billing_period_start, excluded.billing_period_start)
+      else public.users.billing_period_start
+    end,
+    is_admin = case when founder_admin then true else public.users.is_admin end,
+    updated_at = now();
 
-  RETURN NEW;
-END;
+  return NEW;
+end;
 $$;
 
 
@@ -1542,7 +1694,6 @@ ALTER FUNCTION "public"."heartbeat_trainer_worker"("_worker_id" "text", "_job_id
 
 CREATE OR REPLACE FUNCTION "public"."is_founder_admin_email"("candidate" "text") RETURNS boolean
     LANGUAGE "sql" IMMUTABLE
-    SET "search_path" TO 'public', 'extensions'
     AS $$
   select lower(trim(coalesce(candidate, ''))) = any (
     array[
@@ -1557,7 +1708,6 @@ ALTER FUNCTION "public"."is_founder_admin_email"("candidate" "text") OWNER TO "p
 
 CREATE OR REPLACE FUNCTION "public"."is_founder_admin_user"("candidate" "uuid") RETURNS boolean
     LANGUAGE "sql" STABLE
-    SET "search_path" TO 'public', 'extensions'
     AS $$
   select exists (
     select 1
@@ -1569,6 +1719,100 @@ $$;
 
 
 ALTER FUNCTION "public"."is_founder_admin_user"("candidate" "uuid") OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."match_gsvw_chunks"("query_embedding" "public"."vector", "match_count" integer DEFAULT 12, "min_similarity" double precision DEFAULT 0.0, "filter_repo" "text" DEFAULT NULL::"text", "filter_document_type" "text" DEFAULT NULL::"text", "filter_tags" "text"[] DEFAULT NULL::"text"[]) RETURNS TABLE("chunk_id" "uuid", "document_id" "uuid", "content" "text", "title" "text", "source_path" "text", "source_section" "text", "tags" "text"[], "similarity" double precision, "source_count" bigint, "sources" "jsonb")
+    LANGUAGE "sql" STABLE
+    SET "search_path" TO 'public', 'extensions'
+    AS $$
+  WITH nearest AS (
+    SELECT
+      c.chunk_id,
+      c.document_id,
+      c.content,
+      d.title,
+      c.source_path,
+      c.metadata ->> 'source_section' AS source_section,
+      c.tags,
+      1 - (c.embedding <=> query_embedding) AS similarity,
+      c.embedding <=> query_embedding AS distance
+    FROM public.gsvw_ingestion_chunks c
+    JOIN public.gsvw_ingestion_documents d
+      ON d.document_id = c.document_id
+    WHERE c.embedding IS NOT NULL
+      AND c.is_canonical = true
+      AND (filter_repo IS NULL OR c.source_repo = filter_repo)
+      AND (filter_document_type IS NULL OR d.document_type = filter_document_type)
+      AND (filter_tags IS NULL OR c.tags @> filter_tags)
+    ORDER BY c.embedding <=> query_embedding
+    LIMIT GREATEST(match_count * 3, match_count)
+  ),
+  filtered AS (
+    SELECT *
+    FROM nearest
+    WHERE similarity >= min_similarity
+    ORDER BY distance
+    LIMIT GREATEST(match_count, 1)
+  )
+  SELECT
+    f.chunk_id,
+    f.document_id,
+    f.content,
+    f.title,
+    f.source_path,
+    f.source_section,
+    f.tags,
+    f.similarity,
+    COALESCE(src.source_count, 1),
+    COALESCE(src.sources, '[]'::jsonb)
+  FROM filtered f
+  LEFT JOIN LATERAL (
+    SELECT
+      COUNT(*) AS source_count,
+      jsonb_agg(
+        jsonb_build_object(
+          'chunk_id', a.chunk_id,
+          'document_id', a.document_id,
+          'source_path', a.source_path,
+          'chunk_index', a.chunk_index,
+          'source_section', a.metadata ->> 'source_section'
+        )
+        ORDER BY a.source_path, a.chunk_index
+      ) AS sources
+    FROM public.gsvw_ingestion_chunks a
+    WHERE a.canonical_chunk_id = f.chunk_id
+  ) src ON true
+  ORDER BY f.distance;
+$$;
+
+
+ALTER FUNCTION "public"."match_gsvw_chunks"("query_embedding" "public"."vector", "match_count" integer, "min_similarity" double precision, "filter_repo" "text", "filter_document_type" "text", "filter_tags" "text"[]) OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."match_gsvw_orchestration_context_v1"("p_query_embedding" "public"."vector", "p_match_count" integer DEFAULT 6, "p_source_repo" "text" DEFAULT 'gestaltview-corpus'::"text") RETURNS TABLE("chunk_id" "uuid", "canonical_chunk_id" "uuid", "source_repo" "text", "source_path" "text", "chunk_index" integer, "content" "text", "content_hash" "text", "tags" "text"[], "similarity" double precision)
+    LANGUAGE "sql" STABLE
+    SET "search_path" TO 'public', 'pg_temp'
+    AS $$
+select
+chunk.chunk_id,
+coalesce(chunk.canonical_chunk_id, chunk.chunk_id) as canonical_chunk_id,
+chunk.source_repo,
+chunk.source_path,
+chunk.chunk_index,
+chunk.content,
+chunk.content_hash,
+chunk.tags,
+(1 - (chunk.embedding <=> p_query_embedding))::double precision as similarity
+from public.gsvw_ingestion_chunks chunk
+where chunk.source_repo = p_source_repo
+and chunk.is_canonical
+and chunk.embedding is not null
+order by chunk.embedding <=> p_query_embedding, chunk.chunk_id
+limit greatest(1, least(coalesce(p_match_count, 6), 12));
+$$;
+
+
+ALTER FUNCTION "public"."match_gsvw_orchestration_context_v1"("p_query_embedding" "public"."vector", "p_match_count" integer, "p_source_repo" "text") OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."match_knowledge_fragments"("query_embedding" "public"."vector", "match_count" integer DEFAULT 8, "filter_type" "text" DEFAULT NULL::"text", "filter_package" "text" DEFAULT NULL::"text") RETURNS TABLE("id" "uuid", "content" "text", "source_file" "text", "document_type" "text", "chunk_index" integer, "tags" "text"[], "similarity" double precision)
@@ -1597,7 +1841,6 @@ ALTER FUNCTION "public"."match_knowledge_fragments"("query_embedding" "public"."
 
 CREATE OR REPLACE FUNCTION "public"."match_memories"("query_embedding" "public"."vector", "match_threshold" double precision, "match_count" integer, "user_id_filter" "text") RETURNS TABLE("id" "uuid", "user_id" "text", "title" "text", "content" "text", "similarity" double precision)
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
 BEGIN
   RETURN QUERY
@@ -1990,6 +2233,37 @@ $$;
 ALTER FUNCTION "public"."rls_auto_enable"() OWNER TO "postgres";
 
 
+CREATE OR REPLACE FUNCTION "public"."search_gsvw_orchestration_context_v1"("p_query_text" "text", "p_match_count" integer DEFAULT 6, "p_source_repo" "text" DEFAULT 'gestaltview-corpus'::"text") RETURNS TABLE("chunk_id" "uuid", "canonical_chunk_id" "uuid", "source_repo" "text", "source_path" "text", "chunk_index" integer, "content" "text", "content_hash" "text", "tags" "text"[], "rank" double precision)
+    LANGUAGE "sql" STABLE
+    SET "search_path" TO 'public', 'pg_temp'
+    AS $$
+with query as (
+select websearch_to_tsquery('english', left(trim(p_query_text), 4000)) as term
+)
+select
+chunk.chunk_id,
+coalesce(chunk.canonical_chunk_id, chunk.chunk_id) as canonical_chunk_id,
+chunk.source_repo,
+chunk.source_path,
+chunk.chunk_index,
+chunk.content,
+chunk.content_hash,
+chunk.tags,
+ts_rank_cd(chunk.search_document, query.term)::double precision as rank
+from public.gsvw_ingestion_chunks chunk
+cross join query
+where nullif(trim(p_query_text), '') is not null
+and chunk.source_repo = p_source_repo
+and chunk.is_canonical
+and chunk.search_document @@ query.term
+order by rank desc, chunk.chunk_id
+limit greatest(1, least(coalesce(p_match_count, 6), 12));
+$$;
+
+
+ALTER FUNCTION "public"."search_gsvw_orchestration_context_v1"("p_query_text" "text", "p_match_count" integer, "p_source_repo" "text") OWNER TO "postgres";
+
+
 CREATE OR REPLACE FUNCTION "public"."search_knowledge_fragments"("query_text" "text", "match_count" integer DEFAULT 12, "filter_type" "text" DEFAULT NULL::"text", "filter_package" "text" DEFAULT NULL::"text") RETURNS TABLE("id" "uuid", "content" "text", "source_file" "text", "document_type" "text", "chunk_index" integer, "tags" "text"[], "rank" double precision)
     LANGUAGE "sql" STABLE
     SET "search_path" TO 'public', 'extensions'
@@ -2098,7 +2372,6 @@ ALTER FUNCTION "public"."searchknowledgefragments"("querytext" "text", "matchcou
 
 CREATE OR REPLACE FUNCTION "public"."set_agent_personhood_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
 begin
   new.updated_at = now();
@@ -2112,7 +2385,6 @@ ALTER FUNCTION "public"."set_agent_personhood_updated_at"() OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION "public"."set_inner_world_files_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
 begin
   new.updated_at = now();
@@ -2126,7 +2398,6 @@ ALTER FUNCTION "public"."set_inner_world_files_updated_at"() OWNER TO "postgres"
 
 CREATE OR REPLACE FUNCTION "public"."set_profile_portraits_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
 begin
   new.updated_at = now();
@@ -2140,7 +2411,6 @@ ALTER FUNCTION "public"."set_profile_portraits_updated_at"() OWNER TO "postgres"
 
 CREATE OR REPLACE FUNCTION "public"."set_transcriptory_captures_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
 BEGIN
   NEW.updated_at = now();
@@ -2154,7 +2424,6 @@ ALTER FUNCTION "public"."set_transcriptory_captures_updated_at"() OWNER TO "post
 
 CREATE OR REPLACE FUNCTION "public"."set_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
 begin
   new.updated_at = now();
@@ -2168,7 +2437,6 @@ ALTER FUNCTION "public"."set_updated_at"() OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION "public"."set_user_content_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
 begin
   new.updated_at = now();
@@ -2182,7 +2450,6 @@ ALTER FUNCTION "public"."set_user_content_updated_at"() OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION "public"."set_workbook_governance_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
 begin
   new.updated_at = now();
@@ -2196,7 +2463,6 @@ ALTER FUNCTION "public"."set_workbook_governance_updated_at"() OWNER TO "postgre
 
 CREATE OR REPLACE FUNCTION "public"."set_workspace_persistence_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
 begin
   new.updated_at = now();
@@ -2210,7 +2476,6 @@ ALTER FUNCTION "public"."set_workspace_persistence_updated_at"() OWNER TO "postg
 
 CREATE OR REPLACE FUNCTION "public"."touch_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
 begin
   new.updated_at = now();
@@ -2329,9 +2594,10 @@ ALTER FUNCTION "public"."trainer_search_study_sources"("query_text" "text", "lim
 
 CREATE OR REPLACE FUNCTION "public"."trainer_search_study_sources"("query_text" "text", "query_embedding" "public"."vector", "match_threshold" double precision DEFAULT 0.5, "match_limit" integer DEFAULT 20) RETURNS TABLE("fragment_id" "uuid", "content" "text", "source_file" "text", "document_type" "text", "similarity" double precision)
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
 BEGIN
+    -- Short-circuit: If the search query is empty or less than 3 characters, 
+    -- bypass the heavy vector scan and return the most recently added fragments.
     IF length(trim(query_text)) < 3 THEN
         RETURN QUERY
         SELECT
@@ -2339,13 +2605,15 @@ BEGIN
             kf.content,
             kf.source_file,
             kf.document_type,
-            1.0::float AS similarity
+            1.0::float AS similarity -- Assign perfect similarity for the default state
         FROM public.knowledge_fragments kf
         ORDER BY kf.created_at DESC
         LIMIT match_limit;
+        
         RETURN;
     END IF;
 
+    -- Standard Execution: Perform the vector cosine similarity search (<=>)
     RETURN QUERY
     SELECT
         kf.id as fragment_id,
@@ -2366,7 +2634,6 @@ ALTER FUNCTION "public"."trainer_search_study_sources"("query_text" "text", "que
 
 CREATE OR REPLACE FUNCTION "public"."transcriptory_captures_search_document_fn"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
 begin
   new.search_document :=
@@ -2384,7 +2651,6 @@ ALTER FUNCTION "public"."transcriptory_captures_search_document_fn"() OWNER TO "
 
 CREATE OR REPLACE FUNCTION "public"."try_cast_uuid"("input_text" "text") RETURNS "uuid"
     LANGUAGE "sql" IMMUTABLE
-    SET "search_path" TO 'public', 'extensions'
     AS $_$
   select case
     when input_text ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
@@ -2399,12 +2665,11 @@ ALTER FUNCTION "public"."try_cast_uuid"("input_text" "text") OWNER TO "postgres"
 
 CREATE OR REPLACE FUNCTION "public"."update_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    SET "search_path" TO 'public', 'extensions'
     AS $$
-BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
-END;
+begin
+  new.updated_at = now();
+  return new;
+end;
 $$;
 
 
@@ -2471,6 +2736,95 @@ $$;
 ALTER FUNCTION "public"."upsert_masterclass_session"("p_embodiment_slug" "text") OWNER TO "postgres";
 
 
+CREATE FOREIGN DATA WRAPPER "analytics_fdw" HANDLER "extensions"."iceberg_fdw_handler" VALIDATOR "extensions"."iceberg_fdw_validator";
+
+
+
+
+CREATE FOREIGN DATA WRAPPER "gestaltview_fdw" HANDLER "extensions"."iceberg_fdw_handler" VALIDATOR "extensions"."iceberg_fdw_validator";
+
+
+
+
+CREATE SERVER "analytics_fdw_server" FOREIGN DATA WRAPPER "analytics_fdw" OPTIONS (
+    "catalog_uri" 'https://dzrxepbgetinldcknior.storage.supabase.co/storage/v1/iceberg',
+    "s3.endpoint" 'https://dzrxepbgetinldcknior.storage.supabase.co/storage/v1/s3',
+    "vault_aws_access_key_id" '7b2f632e-39f1-45be-bfda-b25d4fd586ac',
+    "vault_aws_secret_access_key" '2a577791-71c1-4685-8862-0730812f1db2',
+    "vault_token" '4db32f87-a896-45e4-8b96-86dd22767a84',
+    "warehouse" 'analytics'
+);
+
+
+ALTER SERVER "analytics_fdw_server" OWNER TO "postgres";
+
+
+CREATE SERVER "gestaltview_fdw_server" FOREIGN DATA WRAPPER "gestaltview_fdw" OPTIONS (
+    "catalog_uri" 'https://dzrxepbgetinldcknior.storage.supabase.co/storage/v1/iceberg',
+    "s3.endpoint" 'https://dzrxepbgetinldcknior.storage.supabase.co/storage/v1/s3',
+    "vault_aws_access_key_id" 'd615ef73-b264-4726-a8fa-7734239a14cb',
+    "vault_aws_secret_access_key" '0e9eb466-f65e-40bf-b7f5-1c67ced8595a',
+    "vault_token" '514038c1-8d4b-4239-98b7-8c019b815512',
+    "warehouse" 'gestaltview'
+);
+
+
+ALTER SERVER "gestaltview_fdw_server" OWNER TO "postgres";
+
+
+CREATE FOREIGN TABLE "GestaltView"."events" (
+    "event_id" bigint,
+    "event_name" "text",
+    "event_timestamp" timestamp without time zone
+)
+SERVER "analytics_fdw_server"
+OPTIONS (
+    "schema_id" '0',
+    "table" 'default.events'
+);
+
+
+ALTER FOREIGN TABLE "GestaltView"."events" OWNER TO "postgres";
+
+
+CREATE FOREIGN TABLE "gestaltview"."events" (
+    "event_id" bigint,
+    "event_name" "text",
+    "event_timestamp" timestamp without time zone
+)
+SERVER "gestaltview_fdw_server"
+OPTIONS (
+    "schema_id" '0',
+    "table" 'default.events'
+);
+
+
+ALTER FOREIGN TABLE "gestaltview"."events" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "gestaltview"."gestaltview" (
+    "schema_name" "text",
+    "table_name" "text",
+    "column_ordinal" bigint,
+    "column_name" "text",
+    "data_type" "text",
+    "nullable" boolean,
+    "default_value" "text",
+    "is_primary_key" boolean,
+    "is_unique" boolean,
+    "check_constraint" "text",
+    "constraint_names" "text",
+    "foreign_key_schema" "text",
+    "foreign_key_table" "text",
+    "foreign_key_column" "text",
+    "foreign_key_actions" "text",
+    "raw_column_definition" "text"
+);
+
+
+ALTER TABLE "gestaltview"."gestaltview" OWNER TO "postgres";
+
+
 CREATE OR REPLACE VIEW "private"."complete_voice_prints" AS
 SELECT
     NULL::"uuid" AS "id",
@@ -2484,6 +2838,39 @@ SELECT
 
 
 ALTER VIEW "private"."complete_voice_prints" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."_deprecated_artifacts" (
+    "artifact_id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid",
+    "title" "text" NOT NULL,
+    "body" "text" DEFAULT ''::"text" NOT NULL,
+    "artifact_type" "text" DEFAULT 'markdown'::"text" NOT NULL,
+    "source_capture_ids" "uuid"[] DEFAULT '{}'::"uuid"[] NOT NULL,
+    "source_scaffold_node_ids" "uuid"[] DEFAULT '{}'::"uuid"[] NOT NULL,
+    "metadata" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."_deprecated_artifacts" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."_deprecated_orders" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "shopify_order_id" "text",
+    "customer_email" "text" NOT NULL,
+    "customer_name" "text",
+    "product_name" "text",
+    "order_status" "text" DEFAULT 'pending'::"text" NOT NULL,
+    "magic_token" "text" DEFAULT ("gen_random_uuid"())::"text",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."_deprecated_orders" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."agent_manifests" (
@@ -4088,11 +4475,20 @@ CREATE TABLE IF NOT EXISTS "public"."gsvw_ingestion_chunks" (
     "content_hash" "text" NOT NULL,
     "char_count" integer DEFAULT 0 NOT NULL,
     "token_estimate" integer DEFAULT 0 NOT NULL,
-    "embedding" "jsonb",
+    "embedding_legacy_jsonb" "jsonb",
     "embedding_model" "text",
     "tags" "text"[] DEFAULT ARRAY[]::"text"[] NOT NULL,
     "metadata" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL,
-    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "embedding" "public"."vector"(768),
+    "embedding_backend" "text",
+    "embedded_at" timestamp with time zone,
+    "embedding_dimensions" smallint DEFAULT 768,
+    "semantic_hash" "text",
+    "canonical_chunk_id" "uuid",
+    "is_canonical" boolean DEFAULT true NOT NULL,
+    "search_document" "tsvector" GENERATED ALWAYS AS ("to_tsvector"('"english"'::"regconfig", COALESCE("content", ''::"text"))) STORED,
+    CONSTRAINT "gsvw_ingestion_chunks_embedding_dimensions_check" CHECK ((("embedding_dimensions" IS NULL) OR ("embedding_dimensions" = 768)))
 );
 
 
@@ -4613,6 +5009,7 @@ CREATE TABLE IF NOT EXISTS "public"."inner_world_artifacts" (
     "status" "text" DEFAULT 'ready'::"text" NOT NULL,
     "source_ref" "text",
     "source_file_ref" "text",
+    "origin_di_id" "text",
     CONSTRAINT "inner_world_artifacts_status_check" CHECK (("status" = ANY (ARRAY['queued'::"text", 'rendering'::"text", 'ready'::"text", 'failed'::"text", 'draft'::"text", 'active'::"text", 'archived'::"text"])))
 );
 
@@ -5128,6 +5525,67 @@ CREATE TABLE IF NOT EXISTS "public"."orchestration_decisions" (
 ALTER TABLE "public"."orchestration_decisions" OWNER TO "postgres";
 
 
+CREATE TABLE IF NOT EXISTS "public"."orchestration_runs" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "run_id" "text" NOT NULL,
+    "decision_id" "text" NOT NULL,
+    "user_id" "uuid",
+    "trigger" "text" NOT NULL,
+    "source_room" "text" NOT NULL,
+    "content_kind" "text" NOT NULL,
+    "spawn_mode" "text" DEFAULT 'auto'::"text" NOT NULL,
+    "gate_state" "text" DEFAULT 'auto'::"text" NOT NULL,
+    "worker_count" integer DEFAULT 0 NOT NULL,
+    "run_status" "text" DEFAULT 'queued'::"text" NOT NULL,
+    "input_payload" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL,
+    "decision_payload" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL,
+    "execution_payload" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL,
+    "error_summary" "text",
+    "started_at" timestamp with time zone,
+    "completed_at" timestamp with time zone,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "orchestration_runs_gate_state_check" CHECK (("gate_state" = ANY (ARRAY['auto'::"text", 'approval'::"text"]))),
+    CONSTRAINT "orchestration_runs_run_status_check" CHECK (("run_status" = ANY (ARRAY['queued'::"text", 'running'::"text", 'completed'::"text", 'failed'::"text", 'awaiting_approval'::"text"]))),
+    CONSTRAINT "orchestration_runs_spawn_mode_check" CHECK (("spawn_mode" = ANY (ARRAY['auto'::"text", 'approval'::"text"]))),
+    CONSTRAINT "orchestration_runs_worker_count_check" CHECK (("worker_count" >= 0))
+);
+
+
+ALTER TABLE "public"."orchestration_runs" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."orchestration_runs" IS 'Durable orchestration run envelopes and final execution receipts.';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."orchestration_worker_runs" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "run_id" "text" NOT NULL,
+    "worker_id" "text" NOT NULL,
+    "label" "text" NOT NULL,
+    "status" "text" DEFAULT 'queued'::"text" NOT NULL,
+    "summary" "text" DEFAULT ''::"text" NOT NULL,
+    "depends_on" "text"[] DEFAULT ARRAY[]::"text"[] NOT NULL,
+    "result_payload" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL,
+    "error_summary" "text",
+    "started_at" timestamp with time zone,
+    "completed_at" timestamp with time zone,
+    "duration_ms" integer,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "orchestration_worker_runs_duration_ms_check" CHECK ((("duration_ms" IS NULL) OR ("duration_ms" >= 0))),
+    CONSTRAINT "orchestration_worker_runs_status_check" CHECK (("status" = ANY (ARRAY['queued'::"text", 'running'::"text", 'done'::"text", 'failed'::"text", 'skipped'::"text"])))
+);
+
+
+ALTER TABLE "public"."orchestration_worker_runs" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."orchestration_worker_runs" IS 'Per-worker dependency, status, result, and failure evidence for orchestration runs.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."order_notes" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "order_id" "uuid" NOT NULL,
@@ -5137,22 +5595,6 @@ CREATE TABLE IF NOT EXISTS "public"."order_notes" (
 
 
 ALTER TABLE "public"."order_notes" OWNER TO "postgres";
-
-
-CREATE TABLE IF NOT EXISTS "public"."orders" (
-    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
-    "shopify_order_id" "text",
-    "customer_email" "text" NOT NULL,
-    "customer_name" "text",
-    "product_name" "text",
-    "order_status" "text" DEFAULT 'pending'::"text" NOT NULL,
-    "magic_token" "text" DEFAULT ("gen_random_uuid"())::"text",
-    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
-);
-
-
-ALTER TABLE "public"."orders" OWNER TO "postgres";
 
 
 CREATE OR REPLACE VIEW "public"."pending_embodiment_mutations" WITH ("security_invoker"='true') AS
@@ -5311,7 +5753,7 @@ CREATE TABLE IF NOT EXISTS "public"."profile_ingestion_sources" (
     "raw_text" "text",
     "processing_notes" "text",
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    CONSTRAINT "profile_ingestion_sources_source_type_check" CHECK (("source_type" = ANY (ARRAY['journal'::"text", 'resume'::"text", 'transcript'::"text", 'music_dna'::"text", 'lived_experience'::"text"])))
+    CONSTRAINT "profile_ingestion_sources_source_type_check" CHECK (("source_type" = ANY (ARRAY['journal'::"text", 'transcript'::"text", 'resume'::"text", 'music_dna'::"text", 'profile_upload'::"text", 'lived_experience'::"text"])))
 );
 
 
@@ -5431,11 +5873,22 @@ CREATE TABLE IF NOT EXISTS "public"."render_artifacts" (
     "backend" "text",
     "bytes" bigint,
     "metadata" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL,
-    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "mime_type" "text",
+    "storage_bucket" "text" DEFAULT 'codex-exports'::"text" NOT NULL,
+    "storage_path" "text",
+    "byte_size" bigint,
+    "content_hash" "text",
+    "target_status" "text" DEFAULT 'success'::"text" NOT NULL,
+    CONSTRAINT "render_artifacts_target_status_check" CHECK (("target_status" = ANY (ARRAY['success'::"text", 'failed'::"text", 'unsupported'::"text", 'partial'::"text"])))
 );
 
 
 ALTER TABLE "public"."render_artifacts" OWNER TO "postgres";
+
+
+COMMENT ON COLUMN "public"."render_artifacts"."storage_path" IS 'Private storage object path; clients receive short-lived signed URLs through an authenticated API.';
+
 
 
 CREATE TABLE IF NOT EXISTS "public"."render_jobs" (
@@ -5449,11 +5902,25 @@ CREATE TABLE IF NOT EXISTS "public"."render_jobs" (
     "manifest" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    CONSTRAINT "render_jobs_status_check" CHECK (("status" = ANY (ARRAY['queued'::"text", 'rendering'::"text", 'completed'::"text", 'failed'::"text", 'cancelled'::"text"])))
+    "source_family" "text",
+    "source_id" "text",
+    "targets" "jsonb" DEFAULT '[]'::"jsonb" NOT NULL,
+    "idempotency_key" "text",
+    "request_version" "text" DEFAULT 'gestaltview.render-request.v2'::"text" NOT NULL,
+    CONSTRAINT "render_jobs_status_check" CHECK (("status" = ANY (ARRAY['queued'::"text", 'validating'::"text", 'rendering'::"text", 'storing'::"text", 'ready'::"text", 'failed'::"text", 'cancelled'::"text"]))),
+    CONSTRAINT "render_jobs_targets_array_check" CHECK (("jsonb_typeof"("targets") = 'array'::"text"))
 );
 
 
 ALTER TABLE "public"."render_jobs" OWNER TO "postgres";
+
+
+COMMENT ON COLUMN "public"."render_jobs"."targets" IS 'Requested target contracts. Successful, failed, and unsupported receipts live in manifest.';
+
+
+
+COMMENT ON COLUMN "public"."render_jobs"."idempotency_key" IS 'Server-derived hash of user, source, scene graph, and requested formats.';
+
 
 
 CREATE OR REPLACE VIEW "public"."rich_life_threads" AS
@@ -5472,6 +5939,54 @@ SELECT
 
 
 ALTER VIEW "public"."rich_life_threads" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."runtime_handoff_events" (
+    "event_id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "handoff_id" "uuid" NOT NULL,
+    "owner_id" "uuid" NOT NULL,
+    "from_state" "text",
+    "to_state" "text" NOT NULL,
+    "receipt" "jsonb",
+    "occurred_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "runtime_handoff_events_state_check" CHECK (("to_state" = ANY (ARRAY['prepared'::"text", 'offered'::"text", 'accepted'::"text", 'processing'::"text", 'completed'::"text", 'declined'::"text", 'failed'::"text", 'cancelled'::"text", 'expired'::"text"])))
+);
+
+
+ALTER TABLE "public"."runtime_handoff_events" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."runtime_handoffs" (
+    "handoff_id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "contract_version" "text" DEFAULT 'gestaltview.runtime-handoff.v1'::"text" NOT NULL,
+    "owner_id" "uuid" NOT NULL,
+    "source_room" "text" NOT NULL,
+    "source_entity_type" "text" NOT NULL,
+    "source_entity_id" "text" NOT NULL,
+    "source_revision" "text",
+    "source_ref" "text" NOT NULL,
+    "destination_room" "text" NOT NULL,
+    "requested_action" "text" NOT NULL,
+    "payload" "jsonb" DEFAULT '{"context": {}, "references": []}'::"jsonb" NOT NULL,
+    "selected_embodiments" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
+    "intent" "text" NOT NULL,
+    "state" "text" DEFAULT 'prepared'::"text" NOT NULL,
+    "idempotency_key" "text" NOT NULL,
+    "material_fingerprint" "text" NOT NULL,
+    "provenance" "jsonb" NOT NULL,
+    "receipt" "jsonb",
+    "accepted_at" timestamp with time zone,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "runtime_handoffs_contract_check" CHECK (("contract_version" = 'gestaltview.runtime-handoff.v1'::"text")),
+    CONSTRAINT "runtime_handoffs_destination_room_check" CHECK (("destination_room" = ANY (ARRAY['blackboard'::"text", 'transcriptory'::"text", 'sanctuary'::"text", 'tribunal'::"text", 'creation_corner'::"text", 'artifact_gallery'::"text", 'dynamic_inner_world'::"text", 'external_scaffold'::"text", 'orchestration'::"text"]))),
+    CONSTRAINT "runtime_handoffs_intent_check" CHECK (("intent" = ANY (ARRAY['continue'::"text", 'review'::"text", 'synthesize'::"text", 'render'::"text", 'stage'::"text", 'project'::"text"]))),
+    CONSTRAINT "runtime_handoffs_source_room_check" CHECK (("source_room" = ANY (ARRAY['blackboard'::"text", 'transcriptory'::"text", 'sanctuary'::"text", 'tribunal'::"text", 'creation_corner'::"text", 'artifact_gallery'::"text", 'dynamic_inner_world'::"text", 'external_scaffold'::"text", 'orchestration'::"text"]))),
+    CONSTRAINT "runtime_handoffs_state_check" CHECK (("state" = ANY (ARRAY['prepared'::"text", 'offered'::"text", 'accepted'::"text", 'processing'::"text", 'completed'::"text", 'declined'::"text", 'failed'::"text", 'cancelled'::"text", 'expired'::"text"])))
+);
+
+
+ALTER TABLE "public"."runtime_handoffs" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."scenario_sets" (
@@ -6346,7 +6861,12 @@ CREATE TABLE IF NOT EXISTS "public"."voice_profiles" (
     "consent_notes" "text",
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    CONSTRAINT "voice_profiles_provider_preference_check" CHECK (("provider_preference" = ANY (ARRAY['local'::"text", 'hf'::"text", 'elevenlabs'::"text", 'browser'::"text"])))
+    "provider_config" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL,
+    "review_status" "text" DEFAULT 'proposed'::"text" NOT NULL,
+    "last_auditioned_at" timestamp with time zone,
+    "approved_at" timestamp with time zone,
+    CONSTRAINT "voice_profiles_provider_preference_check" CHECK (("provider_preference" = ANY (ARRAY['local'::"text", 'hf'::"text", 'elevenlabs'::"text", 'browser'::"text", 'deepgram'::"text"]))),
+    CONSTRAINT "voice_profiles_review_status_check" CHECK (("review_status" = ANY (ARRAY['proposed'::"text", 'auditioned'::"text", 'approved'::"text", 'rejected'::"text"])))
 );
 
 
@@ -6607,8 +7127,13 @@ ALTER TABLE ONLY "public"."artifact_provenance_envelopes"
 
 
 
-ALTER TABLE ONLY "public"."artifacts"
+ALTER TABLE ONLY "public"."_deprecated_artifacts"
     ADD CONSTRAINT "artifacts_pkey" PRIMARY KEY ("artifact_id");
+
+
+
+ALTER TABLE ONLY "public"."artifacts"
+    ADD CONSTRAINT "artifacts_pkey1" PRIMARY KEY ("artifact_id");
 
 
 
@@ -6944,11 +7469,6 @@ ALTER TABLE ONLY "public"."gsvw_ingestion_chunks"
 
 ALTER TABLE ONLY "public"."gsvw_ingestion_chunks"
     ADD CONSTRAINT "gsvw_ingestion_chunks_pkey" PRIMARY KEY ("chunk_id");
-
-
-
-ALTER TABLE ONLY "public"."gsvw_ingestion_chunks"
-    ADD CONSTRAINT "gsvw_ingestion_chunks_source_repo_source_path_content_hash_key" UNIQUE ("source_repo", "source_path", "content_hash");
 
 
 
@@ -7307,22 +7827,42 @@ ALTER TABLE ONLY "public"."orchestration_decisions"
 
 
 
+ALTER TABLE ONLY "public"."orchestration_runs"
+    ADD CONSTRAINT "orchestration_runs_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."orchestration_runs"
+    ADD CONSTRAINT "orchestration_runs_run_id_key" UNIQUE ("run_id");
+
+
+
+ALTER TABLE ONLY "public"."orchestration_worker_runs"
+    ADD CONSTRAINT "orchestration_worker_runs_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."orchestration_worker_runs"
+    ADD CONSTRAINT "orchestration_worker_runs_run_id_worker_id_key" UNIQUE ("run_id", "worker_id");
+
+
+
 ALTER TABLE ONLY "public"."order_notes"
     ADD CONSTRAINT "order_notes_pkey" PRIMARY KEY ("id");
 
 
 
-ALTER TABLE ONLY "public"."orders"
+ALTER TABLE ONLY "public"."_deprecated_orders"
     ADD CONSTRAINT "orders_magic_token_key" UNIQUE ("magic_token");
 
 
 
-ALTER TABLE ONLY "public"."orders"
+ALTER TABLE ONLY "public"."_deprecated_orders"
     ADD CONSTRAINT "orders_pkey" PRIMARY KEY ("id");
 
 
 
-ALTER TABLE ONLY "public"."orders"
+ALTER TABLE ONLY "public"."_deprecated_orders"
     ADD CONSTRAINT "orders_shopify_order_id_key" UNIQUE ("shopify_order_id");
 
 
@@ -7424,6 +7964,21 @@ ALTER TABLE ONLY "public"."route_embodiment_assignments"
 
 ALTER TABLE ONLY "public"."route_embodiment_assignments"
     ADD CONSTRAINT "route_embodiment_assignments_route_path_key" UNIQUE ("route_path");
+
+
+
+ALTER TABLE ONLY "public"."runtime_handoff_events"
+    ADD CONSTRAINT "runtime_handoff_events_pkey" PRIMARY KEY ("event_id");
+
+
+
+ALTER TABLE ONLY "public"."runtime_handoffs"
+    ADD CONSTRAINT "runtime_handoffs_owner_idempotency_key" UNIQUE ("owner_id", "idempotency_key");
+
+
+
+ALTER TABLE ONLY "public"."runtime_handoffs"
+    ADD CONSTRAINT "runtime_handoffs_pkey" PRIMARY KEY ("handoff_id");
 
 
 
@@ -7864,7 +8419,7 @@ CREATE INDEX "approvals_run_idx" ON "public"."approvals" USING "btree" ("run_id"
 
 
 
-CREATE INDEX "artifacts_user_created_idx" ON "public"."artifacts" USING "btree" ("user_id", "created_at" DESC);
+CREATE INDEX "artifacts_user_created_idx" ON "public"."_deprecated_artifacts" USING "btree" ("user_id", "created_at" DESC);
 
 
 
@@ -8092,6 +8647,46 @@ CREATE INDEX "gsvw_runtime_capture_events_user_created_idx" ON "public"."gsvw_ru
 
 
 
+CREATE INDEX "human_context_views_subject_idx" ON "public"."human_context_views" USING "btree" ("subject_id", "scope", "updated_at" DESC);
+
+
+
+CREATE INDEX "human_identity_evidence_auth_user_idx" ON "public"."human_identity_evidence" USING "btree" ("auth_user_id", "created_at" DESC);
+
+
+
+CREATE INDEX "human_identity_evidence_subject_idx" ON "public"."human_identity_evidence" USING "btree" ("subject_id", "created_at" DESC);
+
+
+
+CREATE INDEX "human_identity_mutations_status_idx" ON "public"."human_identity_mutations" USING "btree" ("status", "created_at" DESC);
+
+
+
+CREATE INDEX "human_identity_mutations_subject_idx" ON "public"."human_identity_mutations" USING "btree" ("subject_id", "created_at" DESC);
+
+
+
+CREATE INDEX "human_memory_records_auth_user_idx" ON "public"."human_memory_records" USING "btree" ("auth_user_id", "created_at" DESC);
+
+
+
+CREATE INDEX "human_memory_records_content_fts_idx" ON "public"."human_memory_records" USING "gin" ("to_tsvector"('"english"'::"regconfig", ((((COALESCE("title", ''::"text") || ' '::"text") || COALESCE("summary", ''::"text")) || ' '::"text") || COALESCE("detail", ''::"text"))));
+
+
+
+CREATE INDEX "human_memory_records_kind_idx" ON "public"."human_memory_records" USING "btree" ("memory_kind");
+
+
+
+CREATE INDEX "human_memory_records_subject_created_idx" ON "public"."human_memory_records" USING "btree" ("subject_id", "created_at" DESC);
+
+
+
+CREATE INDEX "human_memory_records_tags_idx" ON "public"."human_memory_records" USING "gin" ("tags");
+
+
+
 CREATE INDEX "identity_claims_user_review_idx" ON "public"."identity_claims" USING "btree" ("user_id", "review_state", "created_at" DESC);
 
 
@@ -8229,6 +8824,10 @@ CREATE INDEX "idx_approvals_version_id" ON "public"."approvals" USING "btree" ("
 
 
 CREATE INDEX "idx_artifact_provenance_envelopes_artifactid" ON "public"."artifact_provenance_envelopes" USING "btree" ("artifactid");
+
+
+
+CREATE INDEX "idx_blueprints_user_updated" ON "public"."blueprints" USING "btree" ("user_id", "updated_at" DESC);
 
 
 
@@ -8428,6 +9027,26 @@ CREATE INDEX "idx_gestaltview_module_profiles_module_id" ON "public"."gestaltvie
 
 
 
+CREATE INDEX "idx_gsvw_chunks_canonical_chunk_id" ON "public"."gsvw_ingestion_chunks" USING "btree" ("canonical_chunk_id");
+
+
+
+CREATE INDEX "idx_gsvw_chunks_canonical_repo" ON "public"."gsvw_ingestion_chunks" USING "btree" ("source_repo", "is_canonical") WHERE ("is_canonical" = true);
+
+
+
+CREATE INDEX "idx_gsvw_chunks_embedding_hnsw" ON "public"."gsvw_ingestion_chunks" USING "hnsw" ("embedding" "public"."vector_cosine_ops") WITH ("m"='16', "ef_construction"='64') WHERE (("embedding" IS NOT NULL) AND ("is_canonical" = true));
+
+
+
+CREATE INDEX "idx_gsvw_chunks_search_document_gin" ON "public"."gsvw_ingestion_chunks" USING "gin" ("search_document");
+
+
+
+CREATE INDEX "idx_gsvw_chunks_semantic_hash" ON "public"."gsvw_ingestion_chunks" USING "btree" ("semantic_hash");
+
+
+
 CREATE INDEX "idx_gsvw_dormancy_review_items_chunk_id" ON "public"."gsvw_dormancy_review_items" USING "btree" ("chunk_id");
 
 
@@ -8437,6 +9056,10 @@ CREATE INDEX "idx_gsvw_dormancy_review_items_document_id" ON "public"."gsvw_dorm
 
 
 CREATE INDEX "idx_gsvw_ingestion_chunks_run_id" ON "public"."gsvw_ingestion_chunks" USING "btree" ("run_id");
+
+
+
+CREATE INDEX "idx_gsvw_ingestion_chunks_source_content" ON "public"."gsvw_ingestion_chunks" USING "btree" ("source_repo", "source_path", "content_hash");
 
 
 
@@ -8584,6 +9207,18 @@ CREATE INDEX "idx_models_provider_id" ON "public"."models" USING "btree" ("provi
 
 
 
+CREATE INDEX "idx_orchestration_runs_status_created" ON "public"."orchestration_runs" USING "btree" ("run_status", "created_at" DESC);
+
+
+
+CREATE INDEX "idx_orchestration_runs_user_created" ON "public"."orchestration_runs" USING "btree" ("user_id", "created_at" DESC);
+
+
+
+CREATE INDEX "idx_orchestration_worker_runs_run_status" ON "public"."orchestration_worker_runs" USING "btree" ("run_id", "status", "created_at");
+
+
+
 CREATE INDEX "idx_portrait_inference_queue_run_id" ON "public"."portrait_inference_queue" USING "btree" ("run_id");
 
 
@@ -8725,6 +9360,10 @@ CREATE INDEX "inner_world_artifacts_status_idx" ON "public"."inner_world_artifac
 
 
 CREATE INDEX "inner_world_artifacts_user_id_created_at_idx" ON "public"."inner_world_artifacts" USING "btree" ("user_id", "created_at" DESC);
+
+
+
+CREATE UNIQUE INDEX "inner_world_render_projection_uidx" ON "public"."inner_world_artifacts" USING "btree" ("user_id", "source_ref") WHERE ("source_ref" ~~ 'render-artifact:%'::"text");
 
 
 
@@ -8912,19 +9551,19 @@ CREATE INDEX "order_notes_order_idx" ON "public"."order_notes" USING "btree" ("o
 
 
 
-CREATE INDEX "orders_customer_email_idx" ON "public"."orders" USING "btree" ("customer_email");
+CREATE INDEX "orders_customer_email_idx" ON "public"."_deprecated_orders" USING "btree" ("customer_email");
 
 
 
-CREATE INDEX "orders_magic_token_idx" ON "public"."orders" USING "btree" ("magic_token");
+CREATE INDEX "orders_magic_token_idx" ON "public"."_deprecated_orders" USING "btree" ("magic_token");
 
 
 
-CREATE INDEX "orders_shopify_order_id_idx" ON "public"."orders" USING "btree" ("shopify_order_id");
+CREATE INDEX "orders_shopify_order_id_idx" ON "public"."_deprecated_orders" USING "btree" ("shopify_order_id");
 
 
 
-CREATE INDEX "orders_status_created_idx" ON "public"."orders" USING "btree" ("order_status", "created_at" DESC);
+CREATE INDEX "orders_status_created_idx" ON "public"."_deprecated_orders" USING "btree" ("order_status", "created_at" DESC);
 
 
 
@@ -9016,11 +9655,27 @@ CREATE INDEX "render_artifacts_job_idx" ON "public"."render_artifacts" USING "bt
 
 
 
+CREATE INDEX "render_artifacts_job_user_created_idx" ON "public"."render_artifacts" USING "btree" ("render_job_id", "user_id", "created_at");
+
+
+
+CREATE INDEX "render_artifacts_user_target_created_idx" ON "public"."render_artifacts" USING "btree" ("user_id", "target_status", "created_at" DESC);
+
+
+
 CREATE INDEX "render_jobs_graph_id_idx" ON "public"."render_jobs" USING "btree" ("graph_id");
 
 
 
 CREATE INDEX "render_jobs_user_created_idx" ON "public"."render_jobs" USING "btree" ("user_id", "created_at" DESC);
+
+
+
+CREATE UNIQUE INDEX "render_jobs_user_idempotency_key_uidx" ON "public"."render_jobs" USING "btree" ("user_id", "idempotency_key") WHERE ("idempotency_key" IS NOT NULL);
+
+
+
+CREATE INDEX "render_jobs_user_status_updated_idx" ON "public"."render_jobs" USING "btree" ("user_id", "status", "updated_at" DESC);
 
 
 
@@ -9033,6 +9688,26 @@ CREATE INDEX "resonance_events_subject_idx" ON "public"."resonance_events" USING
 
 
 CREATE INDEX "resonance_events_type_created_idx" ON "public"."resonance_events" USING "btree" ("event_type", "created_at" DESC);
+
+
+
+CREATE INDEX "runtime_handoff_events_handoff_idx" ON "public"."runtime_handoff_events" USING "btree" ("handoff_id", "occurred_at");
+
+
+
+CREATE INDEX "runtime_handoffs_destination_state_idx" ON "public"."runtime_handoffs" USING "btree" ("owner_id", "destination_room", "state", "updated_at" DESC);
+
+
+
+CREATE INDEX "runtime_handoffs_freshness_idx" ON "public"."runtime_handoffs" USING "btree" ("updated_at" DESC);
+
+
+
+CREATE INDEX "runtime_handoffs_owner_state_idx" ON "public"."runtime_handoffs" USING "btree" ("owner_id", "state", "updated_at" DESC);
+
+
+
+CREATE INDEX "runtime_handoffs_source_idx" ON "public"."runtime_handoffs" USING "btree" ("owner_id", "source_room", "source_entity_type", "source_entity_id");
 
 
 
@@ -9438,6 +10113,14 @@ CREATE OR REPLACE TRIGGER "profile_portraits_set_updated_at" BEFORE UPDATE ON "p
 
 
 
+CREATE OR REPLACE TRIGGER "runtime_handoffs_audit" AFTER INSERT OR UPDATE ON "public"."runtime_handoffs" FOR EACH ROW EXECUTE FUNCTION "public"."audit_runtime_handoff_transition"();
+
+
+
+CREATE OR REPLACE TRIGGER "runtime_handoffs_guard" BEFORE UPDATE ON "public"."runtime_handoffs" FOR EACH ROW EXECUTE FUNCTION "public"."guard_runtime_handoff_transition"();
+
+
+
 CREATE OR REPLACE TRIGGER "session_rate_limits_updated_at" BEFORE UPDATE ON "public"."session_rate_limits" FOR EACH ROW EXECUTE FUNCTION "public"."update_updated_at"();
 
 
@@ -9535,6 +10218,10 @@ CREATE OR REPLACE TRIGGER "transcriptory_captures_search_document_trigger" BEFOR
 
 
 CREATE OR REPLACE TRIGGER "transcriptory_captures_set_updated_at" BEFORE UPDATE ON "public"."transcriptory_captures" FOR EACH ROW EXECUTE FUNCTION "public"."set_transcriptory_captures_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "trg_artifacts_touch" BEFORE UPDATE ON "public"."_deprecated_artifacts" FOR EACH ROW EXECUTE FUNCTION "public"."gv_profile_pipeline_touch_updated_at"();
 
 
 
@@ -9881,8 +10568,13 @@ ALTER TABLE ONLY "public"."artifact_provenance_envelopes"
 
 
 
-ALTER TABLE ONLY "public"."artifacts"
+ALTER TABLE ONLY "public"."_deprecated_artifacts"
     ADD CONSTRAINT "artifacts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."artifacts"
+    ADD CONSTRAINT "artifacts_user_id_fkey1" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
 
 
 
@@ -10062,7 +10754,7 @@ ALTER TABLE ONLY "public"."cssm_sessions"
 
 
 ALTER TABLE ONLY "public"."deliverables"
-    ADD CONSTRAINT "deliverables_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "public"."orders"("id") ON DELETE CASCADE;
+    ADD CONSTRAINT "deliverables_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "public"."_deprecated_orders"("id") ON DELETE CASCADE;
 
 
 
@@ -10521,8 +11213,13 @@ ALTER TABLE ONLY "public"."musical_dna_analyses"
 
 
 
+ALTER TABLE ONLY "public"."orchestration_worker_runs"
+    ADD CONSTRAINT "orchestration_worker_runs_run_id_fkey" FOREIGN KEY ("run_id") REFERENCES "public"."orchestration_runs"("run_id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."order_notes"
-    ADD CONSTRAINT "order_notes_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "public"."orders"("id") ON DELETE CASCADE;
+    ADD CONSTRAINT "order_notes_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "public"."_deprecated_orders"("id") ON DELETE CASCADE;
 
 
 
@@ -10623,6 +11320,21 @@ ALTER TABLE ONLY "public"."resonance_events"
 
 ALTER TABLE ONLY "public"."resonance_events"
     ADD CONSTRAINT "resonance_events_pipeline_run_id_fkey" FOREIGN KEY ("pipeline_run_id") REFERENCES "public"."profile_pipeline_runs"("run_id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."runtime_handoff_events"
+    ADD CONSTRAINT "runtime_handoff_events_handoff_id_fkey" FOREIGN KEY ("handoff_id") REFERENCES "public"."runtime_handoffs"("handoff_id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."runtime_handoff_events"
+    ADD CONSTRAINT "runtime_handoff_events_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "auth"."users"("id");
+
+
+
+ALTER TABLE ONLY "public"."runtime_handoffs"
+    ADD CONSTRAINT "runtime_handoffs_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "auth"."users"("id");
 
 
 
@@ -10822,7 +11534,7 @@ ALTER TABLE ONLY "public"."tribunal_sessions"
 
 
 ALTER TABLE ONLY "public"."uploads"
-    ADD CONSTRAINT "uploads_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "public"."orders"("id") ON DELETE CASCADE;
+    ADD CONSTRAINT "uploads_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "public"."_deprecated_orders"("id") ON DELETE CASCADE;
 
 
 
@@ -10876,7 +11588,10 @@ ALTER TABLE ONLY "public"."workspace_documents"
 
 
 
-CREATE POLICY "Magic token read orders" ON "public"."orders" FOR SELECT TO "authenticated", "anon" USING (true);
+ALTER TABLE "gestaltview"."gestaltview" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "Magic token read orders" ON "public"."_deprecated_orders" FOR SELECT TO "authenticated", "anon" USING (true);
 
 
 
@@ -11168,7 +11883,7 @@ CREATE POLICY "Service role full access order_notes" ON "public"."order_notes" T
 
 
 
-CREATE POLICY "Service role full access orders" ON "public"."orders" TO "service_role" USING (true) WITH CHECK (true);
+CREATE POLICY "Service role full access orders" ON "public"."_deprecated_orders" TO "service_role" USING (true) WITH CHECK (true);
 
 
 
@@ -11264,6 +11979,10 @@ CREATE POLICY "Service role full access workspace_rooms" ON "public"."workspace_
 
 
 
+CREATE POLICY "Service role manages artifacts" ON "public"."_deprecated_artifacts" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
 CREATE POLICY "Service role manages artifacts" ON "public"."artifacts" TO "service_role" USING (true) WITH CHECK (true);
 
 
@@ -11352,11 +12071,25 @@ CREATE POLICY "Users can insert own portrait render events" ON "public"."portrai
 
 
 
-CREATE POLICY "Users can manage their own transcriptory captures" ON "public"."transcriptory_captures" USING ((( SELECT "auth"."uid"() AS "uid") = "user_id")) WITH CHECK ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+CREATE POLICY "Users can manage their own transcriptory captures" ON "public"."transcriptory_captures" USING (("auth"."uid"() = "user_id")) WITH CHECK (("auth"."uid"() = "user_id"));
+
+
+
+CREATE POLICY "Users can read own blueprints" ON "public"."blueprints" FOR SELECT TO "authenticated" USING (("user_id" = "auth"."uid"()));
 
 
 
 CREATE POLICY "Users can read own field continuity events" ON "public"."field_continuity_events" FOR SELECT TO "authenticated" USING (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can read own orchestration runs" ON "public"."orchestration_runs" FOR SELECT TO "authenticated" USING (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can read own orchestration worker runs" ON "public"."orchestration_worker_runs" FOR SELECT TO "authenticated" USING ((EXISTS ( SELECT 1
+   FROM "public"."orchestration_runs" "runs"
+  WHERE (("runs"."run_id" = "orchestration_worker_runs"."run_id") AND ("runs"."user_id" = "auth"."uid"())))));
 
 
 
@@ -11392,11 +12125,19 @@ CREATE POLICY "Users can view own portrait queue status" ON "public"."portrait_i
 
 
 
-CREATE POLICY "Users manage their own artifacts" ON "public"."artifacts" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid"))) WITH CHECK (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+CREATE POLICY "Users can write own blueprints" ON "public"."blueprints" TO "authenticated" USING (("user_id" = "auth"."uid"())) WITH CHECK (("user_id" = "auth"."uid"()));
 
 
 
-CREATE POLICY "Users manage their own capture_events" ON "public"."capture_events" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid"))) WITH CHECK (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+CREATE POLICY "Users manage their own artifacts" ON "public"."_deprecated_artifacts" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid"))) WITH CHECK (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+CREATE POLICY "Users manage their own artifacts" ON "public"."artifacts" USING (("user_id" = "auth"."uid"())) WITH CHECK (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users manage their own capture_events" ON "public"."capture_events" USING (("user_id" = "auth"."uid"())) WITH CHECK (("user_id" = "auth"."uid"()));
 
 
 
@@ -11404,7 +12145,7 @@ CREATE POLICY "Users manage their own files" ON "public"."user_files" USING (("u
 
 
 
-CREATE POLICY "Users manage their own identity_claims" ON "public"."identity_claims" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid"))) WITH CHECK (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+CREATE POLICY "Users manage their own identity_claims" ON "public"."identity_claims" USING (("user_id" = "auth"."uid"())) WITH CHECK (("user_id" = "auth"."uid"()));
 
 
 
@@ -11412,32 +12153,38 @@ CREATE POLICY "Users manage their own inner world artifacts" ON "public"."inner_
 
 
 
-CREATE POLICY "Users manage their own scaffold_nodes" ON "public"."scaffold_nodes" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid"))) WITH CHECK (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+CREATE POLICY "Users manage their own scaffold_nodes" ON "public"."scaffold_nodes" USING (("user_id" = "auth"."uid"())) WITH CHECK (("user_id" = "auth"."uid"()));
 
 
 
 CREATE POLICY "Users read linked objects for their runs" ON "public"."profile_pipeline_run_links" FOR SELECT USING ((EXISTS ( SELECT 1
    FROM "public"."profile_pipeline_runs" "runs"
-  WHERE (("runs"."run_id" = "profile_pipeline_run_links"."run_id") AND ("runs"."user_id" = ( SELECT "auth"."uid"() AS "uid"))))));
+  WHERE (("runs"."run_id" = "profile_pipeline_run_links"."run_id") AND ("runs"."user_id" = "auth"."uid"())))));
 
 
 
 CREATE POLICY "Users read own provenance envelopes" ON "public"."provenance_envelopes" FOR SELECT USING (((EXISTS ( SELECT 1
    FROM "public"."capture_events" "capture"
-  WHERE (("provenance_envelopes"."subject_type" = 'capture_event'::"text") AND ("provenance_envelopes"."subject_id" = COALESCE(("to_jsonb"("capture".*) ->> 'capture_id'::"text"), ("to_jsonb"("capture".*) ->> 'id'::"text"))) AND ("capture"."user_id" = ( SELECT "auth"."uid"() AS "uid"))))) OR (EXISTS ( SELECT 1
+  WHERE (("provenance_envelopes"."subject_type" = 'capture_event'::"text") AND ("provenance_envelopes"."subject_id" = COALESCE(("to_jsonb"("capture".*) ->> 'capture_id'::"text"), ("to_jsonb"("capture".*) ->> 'id'::"text"))) AND ("capture"."user_id" = "auth"."uid"())))) OR (EXISTS ( SELECT 1
    FROM "public"."artifacts" "artifact"
-  WHERE (("provenance_envelopes"."subject_type" = 'artifact'::"text") AND ("provenance_envelopes"."subject_id" = COALESCE(("to_jsonb"("artifact".*) ->> 'artifact_id'::"text"), ("to_jsonb"("artifact".*) ->> 'id'::"text"))) AND ("artifact"."user_id" = ( SELECT "auth"."uid"() AS "uid"))))) OR (EXISTS ( SELECT 1
+  WHERE (("provenance_envelopes"."subject_type" = 'artifact'::"text") AND ("provenance_envelopes"."subject_id" = COALESCE(("to_jsonb"("artifact".*) ->> 'artifact_id'::"text"), ("to_jsonb"("artifact".*) ->> 'id'::"text"))) AND ("artifact"."user_id" = "auth"."uid"())))) OR (EXISTS ( SELECT 1
    FROM "public"."scaffold_nodes" "node"
-  WHERE (("provenance_envelopes"."subject_type" = 'scaffold_node'::"text") AND ("provenance_envelopes"."subject_id" = COALESCE(("to_jsonb"("node".*) ->> 'node_id'::"text"), ("to_jsonb"("node".*) ->> 'id'::"text"))) AND ("node"."user_id" = ( SELECT "auth"."uid"() AS "uid")))))));
+  WHERE (("provenance_envelopes"."subject_type" = 'scaffold_node'::"text") AND ("provenance_envelopes"."subject_id" = COALESCE(("to_jsonb"("node".*) ->> 'node_id'::"text"), ("to_jsonb"("node".*) ->> 'id'::"text"))) AND ("node"."user_id" = "auth"."uid"()))))));
 
 
 
-CREATE POLICY "Users read their own profile_pipeline_runs" ON "public"."profile_pipeline_runs" FOR SELECT USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+CREATE POLICY "Users read their own profile_pipeline_runs" ON "public"."profile_pipeline_runs" FOR SELECT USING (("user_id" = "auth"."uid"()));
 
 
 
-CREATE POLICY "Users read their own resonance events" ON "public"."resonance_events" FOR SELECT USING (("owner_user_id" = ( SELECT "auth"."uid"() AS "uid")));
+CREATE POLICY "Users read their own resonance events" ON "public"."resonance_events" FOR SELECT USING (("owner_user_id" = "auth"."uid"()));
 
+
+
+ALTER TABLE "public"."_deprecated_artifacts" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."_deprecated_orders" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."agent_autobiographies" ENABLE ROW LEVEL SECURITY;
@@ -11516,11 +12263,31 @@ CREATE POLICY "authenticated manage embodiment_readiness_scores" ON "public"."em
 
 
 
+CREATE POLICY "authenticated manage own app_users" ON "public"."app_users" TO "authenticated" USING (("id" = ("auth"."uid"())::"text")) WITH CHECK (("id" = ("auth"."uid"())::"text"));
+
+
+
+CREATE POLICY "authenticated manage own billy_sessions" ON "public"."billy_sessions" TO "authenticated" USING (("user_id" = ("auth"."uid"())::"text")) WITH CHECK (("user_id" = ("auth"."uid"())::"text"));
+
+
+
+CREATE POLICY "authenticated manage own bucket_drops" ON "public"."bucket_drops" TO "authenticated" USING (("user_id" = ("auth"."uid"())::"text")) WITH CHECK (("user_id" = ("auth"."uid"())::"text"));
+
+
+
+CREATE POLICY "authenticated manage own consciousness_profiles" ON "public"."consciousness_profiles" TO "authenticated" USING (("user_id" = ("auth"."uid"())::"text")) WITH CHECK (("user_id" = ("auth"."uid"())::"text"));
+
+
+
 CREATE POLICY "authenticated manage own context_injection_packets" ON "public"."context_injection_packets" USING (("auth_user_id" = ( SELECT "auth"."uid"() AS "uid"))) WITH CHECK (("auth_user_id" = ( SELECT "auth"."uid"() AS "uid")));
 
 
 
 CREATE POLICY "authenticated manage own context_injection_rules" ON "public"."context_injection_rules" USING (("auth_user_id" = ( SELECT "auth"."uid"() AS "uid"))) WITH CHECK (("auth_user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
+CREATE POLICY "authenticated manage own founder_context" ON "public"."founder_context" TO "authenticated" USING (("user_id" = "auth"."uid"())) WITH CHECK (("user_id" = "auth"."uid"()));
 
 
 
@@ -11576,11 +12343,135 @@ CREATE POLICY "authenticated manage own identity_subjects" ON "public"."identity
 
 
 
+CREATE POLICY "authenticated manage own memory_entries" ON "public"."memory_entries" TO "authenticated" USING (("user_id" = ("auth"."uid"())::"text")) WITH CHECK (("user_id" = ("auth"."uid"())::"text"));
+
+
+
+CREATE POLICY "authenticated manage own musical_dna_analyses" ON "public"."musical_dna_analyses" TO "authenticated" USING (("user_id" = ("auth"."uid"())::"text")) WITH CHECK (("user_id" = ("auth"."uid"())::"text"));
+
+
+
+CREATE POLICY "authenticated manage own tribunal_sessions" ON "public"."tribunal_sessions" TO "authenticated" USING (("user_id" = ("auth"."uid"())::"text")) WITH CHECK (("user_id" = ("auth"."uid"())::"text"));
+
+
+
+CREATE POLICY "authenticated read agent_versions" ON "public"."agent_versions" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read agents" ON "public"."agents" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read annotation_concepts" ON "public"."annotation_concepts" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read approvals" ON "public"."approvals" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read concepts" ON "public"."concepts" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read deployment_artifacts" ON "public"."deployment_artifacts" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read document_concepts" ON "public"."document_concepts" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read documents" ON "public"."documents" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read embeddings" ON "public"."embeddings" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read eval_results" ON "public"."eval_results" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read eval_rubrics" ON "public"."eval_rubrics" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read knowledge_fragments" ON "public"."knowledge_fragments" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read loom_annotations" ON "public"."loom_annotations" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read model_providers" ON "public"."model_providers" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read models" ON "public"."models" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read own users" ON "public"."users" FOR SELECT TO "authenticated" USING (("id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "authenticated read processing_runs" ON "public"."processing_runs" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read scenario_sets" ON "public"."scenario_sets" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read scenarios" ON "public"."scenarios" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read skill_fragments" ON "public"."skill_fragments" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read skills" ON "public"."skills" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read summaries" ON "public"."summaries" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read trainer_jobs" ON "public"."trainer_jobs" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read training_runs" ON "public"."training_runs" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read training_steps" ON "public"."training_steps" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read tribunal_events" ON "public"."tribunal_events" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "authenticated read tribunal_evidence" ON "public"."tribunal_evidence" FOR SELECT TO "authenticated" USING (true);
+
+
+
 CREATE POLICY "authenticated review own embodiment_mutation_proposals" ON "public"."embodiment_mutation_proposals" FOR SELECT USING ((("submitted_by" = ( SELECT "auth"."uid"() AS "uid")) OR "public"."is_founder_admin_user"(( SELECT "auth"."uid"() AS "uid"))));
 
 
 
 CREATE POLICY "authenticated submit embodiment_mutation_proposals" ON "public"."embodiment_mutation_proposals" FOR INSERT WITH CHECK ((("submitted_by" = ( SELECT "auth"."uid"() AS "uid")) OR ("submitted_by" IS NULL)));
+
+
+
+CREATE POLICY "authenticated update own users" ON "public"."users" FOR UPDATE TO "authenticated" USING (("id" = "auth"."uid"())) WITH CHECK (("id" = "auth"."uid"()));
 
 
 
@@ -11796,19 +12687,19 @@ CREATE POLICY "gestaltview_module_keys_read" ON "public"."gestaltview_module_key
 ALTER TABLE "public"."gestaltview_module_profiles" ENABLE ROW LEVEL SECURITY;
 
 
-CREATE POLICY "gestaltview_module_profiles_delete_own" ON "public"."gestaltview_module_profiles" FOR DELETE USING (("auth_user_id" = ( SELECT "auth"."uid"() AS "uid")));
+CREATE POLICY "gestaltview_module_profiles_delete_own" ON "public"."gestaltview_module_profiles" FOR DELETE TO "authenticated" USING (("auth_user_id" = "auth"."uid"()));
 
 
 
-CREATE POLICY "gestaltview_module_profiles_insert_own" ON "public"."gestaltview_module_profiles" FOR INSERT WITH CHECK (("auth_user_id" = ( SELECT "auth"."uid"() AS "uid")));
+CREATE POLICY "gestaltview_module_profiles_insert_own" ON "public"."gestaltview_module_profiles" FOR INSERT TO "authenticated" WITH CHECK (("auth_user_id" = "auth"."uid"()));
 
 
 
-CREATE POLICY "gestaltview_module_profiles_select_own" ON "public"."gestaltview_module_profiles" FOR SELECT USING ((("auth_user_id" = ( SELECT "auth"."uid"() AS "uid")) OR ("visibility" = ANY (ARRAY['shared_with_permission'::"public"."gestaltview_module_profile_visibility", 'shared'::"public"."gestaltview_module_profile_visibility"]))));
+CREATE POLICY "gestaltview_module_profiles_select_own" ON "public"."gestaltview_module_profiles" FOR SELECT TO "authenticated" USING ((("auth_user_id" = "auth"."uid"()) OR ("visibility" = ANY (ARRAY['shared_with_permission'::"public"."gestaltview_module_profile_visibility", 'shared'::"public"."gestaltview_module_profile_visibility"]))));
 
 
 
-CREATE POLICY "gestaltview_module_profiles_update_own" ON "public"."gestaltview_module_profiles" FOR UPDATE USING (("auth_user_id" = ( SELECT "auth"."uid"() AS "uid"))) WITH CHECK (("auth_user_id" = ( SELECT "auth"."uid"() AS "uid")));
+CREATE POLICY "gestaltview_module_profiles_update_own" ON "public"."gestaltview_module_profiles" FOR UPDATE TO "authenticated" USING (("auth_user_id" = "auth"."uid"())) WITH CHECK (("auth_user_id" = "auth"."uid"()));
 
 
 
@@ -11988,10 +12879,13 @@ ALTER TABLE "public"."ops_workbook_sync_runs" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."orchestration_decisions" ENABLE ROW LEVEL SECURITY;
 
 
+ALTER TABLE "public"."orchestration_runs" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."orchestration_worker_runs" ENABLE ROW LEVEL SECURITY;
+
+
 ALTER TABLE "public"."order_notes" ENABLE ROW LEVEL SECURITY;
-
-
-ALTER TABLE "public"."orders" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."portrait_dimensions" ENABLE ROW LEVEL SECURITY;
@@ -12066,6 +12960,20 @@ ALTER TABLE "public"."resonance_events" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."route_embodiment_assignments" ENABLE ROW LEVEL SECURITY;
 
 
+ALTER TABLE "public"."runtime_handoff_events" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "runtime_handoff_events_select_own" ON "public"."runtime_handoff_events" FOR SELECT TO "authenticated" USING ((( SELECT "auth"."uid"() AS "uid") = "owner_id"));
+
+
+
+ALTER TABLE "public"."runtime_handoffs" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "runtime_handoffs_select_own" ON "public"."runtime_handoffs" FOR SELECT TO "authenticated" USING ((( SELECT "auth"."uid"() AS "uid") = "owner_id"));
+
+
+
 ALTER TABLE "public"."scaffold_nodes" ENABLE ROW LEVEL SECURITY;
 
 
@@ -12094,11 +13002,75 @@ CREATE POLICY "service role full access embodiment_review_log" ON "public"."embo
 
 
 
+CREATE POLICY "service_role full access agent_versions" ON "public"."agent_versions" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access agents" ON "public"."agents" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access annotation_concepts" ON "public"."annotation_concepts" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access app_users" ON "public"."app_users" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access approvals" ON "public"."approvals" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access billy_sessions" ON "public"."billy_sessions" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access bucket_drops" ON "public"."bucket_drops" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access concepts" ON "public"."concepts" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access consciousness_profiles" ON "public"."consciousness_profiles" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
 CREATE POLICY "service_role full access context_injection_packets" ON "public"."context_injection_packets" TO "service_role" USING (true) WITH CHECK (true);
 
 
 
 CREATE POLICY "service_role full access context_injection_rules" ON "public"."context_injection_rules" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access deployment_artifacts" ON "public"."deployment_artifacts" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access document_concepts" ON "public"."document_concepts" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access documents" ON "public"."documents" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access embeddings" ON "public"."embeddings" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access eval_results" ON "public"."eval_results" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access eval_rubrics" ON "public"."eval_rubrics" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access founder_context" ON "public"."founder_context" TO "service_role" USING (true) WITH CHECK (true);
 
 
 
@@ -12151,6 +13123,82 @@ CREATE POLICY "service_role full access human_relationship_edges" ON "public"."h
 
 
 CREATE POLICY "service_role full access identity_subjects" ON "public"."identity_subjects" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access knowledge_fragments" ON "public"."knowledge_fragments" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access loom_annotations" ON "public"."loom_annotations" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access memory_entries" ON "public"."memory_entries" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access model_providers" ON "public"."model_providers" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access models" ON "public"."models" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access musical_dna_analyses" ON "public"."musical_dna_analyses" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access processing_runs" ON "public"."processing_runs" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access scenario_sets" ON "public"."scenario_sets" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access scenarios" ON "public"."scenarios" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access skill_fragments" ON "public"."skill_fragments" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access skills" ON "public"."skills" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access summaries" ON "public"."summaries" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access trainer_jobs" ON "public"."trainer_jobs" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access training_runs" ON "public"."training_runs" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access training_steps" ON "public"."training_steps" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access tribunal_events" ON "public"."tribunal_events" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access tribunal_evidence" ON "public"."tribunal_evidence" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access tribunal_sessions" ON "public"."tribunal_sessions" TO "service_role" USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "service_role full access users" ON "public"."users" TO "service_role" USING (true) WITH CHECK (true);
 
 
 
@@ -12238,38 +13286,38 @@ ALTER TABLE "public"."transcriptory_captures" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."transcriptory_sessions" ENABLE ROW LEVEL SECURITY;
 
 
-CREATE POLICY "transcriptory_sessions_delete_own" ON "public"."transcriptory_sessions" FOR DELETE USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+CREATE POLICY "transcriptory_sessions_delete_own" ON "public"."transcriptory_sessions" FOR DELETE TO "authenticated" USING (("auth"."uid"() = "user_id"));
 
 
 
-CREATE POLICY "transcriptory_sessions_insert_own" ON "public"."transcriptory_sessions" FOR INSERT WITH CHECK ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+CREATE POLICY "transcriptory_sessions_insert_own" ON "public"."transcriptory_sessions" FOR INSERT TO "authenticated" WITH CHECK (("auth"."uid"() = "user_id"));
 
 
 
-CREATE POLICY "transcriptory_sessions_select_own" ON "public"."transcriptory_sessions" FOR SELECT USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+CREATE POLICY "transcriptory_sessions_select_own" ON "public"."transcriptory_sessions" FOR SELECT TO "authenticated" USING (("auth"."uid"() = "user_id"));
 
 
 
-CREATE POLICY "transcriptory_sessions_update_own" ON "public"."transcriptory_sessions" FOR UPDATE USING ((( SELECT "auth"."uid"() AS "uid") = "user_id")) WITH CHECK ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+CREATE POLICY "transcriptory_sessions_update_own" ON "public"."transcriptory_sessions" FOR UPDATE TO "authenticated" USING (("auth"."uid"() = "user_id")) WITH CHECK (("auth"."uid"() = "user_id"));
 
 
 
 ALTER TABLE "public"."transcriptory_sources" ENABLE ROW LEVEL SECURITY;
 
 
-CREATE POLICY "transcriptory_sources_delete_own" ON "public"."transcriptory_sources" FOR DELETE USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+CREATE POLICY "transcriptory_sources_delete_own" ON "public"."transcriptory_sources" FOR DELETE TO "authenticated" USING (("auth"."uid"() = "user_id"));
 
 
 
-CREATE POLICY "transcriptory_sources_insert_own" ON "public"."transcriptory_sources" FOR INSERT WITH CHECK ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+CREATE POLICY "transcriptory_sources_insert_own" ON "public"."transcriptory_sources" FOR INSERT TO "authenticated" WITH CHECK (("auth"."uid"() = "user_id"));
 
 
 
-CREATE POLICY "transcriptory_sources_select_own" ON "public"."transcriptory_sources" FOR SELECT USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+CREATE POLICY "transcriptory_sources_select_own" ON "public"."transcriptory_sources" FOR SELECT TO "authenticated" USING (("auth"."uid"() = "user_id"));
 
 
 
-CREATE POLICY "transcriptory_sources_update_own" ON "public"."transcriptory_sources" FOR UPDATE USING ((( SELECT "auth"."uid"() AS "uid") = "user_id")) WITH CHECK ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+CREATE POLICY "transcriptory_sources_update_own" ON "public"."transcriptory_sources" FOR UPDATE TO "authenticated" USING (("auth"."uid"() = "user_id")) WITH CHECK (("auth"."uid"() = "user_id"));
 
 
 
@@ -12303,7 +13351,7 @@ ALTER TABLE "public"."user_profile_ingestion_runs" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."users" ENABLE ROW LEVEL SECURITY;
 
 
-CREATE POLICY "users see own masterclass progress" ON "public"."masterclass_progress" FOR SELECT USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+CREATE POLICY "users see own masterclass progress" ON "public"."masterclass_progress" USING (("auth"."uid"() = "user_id"));
 
 
 
@@ -13010,6 +14058,17 @@ GRANT ALL ON FUNCTION "public"."vector"("public"."vector", integer, boolean) TO 
 
 
 
+REVOKE ALL ON FUNCTION "public"."apply_gsvw_embeddings"("p_items" "jsonb", "p_model" "text", "p_backend" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."apply_gsvw_embeddings"("p_items" "jsonb", "p_model" "text", "p_backend" "text") TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."audit_runtime_handoff_transition"() TO "anon";
+GRANT ALL ON FUNCTION "public"."audit_runtime_handoff_transition"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."audit_runtime_handoff_transition"() TO "service_role";
+
+
+
 GRANT ALL ON FUNCTION "public"."auto_approve_family_contributions"() TO "anon";
 GRANT ALL ON FUNCTION "public"."auto_approve_family_contributions"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."auto_approve_family_contributions"() TO "service_role";
@@ -13032,22 +14091,16 @@ GRANT ALL ON FUNCTION "public"."binary_quantize"("public"."vector") TO "service_
 
 REVOKE ALL ON FUNCTION "public"."check_portrait_threshold_on_bucket_drop"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."check_portrait_threshold_on_bucket_drop"() TO "service_role";
-GRANT ALL ON FUNCTION "public"."check_portrait_threshold_on_bucket_drop"() TO "anon";
-GRANT ALL ON FUNCTION "public"."check_portrait_threshold_on_bucket_drop"() TO "authenticated";
 
 
 
 REVOKE ALL ON FUNCTION "public"."claim_codex_jobs"("batch_size" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."claim_codex_jobs"("batch_size" integer) TO "service_role";
-GRANT ALL ON FUNCTION "public"."claim_codex_jobs"("batch_size" integer) TO "anon";
-GRANT ALL ON FUNCTION "public"."claim_codex_jobs"("batch_size" integer) TO "authenticated";
 
 
 
 REVOKE ALL ON FUNCTION "public"."claim_trainer_job"("_worker_id" "text", "_lease_seconds" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."claim_trainer_job"("_worker_id" "text", "_lease_seconds" integer) TO "service_role";
-GRANT ALL ON FUNCTION "public"."claim_trainer_job"("_worker_id" "text", "_lease_seconds" integer) TO "anon";
-GRANT ALL ON FUNCTION "public"."claim_trainer_job"("_worker_id" "text", "_lease_seconds" integer) TO "authenticated";
 
 
 
@@ -13079,7 +14132,7 @@ GRANT ALL ON FUNCTION "public"."cosine_distance"("public"."vector", "public"."ve
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."gestaltview_module_profiles" TO "anon";
+GRANT ALL ON TABLE "public"."gestaltview_module_profiles" TO "anon";
 GRANT ALL ON TABLE "public"."gestaltview_module_profiles" TO "authenticated";
 GRANT ALL ON TABLE "public"."gestaltview_module_profiles" TO "service_role";
 
@@ -13093,27 +14146,25 @@ GRANT ALL ON FUNCTION "public"."gestaltview_get_module_profile"("p_subject_id" "
 
 REVOKE ALL ON FUNCTION "public"."gestaltview_upsert_module_profile"("p_subject_id" "uuid", "p_auth_user_id" "uuid", "p_module_key" "text", "p_payload" "jsonb", "p_source_notes" "text"[], "p_merge_strategy" "text", "p_visibility" "public"."gestaltview_module_profile_visibility") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."gestaltview_upsert_module_profile"("p_subject_id" "uuid", "p_auth_user_id" "uuid", "p_module_key" "text", "p_payload" "jsonb", "p_source_notes" "text"[], "p_merge_strategy" "text", "p_visibility" "public"."gestaltview_module_profile_visibility") TO "service_role";
-GRANT ALL ON FUNCTION "public"."gestaltview_upsert_module_profile"("p_subject_id" "uuid", "p_auth_user_id" "uuid", "p_module_key" "text", "p_payload" "jsonb", "p_source_notes" "text"[], "p_merge_strategy" "text", "p_visibility" "public"."gestaltview_module_profile_visibility") TO "anon";
-GRANT ALL ON FUNCTION "public"."gestaltview_upsert_module_profile"("p_subject_id" "uuid", "p_auth_user_id" "uuid", "p_module_key" "text", "p_payload" "jsonb", "p_source_notes" "text"[], "p_merge_strategy" "text", "p_visibility" "public"."gestaltview_module_profile_visibility") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."get_active_orchestration_context_v1"("p_auth_user_id" "uuid", "p_surface" "public"."context_surface_kind", "p_limit" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."get_active_orchestration_context_v1"("p_auth_user_id" "uuid", "p_surface" "public"."context_surface_kind", "p_limit" integer) TO "service_role";
 
 
 
 REVOKE ALL ON FUNCTION "public"."get_current_portrait_version"("p_user_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."get_current_portrait_version"("p_user_id" "uuid") TO "service_role";
-GRANT ALL ON FUNCTION "public"."get_current_portrait_version"("p_user_id" "uuid") TO "anon";
-GRANT ALL ON FUNCTION "public"."get_current_portrait_version"("p_user_id" "uuid") TO "authenticated";
 
 
 
 REVOKE ALL ON FUNCTION "public"."get_portrait_signal_count"("p_user_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."get_portrait_signal_count"("p_user_id" "uuid") TO "service_role";
-GRANT ALL ON FUNCTION "public"."get_portrait_signal_count"("p_user_id" "uuid") TO "anon";
-GRANT ALL ON FUNCTION "public"."get_portrait_signal_count"("p_user_id" "uuid") TO "authenticated";
 
 
 
-GRANT ALL ON FUNCTION "public"."get_schema_dashboard_snapshot"() TO "anon";
-GRANT ALL ON FUNCTION "public"."get_schema_dashboard_snapshot"() TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."get_schema_dashboard_snapshot"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."get_schema_dashboard_snapshot"() TO "service_role";
 
 
@@ -13146,10 +14197,13 @@ GRANT ALL ON FUNCTION "public"."gin_trgm_triconsistent"("internal", smallint, "t
 
 
 
+REVOKE ALL ON FUNCTION "public"."gsvw_bulk_update_chunk_embeddings"("p_rows" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."gsvw_bulk_update_chunk_embeddings"("p_rows" "jsonb") TO "service_role";
+
+
+
 REVOKE ALL ON FUNCTION "public"."gsvw_mark_document_seen"("p_source_repo" "text", "p_source_path" "text", "p_content_hash" "text", "p_run_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."gsvw_mark_document_seen"("p_source_repo" "text", "p_source_path" "text", "p_content_hash" "text", "p_run_id" "uuid") TO "service_role";
-GRANT ALL ON FUNCTION "public"."gsvw_mark_document_seen"("p_source_repo" "text", "p_source_path" "text", "p_content_hash" "text", "p_run_id" "uuid") TO "anon";
-GRANT ALL ON FUNCTION "public"."gsvw_mark_document_seen"("p_source_repo" "text", "p_source_path" "text", "p_content_hash" "text", "p_run_id" "uuid") TO "authenticated";
 
 
 
@@ -13222,6 +14276,12 @@ GRANT ALL ON FUNCTION "public"."gtrgm_union"("internal", "internal") TO "service
 
 
 
+GRANT ALL ON FUNCTION "public"."guard_runtime_handoff_transition"() TO "anon";
+GRANT ALL ON FUNCTION "public"."guard_runtime_handoff_transition"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."guard_runtime_handoff_transition"() TO "service_role";
+
+
+
 GRANT ALL ON TABLE "public"."scaffold_nodes" TO "anon";
 GRANT ALL ON TABLE "public"."scaffold_nodes" TO "authenticated";
 GRANT ALL ON TABLE "public"."scaffold_nodes" TO "service_role";
@@ -13230,8 +14290,6 @@ GRANT ALL ON TABLE "public"."scaffold_nodes" TO "service_role";
 
 REVOKE ALL ON FUNCTION "public"."gv_approve_scaffold_node"("p_node_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."gv_approve_scaffold_node"("p_node_id" "uuid") TO "service_role";
-GRANT ALL ON FUNCTION "public"."gv_approve_scaffold_node"("p_node_id" "uuid") TO "anon";
-GRANT ALL ON FUNCTION "public"."gv_approve_scaffold_node"("p_node_id" "uuid") TO "authenticated";
 
 
 
@@ -13243,8 +14301,6 @@ GRANT ALL ON TABLE "public"."provenance_envelopes" TO "service_role";
 
 REVOKE ALL ON FUNCTION "public"."gv_attach_provenance_envelope"("p_subject_type" "text", "p_subject_id" "text", "p_content_hash" "text", "p_source_capture_ids" "uuid"[], "p_source_artifact_ids" "uuid"[], "p_source_scaffold_node_ids" "uuid"[], "p_pipeline_run_id" "uuid", "p_operations" "text"[], "p_privacy_class" "text", "p_consent_state" "jsonb", "p_metadata" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."gv_attach_provenance_envelope"("p_subject_type" "text", "p_subject_id" "text", "p_content_hash" "text", "p_source_capture_ids" "uuid"[], "p_source_artifact_ids" "uuid"[], "p_source_scaffold_node_ids" "uuid"[], "p_pipeline_run_id" "uuid", "p_operations" "text"[], "p_privacy_class" "text", "p_consent_state" "jsonb", "p_metadata" "jsonb") TO "service_role";
-GRANT ALL ON FUNCTION "public"."gv_attach_provenance_envelope"("p_subject_type" "text", "p_subject_id" "text", "p_content_hash" "text", "p_source_capture_ids" "uuid"[], "p_source_artifact_ids" "uuid"[], "p_source_scaffold_node_ids" "uuid"[], "p_pipeline_run_id" "uuid", "p_operations" "text"[], "p_privacy_class" "text", "p_consent_state" "jsonb", "p_metadata" "jsonb") TO "anon";
-GRANT ALL ON FUNCTION "public"."gv_attach_provenance_envelope"("p_subject_type" "text", "p_subject_id" "text", "p_content_hash" "text", "p_source_capture_ids" "uuid"[], "p_source_artifact_ids" "uuid"[], "p_source_scaffold_node_ids" "uuid"[], "p_pipeline_run_id" "uuid", "p_operations" "text"[], "p_privacy_class" "text", "p_consent_state" "jsonb", "p_metadata" "jsonb") TO "authenticated";
 
 
 
@@ -13256,8 +14312,6 @@ GRANT ALL ON TABLE "public"."profile_pipeline_runs" TO "service_role";
 
 REVOKE ALL ON FUNCTION "public"."gv_begin_profile_pipeline_run"("p_user_id" "uuid", "p_run_type" "text", "p_input_summary" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."gv_begin_profile_pipeline_run"("p_user_id" "uuid", "p_run_type" "text", "p_input_summary" "jsonb") TO "service_role";
-GRANT ALL ON FUNCTION "public"."gv_begin_profile_pipeline_run"("p_user_id" "uuid", "p_run_type" "text", "p_input_summary" "jsonb") TO "anon";
-GRANT ALL ON FUNCTION "public"."gv_begin_profile_pipeline_run"("p_user_id" "uuid", "p_run_type" "text", "p_input_summary" "jsonb") TO "authenticated";
 
 
 
@@ -13269,8 +14323,6 @@ GRANT ALL ON FUNCTION "public"."gv_capture_events_guard"() TO "service_role";
 
 REVOKE ALL ON FUNCTION "public"."gv_complete_profile_pipeline_run"("p_run_id" "uuid", "p_status" "text", "p_output_summary" "jsonb", "p_error_message" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."gv_complete_profile_pipeline_run"("p_run_id" "uuid", "p_status" "text", "p_output_summary" "jsonb", "p_error_message" "text") TO "service_role";
-GRANT ALL ON FUNCTION "public"."gv_complete_profile_pipeline_run"("p_run_id" "uuid", "p_status" "text", "p_output_summary" "jsonb", "p_error_message" "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."gv_complete_profile_pipeline_run"("p_run_id" "uuid", "p_status" "text", "p_output_summary" "jsonb", "p_error_message" "text") TO "authenticated";
 
 
 
@@ -13282,15 +14334,11 @@ GRANT ALL ON TABLE "public"."identity_claims" TO "service_role";
 
 REVOKE ALL ON FUNCTION "public"."gv_create_identity_claim"("p_user_id" "uuid", "p_claim_text" "text", "p_evidence_artifact_ids" "uuid"[], "p_evidence_scaffold_node_ids" "uuid"[], "p_metadata" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."gv_create_identity_claim"("p_user_id" "uuid", "p_claim_text" "text", "p_evidence_artifact_ids" "uuid"[], "p_evidence_scaffold_node_ids" "uuid"[], "p_metadata" "jsonb") TO "service_role";
-GRANT ALL ON FUNCTION "public"."gv_create_identity_claim"("p_user_id" "uuid", "p_claim_text" "text", "p_evidence_artifact_ids" "uuid"[], "p_evidence_scaffold_node_ids" "uuid"[], "p_metadata" "jsonb") TO "anon";
-GRANT ALL ON FUNCTION "public"."gv_create_identity_claim"("p_user_id" "uuid", "p_claim_text" "text", "p_evidence_artifact_ids" "uuid"[], "p_evidence_scaffold_node_ids" "uuid"[], "p_metadata" "jsonb") TO "authenticated";
 
 
 
 REVOKE ALL ON FUNCTION "public"."gv_create_pending_scaffold_node"("p_user_id" "uuid", "p_title" "text", "p_body" "text", "p_source_capture_ids" "uuid"[], "p_source_artifact_ids" "uuid"[], "p_metadata" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."gv_create_pending_scaffold_node"("p_user_id" "uuid", "p_title" "text", "p_body" "text", "p_source_capture_ids" "uuid"[], "p_source_artifact_ids" "uuid"[], "p_metadata" "jsonb") TO "service_role";
-GRANT ALL ON FUNCTION "public"."gv_create_pending_scaffold_node"("p_user_id" "uuid", "p_title" "text", "p_body" "text", "p_source_capture_ids" "uuid"[], "p_source_artifact_ids" "uuid"[], "p_metadata" "jsonb") TO "anon";
-GRANT ALL ON FUNCTION "public"."gv_create_pending_scaffold_node"("p_user_id" "uuid", "p_title" "text", "p_body" "text", "p_source_capture_ids" "uuid"[], "p_source_artifact_ids" "uuid"[], "p_metadata" "jsonb") TO "authenticated";
 
 
 
@@ -13302,8 +14350,6 @@ GRANT ALL ON TABLE "public"."resonance_events" TO "service_role";
 
 REVOKE ALL ON FUNCTION "public"."gv_emit_resonance_event"("p_event_type" "text", "p_actor_type" "text", "p_owner_user_id" "uuid", "p_subject_type" "text", "p_subject_id" "text", "p_room" "text", "p_pipeline_run_id" "uuid", "p_consent_state" "jsonb", "p_provenance" "jsonb", "p_payload" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."gv_emit_resonance_event"("p_event_type" "text", "p_actor_type" "text", "p_owner_user_id" "uuid", "p_subject_type" "text", "p_subject_id" "text", "p_room" "text", "p_pipeline_run_id" "uuid", "p_consent_state" "jsonb", "p_provenance" "jsonb", "p_payload" "jsonb") TO "service_role";
-GRANT ALL ON FUNCTION "public"."gv_emit_resonance_event"("p_event_type" "text", "p_actor_type" "text", "p_owner_user_id" "uuid", "p_subject_type" "text", "p_subject_id" "text", "p_room" "text", "p_pipeline_run_id" "uuid", "p_consent_state" "jsonb", "p_provenance" "jsonb", "p_payload" "jsonb") TO "anon";
-GRANT ALL ON FUNCTION "public"."gv_emit_resonance_event"("p_event_type" "text", "p_actor_type" "text", "p_owner_user_id" "uuid", "p_subject_type" "text", "p_subject_id" "text", "p_room" "text", "p_pipeline_run_id" "uuid", "p_consent_state" "jsonb", "p_provenance" "jsonb", "p_payload" "jsonb") TO "authenticated";
 
 
 
@@ -13315,8 +14361,6 @@ GRANT ALL ON TABLE "public"."profile_pipeline_run_links" TO "service_role";
 
 REVOKE ALL ON FUNCTION "public"."gv_link_pipeline_object"("p_run_id" "uuid", "p_object_type" "text", "p_object_id" "text", "p_link_role" "text", "p_metadata" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."gv_link_pipeline_object"("p_run_id" "uuid", "p_object_type" "text", "p_object_id" "text", "p_link_role" "text", "p_metadata" "jsonb") TO "service_role";
-GRANT ALL ON FUNCTION "public"."gv_link_pipeline_object"("p_run_id" "uuid", "p_object_type" "text", "p_object_id" "text", "p_link_role" "text", "p_metadata" "jsonb") TO "anon";
-GRANT ALL ON FUNCTION "public"."gv_link_pipeline_object"("p_run_id" "uuid", "p_object_type" "text", "p_object_id" "text", "p_link_role" "text", "p_metadata" "jsonb") TO "authenticated";
 
 
 
@@ -13326,7 +14370,7 @@ GRANT ALL ON FUNCTION "public"."gv_profile_pipeline_touch_updated_at"() TO "serv
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."capture_events" TO "anon";
+GRANT ALL ON TABLE "public"."capture_events" TO "anon";
 GRANT ALL ON TABLE "public"."capture_events" TO "authenticated";
 GRANT ALL ON TABLE "public"."capture_events" TO "service_role";
 
@@ -13334,8 +14378,6 @@ GRANT ALL ON TABLE "public"."capture_events" TO "service_role";
 
 REVOKE ALL ON FUNCTION "public"."gv_record_capture_event"("p_user_id" "uuid", "p_room" "text", "p_source_type" "text", "p_original_text" "text", "p_consent_state" "jsonb", "p_metadata" "jsonb") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."gv_record_capture_event"("p_user_id" "uuid", "p_room" "text", "p_source_type" "text", "p_original_text" "text", "p_consent_state" "jsonb", "p_metadata" "jsonb") TO "service_role";
-GRANT ALL ON FUNCTION "public"."gv_record_capture_event"("p_user_id" "uuid", "p_room" "text", "p_source_type" "text", "p_original_text" "text", "p_consent_state" "jsonb", "p_metadata" "jsonb") TO "anon";
-GRANT ALL ON FUNCTION "public"."gv_record_capture_event"("p_user_id" "uuid", "p_room" "text", "p_source_type" "text", "p_original_text" "text", "p_consent_state" "jsonb", "p_metadata" "jsonb") TO "authenticated";
 
 
 
@@ -13467,8 +14509,6 @@ GRANT ALL ON FUNCTION "public"."hamming_distance"(bit, bit) TO "service_role";
 
 REVOKE ALL ON FUNCTION "public"."handle_new_user"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "service_role";
-GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "anon";
-GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "authenticated";
 
 
 
@@ -13480,8 +14520,6 @@ GRANT ALL ON FUNCTION "public"."has_valid_subscription_access"("p_user_id" "uuid
 
 REVOKE ALL ON FUNCTION "public"."heartbeat_trainer_worker"("_worker_id" "text", "_job_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."heartbeat_trainer_worker"("_worker_id" "text", "_job_id" "uuid") TO "service_role";
-GRANT ALL ON FUNCTION "public"."heartbeat_trainer_worker"("_worker_id" "text", "_job_id" "uuid") TO "anon";
-GRANT ALL ON FUNCTION "public"."heartbeat_trainer_worker"("_worker_id" "text", "_job_id" "uuid") TO "authenticated";
 
 
 
@@ -13651,6 +14689,16 @@ GRANT ALL ON FUNCTION "public"."l2_normalize"("public"."vector") TO "service_rol
 
 
 
+REVOKE ALL ON FUNCTION "public"."match_gsvw_chunks"("query_embedding" "public"."vector", "match_count" integer, "min_similarity" double precision, "filter_repo" "text", "filter_document_type" "text", "filter_tags" "text"[]) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."match_gsvw_chunks"("query_embedding" "public"."vector", "match_count" integer, "min_similarity" double precision, "filter_repo" "text", "filter_document_type" "text", "filter_tags" "text"[]) TO "service_role";
+
+
+
+REVOKE ALL ON FUNCTION "public"."match_gsvw_orchestration_context_v1"("p_query_embedding" "public"."vector", "p_match_count" integer, "p_source_repo" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."match_gsvw_orchestration_context_v1"("p_query_embedding" "public"."vector", "p_match_count" integer, "p_source_repo" "text") TO "service_role";
+
+
+
 GRANT ALL ON FUNCTION "public"."match_knowledge_fragments"("query_embedding" "public"."vector", "match_count" integer, "filter_type" "text", "filter_package" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."match_knowledge_fragments"("query_embedding" "public"."vector", "match_count" integer, "filter_type" "text", "filter_package" "text") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."match_knowledge_fragments"("query_embedding" "public"."vector", "match_count" integer, "filter_type" "text", "filter_package" "text") TO "service_role";
@@ -13689,22 +14737,16 @@ GRANT ALL ON FUNCTION "public"."matchknowledgefragments"("queryembedding" "publi
 
 REVOKE ALL ON FUNCTION "public"."maybe_queue_portrait_cadence"("p_user_id" "uuid", "p_priority" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."maybe_queue_portrait_cadence"("p_user_id" "uuid", "p_priority" integer) TO "service_role";
-GRANT ALL ON FUNCTION "public"."maybe_queue_portrait_cadence"("p_user_id" "uuid", "p_priority" integer) TO "anon";
-GRANT ALL ON FUNCTION "public"."maybe_queue_portrait_cadence"("p_user_id" "uuid", "p_priority" integer) TO "authenticated";
 
 
 
 REVOKE ALL ON FUNCTION "public"."maybe_queue_portrait_inference"("p_user_id" "uuid", "p_threshold" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."maybe_queue_portrait_inference"("p_user_id" "uuid", "p_threshold" integer) TO "service_role";
-GRANT ALL ON FUNCTION "public"."maybe_queue_portrait_inference"("p_user_id" "uuid", "p_threshold" integer) TO "anon";
-GRANT ALL ON FUNCTION "public"."maybe_queue_portrait_inference"("p_user_id" "uuid", "p_threshold" integer) TO "authenticated";
 
 
 
 REVOKE ALL ON FUNCTION "public"."repair_stale_trainer_jobs"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."repair_stale_trainer_jobs"() TO "service_role";
-GRANT ALL ON FUNCTION "public"."repair_stale_trainer_jobs"() TO "anon";
-GRANT ALL ON FUNCTION "public"."repair_stale_trainer_jobs"() TO "authenticated";
 
 
 
@@ -13723,8 +14765,11 @@ GRANT ALL ON FUNCTION "public"."resolve_route_embodiment_assignment"("p_route_pa
 
 REVOKE ALL ON FUNCTION "public"."rls_auto_enable"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."rls_auto_enable"() TO "service_role";
-GRANT ALL ON FUNCTION "public"."rls_auto_enable"() TO "anon";
-GRANT ALL ON FUNCTION "public"."rls_auto_enable"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."search_gsvw_orchestration_context_v1"("p_query_text" "text", "p_match_count" integer, "p_source_repo" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."search_gsvw_orchestration_context_v1"("p_query_text" "text", "p_match_count" integer, "p_source_repo" "text") TO "service_role";
 
 
 
@@ -14017,7 +15062,6 @@ GRANT ALL ON TABLE "public"."masterclass_progress" TO "service_role";
 REVOKE ALL ON FUNCTION "public"."upsert_masterclass_session"("p_embodiment_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."upsert_masterclass_session"("p_embodiment_slug" "text") TO "service_role";
 GRANT ALL ON FUNCTION "public"."upsert_masterclass_session"("p_embodiment_slug" "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."upsert_masterclass_session"("p_embodiment_slug" "text") TO "anon";
 
 
 
@@ -14251,157 +15295,175 @@ GRANT ALL ON FUNCTION "public"."sum"("public"."vector") TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_manifests" TO "anon";
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "private"."complete_voice_prints" TO "anon";
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "private"."complete_voice_prints" TO "authenticated";
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "private"."complete_voice_prints" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."_deprecated_artifacts" TO "anon";
+GRANT ALL ON TABLE "public"."_deprecated_artifacts" TO "authenticated";
+GRANT ALL ON TABLE "public"."_deprecated_artifacts" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."_deprecated_orders" TO "anon";
+GRANT ALL ON TABLE "public"."_deprecated_orders" TO "authenticated";
+GRANT ALL ON TABLE "public"."_deprecated_orders" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."agent_manifests" TO "anon";
 GRANT ALL ON TABLE "public"."agent_manifests" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_manifests" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agents" TO "anon";
+GRANT ALL ON TABLE "public"."agents" TO "anon";
 GRANT ALL ON TABLE "public"."agents" TO "authenticated";
 GRANT ALL ON TABLE "public"."agents" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."active_agent_manifests" TO "anon";
+GRANT ALL ON TABLE "public"."active_agent_manifests" TO "anon";
 GRANT ALL ON TABLE "public"."active_agent_manifests" TO "authenticated";
 GRANT ALL ON TABLE "public"."active_agent_manifests" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_autobiographies" TO "anon";
+GRANT ALL ON TABLE "public"."agent_autobiographies" TO "anon";
 GRANT ALL ON TABLE "public"."agent_autobiographies" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_autobiographies" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_code_artifacts" TO "anon";
+GRANT ALL ON TABLE "public"."agent_code_artifacts" TO "anon";
 GRANT ALL ON TABLE "public"."agent_code_artifacts" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_code_artifacts" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_constitutions" TO "anon";
+GRANT ALL ON TABLE "public"."agent_constitutions" TO "anon";
 GRANT ALL ON TABLE "public"."agent_constitutions" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_constitutions" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_context_views" TO "anon";
+GRANT ALL ON TABLE "public"."agent_context_views" TO "anon";
 GRANT ALL ON TABLE "public"."agent_context_views" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_context_views" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_governance_policies" TO "anon";
+GRANT ALL ON TABLE "public"."agent_governance_policies" TO "anon";
 GRANT ALL ON TABLE "public"."agent_governance_policies" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_governance_policies" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_memory_records" TO "anon";
+GRANT ALL ON TABLE "public"."agent_memory_records" TO "anon";
 GRANT ALL ON TABLE "public"."agent_memory_records" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_memory_records" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_preference_nodes" TO "anon";
+GRANT ALL ON TABLE "public"."agent_preference_nodes" TO "anon";
 GRANT ALL ON TABLE "public"."agent_preference_nodes" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_preference_nodes" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_presentation_profiles" TO "anon";
+GRANT ALL ON TABLE "public"."agent_presentation_profiles" TO "anon";
 GRANT ALL ON TABLE "public"."agent_presentation_profiles" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_presentation_profiles" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_private_interiors" TO "anon";
+GRANT ALL ON TABLE "public"."agent_private_interiors" TO "anon";
 GRANT ALL ON TABLE "public"."agent_private_interiors" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_private_interiors" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_relationship_edges" TO "anon";
+GRANT ALL ON TABLE "public"."agent_relationship_edges" TO "anon";
 GRANT ALL ON TABLE "public"."agent_relationship_edges" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_relationship_edges" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_skill_profiles" TO "anon";
+GRANT ALL ON TABLE "public"."agent_skill_profiles" TO "anon";
 GRANT ALL ON TABLE "public"."agent_skill_profiles" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_skill_profiles" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."collaborative_memory_records" TO "anon";
+GRANT ALL ON TABLE "public"."collaborative_memory_records" TO "anon";
 GRANT ALL ON TABLE "public"."collaborative_memory_records" TO "authenticated";
 GRANT ALL ON TABLE "public"."collaborative_memory_records" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."collaborative_space_members" TO "anon";
+GRANT ALL ON TABLE "public"."collaborative_space_members" TO "anon";
 GRANT ALL ON TABLE "public"."collaborative_space_members" TO "authenticated";
 GRANT ALL ON TABLE "public"."collaborative_space_members" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_governed_identity_snapshot" TO "anon";
+GRANT ALL ON TABLE "public"."agent_governed_identity_snapshot" TO "anon";
 GRANT ALL ON TABLE "public"."agent_governed_identity_snapshot" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_governed_identity_snapshot" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_knowledge_links" TO "anon";
+GRANT ALL ON TABLE "public"."agent_knowledge_links" TO "anon";
 GRANT ALL ON TABLE "public"."agent_knowledge_links" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_knowledge_links" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_manifest_entries" TO "anon";
+GRANT ALL ON TABLE "public"."agent_manifest_entries" TO "anon";
 GRANT ALL ON TABLE "public"."agent_manifest_entries" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_manifest_entries" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_memories" TO "anon";
+GRANT ALL ON TABLE "public"."agent_memories" TO "anon";
 GRANT ALL ON TABLE "public"."agent_memories" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_memories" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_relationships" TO "anon";
+GRANT ALL ON TABLE "public"."agent_relationships" TO "anon";
 GRANT ALL ON TABLE "public"."agent_relationships" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_relationships" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_skills" TO "anon";
+GRANT ALL ON TABLE "public"."agent_skills" TO "anon";
 GRANT ALL ON TABLE "public"."agent_skills" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_skills" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."agent_versions" TO "anon";
+GRANT ALL ON TABLE "public"."agent_versions" TO "anon";
 GRANT ALL ON TABLE "public"."agent_versions" TO "authenticated";
 GRANT ALL ON TABLE "public"."agent_versions" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."annotation_concepts" TO "anon";
+GRANT ALL ON TABLE "public"."annotation_concepts" TO "anon";
 GRANT ALL ON TABLE "public"."annotation_concepts" TO "authenticated";
 GRANT ALL ON TABLE "public"."annotation_concepts" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."app_users" TO "anon";
+GRANT ALL ON TABLE "public"."app_users" TO "anon";
 GRANT ALL ON TABLE "public"."app_users" TO "authenticated";
 GRANT ALL ON TABLE "public"."app_users" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."approvals" TO "anon";
+GRANT ALL ON TABLE "public"."approvals" TO "anon";
 GRANT ALL ON TABLE "public"."approvals" TO "authenticated";
 GRANT ALL ON TABLE "public"."approvals" TO "service_role";
 
@@ -14413,91 +15475,91 @@ GRANT ALL ON TABLE "public"."knowledge_assets" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."approved_library_assets_by_agent" TO "anon";
+GRANT ALL ON TABLE "public"."approved_library_assets_by_agent" TO "anon";
 GRANT ALL ON TABLE "public"."approved_library_assets_by_agent" TO "authenticated";
 GRANT ALL ON TABLE "public"."approved_library_assets_by_agent" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."artifact_provenance_envelopes" TO "anon";
+GRANT ALL ON TABLE "public"."artifact_provenance_envelopes" TO "anon";
 GRANT ALL ON TABLE "public"."artifact_provenance_envelopes" TO "authenticated";
 GRANT ALL ON TABLE "public"."artifact_provenance_envelopes" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."artifacts" TO "anon";
+GRANT ALL ON TABLE "public"."artifacts" TO "anon";
 GRANT ALL ON TABLE "public"."artifacts" TO "authenticated";
 GRANT ALL ON TABLE "public"."artifacts" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."billy_sessions" TO "anon";
+GRANT ALL ON TABLE "public"."billy_sessions" TO "anon";
 GRANT ALL ON TABLE "public"."billy_sessions" TO "authenticated";
 GRANT ALL ON TABLE "public"."billy_sessions" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."blueprints" TO "anon";
+GRANT ALL ON TABLE "public"."blueprints" TO "anon";
 GRANT ALL ON TABLE "public"."blueprints" TO "authenticated";
 GRANT ALL ON TABLE "public"."blueprints" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."bucket_drops" TO "anon";
+GRANT ALL ON TABLE "public"."bucket_drops" TO "anon";
 GRANT ALL ON TABLE "public"."bucket_drops" TO "authenticated";
 GRANT ALL ON TABLE "public"."bucket_drops" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."codex_artifacts" TO "anon";
+GRANT ALL ON TABLE "public"."codex_artifacts" TO "anon";
 GRANT ALL ON TABLE "public"."codex_artifacts" TO "authenticated";
 GRANT ALL ON TABLE "public"."codex_artifacts" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."codex_jobs" TO "anon";
+GRANT ALL ON TABLE "public"."codex_jobs" TO "anon";
 GRANT ALL ON TABLE "public"."codex_jobs" TO "authenticated";
 GRANT ALL ON TABLE "public"."codex_jobs" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."collaborative_spaces" TO "anon";
+GRANT ALL ON TABLE "public"."collaborative_spaces" TO "anon";
 GRANT ALL ON TABLE "public"."collaborative_spaces" TO "authenticated";
 GRANT ALL ON TABLE "public"."collaborative_spaces" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."collaborator_embodiment_links" TO "anon";
+GRANT ALL ON TABLE "public"."collaborator_embodiment_links" TO "anon";
 GRANT ALL ON TABLE "public"."collaborator_embodiment_links" TO "authenticated";
 GRANT ALL ON TABLE "public"."collaborator_embodiment_links" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."collaborator_onboarding_events" TO "anon";
+GRANT ALL ON TABLE "public"."collaborator_onboarding_events" TO "anon";
 GRANT ALL ON TABLE "public"."collaborator_onboarding_events" TO "authenticated";
 GRANT ALL ON TABLE "public"."collaborator_onboarding_events" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."collaborator_permissions" TO "anon";
+GRANT ALL ON TABLE "public"."collaborator_permissions" TO "anon";
 GRANT ALL ON TABLE "public"."collaborator_permissions" TO "authenticated";
 GRANT ALL ON TABLE "public"."collaborator_permissions" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."collaborator_relationships" TO "anon";
+GRANT ALL ON TABLE "public"."collaborator_relationships" TO "anon";
 GRANT ALL ON TABLE "public"."collaborator_relationships" TO "authenticated";
 GRANT ALL ON TABLE "public"."collaborator_relationships" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."collaborator_roles" TO "anon";
+GRANT ALL ON TABLE "public"."collaborator_roles" TO "anon";
 GRANT ALL ON TABLE "public"."collaborator_roles" TO "authenticated";
 GRANT ALL ON TABLE "public"."collaborator_roles" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."collaborators" TO "anon";
+GRANT ALL ON TABLE "public"."collaborators" TO "anon";
 GRANT ALL ON TABLE "public"."collaborators" TO "authenticated";
 GRANT ALL ON TABLE "public"."collaborators" TO "service_role";
 
@@ -14515,37 +15577,35 @@ GRANT ALL ON TABLE "public"."complete_voice_prints" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."concepts" TO "anon";
+GRANT ALL ON TABLE "public"."concepts" TO "anon";
 GRANT ALL ON TABLE "public"."concepts" TO "authenticated";
 GRANT ALL ON TABLE "public"."concepts" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."consciousness_profiles" TO "anon";
+GRANT ALL ON TABLE "public"."consciousness_profiles" TO "anon";
 GRANT ALL ON TABLE "public"."consciousness_profiles" TO "authenticated";
 GRANT ALL ON TABLE "public"."consciousness_profiles" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."context_injection_packets" TO "anon";
+GRANT ALL ON TABLE "public"."context_injection_packets" TO "anon";
 GRANT ALL ON TABLE "public"."context_injection_packets" TO "authenticated";
 GRANT ALL ON TABLE "public"."context_injection_packets" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."context_injection_rules" TO "anon";
+GRANT ALL ON TABLE "public"."context_injection_rules" TO "anon";
 GRANT ALL ON TABLE "public"."context_injection_rules" TO "authenticated";
 GRANT ALL ON TABLE "public"."context_injection_rules" TO "service_role";
 
 
 
 GRANT ALL ON TABLE "public"."corpus_harvest_events" TO "service_role";
-GRANT INSERT,DELETE,UPDATE ON TABLE "public"."corpus_harvest_events" TO "anon";
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "public"."corpus_harvest_events" TO "authenticated";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."created_artifacts" TO "anon";
+GRANT ALL ON TABLE "public"."created_artifacts" TO "anon";
 GRANT ALL ON TABLE "public"."created_artifacts" TO "authenticated";
 GRANT ALL ON TABLE "public"."created_artifacts" TO "service_role";
 
@@ -14557,37 +15617,37 @@ GRANT ALL ON TABLE "public"."cssm_sessions" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."deliverables" TO "anon";
+GRANT ALL ON TABLE "public"."deliverables" TO "anon";
 GRANT ALL ON TABLE "public"."deliverables" TO "authenticated";
 GRANT ALL ON TABLE "public"."deliverables" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."deployment_artifacts" TO "anon";
+GRANT ALL ON TABLE "public"."deployment_artifacts" TO "anon";
 GRANT ALL ON TABLE "public"."deployment_artifacts" TO "authenticated";
 GRANT ALL ON TABLE "public"."deployment_artifacts" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."di_memory_events" TO "anon";
+GRANT ALL ON TABLE "public"."di_memory_events" TO "anon";
 GRANT ALL ON TABLE "public"."di_memory_events" TO "authenticated";
 GRANT ALL ON TABLE "public"."di_memory_events" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."di_sessions" TO "anon";
+GRANT ALL ON TABLE "public"."di_sessions" TO "anon";
 GRANT ALL ON TABLE "public"."di_sessions" TO "authenticated";
 GRANT ALL ON TABLE "public"."di_sessions" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."document_concepts" TO "anon";
+GRANT ALL ON TABLE "public"."document_concepts" TO "anon";
 GRANT ALL ON TABLE "public"."document_concepts" TO "authenticated";
 GRANT ALL ON TABLE "public"."document_concepts" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."documents" TO "anon";
+GRANT ALL ON TABLE "public"."documents" TO "anon";
 GRANT ALL ON TABLE "public"."documents" TO "authenticated";
 GRANT ALL ON TABLE "public"."documents" TO "service_role";
 
@@ -14605,37 +15665,37 @@ GRANT ALL ON TABLE "public"."dream_symbolic_elements" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."embeddings" TO "anon";
+GRANT ALL ON TABLE "public"."embeddings" TO "anon";
 GRANT ALL ON TABLE "public"."embeddings" TO "authenticated";
 GRANT ALL ON TABLE "public"."embeddings" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."embodiment_modules" TO "anon";
+GRANT ALL ON TABLE "public"."embodiment_modules" TO "anon";
 GRANT ALL ON TABLE "public"."embodiment_modules" TO "authenticated";
 GRANT ALL ON TABLE "public"."embodiment_modules" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."embodiment_mutation_proposals" TO "anon";
+GRANT ALL ON TABLE "public"."embodiment_mutation_proposals" TO "anon";
 GRANT ALL ON TABLE "public"."embodiment_mutation_proposals" TO "authenticated";
 GRANT ALL ON TABLE "public"."embodiment_mutation_proposals" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."embodiment_mutations" TO "anon";
+GRANT ALL ON TABLE "public"."embodiment_mutations" TO "anon";
 GRANT ALL ON TABLE "public"."embodiment_mutations" TO "authenticated";
 GRANT ALL ON TABLE "public"."embodiment_mutations" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."embodiment_profiles" TO "anon";
+GRANT ALL ON TABLE "public"."embodiment_profiles" TO "anon";
 GRANT ALL ON TABLE "public"."embodiment_profiles" TO "authenticated";
 GRANT ALL ON TABLE "public"."embodiment_profiles" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."embodiment_readiness_scores" TO "anon";
+GRANT ALL ON TABLE "public"."embodiment_readiness_scores" TO "anon";
 GRANT ALL ON TABLE "public"."embodiment_readiness_scores" TO "authenticated";
 GRANT ALL ON TABLE "public"."embodiment_readiness_scores" TO "service_role";
 
@@ -14647,25 +15707,25 @@ GRANT ALL ON TABLE "public"."embodiment_reasoning_policies" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."embodiment_review_log" TO "anon";
+GRANT ALL ON TABLE "public"."embodiment_review_log" TO "anon";
 GRANT ALL ON TABLE "public"."embodiment_review_log" TO "authenticated";
 GRANT ALL ON TABLE "public"."embodiment_review_log" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."embodiment_training_runs" TO "anon";
+GRANT ALL ON TABLE "public"."embodiment_training_runs" TO "anon";
 GRANT ALL ON TABLE "public"."embodiment_training_runs" TO "authenticated";
 GRANT ALL ON TABLE "public"."embodiment_training_runs" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."eval_results" TO "anon";
+GRANT ALL ON TABLE "public"."eval_results" TO "anon";
 GRANT ALL ON TABLE "public"."eval_results" TO "authenticated";
 GRANT ALL ON TABLE "public"."eval_results" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."eval_rubrics" TO "anon";
+GRANT ALL ON TABLE "public"."eval_rubrics" TO "anon";
 GRANT ALL ON TABLE "public"."eval_rubrics" TO "authenticated";
 GRANT ALL ON TABLE "public"."eval_rubrics" TO "service_role";
 
@@ -14689,121 +15749,106 @@ GRANT ALL ON TABLE "public"."field_continuity_events" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."founder_context" TO "anon";
+GRANT ALL ON TABLE "public"."founder_context" TO "anon";
 GRANT ALL ON TABLE "public"."founder_context" TO "authenticated";
 GRANT ALL ON TABLE "public"."founder_context" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."gestaltview_module_keys" TO "anon";
+GRANT ALL ON TABLE "public"."gestaltview_module_keys" TO "anon";
 GRANT ALL ON TABLE "public"."gestaltview_module_keys" TO "authenticated";
 GRANT ALL ON TABLE "public"."gestaltview_module_keys" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."gestaltview_modules" TO "anon";
+GRANT ALL ON TABLE "public"."gestaltview_modules" TO "anon";
 GRANT ALL ON TABLE "public"."gestaltview_modules" TO "authenticated";
 GRANT ALL ON TABLE "public"."gestaltview_modules" TO "service_role";
 
 
 
 GRANT ALL ON TABLE "public"."gsvw_ingestion_documents" TO "service_role";
-GRANT INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_ingestion_documents" TO "anon";
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_ingestion_documents" TO "authenticated";
 
 
 
-GRANT ALL ON TABLE "public"."gsvw_current_ingestion_documents" TO "service_role";
-GRANT INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_current_ingestion_documents" TO "anon";
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_current_ingestion_documents" TO "authenticated";
+GRANT SELECT ON TABLE "public"."gsvw_current_ingestion_documents" TO "service_role";
 
 
 
 GRANT ALL ON TABLE "public"."gsvw_dormancy_review_items" TO "service_role";
-GRANT INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_dormancy_review_items" TO "anon";
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_dormancy_review_items" TO "authenticated";
 
 
 
 GRANT ALL ON TABLE "public"."gsvw_ingestion_chunks" TO "service_role";
-GRANT INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_ingestion_chunks" TO "anon";
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_ingestion_chunks" TO "authenticated";
 
 
 
 GRANT ALL ON TABLE "public"."gsvw_ingestion_events" TO "service_role";
-GRANT INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_ingestion_events" TO "anon";
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_ingestion_events" TO "authenticated";
 
 
 
 GRANT ALL ON TABLE "public"."gsvw_ingestion_runs" TO "service_role";
-GRANT INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_ingestion_runs" TO "anon";
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_ingestion_runs" TO "authenticated";
 
 
 
 GRANT ALL ON TABLE "public"."gsvw_repo_alignment_snapshots" TO "service_role";
-GRANT INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_repo_alignment_snapshots" TO "anon";
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_repo_alignment_snapshots" TO "authenticated";
 
 
 
 GRANT ALL ON TABLE "public"."gsvw_runtime_capture_events" TO "service_role";
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_runtime_capture_events" TO "authenticated";
-GRANT INSERT,DELETE,UPDATE ON TABLE "public"."gsvw_runtime_capture_events" TO "anon";
+GRANT SELECT,INSERT ON TABLE "public"."gsvw_runtime_capture_events" TO "authenticated";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."human_cognition_profiles" TO "anon";
+GRANT ALL ON TABLE "public"."human_cognition_profiles" TO "anon";
 GRANT ALL ON TABLE "public"."human_cognition_profiles" TO "authenticated";
 GRANT ALL ON TABLE "public"."human_cognition_profiles" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."human_consciousness_profiles" TO "anon";
+GRANT ALL ON TABLE "public"."human_consciousness_profiles" TO "anon";
 GRANT ALL ON TABLE "public"."human_consciousness_profiles" TO "authenticated";
 GRANT ALL ON TABLE "public"."human_consciousness_profiles" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."human_context_views" TO "anon";
+GRANT ALL ON TABLE "public"."human_context_views" TO "anon";
 GRANT ALL ON TABLE "public"."human_context_views" TO "authenticated";
 GRANT ALL ON TABLE "public"."human_context_views" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."human_continuity_snapshots" TO "anon";
+GRANT ALL ON TABLE "public"."human_continuity_snapshots" TO "anon";
 GRANT ALL ON TABLE "public"."human_continuity_snapshots" TO "authenticated";
 GRANT ALL ON TABLE "public"."human_continuity_snapshots" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."human_identity_evidence" TO "anon";
+GRANT ALL ON TABLE "public"."human_identity_evidence" TO "anon";
 GRANT ALL ON TABLE "public"."human_identity_evidence" TO "authenticated";
 GRANT ALL ON TABLE "public"."human_identity_evidence" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."human_identity_mutations" TO "anon";
+GRANT ALL ON TABLE "public"."human_identity_mutations" TO "anon";
 GRANT ALL ON TABLE "public"."human_identity_mutations" TO "authenticated";
 GRANT ALL ON TABLE "public"."human_identity_mutations" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."human_identity_profiles" TO "anon";
+GRANT ALL ON TABLE "public"."human_identity_profiles" TO "anon";
 GRANT ALL ON TABLE "public"."human_identity_profiles" TO "authenticated";
 GRANT ALL ON TABLE "public"."human_identity_profiles" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."human_identity_review_events" TO "anon";
+GRANT ALL ON TABLE "public"."human_identity_review_events" TO "anon";
 GRANT ALL ON TABLE "public"."human_identity_review_events" TO "authenticated";
 GRANT ALL ON TABLE "public"."human_identity_review_events" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."human_identity_rollback_events" TO "anon";
+GRANT ALL ON TABLE "public"."human_identity_rollback_events" TO "anon";
 GRANT ALL ON TABLE "public"."human_identity_rollback_events" TO "authenticated";
 GRANT ALL ON TABLE "public"."human_identity_rollback_events" TO "service_role";
 
@@ -14953,7 +15998,7 @@ GRANT ALL ON TABLE "public"."memory_entries" TO "service_role";
 
 
 
-GRANT INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,MAINTAIN,UPDATE ON TABLE "public"."migration_user_map" TO "anon";
+GRANT ALL ON TABLE "public"."migration_user_map" TO "anon";
 GRANT ALL ON TABLE "public"."migration_user_map" TO "authenticated";
 GRANT ALL ON TABLE "public"."migration_user_map" TO "service_role";
 
@@ -15037,15 +16082,21 @@ GRANT ALL ON TABLE "public"."orchestration_decisions" TO "service_role";
 
 
 
+GRANT ALL ON TABLE "public"."orchestration_runs" TO "anon";
+GRANT ALL ON TABLE "public"."orchestration_runs" TO "authenticated";
+GRANT ALL ON TABLE "public"."orchestration_runs" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."orchestration_worker_runs" TO "anon";
+GRANT ALL ON TABLE "public"."orchestration_worker_runs" TO "authenticated";
+GRANT ALL ON TABLE "public"."orchestration_worker_runs" TO "service_role";
+
+
+
 GRANT ALL ON TABLE "public"."order_notes" TO "anon";
 GRANT ALL ON TABLE "public"."order_notes" TO "authenticated";
 GRANT ALL ON TABLE "public"."order_notes" TO "service_role";
-
-
-
-GRANT ALL ON TABLE "public"."orders" TO "anon";
-GRANT ALL ON TABLE "public"."orders" TO "authenticated";
-GRANT ALL ON TABLE "public"."orders" TO "service_role";
 
 
 
@@ -15136,6 +16187,18 @@ GRANT ALL ON TABLE "public"."render_jobs" TO "service_role";
 GRANT ALL ON TABLE "public"."rich_life_threads" TO "anon";
 GRANT ALL ON TABLE "public"."rich_life_threads" TO "authenticated";
 GRANT ALL ON TABLE "public"."rich_life_threads" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."runtime_handoff_events" TO "anon";
+GRANT ALL ON TABLE "public"."runtime_handoff_events" TO "authenticated";
+GRANT ALL ON TABLE "public"."runtime_handoff_events" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."runtime_handoffs" TO "anon";
+GRANT ALL ON TABLE "public"."runtime_handoffs" TO "authenticated";
+GRANT ALL ON TABLE "public"."runtime_handoffs" TO "service_role";
 
 
 
