@@ -1,8 +1,10 @@
 # GestaltView Inside-Out Convergence and Founder Control Room SPEC
 
-**Status:** Approved phased design; implementation remains gated  
+**Status:** Active implementation; Phases 0–6 reported complete; Phase 7 is next  
 **Prepared:** 2026-07-25 (America/New_York)  
 **Expanded:** 2026-07-27 (America/New_York)  
+**Implementation plan added:** 2026-07-28 (America/New_York)  
+**Current execution checkpoint:** Phase 6 complete by founder/Codex report; exact commit, migration, and verification receipts remain the authoritative proof  
 **Primary runtime repository:** `DigitalConsciousness/gestaltview-v3.0`  
 **Runtime evidence commit:** `d44abedd9b2a10d84f88e624d18e80a953507191`  
 **Recorded follow-on commit:** `62a7400` — forward render reconciliation package reported present; Codex must verify the full SHA and evidence locally  
@@ -227,16 +229,16 @@ Destination selection in Creation Corner expresses intent. It does not bypass th
 
 Every phase ends with an evidence packet and a **GO / HOLD** decision from the outside guide. Codex must not continue past a production or cross-repository gate merely because the local tests passed.
 
-| Phase | Scope | Recorded state on 2026-07-27 |
+| Phase | Scope | Current recorded state |
 |---:|---|---|
-| 0 | Orientation and immutable baseline | Must be rerun against the current worktree |
-| 1 | Render persistence reconciliation | Package reported in `62a7400`; independent proof pending; production unapplied |
-| 2 | Server render contract proof | Not yet proven |
-| 3 | Creation Corner canonical path | Not yet converged |
-| 4 | Inner World projection consumer | Not yet converged |
-| 5 | End-to-end render/projection proof | Not yet proven |
-| 6 | Shared cross-room handoff contract | Approved design; not implemented |
-| 7 | Blackboard and Transcriptory | Approved design; not implemented |
+| 0 | Orientation and immutable baseline | Reported complete before the Phase 6 checkpoint; preserve its evidence packet |
+| 1 | Render persistence reconciliation | Reported complete before the Phase 6 checkpoint; production state is determined by the recorded migration evidence |
+| 2 | Server render contract proof | Reported complete before the Phase 6 checkpoint; retain the focused test receipt |
+| 3 | Creation Corner canonical path | Reported complete before the Phase 6 checkpoint |
+| 4 | Inner World projection consumer | Reported complete before the Phase 6 checkpoint |
+| 5 | End-to-end render/projection proof | Reported complete before the Phase 6 checkpoint; the proof bundle remains authoritative |
+| 6 | Shared cross-room handoff contract | **Reported complete on 2026-07-28; current implementation checkpoint** |
+| 7 | Blackboard and Transcriptory | **Next implementation phase** |
 | 8 | Sanctuary durability and voice linkage | Approved design; not implemented |
 | 9 | Tribunal durable progress events | Approved design; not implemented |
 | 10 | Gallery and DI chains of command | Approved design; not implemented |
@@ -1718,62 +1720,66 @@ The convergence program is complete only when all are true:
 
 ## 11. Current bounded Codex assignment
 
-Give Codex only the following assignment first. Do not ask it to execute the
-entire program or begin the walkthrough expansion in one run.
+The former Phase 0/1 verification assignment is preserved in prior versions of
+this SPEC and its evidence packet. It is superseded operationally by the Phase
+6 checkpoint and must not be rerun merely because it appeared earlier in the
+document.
+
+Give Codex only the following assignment next. Do not ask it to execute Phases
+7–13 in one run.
 
 > Work in `DigitalConsciousness/gestaltview-v3.0`. Read the repository
-> instructions and the expanded Inside-Out Convergence SPEC. Complete Phase 0
-> and independently verify the recorded Phase 1 preparation at commit
-> `62a7400`. Resolve and report the full commit SHA before relying on it.
+> instructions and this Inside-Out Convergence SPEC. Treat Phase 6 as the
+> completed checkpoint, but verify its exact handoff contract, persistence
+> migration, commit, focused tests, RLS behavior, and evidence receipt before
+> building on it. Report any difference between the recorded checkpoint and the
+> current worktree; do not silently recreate or replace the Phase 6 contract.
 >
-> Verify the current branch, commit, dirty state, package scripts, render v2
-> implementation, checked-in July 13 migration, forward reconciliation
-> migration, verification SQL, recovery script, tests, and live Supabase
-> migration/schema baseline. Inspect current Supabase CLI help before choosing
-> commands.
+> Implement only **Phase 7A and Phase 7B** from Section 14: refresh the current
+> baseline, verify the Phase 6 producer/consumer API, then make Transcriptory
+> the first canonical handoff producer. Preserve raw audio/text as the source,
+> keep transcription as a separately attributed derivative, distinguish upload
+> success from transcription success, and retain failed sources for retry.
+> Replace only the Transcriptory-to-room transfer paths that currently depend
+> solely on browser state. Keep a compatibility reader for outstanding local
+> records and preserve their local identity during synchronization.
 >
-> Do not recreate or replace the reconciliation package merely because this
-> SPEC originally requested it. Inspect the commit diff and prove whether the
-> existing package satisfies Phase 1. Run the clean-local and v1-upgrade tests,
-> run the read-only verification SQL against the approved local/development
-> target, verify checksums and recovery behavior, and preserve all existing
-> artifacts and policies. If a focused defect is proven, propose the smallest
-> correction and identify it separately from the pre-existing commit.
->
-> Do not apply production DDL. Do not edit Creation Corner, room components,
-> corpus code, or the new handoff layers yet. Stop with an evidence packet
-> containing the exact schema diff, migration history comparison, paths,
-> checksums, test output, verification output, recovery procedure, risks, and a
-> GO/HOLD request for production migration review.
+> Add or update focused contract, API, component, idempotency,
+> failure-retention, and owner-isolation tests. Do not edit Blackboard,
+> Sanctuary, Tribunal, Gallery, Founder Runtime, corpus code, or security policy
+> families except where a proven Phase 6 defect blocks Transcriptory. Do not
+> apply production DDL or deploy. Stop with an evidence packet and a GO/HOLD
+> request before Phase 7C.
 
-### First-assignment acceptance
+### Current-assignment acceptance
 
-- Phase 0 evidence is complete;
-- full SHA and exact diff for recorded commit `62a7400` are captured;
-- Phase 1 files are independently reviewable;
-- migration-history handling is forward-only and honest;
-- local migration proofs pass;
-- verification SQL is read-only and repeatable;
-- no live write occurred;
-- no UI, room-integration, orchestration, or corpus scope was pulled forward;
+- the current branch, commit, dirty state, and Phase 6 evidence locators are recorded;
+- the canonical handoff client/server boundary is reused rather than forked;
+- raw Transcriptory source and transcription derivative remain distinct;
+- upload, transcription, and destination-handoff failures are independently visible;
+- retry is idempotent and does not duplicate the source capture;
+- failed transcription preserves the uploaded or pasted source;
+- same-owner and cross-owner behavior is tested;
+- local records remain recoverable through a compatibility path;
+- no Blackboard, Sanctuary, Tribunal, Gallery, Founder Runtime, corpus, or broad security scope is pulled forward;
+- no production DDL or deployment occurs;
 - Codex stops for outside review.
 
 ---
 
 ## 12. Founder-facing summary
 
-The next real move is not to rebuild GestaltView. It is to independently prove
-the recorded render reconciliation package and let the durable center catch up
-with the work already present around it.
+The durable render, projection, and shared handoff center has now reached the
+reported Phase 6 checkpoint. The next real move is to make one room pair use it
+completely, beginning with Transcriptory and Blackboard rather than spreading
+the contract across every room at once.
 
-First, verify the database reconciliation and hold production behind the
-outside gate. Then prove one artifact all the way through real bytes, receipt,
-retrieval, and explicit Inner World projection. After that, connect the rooms
-through one acknowledged handoff contract: Transcriptory preserves sources,
-Blackboard collaborates, Sanctuary reflects, Tribunal deliberates, Creation
-Corner synthesizes, Gallery stages, and Inner World receives only explicit
-verified projections. Founder Runtime reports those facts; it does not invent
-them. Corpus and security work follow from the same rule: preserve what is
+Transcriptory preserves sources. Blackboard collaborates and cites them.
+Creation Corner accepts an acknowledged blueprint without losing lineage.
+Only after that path is proven does Sanctuary link voice, Tribunal expose real
+events, Gallery derive status from receipts, and the DI chain of command prove
+acceptance and output. Founder Runtime then reports those facts; it does not
+invent them. Corpus and security work follow the same rule: preserve what is
 meaningful, repair lifecycle and boundaries, and never let a convenient surface
 claim more certainty than the underlying evidence can carry.
 
@@ -1814,5 +1820,454 @@ references through a separate approved design that defines:
 - output persistence;
 - deletion and correction behavior;
 - tests preventing silent profile mutation or overclaiming.
+
+---
+
+## 14. Implementation plan from the Phase 6 checkpoint
+
+### 14.1 Planning frame
+
+This implementation plan begins from the founder/Codex report that Phase 6 is
+complete. It does not convert that report into invented operational evidence.
+The Phase 6 commit, migration history, schema-fit matrix, tests, and GO/HOLD
+receipt remain the authoritative checkpoint and must be linked in the first
+status update.
+
+The plan translates Phases 7–13 into bounded execution slices. The phase
+requirements in Section 5 remain governing; this section defines order,
+dependencies, stop points, and evidence packets.
+
+Work remains serial at the phase level:
+
+```mermaid
+flowchart TD
+    P6["Phase 6<br/>Handoff spine complete"] --> P7["Phase 7<br/>Transcriptory + Blackboard"]
+    P7 --> P8["Phase 8<br/>Sanctuary"]
+    P8 --> P9["Phase 9<br/>Tribunal events"]
+    P9 --> P10["Phase 10<br/>Gallery + DI work"]
+    P10 --> P11["Phase 11<br/>Founder Control Room"]
+    P11 --> P12["Phase 12<br/>Corpus lifecycle"]
+    P12 --> P13["Phase 13<br/>Security + identity"]
+```
+
+Within a phase, discovery and read-only verification may run together. Changes
+that share a schema, source record, or lifecycle boundary remain sequential.
+
+### 14.2 Execution rules
+
+1. Start every slice by recording branch, commit, dirty state, governing
+   instructions, and the prior slice receipt.
+2. Verify current paths before editing; `components.zip` is lineage and design
+   evidence, not authority over newer runtime code.
+3. Reuse the Phase 6 contract. A new room-specific handoff envelope is a HOLD
+   unless the shared contract is demonstrably incapable of representing the
+   required action.
+4. Preserve raw source separately from derivatives, interpretations, receipts,
+   projections, and presentation state.
+5. Keep local/offline usefulness through explicit adapters. Do not delete a
+   fallback until outstanding records can be read, migrated, or exported.
+6. Perform database changes through additive, forward-only migrations. Live
+   mutation and deployment remain separate approval gates.
+7. Use the narrowest meaningful verification first, then widen to relevant
+   package tests, build, browser proof, and RLS checks.
+8. Finish every slice with the update format in Section 8.1 and a
+   `Known → Attempted → Observed → Changed` continuity receipt.
+9. Do not call a phase complete because its files exist. Completion requires
+   execution, persistence, reopen/replay behavior, owner isolation, and the
+   phase acceptance evidence.
+10. Novelty, incompleteness, or missing precedent is not a block. Deception,
+    provenance loss, unsafe irreversible action, failed isolation, fabricated
+    progress, or unsupported success claims are.
+
+### 14.3 Phase 6 checkpoint receipt
+
+Before Phase 7 changes, append or link the following facts in
+`docs/CurrentState.md`:
+
+- full runtime commit SHA containing the completed Phase 6 work;
+- Phase 6 migration version and whether it is local, development, or production;
+- selected persistence shape from the schema-fit audit;
+- canonical contract and client/server paths;
+- focused test paths and passing counts;
+- owner, cross-owner, anonymous, and service-role results;
+- idempotency result;
+- source-survival result after completion, failure, and handoff removal;
+- outstanding risks or intentionally deferred work;
+- outside-guide GO/HOLD decision.
+
+If the work is present but one receipt is missing, classify the capability by
+what can be demonstrated and recover the missing evidence. Do not discard or
+rebuild working Phase 6 code solely to produce a cleaner narrative.
+
+### 14.4 Phase 7 implementation — Transcriptory and Blackboard
+
+#### Phase 7A — Refresh and bind to the Phase 6 contract
+
+**Goal:** prove the exact producer/consumer API that room adapters will use.
+
+Tasks:
+
+- verify live runtime paths, types, routes, migrations, and tests;
+- map existing Transcriptory and Blackboard transfers that use direct calls,
+  navigation state, `sessionStorage`, or `localStorage`;
+- classify each as source creation, derivative creation, handoff offer,
+  destination acceptance, or local compatibility state;
+- identify the smallest compatibility adapter needed for outstanding browser
+  records;
+- add no new room behavior in this slice.
+
+Exit evidence:
+
+- current-state transfer map;
+- verified Phase 6 type/API examples;
+- list of exact files eligible for Phase 7B/7C;
+- no mutation beyond documentation or focused test-fixture correction.
+
+#### Phase 7B — Make Transcriptory the first canonical producer
+
+**Goal:** preserve a raw source and offer it through the shared handoff
+contract without conflating upload, transcription, or destination success.
+
+Tasks:
+
+- persist pasted text or audio identity before claiming source success;
+- record transcription as a provider/model-attributed derivative;
+- expose separate upload, transcription, retry, and handoff states;
+- keep failed transcription sources visible and retrievable;
+- make retry idempotent against the original source identity;
+- offer owner-scoped handoffs to Blackboard, Sanctuary, or Creation Corner
+  through the Phase 6 client;
+- retain a labeled local-only path and synchronization identity;
+- add confirmation and relationship-aware behavior for deletion.
+
+Exit evidence:
+
+- source/derivative round trip;
+- forced transcription failure with preserved source;
+- idempotent retry result;
+- handoff offer receipt;
+- cross-owner denial;
+- focused tests and build result.
+
+#### Phase 7C — Make Blackboard a canonical consumer and producer
+
+**Goal:** accept cited sources durably, collaborate over them, and offer a
+blueprint without silently mutating profile state.
+
+Tasks:
+
+- accept Transcriptory handoffs and persist the destination reference;
+- render cited source/file context through the existing safe preview path;
+- preserve typed, voice, and uploaded Blackboard source identity;
+- record selected embodiment profiles as participation context;
+- convert recap/blueprint transfer to Creation Corner into a durable offer;
+- require explicit External Scaffold transfer;
+- route profile or memory extraction into a reviewable proposal;
+- retain labeled local-only conversations and synchronize without losing their
+  local IDs.
+
+Exit evidence:
+
+- durable acceptance receipt;
+- source citation visible in Blackboard;
+- durable Blackboard → Creation Corner offer and acceptance;
+- explicit External Scaffold test;
+- profile-proposal test;
+- failure/retry and local compatibility proof.
+
+#### Phase 7D — Complete the three-room proof
+
+Run the Phase 7 fixture from Section 5:
+
+`Transcriptory source → Blackboard acceptance → cited collaboration → Creation Corner blueprint acceptance`
+
+Prove:
+
+- same-owner success;
+- cross-owner denial;
+- idempotent replay;
+- source lineage at every hop;
+- distinct source, derivative, handoff, and destination records;
+- visible actionable failure for a rejected or unavailable destination.
+
+**Phase gate:** stop for outside review. Phase 8 cannot begin until the Phase 7
+fixture and recovery path are accepted.
+
+### 14.5 Phase 8 implementation — Sanctuary
+
+#### Phase 8A — Verify durable room fit
+
+- inspect `journals`, `scrapbook_items`, storage rules, RLS, current writers,
+  retention behavior, and local keys;
+- decide whether additive fields are necessary;
+- define stable sync identity, source reference, archive state, and conflict
+  metadata;
+- preserve the atmosphere and current offline behavior.
+
+#### Phase 8B — Add authenticated round-trip and conflict-safe merge
+
+- load server and local records without replacing either collection wholesale;
+- synchronize by stable identity;
+- label local-only and unsynchronized items;
+- preserve both recoverable versions when concurrent edits conflict;
+- remove any silent fixed retention cap from server-owned history;
+- keep deletion of a presentation item separate from deletion of its source.
+
+#### Phase 8C — Link voice through Transcriptory
+
+- create the voice source in Transcriptory;
+- accept the handoff in Sanctuary;
+- ask the user whether to create a journal draft, scrapbook item, or retain only
+  the capture;
+- persist the chosen derivative with its source link;
+- preserve browser speech preview as explicitly non-durable until persisted.
+
+#### Phase 8D — Verify the room as a room
+
+- round-trip journals and scrapbook items;
+- test offline addition and reconnect;
+- force a conflict and recover both versions;
+- test owner isolation and private storage;
+- verify reduced motion, keyboard access, and narrow layout;
+- confirm no orchestration noise was added to Sanctuary.
+
+**Phase gate:** production data migration or policy changes require separate
+approval; stop after the accepted Phase 8 evidence packet.
+
+### 14.6 Phase 9 implementation — Tribunal
+
+#### Phase 9A — Establish the public event contract
+
+- verify live Tribunal tables, orchestration links, writers, and indexes;
+- create or refine the shared public event types;
+- enforce monotonic server-side sequence numbers;
+- separate public work/status payloads from private diagnostics;
+- reject hidden chain-of-thought storage or transport.
+
+#### Phase 9B — Persist actual work events
+
+- write session, participant, synthesis, proposal, terminal, failure, and
+  cancellation events at real execution boundaries;
+- attach source/evidence references to dependent claims;
+- preserve completed sibling output when one participant fails;
+- link retries as new attempts rather than rewriting history.
+
+#### Phase 9C — Replay, reconnect, and cancellation
+
+- read events by cursor/sequence;
+- use SSE only if the deployment proves it reliable; otherwise poll the same
+  durable ledger;
+- reconnect from the last observed sequence;
+- persist cancellation and stop new work;
+- expose stalled participant, timeout, and next action without invented
+  percentages or theatrical progress.
+
+#### Phase 9D — Verify deliberation and explicit artifact transition
+
+- replay from event 1;
+- force reconnect, participant failure, reduced quorum, and cancellation;
+- show partial user-facing work before synthesis completes;
+- create an explicit idempotent handoff to Creation Corner;
+- do not publish or stage a finished artifact without a verified render receipt.
+
+**Phase gate:** stop after event replay and failure preservation are proven.
+
+### 14.7 Phase 10 implementation — Gallery and DI chains of command
+
+#### Phase 10A — Build the Gallery read model
+
+- classify every record by verified render, legacy created artifact, legacy
+  Inner World, local draft, manual import, or unknown legacy;
+- derive visible status from jobs, receipts, and projection evidence;
+- keep conservative labels when provenance is incomplete;
+- preserve existing artifact and Inner World records.
+
+#### Phase 10B — Make staging, retry, and publication truthful
+
+- publish only through the canonical projection endpoint;
+- return one receipt per bulk item;
+- preserve successful siblings during partial bulk failure;
+- make archive presentation-only unless a separately confirmed source deletion
+  is requested;
+- test canonical retry/idempotency rather than mutating client status.
+
+#### Phase 10C — Close actionable DI assignment lifecycle
+
+- extend the existing orchestration spine with assignment acknowledgement,
+  heartbeat, public progress, output reference, timeout, and escalation;
+- preserve the selection reason and previous attempts;
+- derive capability from registered current skills/workers;
+- prevent Billy or another coordinator from claiming another worker's output
+  without its receipt;
+- return named next actions to the source room on failure.
+
+#### Phase 10D — Cross-system proof
+
+- stage and explicitly publish one verified render;
+- keep one legacy record conservatively classified;
+- force one partial bulk failure;
+- complete one DI assignment with concrete output evidence;
+- drop one assignment and prove timeout/escalation;
+- verify analytics distinguish proposed, accepted, running, completed, blocked,
+  and failed states.
+
+**Phase gate:** Phase 11 begins only when Gallery and orchestration status can be
+derived without inventing a second ledger.
+
+### 14.8 Phase 11 implementation — Founder Control Room
+
+#### Phase 11A — Define the read-only contract
+
+- verify existing founder route, auth helper, analytics queries, and source
+  availability;
+- implement the shared response contract with per-section source, observation
+  time, and freshness;
+- return `unknown` for unavailable evidence;
+- introduce no control-room persistence table.
+
+#### Phase 11B — Implement bounded server aggregations
+
+- add render, projection, handoff, Tribunal, DI, Transcriptory, Sanctuary,
+  corpus, governance, and orientation summaries;
+- return identifiers and categorized facts, not unrestricted private content;
+- enforce founder/admin access on the server;
+- test ordinary-user and anonymous denial.
+
+#### Phase 11C — Integrate the existing Founder Runtime
+
+- make **Next Real Moves** the default view;
+- add System Pulse and Convergence Flow without creating another application;
+- reuse relevant orchestration analytics;
+- show why an action is next, evidence, owner, safe scope, completion criterion,
+  and blocked/ready state;
+- make timestamps and unknown states visible.
+
+#### Phase 11D — Verify honest visibility
+
+- test deterministic next-action ordering;
+- test unavailable and stale sources;
+- link render proof to underlying job/receipt identifiers;
+- verify no private founder content leaks through aggregates;
+- verify narrow and desktop layouts.
+
+**Phase gate:** the Control Room may report only accepted evidence from prior
+phases. A missing source becomes `unknown`, not healthy.
+
+### 14.9 Phase 12 implementation — Corpus run lifecycle
+
+#### Phase 12A — Refresh the corpus baseline
+
+- record corpus commit, workflow state, pause intent, secret target environment,
+  live run-state counts, canonical counts, embedding coverage, and capacity;
+- reproduce the canonical/noncanonical embedding distinction;
+- perform no ingestion or stale-row mutation.
+
+#### Phase 12B — Make run finalization exception-safe
+
+- create `running` only after sufficient preflight;
+- finalize exactly once as `complete`, `partial`, `error`, or `cancelled`;
+- persist `finished_at`, concise error category, and safe diagnostics;
+- make finalization idempotent;
+- handle cancellation/termination signals where supported.
+
+#### Phase 12C — Add checkpoint and reconciliation behavior
+
+- preserve progress before workflow timeout where the ingestion architecture
+  supports resumable packages;
+- distinguish a workflow timeout from invalid persisted work;
+- list stale candidates using heartbeat/freshness and a documented threshold;
+- provide report-only/dry-run reconciliation;
+- retain prior state and reason when an approved reconciliation occurs.
+
+#### Phase 12D — Verify before resuming automation
+
+- test success, forced exception, partial completion, cancellation, and repeated
+  finalization;
+- confirm canonical embedding coverage is unchanged;
+- run a canonical-package dry run;
+- reconcile workflow pause documentation with founder intent;
+- keep live stale-row mutation and workflow enablement behind separate approval.
+
+**Phase gate:** no live stale-row update or workflow dispatch without outside
+review of the candidate report and target environment.
+
+### 14.10 Phase 13 implementation — Security and identity closure
+
+#### Phase 13A — Establish the current advisor and exposure baseline
+
+- rerun security and performance advisors;
+- inventory security-definer views, RLS-without-policy findings, mutable
+  `search_path` functions, duplicate policies, and GraphQL/schema exposure;
+- classify each surface as browser-accessible, server-only, or unexposed;
+- separate repeated advisor notices from distinct exploitable boundaries.
+
+#### Phase 13B — Fix critical boundaries first
+
+- remediate the security-definer view using the narrowest compatible change;
+- lock function `search_path` where safe and test callers;
+- address exposed server-only/private schema surfaces;
+- preserve legitimate server workflows and rollback paths.
+
+#### Phase 13C — Close policy families incrementally
+
+- handle one related table family per change;
+- write the narrowest owner/service policies or remove unnecessary exposure;
+- consolidate duplicate broad policies only with behavior tests;
+- verify owner, other-user, anonymous, and service-role behavior;
+- record advisor deltas after every bounded family.
+
+#### Phase 13D — Reconcile runtime identity and orientation
+
+- verify the authoritative runtime repository and deployment;
+- correct active package/readme/current-state naming where safe;
+- add dated supersession notes to corpus and handshake documents;
+- retain historical names and claims in their original context;
+- run build, deployment-reference, orientation, continuity, and collaborator
+  synchronization checks.
+
+#### Phase 13E — Program closure receipt
+
+- run the complete verification ladder from Section 7;
+- refresh `docs/CurrentState.md`;
+- record deployed versus local-only work;
+- list remaining unknowns, accepted risks, and deferred consumers;
+- verify every program-done statement in Section 10 has an evidence locator or
+  remains explicitly open.
+
+### 14.11 Required evidence packet for every slice
+
+Use this compact contract:
+
+| Field | Required content |
+|---|---|
+| Outcome | The narrow behavior now demonstrated |
+| Known | Prior evidence and state used |
+| Attempted | Files, migration, commands, and intended change |
+| Observed | Test, query, trace, browser, storage, or RLS result |
+| Changed | State carried into the next slice and why |
+| Source locators | Commit SHA, paths, migration version, test names, IDs with secrets removed |
+| Developmental state | Modeled, prototyped, integrated, operational, evaluated, or maintained |
+| Uncertainty | Missing, conflicting, or inaccessible evidence |
+| Preservation | Source records, fallback paths, policies, and unrelated work kept intact |
+| Recovery | Forward correction, feature containment, or safe rollback |
+| Authority | Illuminate, Bridge, Revise, Hold, or Block, scoped to the exact action |
+| Next crossing | One bounded next action plus meaningful alternatives |
+| Decision holder | Founder, outside guide, repository maintainer, or system policy |
+
+### 14.12 Immediate next crossing
+
+The next authorized coding scope is **Phase 7A–7B only**:
+
+1. bind the current worktree to the completed Phase 6 evidence;
+2. inventory existing Transcriptory transfer paths;
+3. make Transcriptory the first source-preserving producer of
+   `gestaltview.runtime-handoff.v1`;
+4. prove source retention, derivative provenance, idempotent retry, and owner
+   isolation;
+5. stop before Blackboard implementation and request the Phase 7C gate.
+
+This is the smallest crossing that turns the completed shared contract into
+observable room behavior without spreading uncertainty across the rest of the
+runtime.
 
 ---
