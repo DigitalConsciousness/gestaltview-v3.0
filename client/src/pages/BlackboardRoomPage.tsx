@@ -861,6 +861,18 @@ export default function BlackboardRoomPage() {
     () => summarizeMessages(messages),
     [messages],
   );
+  const originatingSourceRefs = useMemo(
+    () => [
+      ...new Set(
+        messages.flatMap((message) =>
+          message.sourceCitation?.status === "accepted"
+            ? [message.sourceCitation.sourceRef]
+            : [],
+        ),
+      ),
+    ],
+    [messages],
+  );
   const summaryCaptures = useMemo(
     () => buildSummaryBlueprint(messages),
     [messages],
@@ -1415,6 +1427,7 @@ export default function BlackboardRoomPage() {
         ownerId: user.id,
         blueprint,
         selectedEmbodiments: selectedPersonaSlugs,
+        originatingSourceRefs,
       });
       appendBlueprint(blueprint);
       window.sessionStorage.setItem(
@@ -1422,6 +1435,9 @@ export default function BlackboardRoomPage() {
         JSON.stringify({
           handoffId: handoff.handoffId,
           blueprintId: blueprint.id,
+          sourceRefs: handoff.payload.references
+            .filter((reference) => reference.type === "originating_source")
+            .map((reference) => reference.ref),
         }),
       );
       setIsBlueprintDrawerOpen(false);
@@ -1456,6 +1472,7 @@ export default function BlackboardRoomPage() {
         ownerId: user.id,
         blueprint,
         selectedEmbodiments: selectedPersonaSlugs,
+        originatingSourceRefs,
       });
     } catch (error) {
       toast.error(

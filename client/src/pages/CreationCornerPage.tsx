@@ -288,6 +288,7 @@ export default function CreationCornerPage() {
   const [selectedUploadName, setSelectedUploadName] = useState<string | null>(
     null,
   );
+  const [incomingSourceRefs, setIncomingSourceRefs] = useState<string[]>([]);
   const sourceFileInputRef = useRef<HTMLInputElement>(null);
 
   // ── Result state ─────────────────────────────────────────────────────────
@@ -369,9 +370,18 @@ export default function CreationCornerPage() {
       const payload = JSON.parse(raw) as {
         handoffId?: string;
         blueprintId?: string;
+        sourceRefs?: string[];
       };
       if (!payload.handoffId || !payload.blueprintId) return;
       setSelectedBlueprintId(payload.blueprintId);
+      setIncomingSourceRefs(
+        Array.isArray(payload.sourceRefs)
+          ? payload.sourceRefs.filter(
+              (sourceRef): sourceRef is string =>
+                typeof sourceRef === "string" && sourceRef.trim().length > 0,
+            )
+          : [],
+      );
       void acceptRuntimeSourceInCreationCorner({
         handoffId: payload.handoffId,
         destinationEntityRef: `creation-blueprint:${payload.blueprintId}`,
@@ -1058,6 +1068,16 @@ export default function CreationCornerPage() {
                   </span>
                 </p>
               )}
+              {incomingSourceRefs.length > 0 ? (
+                <div className="mt-3 rounded-lg border border-sky-300/20 bg-sky-300/5 px-3 py-2 text-xs text-sky-100">
+                  <p className="font-semibold">Originating source lineage</p>
+                  {incomingSourceRefs.map((sourceRef) => (
+                    <p key={sourceRef} className="mt-1 break-all font-mono">
+                      {sourceRef}
+                    </p>
+                  ))}
+                </div>
+              ) : null}
             </section>
 
             {/* Artifact type grid */}

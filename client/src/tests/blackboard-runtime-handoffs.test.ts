@@ -113,6 +113,10 @@ describe("Blackboard runtime handoff adapters", () => {
         },
       },
       selectedEmbodiments: ["billy", "the-architect"],
+      originatingSourceRefs: [
+        "transcriptory-capture:transcript-1",
+        "transcriptory-capture:transcript-1",
+      ],
     });
 
     const input = prepareRuntimeHandoffMock.mock.calls[0][0];
@@ -131,6 +135,17 @@ describe("Blackboard runtime handoff adapters", () => {
       idempotencyKey: "blackboard:blueprint-1:creation_corner:v1",
     });
     expect(JSON.stringify(input)).not.toContain("Private blueprint body");
+    expect(input.payload.references).toContainEqual({
+      type: "originating_source",
+      ref: "transcriptory-capture:transcript-1",
+      label: "Originating source",
+    });
+    expect(
+      input.payload.references.filter(
+        (reference: { type: string }) =>
+          reference.type === "originating_source",
+      ),
+    ).toHaveLength(1);
     expect(offered.state).toBe("offered");
   });
 
@@ -215,6 +230,32 @@ describe("Blackboard runtime handoff adapters", () => {
         destinationEntityRef: "creation-blueprint:blueprint-1",
       },
     });
+  });
+
+  it("returns an actionable failure when the Creation Corner destination is unavailable", async () => {
+    getRuntimeHandoffMock.mockResolvedValue({
+      handoffId: "handoff-unavailable",
+      state: "declined",
+      destination: { room: "creation_corner" },
+      source: {
+        room: "blackboard",
+        entityId: "blueprint-1",
+        immutableRef: "blackboard-blueprint:blueprint-1",
+      },
+    });
+    const { acceptRuntimeSourceInCreationCorner } =
+      await import("@/lib/blackboardRuntimeHandoffs");
+
+    await expect(
+      acceptRuntimeSourceInCreationCorner({
+        handoffId: "handoff-unavailable",
+        destinationEntityRef: "creation-blueprint:blueprint-1",
+        expectedSourceRoom: "blackboard",
+      }),
+    ).rejects.toThrow(
+      "This source is not available for Creation Corner acceptance.",
+    );
+    expect(transitionRuntimeHandoffMock).not.toHaveBeenCalled();
   });
 
   it("builds a reviewable profile proposal instead of mutating profile state", async () => {

@@ -17,6 +17,71 @@
 
 ---
 
+# CurrentState — Inside-Out Convergence Phase 7D (2026-07-29)
+
+**Audit frame:** Complete the bounded
+`Transcriptory → Blackboard → Creation Corner` proof and inform the Phase 7
+outside-review decision. The authoritative sources are the convergence spec,
+the shared v1 handoff contract, Phase 7 room adapters, the server-mediated
+handoff API, and the focused test observations below. This work did not apply
+the handoff migration to production, deploy, or begin Phase 8.
+
+## Known
+
+- The Phase 7C blueprint offer preserved Blackboard capture references but did
+  not carry an accepted originating Transcriptory reference into the Creation
+  Corner offer.
+- The shared handoff API derives ownership from authentication and filters
+  reads and writes by owner. The migration models RLS and immutable lifecycle
+  evidence, but this Phase 7D run did not establish production application.
+- Browser compatibility packets remain transport hints; shared handoff records
+  and receipts are the modeled durable authority.
+
+## Attempted and changed
+
+- Added the harmless Phase 7 fixture in
+  `client/src/tests/phase7-three-room-proof.test.ts`.
+- Blackboard blueprint offers now include deduplicated
+  `originating_source` references alongside the distinct Blackboard blueprint
+  and capture references. Private blueprint body text remains excluded.
+- Blackboard forwards those source references in the existing compatibility
+  packet after the durable offer succeeds.
+- Creation Corner renders the originating source reference visibly and retains
+  its retry-safe acknowledgment behavior.
+- Added an actionable unavailable-destination proof: a declined Creation Corner
+  handoff produces a visible, specific acceptance error and no transition.
+
+## Observed
+
+- The fixture demonstrates same-owner success across two accepted handoffs,
+  cross-owner `not found` behavior, idempotent replay of both handoff IDs, and
+  source lineage at every hop.
+- The fixture keeps seven identities distinct: Transcriptory source capture,
+  transcription derivative, cited Blackboard collaboration record, Blackboard
+  blueprint, Transcriptory handoff, Creation Corner handoff, and Creation
+  Corner destination record.
+- The complete focused Phase 7 set passes: **29/29 tests across 7 files**.
+- `pnpm exec tsc --noEmit --pretty false` passes.
+- `pnpm exec vite build` passes after transforming **5,434 modules**.
+- `git diff --check` passes.
+
+## Layered audit orientation
+
+- **Source preservation and room lineage:** demonstrated and evaluated in the
+  bounded fixture; aligned with the source/derivative distinction.
+- **Owner isolation and replay:** demonstrated at the client adapter and
+  server-API test boundaries; production RLS operation remains unobserved in
+  this phase.
+- **Destination failure:** demonstrated as actionable and non-mutating.
+- **Developmental state:** integrated and locally evaluated. Production
+  operational status remains unknown until the migration is applied and the
+  same fixture is observed against that approved environment.
+- **Authority:** **Bridge** for the Phase 7 implementation and local evidence;
+  **Hold** on Phase 8 until the outside guide accepts the Phase 7 fixture and
+  recovery path. The founder/outside guide retains the decision.
+
+---
+
 # CurrentState — Relationship-first collaborator requisition prepared (2026-07-28)
 
 **Scope of this pass:** Converted the approved custom-collaborator launch design into a reviewable Priority 1 implementation without applying production DDL.

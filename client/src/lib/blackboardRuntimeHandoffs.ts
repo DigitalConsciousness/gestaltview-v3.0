@@ -66,6 +66,7 @@ async function offerBlackboardBlueprintToRoom(input: {
   ownerId: string;
   blueprint: CaptureBlueprint;
   selectedEmbodiments: string[];
+  originatingSourceRefs?: string[];
   destination: "creation_corner" | "external_scaffold";
 }) {
   const requestedAction =
@@ -73,6 +74,7 @@ async function offerBlackboardBlueprintToRoom(input: {
       ? "accept_blueprint_source"
       : "review_blueprint_for_scaffold";
   const sourceRef = `blackboard-blueprint:${input.blueprint.id}`;
+  const originatingSourceRefs = [...new Set(input.originatingSourceRefs ?? [])];
   const prepared = await prepareRuntimeHandoff({
     contractVersion: RUNTIME_HANDOFF_CONTRACT_VERSION,
     source: {
@@ -102,6 +104,11 @@ async function offerBlackboardBlueprintToRoom(input: {
           type: "blackboard_capture",
           ref: `blackboard-capture:${captureId}`,
         })),
+        ...originatingSourceRefs.map((ref) => ({
+          type: "originating_source",
+          ref,
+          label: "Originating source",
+        })),
       ],
     },
     selectedEmbodiments: input.selectedEmbodiments,
@@ -124,6 +131,7 @@ export function offerBlackboardBlueprint(input: {
   ownerId: string;
   blueprint: CaptureBlueprint;
   selectedEmbodiments: string[];
+  originatingSourceRefs?: string[];
 }) {
   return offerBlackboardBlueprintToRoom({
     ...input,
@@ -135,6 +143,7 @@ export function offerBlackboardBlueprintToScaffold(input: {
   ownerId: string;
   blueprint: CaptureBlueprint;
   selectedEmbodiments: string[];
+  originatingSourceRefs?: string[];
 }) {
   return offerBlackboardBlueprintToRoom({
     ...input,
