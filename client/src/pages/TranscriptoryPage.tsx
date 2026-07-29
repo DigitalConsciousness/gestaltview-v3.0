@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FileAudio, Mic2, Plus, Search, UploadCloud, Waves } from "lucide-react";
+import {
+  FileAudio,
+  Mic2,
+  Plus,
+  Search,
+  UploadCloud,
+  Waves,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import TranscriptCard from "@/components/TranscriptCard";
@@ -14,8 +21,10 @@ import {
   createTranscriptorySession,
   formatTranscriptoryFailureMessage,
   getTranscriptoryCapture,
+  listLocalTranscriptoryCaptures,
   listTranscriptoryCaptures,
   listTranscriptorySessions,
+  removeLocalTranscriptoryCapture,
   transcribeTranscriptoryAudio,
   type TranscriptoryCapture,
   type TranscriptorySession,
@@ -28,36 +37,65 @@ export default function TranscriptoryPage() {
   const { isAuthenticated, isLoading } = useAuth();
   const [captures, setCaptures] = useState<TranscriptoryCapture[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [selectedSources, setSelectedSources] = useState<TranscriptorySource[]>([]);
-  const [selectedSession, setSelectedSession] = useState<TranscriptorySession | null>(null);
+  const [selectedSources, setSelectedSources] = useState<TranscriptorySource[]>(
+    [],
+  );
+  const [selectedSession, setSelectedSession] =
+    useState<TranscriptorySession | null>(null);
   const [sessions, setSessions] = useState<TranscriptorySession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string>("");
   const [query, setQuery] = useState("");
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [transcriptionError, setTranscriptionError] = useState<string | null>(null);
+  const [transcriptionError, setTranscriptionError] = useState<string | null>(
+    null,
+  );
   const [sessionTitle, setSessionTitle] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const retryFilesRef = useRef(new Map<string, File>());
 
   useSEO({
     ...PAGE_SEO.default,
     title: "Transcriptory | GestaltView",
-    description: "Voice notes, transcripts, and raw source captures accumulated over time.",
+    description:
+      "Voice notes, transcripts, and raw source captures accumulated over time.",
     h1: "Transcriptory",
     canonical: "https://gestaltview-v2.vercel.app/transcriptory",
   });
 
   useEffect(() => {
+    const localCaptures = listLocalTranscriptoryCaptures();
+    setCaptures(localCaptures);
+    setSelectedId((current) => current ?? localCaptures[0]?.id ?? null);
+  }, []);
+
+  useEffect(() => {
     if (isLoading || !isAuthenticated) return;
     let active = true;
-    listTranscriptoryCaptures({ q: query || undefined, sessionId: activeSessionId || undefined })
+    listTranscriptoryCaptures({
+      q: query || undefined,
+      sessionId: activeSessionId || undefined,
+    })
       .then((items) => {
         if (!active) return;
-        setCaptures(items);
+        const localCaptures = listLocalTranscriptoryCaptures();
+        setCaptures([
+          ...localCaptures,
+          ...items.filter(
+            (item) =>
+              !localCaptures.some(
+                (local) => local.metadata?.syncedCaptureId === item.id,
+              ),
+          ),
+        ]);
         setSelectedId((current) => current ?? items[0]?.id ?? null);
       })
       .catch((error) => {
         if (!active) return;
-        setLoadError(error instanceof Error ? error.message : "Failed to load Transcriptory.");
+        setLoadError(
+          error instanceof Error
+            ? error.message
+            : "Failed to load Transcriptory.",
+        );
       });
     return () => {
       active = false;
@@ -80,7 +118,11 @@ export default function TranscriptoryPage() {
   }, [isAuthenticated, isLoading]);
 
   useEffect(() => {
-    if (!selectedId || selectedId.startsWith("local-transcript-") || !isAuthenticated) {
+    if (
+      !selectedId ||
+      selectedId.startsWith("local-transcript-") ||
+      !isAuthenticated
+    ) {
       setSelectedSources([]);
       setSelectedSession(null);
       return;
@@ -89,7 +131,11 @@ export default function TranscriptoryPage() {
     getTranscriptoryCapture(selectedId)
       .then((detail) => {
         if (!active) return;
-        setCaptures((current) => current.map((capture) => (capture.id === detail.capture.id ? detail.capture : capture)));
+        setCaptures((current) =>
+          current.map((capture) =>
+            capture.id === detail.capture.id ? detail.capture : capture,
+          ),
+        );
         setSelectedSources(detail.sources);
         setSelectedSession(detail.session);
       })
@@ -107,14 +153,22 @@ export default function TranscriptoryPage() {
     const normalized = query.trim().toLowerCase();
     if (!normalized) return captures;
     return captures.filter((capture) =>
-      [capture.title, capture.summary, capture.rawTranscript, capture.themes.join(" ")]
+      [
+        capture.title,
+        capture.summary,
+        capture.rawTranscript,
+        capture.themes.join(" "),
+      ]
         .join(" ")
         .toLowerCase()
         .includes(normalized),
     );
   }, [captures, query]);
 
-  const selectedCapture = captures.find((capture) => capture.id === selectedId) ?? filteredCaptures[0] ?? null;
+  const selectedCapture =
+    captures.find((capture) => capture.id === selectedId) ??
+    filteredCaptures[0] ??
+    null;
 
   const createSession = async () => {
     const title = sessionTitle.trim();
@@ -130,7 +184,11 @@ export default function TranscriptoryPage() {
       setSessionTitle("");
       toast.success("Transcriptory session created.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to create Transcriptory session.");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to create Transcriptory session.",
+      );
     }
   };
 
@@ -151,33 +209,61 @@ export default function TranscriptoryPage() {
     }
 
     let persistedCaptureId = local.id;
+    let savedCapture: TranscriptoryCapture;
     try {
-      const saved = await createTranscriptoryCapture({
+      savedCapture = await createTranscriptoryCapture({
         title: input.title,
         sessionId: activeSessionId || undefined,
         audioStoragePath: input.audioStoragePath,
         rawTranscript: input.rawTranscript,
         status: input.file ? "processing" : undefined,
-        sourceKind: input.file ? "audio" : input.rawTranscript ? "text" : "audio",
+        sourceKind: input.file
+          ? "audio"
+          : input.rawTranscript
+            ? "text"
+            : "audio",
         sourceLabel: input.file?.name,
       });
-      persistedCaptureId = saved.id;
-      setCaptures((current) => current.map((capture) => (capture.id === local.id ? saved : capture)));
-      setSelectedId(saved.id);
+      persistedCaptureId = savedCapture.id;
+      removeLocalTranscriptoryCapture(local.id);
+      setCaptures((current) =>
+        current.map((capture) =>
+          capture.id === local.id ? savedCapture : capture,
+        ),
+      );
+      setSelectedId(savedCapture.id);
       if (!input.file) {
         toast.success("Transcriptory capture saved.");
         return;
       }
+      retryFilesRef.current.set(savedCapture.id, input.file);
+      toast.success("Transcriptory source record saved.");
+    } catch (error) {
+      const failureMessage = formatTranscriptoryFailureMessage(
+        error,
+        "Transcriptory source could not be persisted.",
+      );
+      toast.error(failureMessage);
+      return;
+    }
 
+    try {
       toast.info("Transcribing audio with AssemblyAI. This may take a moment.");
-      const transcription = await transcribeTranscriptoryAudio({ captureId: saved.id, file: input.file });
+      const transcription = await transcribeTranscriptoryAudio({
+        captureId: savedCapture.id,
+        file: input.file!,
+      });
       if (transcription.capture) {
-        setCaptures((current) => current.map((capture) => (capture.id === saved.id ? transcription.capture! : capture)));
+        setCaptures((current) =>
+          current.map((capture) =>
+            capture.id === savedCapture.id ? transcription.capture! : capture,
+          ),
+        );
         setSelectedId(transcription.capture.id);
       } else {
         setCaptures((current) =>
           current.map((capture) =>
-            capture.id === saved.id
+            capture.id === savedCapture.id
               ? {
                   ...capture,
                   rawTranscript: transcription.transcript,
@@ -191,11 +277,14 @@ export default function TranscriptoryPage() {
       }
       toast.success("Transcript saved to Transcriptory.");
     } catch (error) {
-      const failureMessage = formatTranscriptoryFailureMessage(error, "Transcriptory capture failed.");
+      const failureMessage = formatTranscriptoryFailureMessage(
+        error,
+        "Transcriptory capture failed.",
+      );
       setTranscriptionError(failureMessage);
       setCaptures((current) =>
         current.map((capture) =>
-          capture.id === local.id || capture.id === persistedCaptureId
+          capture.id === persistedCaptureId
             ? {
                 ...capture,
                 status: "failed",
@@ -206,7 +295,56 @@ export default function TranscriptoryPage() {
             : capture,
         ),
       );
-      toast.error(failureMessage);
+      toast.error(`Source preserved; transcription failed: ${failureMessage}`);
+    }
+  };
+
+  const retryTranscription = async (capture: TranscriptoryCapture) => {
+    const file = retryFilesRef.current.get(capture.id);
+    if (!file) {
+      toast.error(
+        "The source record is preserved, but this browser no longer has the original audio bytes. Re-select the source file to retry.",
+      );
+      return;
+    }
+
+    setTranscriptionError(null);
+    setCaptures((current) =>
+      current.map((item) =>
+        item.id === capture.id
+          ? { ...item, status: "processing", transcriptStatus: "processing" }
+          : item,
+      ),
+    );
+    try {
+      const result = await transcribeTranscriptoryAudio({
+        captureId: capture.id,
+        file,
+      });
+      if (result.capture) {
+        setCaptures((current) =>
+          current.map((item) =>
+            item.id === capture.id ? result.capture! : item,
+          ),
+        );
+      }
+      toast.success("Transcriptory retry completed.");
+    } catch (error) {
+      const message = formatTranscriptoryFailureMessage(error);
+      setTranscriptionError(message);
+      setCaptures((current) =>
+        current.map((item) =>
+          item.id === capture.id
+            ? {
+                ...item,
+                status: "failed",
+                transcriptStatus: "failed",
+                errorMessage: message,
+              }
+            : item,
+        ),
+      );
+      toast.error(`Source preserved; retry failed: ${message}`);
     }
   };
 
@@ -216,19 +354,31 @@ export default function TranscriptoryPage() {
       return;
     }
 
-    if (!window.confirm(`Delete "${capture.title}" from Transcriptory?`)) {
+    const relationshipWarning =
+      selectedSources.length > 0 || capture.linkedCaptures.length > 0
+        ? " Its source and relationship records will be archived or removed, while accepted destination records remain independent."
+        : "";
+    if (
+      !window.confirm(
+        `Archive "${capture.title}" from Transcriptory?${relationshipWarning}`,
+      )
+    ) {
       return;
     }
 
     try {
       if (isAuthenticated && !captureId.startsWith("local-transcript-")) {
         await deleteTranscriptoryCapture(captureId);
+      } else {
+        removeLocalTranscriptoryCapture(captureId);
       }
 
       setCaptures((current) => {
         const next = current.filter((item) => item.id !== captureId);
         setSelectedId((currentSelected) =>
-          currentSelected === captureId ? next[0]?.id ?? null : currentSelected,
+          currentSelected === captureId
+            ? (next[0]?.id ?? null)
+            : currentSelected,
         );
         return next;
       });
@@ -240,7 +390,11 @@ export default function TranscriptoryPage() {
 
       toast.success("Transcriptory capture deleted.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to delete Transcriptory capture.");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to delete Transcriptory capture.",
+      );
     }
   };
 
@@ -270,13 +424,16 @@ export default function TranscriptoryPage() {
               Your voice. Accumulated.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-8 text-white/64">
-              Upload or record audio, preserve the raw transcript, and keep each voice note available as context for Blackboard, Creation Corner, and future Digital Intelligence work.
+              Upload or record audio, preserve the raw transcript, and keep each
+              voice note available as context for Blackboard, Creation Corner,
+              and future Digital Intelligence work.
             </p>
           </div>
 
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.24)] backdrop-blur">
             <p className="text-sm leading-6 text-white/62">
-              Large files over 50MB may take several minutes to transcribe. Browser SpeechRecognition is intentionally bypassed.
+              Large files over 50MB may take several minutes to transcribe.
+              Browser SpeechRecognition is intentionally bypassed.
             </p>
             <div className="mt-4 flex gap-2">
               <input
@@ -304,7 +461,9 @@ export default function TranscriptoryPage() {
                   type="button"
                   onClick={() => setActiveSessionId("")}
                   className={`rounded-full border px-3 py-1.5 text-xs ${
-                    activeSessionId ? "border-white/10 text-white/50" : "border-cyan-300/24 bg-cyan-300/10 text-cyan-50"
+                    activeSessionId
+                      ? "border-white/10 text-white/50"
+                      : "border-cyan-300/24 bg-cyan-300/10 text-cyan-50"
                   }`}
                 >
                   All
@@ -315,7 +474,9 @@ export default function TranscriptoryPage() {
                     type="button"
                     onClick={() => setActiveSessionId(session.id)}
                     className={`rounded-full border px-3 py-1.5 text-xs ${
-                      activeSessionId === session.id ? "border-cyan-300/24 bg-cyan-300/10 text-cyan-50" : "border-white/10 text-white/50"
+                      activeSessionId === session.id
+                        ? "border-cyan-300/24 bg-cyan-300/10 text-cyan-50"
+                        : "border-white/10 text-white/50"
                     }`}
                   >
                     {session.title}
@@ -349,7 +510,10 @@ export default function TranscriptoryPage() {
               </span>
             </div>
             {transcriptionError ? (
-              <p role="alert" className="mt-4 rounded-2xl border border-rose-300/20 bg-rose-300/[0.08] p-3 text-sm leading-6 text-rose-50">
+              <p
+                role="alert"
+                className="mt-4 rounded-2xl border border-rose-300/20 bg-rose-300/[0.08] p-3 text-sm leading-6 text-rose-50"
+              >
                 Audio upload or transcription failed: {transcriptionError}
               </p>
             ) : null}
@@ -364,8 +528,12 @@ export default function TranscriptoryPage() {
           <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5 backdrop-blur">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/42">Transcript library</p>
-                <p className="mt-1 text-sm text-white/52">{captures.length} captures</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/42">
+                  Transcript library
+                </p>
+                <p className="mt-1 text-sm text-white/52">
+                  {captures.length} captures
+                </p>
               </div>
               <label className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-2 text-sm text-white/62">
                 <Search className="size-4" />
@@ -379,24 +547,27 @@ export default function TranscriptoryPage() {
             </div>
 
             {loadError ? (
-              <p className="mt-4 rounded-2xl border border-amber-300/18 bg-amber-300/[0.06] p-3 text-sm text-amber-50">{loadError}</p>
+              <p className="mt-4 rounded-2xl border border-amber-300/18 bg-amber-300/[0.06] p-3 text-sm text-amber-50">
+                {loadError}
+              </p>
             ) : null}
 
             <div className="mt-5 grid gap-3">
               {filteredCaptures.length > 0 ? (
                 filteredCaptures.map((capture) => (
-                <TranscriptCard
-                  key={capture.id}
-                  capture={capture}
-                  selected={capture.id === selectedCapture?.id}
-                  onOpen={() => setSelectedId(capture.id)}
-                  onDelete={() => void deleteCapture(capture.id)}
-                />
-              ))
+                  <TranscriptCard
+                    key={capture.id}
+                    capture={capture}
+                    selected={capture.id === selectedCapture?.id}
+                    onOpen={() => setSelectedId(capture.id)}
+                    onDelete={() => void deleteCapture(capture.id)}
+                  />
+                ))
               ) : (
                 <div className="rounded-[1.5rem] border border-dashed border-white/12 bg-black/18 p-6 text-sm leading-6 text-white/50">
                   <FileAudio className="mb-3 size-5 text-cyan-200/68" />
-                  No transcripts yet. Upload audio, record a note, or paste a transcript in the next implementation slice.
+                  No transcripts yet. Upload audio, record a note, or paste a
+                  transcript in the next implementation slice.
                 </div>
               )}
             </div>
@@ -406,7 +577,18 @@ export default function TranscriptoryPage() {
             capture={selectedCapture}
             sources={selectedSources}
             session={selectedSession}
-            onDelete={selectedCapture ? () => void deleteCapture(selectedCapture.id) : undefined}
+            onDelete={
+              selectedCapture
+                ? () => void deleteCapture(selectedCapture.id)
+                : undefined
+            }
+            onRetry={
+              selectedCapture &&
+              (selectedCapture.status === "failed" ||
+                selectedCapture.transcriptStatus === "failed")
+                ? () => void retryTranscription(selectedCapture)
+                : undefined
+            }
           />
         </section>
       </div>

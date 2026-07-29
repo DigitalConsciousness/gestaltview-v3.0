@@ -14,8 +14,12 @@ vi.mock("../_lib/transcriptory", () => ({
   TRANSCRIPTORY_CAPTURE_SELECT: "*",
   TRANSCRIPTORY_SESSION_SELECT: "*",
   TRANSCRIPTORY_SOURCE_SELECT: "*",
-  getQueryValue: (value: string | string[] | undefined) => Array.isArray(value) ? value[0] ?? "" : value ?? "",
-  getPaginationValue: (value: string | string[] | undefined, fallback: number) => {
+  getQueryValue: (value: string | string[] | undefined) =>
+    Array.isArray(value) ? (value[0] ?? "") : (value ?? ""),
+  getPaginationValue: (
+    value: string | string[] | undefined,
+    fallback: number,
+  ) => {
     const raw = Array.isArray(value) ? value[0] : value;
     const parsed = Number.parseInt(raw ?? "", 10);
     return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
@@ -23,13 +27,27 @@ vi.mock("../_lib/transcriptory", () => ({
   normalizeTranscriptoryStatus: (status?: string) => {
     if (status === "transcribing") return "processing";
     if (status === "error") return "failed";
-    return status === "ready" || status === "processing" || status === "failed" ? status : "pending";
+    return status === "ready" || status === "processing" || status === "failed"
+      ? status
+      : "pending";
   },
   normalizeHandoffTarget: (value: unknown) =>
-    value === "creation_corner" || value === "blackboard_room" || value === "universal_capture" ? value : null,
+    value === "creation_corner" ||
+    value === "blackboard_room" ||
+    value === "universal_capture"
+      ? value
+      : null,
   handoffSourceForTarget: (target: string) => {
-    if (target === "creation_corner") return { sourceType: "creation_corner_seed", sourcePage: "creation_corner" };
-    if (target === "blackboard_room") return { sourceType: "blackboard_handoff", sourcePage: "blackboard_room" };
+    if (target === "creation_corner")
+      return {
+        sourceType: "creation_corner_seed",
+        sourcePage: "creation_corner",
+      };
+    if (target === "blackboard_room")
+      return {
+        sourceType: "blackboard_handoff",
+        sourcePage: "blackboard_room",
+      };
     return { sourceType: "universal_capture", sourcePage: "universal_capture" };
   },
   buildTranscriptoryCapturePayload: (row: any) => ({
@@ -46,12 +64,14 @@ vi.mock("../_lib/transcriptory", () => ({
     themes: row.themes ?? [],
     linkedCaptures: row.linked_captures ?? [],
     linkedBlackboardSession: row.linked_blackboard_session ?? undefined,
-    linkedCreationCornerArtifact: row.linked_creation_corner_artifact ?? undefined,
+    linkedCreationCornerArtifact:
+      row.linked_creation_corner_artifact ?? undefined,
     contextWeight: row.context_weight ?? 1,
     sourceKind: row.source_kind ?? "audio",
     sourceLabel: row.source_label ?? undefined,
     processingProvider: row.processing_provider ?? undefined,
-    transcriptStatus: row.transcript_status ?? (row.status === "ready" ? "ready" : "pending"),
+    transcriptStatus:
+      row.transcript_status ?? (row.status === "ready" ? "ready" : "pending"),
     status: row.status,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -65,8 +85,12 @@ vi.mock("../_lib/transcriptory", () => ({
     markdown: [
       `# Transcriptory capture: ${capture.title ?? "Untitled transcript"}`,
       capture.summary ? `Summary:\n${capture.summary}` : "",
-      capture.raw_transcript ? `Raw transcript:\n${capture.raw_transcript}` : "",
-    ].filter(Boolean).join("\n\n"),
+      capture.raw_transcript
+        ? `Raw transcript:\n${capture.raw_transcript}`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n\n"),
   }),
   buildTranscriptorySessionPayload: (row: any) => ({
     id: row.id,
@@ -217,7 +241,10 @@ describe("Transcriptory API", () => {
   });
 
   it("requires authentication before listing captures", async () => {
-    requireAuthMock.mockReturnValue({ status: 401, body: { error: "Authentication required" } });
+    requireAuthMock.mockReturnValue({
+      status: 401,
+      body: { error: "Authentication required" },
+    });
     const module = await import("../transcriptory/captures");
     const res = createRes();
 
@@ -249,7 +276,9 @@ describe("Transcriptory API", () => {
         },
       ],
     });
-    getTranscriptorySupabaseAdminMock.mockReturnValue({ from: vi.fn(() => builder) });
+    getTranscriptorySupabaseAdminMock.mockReturnValue({
+      from: vi.fn(() => builder),
+    });
     const module = await import("../transcriptory/captures");
     const res = createRes();
 
@@ -273,7 +302,9 @@ describe("Transcriptory API", () => {
 
   it("filters the transcriptory library by session, text query, theme, status, and pagination", async () => {
     const builder = createBuilder({ listData: [] });
-    getTranscriptorySupabaseAdminMock.mockReturnValue({ from: vi.fn(() => builder) });
+    getTranscriptorySupabaseAdminMock.mockReturnValue({
+      from: vi.fn(() => builder),
+    });
     const module = await import("../transcriptory/captures");
     const res = createRes();
 
@@ -296,7 +327,10 @@ describe("Transcriptory API", () => {
     expect(builder.calls.eq).toContainEqual(["user_id", "user-1"]);
     expect(builder.calls.eq).toContainEqual(["session_id", "session-1"]);
     expect(builder.calls.eq).toContainEqual(["transcript_status", "ready"]);
-    expect(builder.calls.eq).toContainEqual(["textSearch:search_document", "raw signal"]);
+    expect(builder.calls.eq).toContainEqual([
+      "textSearch:search_document",
+      "raw signal",
+    ]);
     expect(builder.calls.eq).toContainEqual(["contains:themes", ["Workflow"]]);
     expect(builder.calls.eq).toContainEqual(["range", [50, 74]]);
     expect(res.statusCode).toBe(200);
@@ -322,7 +356,9 @@ describe("Transcriptory API", () => {
         updated_at: "2026-06-09T00:00:00.000Z",
       },
     });
-    getTranscriptorySupabaseAdminMock.mockReturnValue({ from: vi.fn(() => builder) });
+    getTranscriptorySupabaseAdminMock.mockReturnValue({
+      from: vi.fn(() => builder),
+    });
     const module = await import("../transcriptory/captures");
     const res = createRes();
 
@@ -345,7 +381,9 @@ describe("Transcriptory API", () => {
       status: "pending",
     });
     expect(res.statusCode).toBe(201);
-    expect(res.body).toMatchObject({ capture: { id: "capture-2", status: "pending" } });
+    expect(res.body).toMatchObject({
+      capture: { id: "capture-2", status: "pending" },
+    });
   });
 
   it("forces upload captures into pending unless raw transcript text is already present", async () => {
@@ -364,7 +402,9 @@ describe("Transcriptory API", () => {
       },
     });
     getTranscriptorySupabaseAdminMock.mockReturnValue({
-      from: vi.fn((table: string) => (table === "transcriptory_captures" ? builder : createBuilder())),
+      from: vi.fn((table: string) =>
+        table === "transcriptory_captures" ? builder : createBuilder(),
+      ),
     });
 
     const module = await import("../transcriptory/captures");
@@ -374,7 +414,11 @@ describe("Transcriptory API", () => {
       {
         method: "POST",
         headers: {},
-        body: { title: "Pending upload", audioStoragePath: "user-1/pending.webm", status: "processing" },
+        body: {
+          title: "Pending upload",
+          audioStoragePath: "user-1/pending.webm",
+          status: "processing",
+        },
       } as never,
       res as never,
     );
@@ -397,7 +441,9 @@ describe("Transcriptory API", () => {
         updated_at: "2026-06-10T00:00:00.000Z",
       },
     });
-    getTranscriptorySupabaseAdminMock.mockReturnValue({ from: vi.fn(() => builder) });
+    getTranscriptorySupabaseAdminMock.mockReturnValue({
+      from: vi.fn(() => builder),
+    });
     const module = await import("../transcriptory/sessions");
     const res = createRes();
 
@@ -405,7 +451,10 @@ describe("Transcriptory API", () => {
       {
         method: "POST",
         headers: {},
-        body: { title: "Morning walks", description: "Notes from recurring walking captures." },
+        body: {
+          title: "Morning walks",
+          description: "Notes from recurring walking captures.",
+        },
       } as never,
       res as never,
     );
@@ -418,7 +467,9 @@ describe("Transcriptory API", () => {
       status: "active",
     });
     expect(res.statusCode).toBe(201);
-    expect(res.body).toMatchObject({ session: { id: "session-1", title: "Morning walks" } });
+    expect(res.body).toMatchObject({
+      session: { id: "session-1", title: "Morning walks" },
+    });
   });
 
   it("lists the authenticated user's transcriptory sessions", async () => {
@@ -438,7 +489,9 @@ describe("Transcriptory API", () => {
         },
       ],
     });
-    getTranscriptorySupabaseAdminMock.mockReturnValue({ from: vi.fn(() => builder) });
+    getTranscriptorySupabaseAdminMock.mockReturnValue({
+      from: vi.fn(() => builder),
+    });
     const module = await import("../transcriptory/sessions");
     const res = createRes();
 
@@ -446,7 +499,9 @@ describe("Transcriptory API", () => {
 
     expect(builder.calls.eq).toContainEqual(["user_id", "user-1"]);
     expect(res.statusCode).toBe(200);
-    expect(res.body).toMatchObject({ sessions: [{ id: "session-1", title: "Morning walks" }] });
+    expect(res.body).toMatchObject({
+      sessions: [{ id: "session-1", title: "Morning walks" }],
+    });
   });
 
   it("updates owned transcriptory sessions by id", async () => {
@@ -464,7 +519,9 @@ describe("Transcriptory API", () => {
         updated_at: "2026-06-10T00:00:00.000Z",
       },
     });
-    getTranscriptorySupabaseAdminMock.mockReturnValue({ from: vi.fn(() => builder) });
+    getTranscriptorySupabaseAdminMock.mockReturnValue({
+      from: vi.fn(() => builder),
+    });
     const module = await import("../transcriptory/sessions/[id]");
     const res = createRes();
 
@@ -473,7 +530,10 @@ describe("Transcriptory API", () => {
         method: "PATCH",
         headers: {},
         query: { id: "session-1" },
-        body: { title: "Renamed walk notes", description: "Updated description." },
+        body: {
+          title: "Renamed walk notes",
+          description: "Updated description.",
+        },
       } as never,
       res as never,
     );
@@ -485,7 +545,9 @@ describe("Transcriptory API", () => {
     expect(builder.calls.eq).toContainEqual(["id", "session-1"]);
     expect(builder.calls.eq).toContainEqual(["user_id", "user-1"]);
     expect(res.statusCode).toBe(200);
-    expect(res.body).toMatchObject({ session: { id: "session-1", title: "Renamed walk notes" } });
+    expect(res.body).toMatchObject({
+      session: { id: "session-1", title: "Renamed walk notes" },
+    });
   });
 
   it("returns capture detail with source lineage and session, then marks it accessed", async () => {
@@ -507,7 +569,14 @@ describe("Transcriptory API", () => {
       },
     });
     const sourceBuilder = createBuilder({
-      listData: [{ id: "source-1", source_type: "upload", source_page: "transcriptory", created_at: "2026-06-10T00:00:00.000Z" }],
+      listData: [
+        {
+          id: "source-1",
+          source_type: "upload",
+          source_page: "transcriptory",
+          created_at: "2026-06-10T00:00:00.000Z",
+        },
+      ],
     });
     const sessionBuilder = createBuilder({ singleData: null });
     const fromMock = vi.fn((table: string) => {
@@ -519,7 +588,10 @@ describe("Transcriptory API", () => {
     const module = await import("../transcriptory/captures/[id]");
     const res = createRes();
 
-    await module.default({ method: "GET", headers: {}, query: { id: "capture-1" } } as never, res as never);
+    await module.default(
+      { method: "GET", headers: {}, query: { id: "capture-1" } } as never,
+      res as never,
+    );
 
     expect(captureBuilder.calls.eq).toContainEqual(["id", "capture-1"]);
     expect(captureBuilder.calls.eq).toContainEqual(["user_id", "user-1"]);
@@ -548,13 +620,20 @@ describe("Transcriptory API", () => {
       },
     });
     const sourceBuilder = createBuilder({ singleData: { id: "source-2" } });
-    const fromMock = vi.fn((table: string) => (table === "transcriptory_sources" ? sourceBuilder : captureBuilder));
+    const fromMock = vi.fn((table: string) =>
+      table === "transcriptory_sources" ? sourceBuilder : captureBuilder,
+    );
     getTranscriptorySupabaseAdminMock.mockReturnValue({ from: fromMock });
     const module = await import("../transcriptory/captures/[id]/handoff");
     const res = createRes();
 
     await module.default(
-      { method: "POST", headers: {}, query: { id: "capture-1" }, body: { target: "creation_corner" } } as never,
+      {
+        method: "POST",
+        headers: {},
+        query: { id: "capture-1" },
+        body: { target: "creation_corner" },
+      } as never,
       res as never,
     );
 
@@ -635,13 +714,22 @@ describe("Transcriptory API", () => {
     const module = await import("../transcriptory/transcribe");
     const res = createRes();
 
-    await module.default({ method: "POST", headers: { "x-capture-id": "capture-zombie" } } as never, res as never);
+    await module.default(
+      {
+        method: "POST",
+        headers: { "x-capture-id": "capture-zombie" },
+      } as never,
+      res as never,
+    );
 
     expect(res.statusCode).not.toBe(409);
   });
 
   it("requires authentication before transcribing audio", async () => {
-    requireAuthMock.mockReturnValue({ status: 401, body: { error: "Authentication required" } });
+    requireAuthMock.mockReturnValue({
+      status: 401,
+      body: { error: "Authentication required" },
+    });
     process.env.ASSEMBLYAI_API_KEY = "aai_test_key";
     const module = await import("../transcriptory/transcribe");
     const res = createRes();
@@ -708,14 +796,18 @@ describe("Transcriptory API", () => {
     getTranscriptorySupabaseAdminMock.mockReturnValue({
       from: vi.fn(() => builder),
       storage: {
-        createBucket: vi.fn().mockResolvedValue({ error: { message: "already exists" } }),
+        createBucket: vi
+          .fn()
+          .mockResolvedValue({ error: { message: "already exists" } }),
         from: storageFromMock,
       },
     });
     fetchMock
       .mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ upload_url: "https://cdn.assemblyai.com/upload/audio.webm" }),
+        json: async () => ({
+          upload_url: "https://cdn.assemblyai.com/upload/audio.webm",
+        }),
       })
       .mockResolvedValueOnce({
         ok: true,
@@ -751,10 +843,18 @@ describe("Transcriptory API", () => {
     );
 
     expect(fetchMock).toHaveBeenCalledTimes(4);
-    expect(fetchMock.mock.calls[0][0]).toBe("https://api.assemblyai.com/v2/upload");
-    expect(fetchMock.mock.calls[0][1].headers.Authorization).toBe("aai_test_key");
-    expect(fetchMock.mock.calls[0][1].headers.Authorization).not.toMatch(/^Bearer /);
-    expect(fetchMock.mock.calls[1][0]).toBe("https://api.assemblyai.com/v2/transcript");
+    expect(fetchMock.mock.calls[0][0]).toBe(
+      "https://api.assemblyai.com/v2/upload",
+    );
+    expect(fetchMock.mock.calls[0][1].headers.Authorization).toBe(
+      "aai_test_key",
+    );
+    expect(fetchMock.mock.calls[0][1].headers.Authorization).not.toMatch(
+      /^Bearer /,
+    );
+    expect(fetchMock.mock.calls[1][0]).toBe(
+      "https://api.assemblyai.com/v2/transcript",
+    );
     expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toMatchObject({
       audio_url: "https://cdn.assemblyai.com/upload/audio.webm",
       speech_models: ["universal-3-pro", "universal-2"],
@@ -769,15 +869,19 @@ describe("Transcriptory API", () => {
       }),
     );
     expect(builder.calls.in).toContainEqual(["status", ["pending", "failed"]]);
-    expect(builder.calls.update).toContainEqual(expect.objectContaining({
-      raw_transcript: "Raw transcript from AssemblyAI.",
-      duration_seconds: 42,
-      audio_storage_path: expect.stringMatching(/^user-1\/capture-1\/.+note\.webm$/),
-      summary: "A concise Transcriptory summary.",
-      themes: ["Product", "Workflow"],
-      linked_captures: ["capture-related"],
-      status: "ready",
-    }));
+    expect(builder.calls.update).toContainEqual(
+      expect.objectContaining({
+        raw_transcript: "Raw transcript from AssemblyAI.",
+        duration_seconds: 42,
+        audio_storage_path: expect.stringMatching(
+          /^user-1\/capture-1\/.+note\.webm$/,
+        ),
+        summary: "A concise Transcriptory summary.",
+        themes: ["Product", "Workflow"],
+        linked_captures: ["capture-related"],
+        status: "ready",
+      }),
+    );
     expect(uploadMock).toHaveBeenCalledWith(
       expect.stringMatching(/^user-1\/capture-1\/.+note\.webm$/),
       expect.any(ArrayBuffer),
@@ -833,11 +937,16 @@ describe("Transcriptory API", () => {
         archived_at: null,
       },
     });
-    getTranscriptorySupabaseAdminMock.mockReturnValue({ from: vi.fn(() => builder) });
+    getTranscriptorySupabaseAdminMock.mockReturnValue({
+      from: vi.fn(() => builder),
+    });
     const module = await import("../transcriptory/captures/[id]");
     const res = createRes();
 
-    await module.default({ method: "DELETE", headers: {}, query: { id: "capture-3" } } as never, res as never);
+    await module.default(
+      { method: "DELETE", headers: {}, query: { id: "capture-3" } } as never,
+      res as never,
+    );
 
     expect(builder.calls.eq).toContainEqual(["id", "capture-3"]);
     expect(builder.calls.eq).toContainEqual(["user_id", "user-1"]);
@@ -975,14 +1084,19 @@ describe("Transcriptory API", () => {
     getTranscriptorySupabaseAdminMock.mockReturnValue({
       from: vi.fn(() => builder),
       storage: {
-        createBucket: vi.fn().mockResolvedValue({ error: { message: "already exists" } }),
+        createBucket: vi
+          .fn()
+          .mockResolvedValue({ error: { message: "already exists" } }),
         from: vi.fn(() => ({ upload: uploadMock })),
       },
     });
     fetchMock.mockResolvedValueOnce({
       ok: false,
       statusText: "Bad Gateway",
-      json: async () => ({ error: "provider unavailable with sensitive detail that should not leak forever" }),
+      json: async () => ({
+        error:
+          "provider unavailable with sensitive detail that should not leak forever",
+      }),
     });
     const module = await import("../transcriptory/transcribe");
     const res = createRes();
@@ -999,13 +1113,18 @@ describe("Transcriptory API", () => {
       res as never,
     );
 
-    expect(builder.calls.update).toContainEqual(expect.objectContaining({
-      status: "failed",
-      transcript_status: "failed",
-      error_code: "assemblyai_transcription_failed",
-      error_message: expect.stringContaining("AssemblyAI upload failed"),
-      processing_completed_at: expect.any(String),
-    }));
+    expect(builder.calls.update).toContainEqual(
+      expect.objectContaining({
+        status: "failed",
+        transcript_status: "failed",
+        audio_storage_path: expect.stringMatching(
+          /^user-1\/capture-failed\/.+audio\.webm$/,
+        ),
+        error_code: "assemblyai_transcription_failed",
+        error_message: expect.stringContaining("AssemblyAI upload failed"),
+        processing_completed_at: expect.any(String),
+      }),
+    );
     expect(res.statusCode).toBe(502);
     expect(res.body).toMatchObject({
       error: "assemblyai_transcription_failed",
@@ -1038,14 +1157,20 @@ describe("Transcriptory API", () => {
     getTranscriptorySupabaseAdminMock.mockReturnValue({
       from: vi.fn(() => builder),
       storage: {
-        createBucket: vi.fn().mockResolvedValue({ error: { message: "already exists" } }),
-        from: vi.fn(() => ({ upload: vi.fn().mockResolvedValue({ error: null }) })),
+        createBucket: vi
+          .fn()
+          .mockResolvedValue({ error: { message: "already exists" } }),
+        from: vi.fn(() => ({
+          upload: vi.fn().mockResolvedValue({ error: null }),
+        })),
       },
     });
     fetchMock
       .mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ upload_url: "https://cdn.assemblyai.com/upload/audio.webm" }),
+        json: async () => ({
+          upload_url: "https://cdn.assemblyai.com/upload/audio.webm",
+        }),
       })
       .mockResolvedValueOnce({
         ok: true,
@@ -1054,7 +1179,10 @@ describe("Transcriptory API", () => {
     for (let i = 0; i < 80; i += 1) {
       fetchMock.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ id: "aai-transcript-timeout", status: "processing" }),
+        json: async () => ({
+          id: "aai-transcript-timeout",
+          status: "processing",
+        }),
       });
     }
     const module = await import("../transcriptory/transcribe");
@@ -1073,11 +1201,13 @@ describe("Transcriptory API", () => {
     );
 
     expect(fetchMock).toHaveBeenCalledTimes(10);
-    expect(builder.calls.update).toContainEqual(expect.objectContaining({
-      status: "failed",
-      transcript_status: "failed",
-      error_message: "AssemblyAI transcription timed out.",
-    }));
+    expect(builder.calls.update).toContainEqual(
+      expect.objectContaining({
+        status: "failed",
+        transcript_status: "failed",
+        error_message: "AssemblyAI transcription timed out.",
+      }),
+    );
     expect(res.statusCode).toBe(502);
   });
 });

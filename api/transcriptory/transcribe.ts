@@ -38,16 +38,18 @@ type TranscriptoryErrorCode =
 function hasServerTranscriptionProvider(): boolean {
   return Boolean(
     process.env.ASSEMBLYAI_API_KEY?.trim() ||
-      process.env.BILLY_TRANSCRIPTION_URL?.trim() ||
-      process.env.GROQ_API_KEY?.trim() ||
-      process.env.HUGGINGFACE_API_KEY?.trim() ||
-      process.env.HF_API_TOKEN?.trim(),
+    process.env.BILLY_TRANSCRIPTION_URL?.trim() ||
+    process.env.GROQ_API_KEY?.trim() ||
+    process.env.HUGGINGFACE_API_KEY?.trim() ||
+    process.env.HF_API_TOKEN?.trim(),
   );
 }
 
 function getHeader(req: VercelRequest, name: string): string {
   const lowerName = name.toLowerCase();
-  const matchedKey = Object.keys(req.headers).find((key) => key.toLowerCase() === lowerName);
+  const matchedKey = Object.keys(req.headers).find(
+    (key) => key.toLowerCase() === lowerName,
+  );
   const value = matchedKey ? req.headers[matchedKey] : undefined;
   if (Array.isArray(value)) return value[0] ?? "";
   return typeof value === "string" ? value : "";
@@ -63,18 +65,30 @@ function getContentLength(req: VercelRequest): number | null {
 function safeFileName(name: string): string {
   const trimmed = name.trim() || "transcriptory-audio.webm";
   const parts = trimmed.split(".");
-  const extension = parts.length > 1 ? `.${parts.pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "webm"}` : ".webm";
+  const extension =
+    parts.length > 1
+      ? `.${
+          parts
+            .pop()
+            ?.toLowerCase()
+            .replace(/[^a-z0-9]/g, "") || "webm"
+        }`
+      : ".webm";
   const base = parts.join(".") || "transcriptory-audio";
-  const safeBase = base
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80) || "transcriptory-audio";
+  const safeBase =
+    base
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 80) || "transcriptory-audio";
   return `${safeBase}${extension}`;
 }
 
 function bufferToArrayBuffer(buffer: Buffer): ArrayBuffer {
-  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer;
+  return buffer.buffer.slice(
+    buffer.byteOffset,
+    buffer.byteOffset + buffer.byteLength,
+  ) as ArrayBuffer;
 }
 
 function storagePathForTranscriptoryAudio(input: {
@@ -99,8 +113,12 @@ function getCaptureId(req: VercelRequest): string {
 }
 
 function safeDiagnosticMessage(error: unknown): string {
-  const message = error instanceof Error ? error.message : "AssemblyAI transcription failed.";
-  return message.replace(/\s+/g, " ").trim().slice(0, 500) || "AssemblyAI transcription failed.";
+  const message =
+    error instanceof Error ? error.message : "AssemblyAI transcription failed.";
+  return (
+    message.replace(/\s+/g, " ").trim().slice(0, 500) ||
+    "AssemblyAI transcription failed."
+  );
 }
 
 async function readRequestBody(req: VercelRequest): Promise<Buffer> {
@@ -108,7 +126,8 @@ async function readRequestBody(req: VercelRequest): Promise<Buffer> {
   if (Buffer.isBuffer(body)) return body;
   if (body instanceof Uint8Array) return Buffer.from(body);
   if (typeof body === "string") return Buffer.from(body);
-  if (body && typeof body === "object") return Buffer.from(JSON.stringify(body));
+  if (body && typeof body === "object")
+    return Buffer.from(JSON.stringify(body));
 
   const chunks: Buffer[] = [];
   for await (const chunk of req) {
@@ -119,7 +138,10 @@ async function readRequestBody(req: VercelRequest): Promise<Buffer> {
 
 async function readAssemblyAIError(response: Response): Promise<string> {
   try {
-    const data = (await response.json()) as { error?: string; message?: string };
+    const data = (await response.json()) as {
+      error?: string;
+      message?: string;
+    };
     return data.error ?? data.message ?? response.statusText;
   } catch {
     return response.statusText;
@@ -142,7 +164,9 @@ async function uploadAudioToAssemblyAI(input: {
   });
 
   if (!response.ok) {
-    throw new Error(`AssemblyAI upload failed: ${await readAssemblyAIError(response)}`);
+    throw new Error(
+      `AssemblyAI upload failed: ${await readAssemblyAIError(response)}`,
+    );
   }
 
   const data = (await response.json()) as { upload_url?: string };
@@ -153,11 +177,20 @@ async function uploadAudioToAssemblyAI(input: {
 }
 
 async function ensureTranscriptoryAudioBucket(supabase: any): Promise<void> {
-  const { error } = await supabase.storage.createBucket(TRANSCRIPTORY_AUDIO_BUCKET, { public: false });
+  const { error } = await supabase.storage.createBucket(
+    TRANSCRIPTORY_AUDIO_BUCKET,
+    { public: false },
+  );
   if (error) {
     const message = `${error.message ?? error}`.toLowerCase();
-    if (!message.includes("already exists") && !message.includes("duplicate") && !message.includes("conflict")) {
-      throw new Error(`Failed to ensure storage bucket "${TRANSCRIPTORY_AUDIO_BUCKET}": ${error.message ?? error}`);
+    if (
+      !message.includes("already exists") &&
+      !message.includes("duplicate") &&
+      !message.includes("conflict")
+    ) {
+      throw new Error(
+        `Failed to ensure storage bucket "${TRANSCRIPTORY_AUDIO_BUCKET}": ${error.message ?? error}`,
+      );
     }
   }
 }
@@ -176,24 +209,27 @@ async function persistTranscriptoryAudio(input: {
     captureId: input.captureId,
     fileName: input.fileName,
   });
-  const { error } = await input.supabase.storage.from(TRANSCRIPTORY_AUDIO_BUCKET).upload(
-    storagePath,
-    bufferToArrayBuffer(input.audio),
-    {
+  const { error } = await input.supabase.storage
+    .from(TRANSCRIPTORY_AUDIO_BUCKET)
+    .upload(storagePath, bufferToArrayBuffer(input.audio), {
       contentType: input.contentType || "application/octet-stream",
       cacheControl: "3600",
       upsert: true,
-    },
-  );
+    });
 
   if (error) {
-    throw new Error(`Failed to persist Transcriptory audio: ${error.message ?? error}`);
+    throw new Error(
+      `Failed to persist Transcriptory audio: ${error.message ?? error}`,
+    );
   }
 
   return storagePath;
 }
 
-async function submitAssemblyAITranscript(input: { apiKey: string; audioUrl: string }): Promise<string> {
+async function submitAssemblyAITranscript(input: {
+  apiKey: string;
+  audioUrl: string;
+}): Promise<string> {
   const response = await fetch(`${ASSEMBLYAI_BASE_URL}/v2/transcript`, {
     method: "POST",
     headers: {
@@ -207,7 +243,9 @@ async function submitAssemblyAITranscript(input: { apiKey: string; audioUrl: str
   });
 
   if (!response.ok) {
-    throw new Error(`AssemblyAI transcript submit failed: ${await readAssemblyAIError(response)}`);
+    throw new Error(
+      `AssemblyAI transcript submit failed: ${await readAssemblyAIError(response)}`,
+    );
   }
 
   const data = (await response.json()) as { id?: string };
@@ -221,17 +259,25 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function pollAssemblyAITranscript(input: { apiKey: string; transcriptId: string }): Promise<AssemblyAITranscript> {
+async function pollAssemblyAITranscript(input: {
+  apiKey: string;
+  transcriptId: string;
+}): Promise<AssemblyAITranscript> {
   const pollDelayMs = process.env.NODE_ENV === "test" ? 0 : 2500;
 
   for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt += 1) {
-    const response = await fetch(`${ASSEMBLYAI_BASE_URL}/v2/transcript/${input.transcriptId}`, {
-      method: "GET",
-      headers: { Authorization: input.apiKey },
-    });
+    const response = await fetch(
+      `${ASSEMBLYAI_BASE_URL}/v2/transcript/${input.transcriptId}`,
+      {
+        method: "GET",
+        headers: { Authorization: input.apiKey },
+      },
+    );
 
     if (!response.ok) {
-      throw new Error(`AssemblyAI transcript poll failed: ${await readAssemblyAIError(response)}`);
+      throw new Error(
+        `AssemblyAI transcript poll failed: ${await readAssemblyAIError(response)}`,
+      );
     }
 
     const transcript = (await response.json()) as AssemblyAITranscript;
@@ -248,14 +294,18 @@ async function pollAssemblyAITranscript(input: { apiKey: string; transcriptId: s
 function parseJsonObject(text: string): Record<string, unknown> | null {
   try {
     const direct = JSON.parse(text) as unknown;
-    return direct && typeof direct === "object" && !Array.isArray(direct) ? direct as Record<string, unknown> : null;
+    return direct && typeof direct === "object" && !Array.isArray(direct)
+      ? (direct as Record<string, unknown>)
+      : null;
   } catch {
     const match = text.match(/\{[\s\S]*\}/);
     if (!match) return null;
     try {
       const extracted = JSON.parse(match[0]) as unknown;
-      return extracted && typeof extracted === "object" && !Array.isArray(extracted)
-        ? extracted as Record<string, unknown>
+      return extracted &&
+        typeof extracted === "object" &&
+        !Array.isArray(extracted)
+        ? (extracted as Record<string, unknown>)
         : null;
     } catch {
       return null;
@@ -315,17 +365,25 @@ async function findLinkedTranscriptoryCaptures(input: {
   if (error || !Array.isArray(data)) return [];
 
   const inputThemes = new Set(input.themes.map((theme) => theme.toLowerCase()));
-  const inputTokens = tokenizeForSimilarity(`${input.summary}\n${input.transcriptText}`);
+  const inputTokens = tokenizeForSimilarity(
+    `${input.summary}\n${input.transcriptText}`,
+  );
 
   return data
     .map((row: any) => {
       const rowThemes = new Set<string>(
-        (Array.isArray(row.themes) ? row.themes as unknown[] : [])
-          .filter((theme: unknown): theme is string => typeof theme === "string")
+        (Array.isArray(row.themes) ? (row.themes as unknown[]) : [])
+          .filter(
+            (theme: unknown): theme is string => typeof theme === "string",
+          )
           .map((theme) => theme.toLowerCase()),
       );
-      const rowTokens = tokenizeForSimilarity(`${row.title ?? ""}\n${row.summary ?? ""}\n${row.raw_transcript ?? ""}`);
-      const score = overlapCount(inputThemes, rowThemes) * 3 + overlapCount(inputTokens, rowTokens);
+      const rowTokens = tokenizeForSimilarity(
+        `${row.title ?? ""}\n${row.summary ?? ""}\n${row.raw_transcript ?? ""}`,
+      );
+      const score =
+        overlapCount(inputThemes, rowThemes) * 3 +
+        overlapCount(inputTokens, rowTokens);
       return { id: String(row.id), score };
     })
     .filter((item) => item.score > 0)
@@ -363,13 +421,20 @@ async function claimTranscriptoryCapture(input: {
   }
 
   if (primary.error) {
-    const code = typeof primary.error.code === "string" ? primary.error.code : "";
+    const code =
+      typeof primary.error.code === "string" ? primary.error.code : "";
     const message = `${primary.error.message ?? primary.error}`.toLowerCase();
-    if (code === "PGRST116" || message.includes("0 rows") || message.includes("no rows")) {
+    if (
+      code === "PGRST116" ||
+      message.includes("0 rows") ||
+      message.includes("no rows")
+    ) {
       return null;
     }
 
-    throw new Error(primary.error.message ?? "Failed to claim Transcriptory capture.");
+    throw new Error(
+      primary.error.message ?? "Failed to claim Transcriptory capture.",
+    );
   }
 
   const fallback = await input.supabase
@@ -384,13 +449,20 @@ async function claimTranscriptoryCapture(input: {
     .single();
 
   if (fallback.error) {
-    const code = typeof fallback.error.code === "string" ? fallback.error.code : "";
+    const code =
+      typeof fallback.error.code === "string" ? fallback.error.code : "";
     const message = `${fallback.error.message ?? fallback.error}`.toLowerCase();
-    if (code === "PGRST116" || message.includes("0 rows") || message.includes("no rows")) {
+    if (
+      code === "PGRST116" ||
+      message.includes("0 rows") ||
+      message.includes("no rows")
+    ) {
       return null;
     }
 
-    throw new Error(fallback.error.message ?? "Failed to reclaim Transcriptory capture.");
+    throw new Error(
+      fallback.error.message ?? "Failed to reclaim Transcriptory capture.",
+    );
   }
 
   return fallback.data ?? null;
@@ -402,12 +474,16 @@ async function markTranscriptoryCaptureFailed(input: {
   userId: string;
   error: unknown;
   errorCode?: TranscriptoryErrorCode;
+  audioStoragePath?: string;
 }): Promise<void> {
   await input.supabase
     .from("transcriptory_captures")
     .update({
       transcript_status: "failed",
       status: "failed",
+      ...(input.audioStoragePath
+        ? { audio_storage_path: input.audioStoragePath }
+        : {}),
       error_code: input.errorCode ?? "assemblyai_transcription_failed",
       error_message: safeDiagnosticMessage(input.error),
       processing_completed_at: new Date().toISOString(),
@@ -427,7 +503,7 @@ async function summarizeTranscriptoryCapture(input: {
   const result = await routeLlm(
     [
       "Summarize this Transcriptory voice capture without sanitizing or editorializing the user's raw language.",
-      "Return strict JSON only with shape: {\"summary\":\"2-4 sentence thematic summary\",\"themes\":[\"Theme\"]}.",
+      'Return strict JSON only with shape: {"summary":"2-4 sentence thematic summary","themes":["Theme"]}.',
       "",
       "Raw transcript:",
       excerpt,
@@ -441,7 +517,8 @@ async function summarizeTranscriptoryCapture(input: {
   );
 
   const parsed = parseJsonObject(result.response);
-  const summary = typeof parsed?.summary === "string" ? parsed.summary.trim() : "";
+  const summary =
+    typeof parsed?.summary === "string" ? parsed.summary.trim() : "";
   const themes = normalizeThemes(parsed?.themes);
   return { summary, themes };
 }
@@ -463,7 +540,8 @@ async function updateCaptureWithTranscript(input: {
     .update({
       raw_transcript: input.transcript.text ?? "",
       transcript_text: input.transcript.text ?? "",
-      duration_seconds: Math.round(input.transcript.audio_duration ?? 0) || null,
+      duration_seconds:
+        Math.round(input.transcript.audio_duration ?? 0) || null,
       audio_storage_path: input.audioStoragePath ?? null,
       summary: input.summary || null,
       themes: input.themes,
@@ -490,7 +568,12 @@ async function updateCaptureWithTranscript(input: {
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   applyCorsHeaders(req, res, {
     methods: ["POST", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization", "X-Capture-Id", "X-Filename"],
+    allowHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Capture-Id",
+      "X-Filename",
+    ],
   });
 
   if (req.method === "OPTIONS") {
@@ -524,7 +607,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     sendJson(res, 501, {
       error: "transcription_adapter_not_wired",
       browserSpeechRecognitionUsed: false,
-      message: "AssemblyAI is not configured; non-AssemblyAI provider execution is not wired in this slice.",
+      message:
+        "AssemblyAI is not configured; non-AssemblyAI provider execution is not wired in this slice.",
     });
     return;
   }
@@ -553,11 +637,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const supabase = captureId ? getTranscriptorySupabaseAdmin() : null;
   let captureClaimed = false;
+  let preservedAudioStoragePath: string | undefined;
 
   try {
     const audio = await readRequestBody(req);
     if (!audio.length) {
-      sendJson(res, 400, { error: "audio_required", message: "Upload an audio file body to transcribe." });
+      sendJson(res, 400, {
+        error: "audio_required",
+        message: "Upload an audio file body to transcribe.",
+      });
       return;
     }
 
@@ -583,14 +671,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (!claimed) {
         sendJson(res, 409, {
           error: "capture_already_processing",
-          message: "This Transcriptory capture is already processing or is not available for transcription.",
+          message:
+            "This Transcriptory capture is already processing or is not available for transcription.",
         });
         return;
       }
       captureClaimed = true;
     }
 
-    const contentType = getHeader(req, "content-type") || "application/octet-stream";
+    const contentType =
+      getHeader(req, "content-type") || "application/octet-stream";
     const fileName = getHeader(req, "x-filename") || "transcriptory-audio.webm";
     const audioStoragePath = captureId
       ? await persistTranscriptoryAudio({
@@ -602,9 +692,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           audio,
         })
       : undefined;
-    const audioUrl = await uploadAudioToAssemblyAI({ apiKey: assemblyApiKey, audio, contentType });
-    const transcriptId = await submitAssemblyAITranscript({ apiKey: assemblyApiKey, audioUrl });
-    const transcript = await pollAssemblyAITranscript({ apiKey: assemblyApiKey, transcriptId });
+    preservedAudioStoragePath = audioStoragePath;
+    const audioUrl = await uploadAudioToAssemblyAI({
+      apiKey: assemblyApiKey,
+      audio,
+      contentType,
+    });
+    const transcriptId = await submitAssemblyAITranscript({
+      apiKey: assemblyApiKey,
+      audioUrl,
+    });
+    const transcript = await pollAssemblyAITranscript({
+      apiKey: assemblyApiKey,
+      transcriptId,
+    });
     const enrichment = await summarizeTranscriptoryCapture({
       transcriptText: transcript.text ?? "",
       userId: auth.id,
@@ -643,12 +744,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         captureId,
         userId: auth.id,
         error,
+        audioStoragePath: preservedAudioStoragePath,
       });
     }
     sendJson(res, 502, {
       error: "assemblyai_transcription_failed",
       browserSpeechRecognitionUsed: false,
-      message: error instanceof Error ? error.message : "AssemblyAI transcription failed.",
+      message:
+        error instanceof Error
+          ? error.message
+          : "AssemblyAI transcription failed.",
     });
   }
 }

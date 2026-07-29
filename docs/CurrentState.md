@@ -245,7 +245,6 @@
 - **Slice 7 — AI Orchestrator pragmatism:** Added \`api/render/idempotency.ts\` for stable idempotency-key generation and duplicate detection. Sync targets complete in-request (25s timeout), async targets enqueue, unsupported targets get honest diagnostics. Partial failures never erase successful siblings.
 - **Slice 8 — Status polling:** Added \`api/render/status.ts\` (GET) for polling render job state with artifact details when ready.
 
-
 ### Hotfix — Vercel workspace package resolution (2026-07-13)
 
 - Added `packages/*` to `pnpm-workspace.yaml`, moved pnpm overrides into workspace configuration, and declared `@gestaltview/nextgen-rendering-engine` as a root `workspace:*` dependency so Vercel `pnpm install --frozen-lockfile` links the local render engine package.
@@ -534,7 +533,7 @@
 
 # CurrentState — Rendering engine + UI enhancement pass: error boundary, design-system components, preview loading state, lazy ExhibitPod, rendering guide (2026-07-02)
 
-**Scope of this pass:** Applied SPEC-RENDER-UI-v1.0 against the *live* repo. A live-first audit showed most of the spec's Phase 1 (server renderers), the `gestaltview:height` bridge, the signed-URL export pipeline, and the ArtifactGallery renderer path were already implemented and more capable than the spec's proposals, so those were intentionally left untouched (no devolution). Only the genuinely-missing enhancements were added.
+**Scope of this pass:** Applied SPEC-RENDER-UI-v1.0 against the _live_ repo. A live-first audit showed most of the spec's Phase 1 (server renderers), the `gestaltview:height` bridge, the signed-URL export pipeline, and the ArtifactGallery renderer path were already implemented and more capable than the spec's proposals, so those were intentionally left untouched (no devolution). Only the genuinely-missing enhancements were added.
 
 ### What changed
 
@@ -2137,7 +2136,7 @@
 - Aligned both:
   - `supabase/schema_contract_report.sql`
   - `prisma/verification/verify_expected_columns.sql`
-  with the same generated schema surface.
+    with the same generated schema surface.
 - Added `supabase/migrations/20260616000200_runtime_contract_backfill.sql` to backfill:
   - `session_rate_limits`
   - `order_notes`
@@ -2975,10 +2974,12 @@ Companion session: Same day's earlier work — Spotify `VITE_SPOTIFY_REDIRECT_UR
 ## What was shipped (this session)
 
 **Already executed:**
+
 - ✅ `CODEX_EXPORT_BUCKET=codex-exports` set on Vercel production + preview (byte-verified)
 - ✅ Storage bucket `codex-exports` exists (Keith created earlier)
 
 **PR #74 opened (feat/gen-engine-end-to-end-2026-06-09):**
+
 - ✅ New file: `api/cron/codex-drain.ts` — every 2 minutes, drains up to 5 pending jobs via `runCodexExportJob()`, bounded by 50s, Vercel-cron-header restricted in production
 - ✅ `vercel.json`: register the cron + functions config
 - ✅ `shared/gen-engine/core.ts`: `isLikelyJsonObject()` guard added to `pickBestTitle()` and `pickBestSummary()` candidate chain; existing callers passing plain strings unaffected; trailing fallback (`"Untitled artifact"` / synthesized default) preserves a non-empty result
@@ -3007,7 +3008,7 @@ Companion session: Same day's earlier work — Spotify `VITE_SPOTIFY_REDIRECT_UR
 
 **Last updated:** 2026-06-09 (afternoon session)
 **Owner context:** GestaltView v2 runtime repository (`gestaltview-v2`)
-**Scope of this pass:** Second pass of the day, immediately after PR #74 merged. Keith reviewed a downloaded `Untitled-artifact.md` (538 KB) from Creation Corner and flagged: *"The draft carries flattening language; preserve the raw signal more closely."* This entry records the three structural failures behind that draft and the PR #75 that addresses them.
+**Scope of this pass:** Second pass of the day, immediately after PR #74 merged. Keith reviewed a downloaded `Untitled-artifact.md` (538 KB) from Creation Corner and flagged: _"The draft carries flattening language; preserve the raw signal more closely."_ This entry records the three structural failures behind that draft and the PR #75 that addresses them.
 
 ## What was found
 
@@ -3015,9 +3016,9 @@ The downloaded artifact was generated end-to-end through `/api/codex/forge` (`im
 
 1. **`CreationCornerPage.tsx:327`** — `JSON.stringify(selectedBlueprint)` when freeText was empty. Serialized the entire `CaptureBlueprint` object (including `blueprint.summary` which itself contained a stringified Blackboard message join with Billy's preamble) into a single `textInput` of 538 KB.
 
-2. **`/api/gen-engine/artifacts` and `/api/gen-engine/resonance` returned non-OK** — client fell back to local synthesis. Two warnings printed in the UI: *"Used local synthesis fallback because the gen-engine API was unavailable."* This is the same June 8 CurrentState 🔴 Critical item: *"Creation Corner — LLM routing unverified."* Still unverified — the local fallback never calls Groq or HuggingFace.
+2. **`/api/gen-engine/artifacts` and `/api/gen-engine/resonance` returned non-OK** — client fell back to local synthesis. Two warnings printed in the UI: _"Used local synthesis fallback because the gen-engine API was unavailable."_ This is the same June 8 CurrentState 🔴 Critical item: _"Creation Corner — LLM routing unverified."_ Still unverified — the local fallback never calls Groq or HuggingFace.
 
-3. **`renderMarkdownArtifact` in `shared/gen-engine/core.ts`** — no Preserve-Voice enforcement and no anti-sycophancy strip pass. With `synthesisStyle: "divergent"` (Expand: *"Elaborate what's implied"*), the local fallback amplified the JSON-dump source with template-shaped output. Result: 52 occurrences of "Beautiful", 13 of "holding space", 13 of "that must", 12 of "It's nice to" in a single 538 KB draft.
+3. **`renderMarkdownArtifact` in `shared/gen-engine/core.ts`** — no Preserve-Voice enforcement and no anti-sycophancy strip pass. With `synthesisStyle: "divergent"` (Expand: _"Elaborate what's implied"_), the local fallback amplified the JSON-dump source with template-shaped output. Result: 52 occurrences of "Beautiful", 13 of "holding space", 13 of "that must", 12 of "It's nice to" in a single 538 KB draft.
 
 ## What was shipped (PR #75 — open)
 
@@ -3027,7 +3028,7 @@ The downloaded artifact was generated end-to-end through `/api/codex/forge` (`im
 
 - `shared/gen-engine/core.ts` — new `renderFaithfulArtifact()` path emits quote-only structure when `synthesisStyle === "faithful"` (UI: "Preserve Voice — Stay exactly in your register") OR `preserveExactLanguage === true`.
 
-- `shared/gen-engine/core.ts` — new `stripEmbellishment()` pass scrubs `input.summary` and `input.userInstructions` in the non-faithful path. Anchored to CONTEXT.md anti-sycophancy rule: *"If a response flatters, overconfirms, prematurely elevates, or adopts the user's frame without sufficient grounding, that is a system failure."* Pattern list is intentionally narrow. Source material is preserved verbatim — only agent-authored interpretive fields are stripped.
+- `shared/gen-engine/core.ts` — new `stripEmbellishment()` pass scrubs `input.summary` and `input.userInstructions` in the non-faithful path. Anchored to CONTEXT.md anti-sycophancy rule: _"If a response flatters, overconfirms, prematurely elevates, or adopts the user's frame without sufficient grounding, that is a system failure."_ Pattern list is intentionally narrow. Source material is preserved verbatim — only agent-authored interpretive fields are stripped.
 
 - `api/__tests__/preserve-raw-signal.test.ts` — 4 vitest cases covering faithful path and strip pass.
 
@@ -3490,11 +3491,13 @@ Keith was incapacitated most of Sunday with a migraine. Both memos were recorded
 ### 🔴 Critical / Blocking
 
 **1. Creation Corner — LLM routing unverified**
+
 - Status: Rendering may appear to work visually but LLM integration path is unconfirmed.
 - Required: Verify generation calls route through **Groq first → HuggingFace free tier second**.
 - Files in scope: `client/src/pages/CreationCornerPage.tsx`, `api/codex/*`, `api/gen-engine/*`
 
 **2. Musical DNA — Spotify URI env var gap**
+
 - Status: Spotify Dev API dashboard is configured correctly. The Vercel env var binding is the gap.
 - Required: Confirm the exact variable name (`VITE_SPOTIFY_REDIRECT_URI` per the May 19 pass) is set in Vercel and matches the registered callback URI.
 - Reference: See `CurrentState — MusicalDNA env normalization` (2026-05-19)
@@ -3504,17 +3507,20 @@ Keith was incapacitated most of Sunday with a migraine. Both memos were recorded
 ### 🟡 High Priority / Next Slices
 
 **3. Blackboard Room — embodiment profile dropdown + ACP portal button**
+
 - Redundancy exists between Blackboard Room and Agent Council Page.
 - Fix: Add an **embodiment profile dropdown** directly in the Blackboard Room so users can switch profiles without leaving.
 - Fix: Add a **button in the Blackboard Room** that opens the Agent Council Page portal.
 - Files in scope: `client/src/pages/BlackboardRoomPage.tsx`
 
 **4. Agent Council — canned response circuit breaker**
+
 - Therapist-script validation openers and similar therapeutic-sounding canned responses must be eliminated from council output.
 - Fix: Implement a **circuit breaker** or **AI orchestrator/air traffic controller** layer that intercepts canned responses before they reach the UI and forces a live retry.
 - Applies to: Digital Intelligence Council multi-agent orchestration layer
 
 **5. Session recap → Creation Corner rollforward**
+
 - Desired workflow: End of council/blackboard session → generate recap → save → auto-roll into Creation Corner as a blueprint seed.
 - This is a new workflow loop not yet wired.
 - Files in scope: `client/src/pages/BlackboardRoomPage.tsx`, `client/src/pages/CreationCornerPage.tsx`, session recap generation logic
@@ -3524,23 +3530,27 @@ Keith was incapacitated most of Sunday with a migraine. Both memos were recorded
 ### 🟠 Polish / Scheduled Slices
 
 **6. Agent Council Page — neon floating embers**
+
 - Add electric neon floating embers to the ACP visual atmosphere.
 - Pattern: Matches ember style used elsewhere in the platform.
 
 **7. Homepage — dynamic hero animation + tagline**
+
 - Current cards are flat and lack visual energy.
 - Add: **Dynamic hero animation**
-- Add tagline under hero: *"You don't have to know where you're going. Just know you're not alone in getting there"*
+- Add tagline under hero: _"You don't have to know where you're going. Just know you're not alone in getting there"_
 - Tagline styling: Soft cursive script, subtle traveling gradient, not too compact.
 - Files in scope: `client/src/pages/Home.tsx`
 
 **8. Sanctuary Page — warmth and personalization**
+
 - Current page reads as too clinical/sterile.
 - Add: Glowing willow tree graphic (NotebookLM-generated asset, available and ready).
 - Add: User-personalizable ember colors and dynamic backgrounds.
 - Files in scope: `client/src/pages/SanctuaryPage.tsx`
 
 **9. Voice-to-text — all pages, custom adapter**
+
 - Voice-to-text is mandatory on every page (journal, blackboard, creation corner, etc.).
 - Current speech-to-text adapter uses the browser default → broken.
 - Fix: Build a custom adapter using the **Billy voice** infrastructure already in the codebase. Bypass browser default entirely.
@@ -3551,14 +3561,17 @@ Keith was incapacitated most of Sunday with a migraine. Both memos were recorded
 ### ⚪ Pending / External
 
 **10. Indiegogo campaign**
+
 - Was targeted for launch this morning (June 8).
 - Status: Unknown — not tracked in repo.
 
 **11. Perplexity Pro + ChatGPT Plus subscriptions**
+
 - Lapsed. Renewal expected by midnight tonight (June 8).
 - No repo action required.
 
 **12. Doug Lessing / VC list outreach**
+
 - GestaltView is significantly more developed than when Doug ghosted ~1 year ago.
 - Founders Network nomination from Doug Lessing is still a valid warm lead.
 - Pepperdine Most Fundable Companies quarterfinalist status is a credentialing stamp.
@@ -3590,6 +3603,7 @@ Verified the live Council implementation file as `client/src/pages/AgentCouncilP
 Creation Corner renders are now confirmed good and the prior render-gap/open JSON passthrough concern is resolved. Remove the old “Creation Corner render gap” item from open issues.
 
 Open carry-forward:
+
 - Persona dropdown audit remains open
 - SymbioCoder/VibeCoder metadata still not surfaced in UI
 - 11-module extraction pipeline still pending
@@ -3611,12 +3625,12 @@ Open carry-forward:
 
 ## Build history for this pass
 
-| Commit | Result | Notes |
-|---|---|---|
-| [`61344d1`](https://github.com/DigitalConsciousness/gestaltview-v2.0/commit/61344d174ec0c507f4ee85abc4985df42be07585) | SHIPPED | symbioCoder shared module + API route |
-| [`cae5ad3`](https://github.com/DigitalConsciousness/gestaltview-v2.0/commit/cae5ad3fef5a3be64ce2cb37ee03a975dfb233ef) | SHIPPED | vibeCoder shared module + API route |
-| [`b5302b4`](https://github.com/DigitalConsciousness/gestaltview-v2.0/commit/b5302b4b39808036ff000715c6550098f8e7a4cd) | SHIPPED | resume-rockstar API routes: analyze, enhance, score-section |
-| [`36e2e58`](https://github.com/DigitalConsciousness/gestaltview-v2.0/commit/36e2e5800837e7591a28524371daae96fc94b57b) | SHIPPED | resumeRockstar route with Groq + HuggingFace calls |
+| Commit                                                                                                                | Result      | Notes                                                        |
+| --------------------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------ |
+| [`61344d1`](https://github.com/DigitalConsciousness/gestaltview-v2.0/commit/61344d174ec0c507f4ee85abc4985df42be07585) | SHIPPED     | symbioCoder shared module + API route                        |
+| [`cae5ad3`](https://github.com/DigitalConsciousness/gestaltview-v2.0/commit/cae5ad3fef5a3be64ce2cb37ee03a975dfb233ef) | SHIPPED     | vibeCoder shared module + API route                          |
+| [`b5302b4`](https://github.com/DigitalConsciousness/gestaltview-v2.0/commit/b5302b4b39808036ff000715c6550098f8e7a4cd) | SHIPPED     | resume-rockstar API routes: analyze, enhance, score-section  |
+| [`36e2e58`](https://github.com/DigitalConsciousness/gestaltview-v2.0/commit/36e2e5800837e7591a28524371daae96fc94b57b) | SHIPPED     | resumeRockstar route with Groq + HuggingFace calls           |
 | [`b9fd090`](https://github.com/DigitalConsciousness/gestaltview-v2.0/commit/b9fd09085390fcabc2a7e157ec89cd6b079d4327) | VERIFIED ✅ | SymbioCoder + VibeCoder wired end-to-end into Billy pipeline |
 
 ## Validation performed
@@ -3662,10 +3676,10 @@ Open carry-forward:
 
 ## Build history for this pass
 
-| Commit | Result | Notes |
-|---|---|---|
-| `100094d` | FAILED | 5 TypeScript errors across gen-engine routes and codexBridge |
-| `446904b` | PENDING | All 5 errors resolved; clean `tsc --noEmit` expected |
+| Commit    | Result  | Notes                                                        |
+| --------- | ------- | ------------------------------------------------------------ |
+| `100094d` | FAILED  | 5 TypeScript errors across gen-engine routes and codexBridge |
+| `446904b` | PENDING | All 5 errors resolved; clean `tsc --noEmit` expected         |
 
 ## Errors resolved (commit `100094d` → `446904b`)
 
@@ -3719,7 +3733,7 @@ Open carry-forward:
 - Added [api/codex/artifacts/[artifactId]/drain-exports.ts](/workspaces/gestaltview-v2.0/api/codex/artifacts/%5BartifactId%5D/drain-exports.ts), which drains all pending/retryable/failed HTML and JSON jobs for an artifact, preserves partial completion, and returns refreshed artifact, manifest, job, and result state.
 - Added [listCodexJobsForArtifact()](/workspaces/gestaltview-v2.0/api/codex/_persistence.ts) so both memory-backed local jobs and Supabase-backed jobs can be drained at artifact scope.
 - Updated [client/src/pages/CreationCornerPage.tsx](/workspaces/gestaltview-v2.0/client/src/pages/CreationCornerPage.tsx) so `Render exports` prefers the new artifact-level drain endpoint and keeps the single-job endpoint as a fallback.
-- Expanded [api/__tests__/codex-export-runner.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/codex-export-runner.test.ts) to cover forge -> two queued jobs -> drain endpoint -> both HTML/JSON manifests ready.
+- Expanded [api/**tests**/codex-export-runner.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/codex-export-runner.test.ts) to cover forge -> two queued jobs -> drain endpoint -> both HTML/JSON manifests ready.
 - Investigated the repeated `npm run build` exit code `143`. Direct app typechecking passes, Vite dies during production transform/render under the constrained local environment, disabling Tailwind did not change it, increasing Node heap only delayed it, and the nested `zustand@5.0.14` is isolated under `@react-three/*` rather than the direct app dependency (`zustand@4.5.5`). The evidence does not currently indicate an app-code regression; it indicates local build resource/process termination.
 
 ## Validation performed
@@ -3754,7 +3768,7 @@ Open carry-forward:
 - Added [api/codex/artifacts/[artifactId]/drain-exports.ts](/workspaces/gestaltview-v2.0/api/codex/artifacts/%5BartifactId%5D/drain-exports.ts), which drains all pending/retryable/failed HTML and JSON jobs for an artifact, preserves partial completion, and returns refreshed artifact, manifest, job, and result state.
 - Added [listCodexJobsForArtifact()](/workspaces/gestaltview-v2.0/api/codex/_persistence.ts) so both memory-backed local jobs and Supabase-backed jobs can be drained at artifact scope.
 - Updated [client/src/pages/CreationCornerPage.tsx](/workspaces/gestaltview-v2.0/client/src/pages/CreationCornerPage.tsx) so `Render exports` prefers the new artifact-level drain endpoint and keeps the single-job endpoint as a fallback.
-- Expanded [api/__tests__/codex-export-runner.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/codex-export-runner.test.ts) to cover forge -> two queued jobs -> drain endpoint -> both HTML/JSON manifests ready.
+- Expanded [api/**tests**/codex-export-runner.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/codex-export-runner.test.ts) to cover forge -> two queued jobs -> drain endpoint -> both HTML/JSON manifests ready.
 - Investigated the repeated `npm run build` exit code `143`. Direct app typechecking passes, Vite dies during production transform/render under the constrained local environment, disabling Tailwind did not change it, increasing Node heap only delayed it, and the nested `zustand@5.0.14` is isolated under `@react-three/*` rather than the direct app dependency (`zustand@4.5.5`). The evidence does not currently indicate an app-code regression; it indicates local build resource/process termination.
 
 ## Validation performed
@@ -3787,9 +3801,9 @@ Open carry-forward:
 ## Executive summary
 
 - Added [shared/profileIngestion.ts](/workspaces/gestaltview-v2.0/shared/profileIngestion.ts) and [api/_lib/profileIngestion.ts](/workspaces/gestaltview-v2.0/api/_lib/profileIngestion.ts) with a deterministic first-pass ingestion pipeline that accepts journals, resumes, transcripts, lived-experience narratives, and optional Music DNA text, then produces evidence-backed personality dimensions without using Myers-Briggs-style labels.
-- Added [api/profile/ingest.ts](/workspaces/gestaltview-v2.0/api/profile/ingest.ts) for `POST /api/profile/ingest`, plus focused API coverage in [api/__tests__/profile-ingestion.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/profile-ingestion.test.ts).
+- Added [api/profile/ingest.ts](/workspaces/gestaltview-v2.0/api/profile/ingest.ts) for `POST /api/profile/ingest`, plus focused API coverage in [api/**tests**/profile-ingestion.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/profile-ingestion.test.ts).
 - Added [api/consciousness/dynamic-inner-world.ts](/workspaces/gestaltview-v2.0/api/consciousness/dynamic-inner-world.ts), [client/src/hooks/useDynamicInnerWorld.ts](/workspaces/gestaltview-v2.0/client/src/hooks/useDynamicInnerWorld.ts), and [client/src/components/ProfileDisplay.tsx](/workspaces/gestaltview-v2.0/client/src/components/ProfileDisplay.tsx) so Dynamic Inner World now has a live endpoint-backed profile card stack and stats band while preserving existing local artifact behavior.
-- Added [api/embodiments/by-route.ts](/workspaces/gestaltview-v2.0/api/embodiments/by-route.ts), [client/src/hooks/useRouteEmbodiment.ts](/workspaces/gestaltview-v2.0/client/src/hooks/useRouteEmbodiment.ts), and [api/__tests__/route-embodiment.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/route-embodiment.test.ts) to expose route-to-DI assignments while keeping Blackboard Room unassigned as specified.
+- Added [api/embodiments/by-route.ts](/workspaces/gestaltview-v2.0/api/embodiments/by-route.ts), [client/src/hooks/useRouteEmbodiment.ts](/workspaces/gestaltview-v2.0/client/src/hooks/useRouteEmbodiment.ts), and [api/**tests**/route-embodiment.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/route-embodiment.test.ts) to expose route-to-DI assignments while keeping Blackboard Room unassigned as specified.
 - Registered `/workspace/modules/resume-rockstar`, `/workspace/modules/symbio-coder`, and `/workspace/modules/vibe-coder` route aliases in [client/src/App.tsx](/workspaces/gestaltview-v2.0/client/src/App.tsx) against the existing compressed module implementations.
 - Added [supabase/migrations/20260528000000_profile_ingestion_and_route_embodiments.sql](/workspaces/gestaltview-v2.0/supabase/migrations/20260528000000_profile_ingestion_and_route_embodiments.sql) for profile-ingestion run/source/dimension tables, module embodiment assignments, and route embodiment seeds.
 - Fixed existing Vibe Coder strictness issues in [api/modules/vibe-coder/_lib/vibeEngine.ts](/workspaces/gestaltview-v2.0/api/modules/vibe-coder/_lib/vibeEngine.ts) and [client/src/modules/Vibe_Coder/components/VibeAnalysisCard.tsx](/workspaces/gestaltview-v2.0/client/src/modules/Vibe_Coder/components/VibeAnalysisCard.tsx) so the SPEC-2 module surface typechecks cleanly.
@@ -3824,9 +3838,9 @@ Open carry-forward:
 ## Executive summary
 
 - Added [shared/profileIngestion.ts](/workspaces/gestaltview-v2.0/shared/profileIngestion.ts) and [api/_lib/profileIngestion.ts](/workspaces/gestaltview-v2.0/api/_lib/profileIngestion.ts) with a deterministic first-pass ingestion pipeline that accepts journals, resumes, transcripts, lived-experience narratives, and optional Music DNA text, then produces evidence-backed personality dimensions without using Myers-Briggs-style labels.
-- Added [api/profile/ingest.ts](/workspaces/gestaltview-v2.0/api/profile/ingest.ts) for `POST /api/profile/ingest`, plus focused API coverage in [api/__tests__/profile-ingestion.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/profile-ingestion.test.ts).
+- Added [api/profile/ingest.ts](/workspaces/gestaltview-v2.0/api/profile/ingest.ts) for `POST /api/profile/ingest`, plus focused API coverage in [api/**tests**/profile-ingestion.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/profile-ingestion.test.ts).
 - Added [api/consciousness/dynamic-inner-world.ts](/workspaces/gestaltview-v2.0/api/consciousness/dynamic-inner-world.ts), [client/src/hooks/useDynamicInnerWorld.ts](/workspaces/gestaltview-v2.0/client/src/hooks/useDynamicInnerWorld.ts), and [client/src/components/ProfileDisplay.tsx](/workspaces/gestaltview-v2.0/client/src/components/ProfileDisplay.tsx) so Dynamic Inner World now has a live endpoint-backed profile card stack and stats band while preserving existing local artifact behavior.
-- Added [api/embodiments/by-route.ts](/workspaces/gestaltview-v2.0/api/embodiments/by-route.ts), [client/src/hooks/useRouteEmbodiment.ts](/workspaces/gestaltview-v2.0/client/src/hooks/useRouteEmbodiment.ts), and [api/__tests__/route-embodiment.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/route-embodiment.test.ts) to expose route-to-DI assignments while keeping Blackboard Room unassigned as specified.
+- Added [api/embodiments/by-route.ts](/workspaces/gestaltview-v2.0/api/embodiments/by-route.ts), [client/src/hooks/useRouteEmbodiment.ts](/workspaces/gestaltview-v2.0/client/src/hooks/useRouteEmbodiment.ts), and [api/**tests**/route-embodiment.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/route-embodiment.test.ts) to expose route-to-DI assignments while keeping Blackboard Room unassigned as specified.
 - Registered `/workspace/modules/resume-rockstar`, `/workspace/modules/symbio-coder`, and `/workspace/modules/vibe-coder` route aliases in [client/src/App.tsx](/workspaces/gestaltview-v2.0/client/src/App.tsx) against the existing compressed module implementations.
 - Added [supabase/migrations/20260528000000_profile_ingestion_and_route_embodiments.sql](/workspaces/gestaltview-v2.0/supabase/migrations/20260528000000_profile_ingestion_and_route_embodiments.sql) for profile-ingestion run/source/dimension tables, module embodiment assignments, and route embodiment seeds.
 - Fixed existing Vibe Coder strictness issues in [api/modules/vibe-coder/_lib/vibeEngine.ts](/workspaces/gestaltview-v2.0/api/modules/vibe-coder/_lib/vibeEngine.ts) and [client/src/modules/Vibe_Coder/components/VibeAnalysisCard.tsx](/workspaces/gestaltview-v2.0/client/src/modules/Vibe_Coder/components/VibeAnalysisCard.tsx) so the SPEC-2 module surface typechecks cleanly.
@@ -4276,7 +4290,7 @@ Open carry-forward:
 - Updated [api/sanctuary/scrapbook.ts](/workspaces/gestaltview-v2.0/api/sanctuary/scrapbook.ts) so scrapbook item writes use `source_ref`, uploaded files are resolved through `user_files.source_ref` before falling back to UUID id, and returned `fileId` values stay compatible with the client-local ids.
 - Added [api/sanctuary/journals.ts](/workspaces/gestaltview-v2.0/api/sanctuary/journals.ts) as a plural route alias for the spec path without breaking the existing singular route used by the client.
 - Added [supabase/migrations/20260526001000_add_sanctuary_source_refs.sql](/workspaces/gestaltview-v2.0/supabase/migrations/20260526001000_add_sanctuary_source_refs.sql) to add/populate `journals.source_ref`, `scrapbook_items.source_ref`, `scrapbook_items.source_file_ref`, and `scrapbook_items.updated_at`.
-- Added [api/__tests__/sanctuary.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/sanctuary.test.ts) to guard the source-ref journal and scrapbook persistence behavior.
+- Added [api/**tests**/sanctuary.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/sanctuary.test.ts) to guard the source-ref journal and scrapbook persistence behavior.
 
 ## Validation performed
 
@@ -4324,10 +4338,10 @@ Open carry-forward:
 
 ## Build history for this pass
 
-| Commit | Result | Notes |
-|---|---|---|
-| `100094d` | FAILED | 5 TypeScript errors across gen-engine routes and codexBridge |
-| `446904b` | PENDING | All 5 errors resolved; clean `tsc --noEmit` expected |
+| Commit    | Result  | Notes                                                        |
+| --------- | ------- | ------------------------------------------------------------ |
+| `100094d` | FAILED  | 5 TypeScript errors across gen-engine routes and codexBridge |
+| `446904b` | PENDING | All 5 errors resolved; clean `tsc --noEmit` expected         |
 
 ## Errors resolved (commit `100094d` → `446904b`)
 
@@ -4416,7 +4430,7 @@ Open carry-forward:
 - Updated [api/sanctuary/scrapbook.ts](/workspaces/gestaltview-v2.0/api/sanctuary/scrapbook.ts) so scrapbook item writes use `source_ref`, uploaded files are resolved through `user_files.source_ref` before falling back to UUID id, and returned `fileId` values stay compatible with the client-local ids.
 - Added [api/sanctuary/journals.ts](/workspaces/gestaltview-v2.0/api/sanctuary/journals.ts) as a plural route alias for the spec path without breaking the existing singular route used by the client.
 - Added [supabase/migrations/20260526001000_add_sanctuary_source_refs.sql](/workspaces/gestaltview-v2.0/supabase/migrations/20260526001000_add_sanctuary_source_refs.sql) to add/populate `journals.source_ref`, `scrapbook_items.source_ref`, `scrapbook_items.source_file_ref`, and `scrapbook_items.updated_at`.
-- Added [api/__tests__/sanctuary.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/sanctuary.test.ts) to guard the source-ref journal and scrapbook persistence behavior.
+- Added [api/**tests**/sanctuary.test.ts](/workspaces/gestaltview-v2.0/api/__tests__/sanctuary.test.ts) to guard the source-ref journal and scrapbook persistence behavior.
 
 ## Validation performed
 
@@ -7607,11 +7621,13 @@ Open carry-forward:
 ## Performance addendum — Billy CTA interaction staging + mobile first-open deferral (2026-03-29)
 
 ### Scope
+
 - Reworked Billy greeter CTA click flow to prioritize immediate tap acknowledgement and defer expensive follow-up work (`openPanel`, route transitions, section scroll/highlight) off the tap task boundary.
 - Staged Billy panel initial heavy behavior for mobile first-open so render/interaction overhead is reduced during the first activation window.
 - Introduced lightweight pending/opening CTA feedback to communicate click capture instantly.
 
 ### Changes applied in this pass
+
 - `client/src/components/BillyGreeter.tsx`
   - Added explicit next-frame (`requestAnimationFrame`) and idle-time (`requestIdleCallback` fallback) scheduling helpers.
   - Refactored pathway selection to stop chaining close + route/scroll + panel mount in one task.
@@ -7622,32 +7638,37 @@ Open carry-forward:
   - Updated first-open panel behavior: auto-scroll uses non-animated mode and initial prompt auto-send is staged later when deferral is active.
 
 ### Validation / profiling status
+
 - Local static validation: TypeScript/Vite build should be run after this pass to ensure no regressions.
 - Requested Android Chrome INP re-profile **has not yet been run in this environment**; must be validated on-device with the same Billy CTA path used in the prior report.
 
 ### Reasoning
+
 1. Input latency was likely dominated by synchronous work triggered directly from CTA clicks.
 2. Deferring route/scroll/panel mount steps to the next frame and idle periods preserves immediate input responsiveness.
 3. A visible pending/opening state confirms user intent capture even while deferred work continues.
 4. Mobile first-open deferral reduces the chance of stacking expensive visual work during the most sensitive interaction window.
 
 ### Next steps
+
 1. Run mobile on-device INP profiling (Android Chrome) against the same CTA flow and compare to baseline “poor” events.
 2. If remaining spikes persist, capture a flamechart for panel mount and selectively defer non-essential message/avatar animation work further.
 3. Keep this file synchronized with measured INP deltas after the on-device profile run.
 
-
 ## Hotfix addendum — Vercel Billy module-resolution incident (2026-03-28)
 
 ### Incident summary
+
 - Production deployment `dpl_F8q2P5jqFaJqgn7uzEeTp1UrYAEX` logged repeated `ERR_MODULE_NOT_FOUND` failures for `/api/billy` when Node attempted to import `file:///var/task/api/_lib/response` (without extension).
 - Blast radius observed in runtime logs: `GET/POST /api/billy` returned `500` while other routes such as `/api/session/state` continued returning `200/304`.
 
 ### Root cause
+
 - The repository runs as ESM (`"type": "module"`). In the serverless runtime, extensionless relative imports inside API handlers were emitted in a form Node could not resolve for this function bundle.
 - `api/billy.ts` failed first at `./_lib/response`, and neighboring API handlers used the same extensionless pattern.
 
 ### Changes applied in this pass
+
 - Updated API runtime entrypoints to use explicit `.js` extensions for local ESM imports so the deployed serverless bundle resolves consistently:
   - `api/billy.ts`
   - `api/billy-health.ts`
@@ -7656,26 +7677,30 @@ Open carry-forward:
   - `api/voice/billy.ts`
 
 ### Validation performed for the hotfix
+
 - `npm run build` → passed (full client/server TypeScript + Vite build).
 - `npx vitest --config vitest.api.config.ts run api/__tests__/billy.test.ts api/__tests__/endpoints.test.ts` → passed (`14/14`).
 
 ### Updated operational state
+
 1. The immediate Billy 500 regression from this incident is addressed in source with explicit ESM import specifiers.
 2. The API contract and route behavior remain green in focused tests after the import-specifier update.
 3. Next deployment should be verified against `/api/billy` and `/api/billy-health` immediately post-release to confirm runtime parity on Vercel.
 
-
 ## Hotfix addendum — Vercel Billy module-resolution incident (2026-03-28)
 
 ### Incident summary
+
 - Production deployment `dpl_F8q2P5jqFaJqgn7uzEeTp1UrYAEX` logged repeated `ERR_MODULE_NOT_FOUND` failures for `/api/billy` when Node attempted to import `file:///var/task/api/_lib/response` (without extension).
 - Blast radius observed in runtime logs: `GET/POST /api/billy` returned `500` while other routes such as `/api/session/state` continued returning `200/304`.
 
 ### Root cause
+
 - The repository runs as ESM (`"type": "module"`). In the serverless runtime, extensionless relative imports inside API handlers were emitted in a form Node could not resolve for this function bundle.
 - `api/billy.ts` failed first at `./_lib/response`, and neighboring API handlers used the same extensionless pattern.
 
 ### Changes applied in this pass
+
 - Updated API runtime entrypoints to use explicit `.js` extensions for local ESM imports so the deployed serverless bundle resolves consistently:
   - `api/billy.ts`
   - `api/billy-health.ts`
@@ -7684,28 +7709,30 @@ Open carry-forward:
   - `api/voice/billy.ts`
 
 ### Validation performed for the hotfix
+
 - `npm run build` → passed (full client/server TypeScript + Vite build).
 - `npx vitest --config vitest.api.config.ts run api/__tests__/billy.test.ts api/__tests__/endpoints.test.ts` → passed (`14/14`).
 
-
 ### Follow-up incident after first hotfix (2026-03-28)
+
 - A subsequent deployment (`dpl_9GHs6ghbkQadvWxC52zAKajSTNuG`) still returned `/api/billy` `500` with `ERR_MODULE_NOT_FOUND` for `file:///var/task/shared/llm/plk` imported by `api/_lib/llmRouter.js`.
 - This confirmed the first pass fixed API entrypoint specifiers but missed an internal `_lib` dependency edge into `shared/`.
 - Remediation in this pass: updated `api/_lib/llmRouter.ts` to use explicit ESM `.js` specifiers for `../../shared/llm/plk` and `../../shared/billy/types`.
 
 ### Updated operational state
+
 1. The immediate Billy 500 regression from this incident is addressed in source with explicit ESM import specifiers.
 2. The API contract and route behavior remain green in focused tests after the import-specifier update.
 3. Next deployment should be verified against `/api/billy` and `/api/billy-health` immediately post-release to confirm runtime parity on Vercel.
 
 ## Executive snapshot
 
-| Area | Status | What changed in this pass | Why it matters |
-|---|---|---|---|
-| Skills Keeper protocol | ✅ initiated | Added new `agents/skills-keeper.md` agent with stewardship, dispatch, and agent-improvement workflow contracts. | The repository now has an explicit runnable agent protocol for skill catalog enhancement and agent creation flows. |
-| Revenue Hunter quality | ✅ enhanced | Reworked `agents/revenue-hunter.md` with tighter triggers, clearer guardrails, stronger output contracts, and explicit Skills Keeper handoff behavior. | Revenue-focused support is now easier to trigger reliably and better aligned to execution-first, ADHD-aware operations. |
-| Revenue Hunter onboarding docs | ✅ enhanced | Rewrote `agents/revenue-hunter-quickstart.md` to include the new handoff path into Skills Keeper and simplified weekly rhythm guidance. | Founder/operator adoption is faster because activation, execution, and escalation steps are now explicit. |
-| State documentation hygiene | ✅ aligned | Replaced stale runtime-heavy state content with this targeted update for the current mission. | CurrentState now reflects actual changes from this pass instead of unrelated prior details. |
+| Area                           | Status       | What changed in this pass                                                                                                                              | Why it matters                                                                                                          |
+| ------------------------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| Skills Keeper protocol         | ✅ initiated | Added new `agents/skills-keeper.md` agent with stewardship, dispatch, and agent-improvement workflow contracts.                                        | The repository now has an explicit runnable agent protocol for skill catalog enhancement and agent creation flows.      |
+| Revenue Hunter quality         | ✅ enhanced  | Reworked `agents/revenue-hunter.md` with tighter triggers, clearer guardrails, stronger output contracts, and explicit Skills Keeper handoff behavior. | Revenue-focused support is now easier to trigger reliably and better aligned to execution-first, ADHD-aware operations. |
+| Revenue Hunter onboarding docs | ✅ enhanced  | Rewrote `agents/revenue-hunter-quickstart.md` to include the new handoff path into Skills Keeper and simplified weekly rhythm guidance.                | Founder/operator adoption is faster because activation, execution, and escalation steps are now explicit.               |
+| State documentation hygiene    | ✅ aligned   | Replaced stale runtime-heavy state content with this targeted update for the current mission.                                                          | CurrentState now reflects actual changes from this pass instead of unrelated prior details.                             |
 
 ## What changed
 
@@ -7765,20 +7792,24 @@ Open carry-forward:
 ## Hotfix addendum — Post-deploy runtime verification snapshot (2026-03-29)
 
 ### Incident summary
+
 - Production deployment `dpl_7ar2ZEhK2hC6WpTtmNk9xWby27fL` was sampled from runtime logs on March 29, 2026.
 - Observed route behavior: `/api/billy` returned multiple `200` responses across repeated calls, while `/api/session/state` returned mixed `200/304` responses.
 - One Node deprecation warning (`DEP0169`) was observed during the same window.
 
 ### Current risk
+
 - **Classification:** Non-blocking.
 - **Operational impact:** Core Billy/session endpoints are currently healthy, but the `DEP0169` signal is technical debt / observability noise that can mask future actionable warnings if left untriaged.
 
 ### Next-step checklist
+
 - [ ] Trace the `DEP0169` warning to its precise runtime call site (package + code path) from Vercel function logs.
 - [ ] Remediate or pin/update the dependency chain responsible for `DEP0169`, then verify no new warnings are introduced in production logs.
 - [ ] Run a mobile performance follow-up focused on INP and interaction timing around `BillyGreeter.tsx` flows, and record findings in the next `CurrentState` update.
 
 ### Updated operational state
+
 1. Deployment `dpl_7ar2ZEhK2hC6WpTtmNk9xWby27fL` currently shows healthy Billy/session API behavior (`/api/billy` and `/api/session/state` returning successful HTTP statuses).
 2. No blocking runtime regression is indicated from this sample.
 3. Warning hygiene and mobile INP follow-up remain open and should be tracked as short-term reliability/performance debt.
@@ -7787,13 +7818,13 @@ Open carry-forward:
 
 ### Executive snapshot
 
-| Area | Status | What changed in this pass | Why it matters |
-|---|---|---|---|
-| Agent index | ✅ added | Created `agents/INDEX.md` with agent routing notes, canonical-file rules, and an add-agent checklist. | Agent discovery no longer depends on remembering standalone filenames. |
-| Root agent registry | ✅ added | Added `agents/openai.yaml` as a small root catalog for the visible `agents/` entries. | OpenAI-facing metadata now exists at the directory root as well as inside the Revenue Hunter folder. |
+| Area                | Status         | What changed in this pass                                                                                                      | Why it matters                                                                                                        |
+| ------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| Agent index         | ✅ added       | Created `agents/INDEX.md` with agent routing notes, canonical-file rules, and an add-agent checklist.                          | Agent discovery no longer depends on remembering standalone filenames.                                                |
+| Root agent registry | ✅ added       | Added `agents/openai.yaml` as a small root catalog for the visible `agents/` entries.                                          | OpenAI-facing metadata now exists at the directory root as well as inside the Revenue Hunter folder.                  |
 | Revenue Hunter path | ✅ established | Added `agents/revenue-hunter/README.md` as a stable folder entrypoint that routes to the existing prompt and quickstart files. | The repository now has a human-expected `agents/revenue-hunter` path without breaking the flat-file agent convention. |
-| OpenAI metadata | ✅ added | Added `agents/revenue-hunter/openai.yaml` using the repo's existing interface/policy schema. | Revenue Hunter now has a machine-readable OpenAI metadata surface alongside the human-facing folder entrypoint. |
-| Canonical structure | ✅ clarified | Documented that flat `agents/*.md` files remain the source of truth even when companion folders exist. | Future agent additions are less likely to fork into competing layouts. |
+| OpenAI metadata     | ✅ added       | Added `agents/revenue-hunter/openai.yaml` using the repo's existing interface/policy schema.                                   | Revenue Hunter now has a machine-readable OpenAI metadata surface alongside the human-facing folder entrypoint.       |
+| Canonical structure | ✅ clarified   | Documented that flat `agents/*.md` files remain the source of truth even when companion folders exist.                         | Future agent additions are less likely to fork into competing layouts.                                                |
 
 ## What changed
 
@@ -7903,17 +7934,19 @@ Open carry-forward:
 
 ## Executive summary (2026-03-29)
 
-- Fixed the Vercel/TypeScript build error `TS2339: Property \`code\` does not exist on type \`Error\`` at `api/billy.ts(107,21)`.
+- Fixed the Vercel/TypeScript build error `TS2339: Property \`code\` does not exist on type \`Error\``at`api/billy.ts(107,21)`.
 - Updated deprecation warning logging to safely narrow `warning` to `NodeJS.ErrnoException` before reading `.code`.
 - Re-ran `npm run build`; TypeScript and Vite build now pass in this environment.
 
 ## Change details
 
 ### Root cause
+
 - Node's `process.on("warning")` callback value is typed as `Error` in this TypeScript context.
 - The code accessed `warning.code` directly, which is not guaranteed on `Error`, causing compile failure in Vercel.
 
 ### Remediation
+
 - Introduced `warningCode` with runtime type narrowing:
   - read `.code` only when `typeof (warning as NodeJS.ErrnoException).code === "string"`
   - otherwise fall back to `"unknown"`
@@ -8096,6 +8129,7 @@ For ChatGPT Actions import, use the schema URL rooted at `https://gestaltview-v2
 ## CurrentState — Architecture Audit (2026-06-10)
 
 Ran the requested top-to-bottom architecture and functional audit across the live `gestaltview-v2.0` workspace, starting from `docs/CurrentState.md`, `vercel.json`, `middleware.ts`, `supabase/migrations/`, and the `api/` tree. The full report is recorded at `audits/audit_report_2026-06-10.md` and flags the highest-priority follow-ups as identity derivation hardening for Billy/Bucket Drop/gen-engine/Creation Corner, Codex drain atomic job claiming, Transcriptory failed/concurrent capture handling, GATE Stripe raw-body verification, production CORS fail-closed behavior, and removal/clarification of tracked build output and overlapping agent/worker surfaces.
+
 # CurrentState — Phase 6 shared runtime handoff contract (2026-07-27)
 
 Phase 6 now has a local, reviewable implementation package. The live schema-fit
@@ -8119,5 +8153,90 @@ Local verification:
 Production migration application remains explicitly gated on outside approval.
 Phase 7 room adapters must not begin claiming durable transfers until this
 migration has been reviewed and applied in an approved environment.
+
+---
+
+# CurrentState — Inside-Out Convergence Phase 7A–7B (2026-07-29)
+
+**Scope:** Bind Transcriptory to the Phase 6 shared handoff contract and stop
+before Blackboard consumer work. No production DDL, deployment, Blackboard,
+Sanctuary, Tribunal, Gallery, Founder Runtime, corpus, or broad security-policy
+change was performed.
+
+## Known
+
+- Work began from clean `main` at
+  `3df50a903b7e93985712a57dbf7544a08c49227c`; the founder explicitly approved
+  direct edits on `main`.
+- The Phase 6 implementation is located at commit
+  `64e603f5765b61d5f68091527161781ffd761fae`.
+- Its persistence package is
+  `supabase/migrations/20260727222849_runtime_handoffs_v1.sql`; it remains a
+  local/repository migration rather than demonstrated production state.
+- The selected persistence shape and live schema evidence remain in
+  `docs/launch/phase6-schema-fit-audit-2026-07-27.md`.
+- Canonical boundaries are `shared/handoffs/contracts.ts`,
+  `api/runtime-handoffs/`, and
+  `client/src/lib/runtimeHandoffClient.ts`.
+- Phase 6 focused evidence lives in
+  `tests/api/runtime-handoffs.integration.test.ts` and
+  `tests/migrations/runtime-handoffs-v1.test.ts`.
+
+## Phase 7A transfer map
+
+| Existing transfer                          | Classification                     | Current disposition                                                                                                  |
+| ------------------------------------------ | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Transcriptory capture POST                 | source creation                    | Preserved; creates the owned source before transcription or handoff success                                          |
+| Transcriptory audio POST                   | derivative creation                | Preserved; AssemblyAI transcript remains distinct from the source record and private audio object                    |
+| `/api/transcriptory/captures/[id]/handoff` | legacy room-specific handoff offer | Retained for compatibility, but the live Transcriptory UI no longer uses it                                          |
+| `requestTranscriptoryHandoff`              | handoff offer                      | Rebound to `gestaltview.runtime-handoff.v1`, then explicitly transitions `prepared → offered`                        |
+| Transcriptory session-storage packets      | local destination compatibility    | Written only after durable offer success for persisted captures; retained because Phase 7C consumers still read them |
+| Local Transcriptory capture                | local compatibility state          | Now stored in `gestaltview.transcriptory.localCaptures.v1` with stable `localCaptureId`                              |
+| Destination receipt                        | destination acceptance             | Not implemented here; belongs to Phase 7C and is never implied by an `offered` handoff                               |
+
+Eligible Phase 7B files were limited to the Transcriptory page, viewer, client,
+transcription route, and focused tests. Blackboard and destination consumers
+remain Phase 7C scope.
+
+## Attempted and changed
+
+- Persisted captures now offer owner-scoped Blackboard, Creation Corner, or
+  Sanctuary handoffs through the shared Phase 6 client.
+- Handoff payloads carry source and derivative references rather than copying
+  raw transcript text. The capture reference and transcription derivative are
+  explicitly distinct.
+- The UI reports durable offer ID/state separately from destination acceptance.
+  Persistence failure is visible and does not trigger the browser compatibility
+  packet.
+- Local-only records survive reload with their original local identity and are
+  labeled as having no durable receipt.
+- Source-record creation, transcription, and handoff failure are presented as
+  separate states. In-session transcription retry reuses the same capture ID.
+- When AssemblyAI fails after private audio storage succeeds, the failed capture
+  now retains `audio_storage_path`, so the source remains retrievable for a
+  later retry rather than becoming an orphaned object.
+- Archive confirmation now calls out source/relationship consequences.
+
+## Observed evidence and current authority
+
+- Focused Phase 6/Transcriptory verification: 4 files, 34 tests passed.
+- `pnpm exec tsc --noEmit`: passed.
+- `pnpm run build` (`tsc && vite build`): passed.
+- `git diff --check`: passed.
+- Repository-wide `pnpm test`: 160 files and 689 tests passed; 16 files
+  failed (10 assertion failures plus 6 unrelated suite parse failures). The
+  failures are outside this slice in trainer, orchestration, GATE, Supabase
+  configuration, council, rendering, route coverage, scaffold, Origin Story,
+  and uploaded-document surfaces. They remain pre-existing repository drift
+  rather than evidence for Transcriptory completion.
+- The Phase 6 contract is **modeled and locally evaluated**, not demonstrated
+  production-operational while its migration remains unapplied.
+- Transcriptory is **integrated locally** with the canonical offer boundary.
+  Destination acceptance/reopen proof remains intentionally open until Phase
+  7C.
+- Authority is **Bridge** for Phase 7A–7B local implementation and **Hold** only
+  for production durability claims, production migration/deployment, and
+  Phase 7C destination behavior.
+- The outside guide/founder retains the Phase 7C GO/HOLD decision.
 
 ---
