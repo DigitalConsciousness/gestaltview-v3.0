@@ -17,7 +17,10 @@ import { toast } from "sonner";
 import { PAGE_SEO, useSEO } from "@/hooks/useSEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDigitalIntelligence } from "@/hooks/useDigitalIntelligence";
-import { createArtifact as synthesizeArtifact, scoreResonance } from "@/lib/genEngineClient";
+import {
+  createArtifact as synthesizeArtifact,
+  scoreResonance,
+} from "@/lib/genEngineClient";
 import { requestOrchestrationDecision } from "@/lib/orchestratorClient";
 import BlueprintLibrary from "@/components/BlueprintLibrary";
 import BlueprintGenerativeWorkbench from "@/components/BlueprintGenerativeWorkbench";
@@ -44,10 +47,7 @@ import {
   materializeCreationCornerBlueprint,
   mergeCreationCornerBlueprints,
 } from "@/lib/creationCornerContent";
-import {
-  appendUserFile,
-  createUserFileRecord,
-} from "@/lib/innerWorldFiles";
+import { appendUserFile, createUserFileRecord } from "@/lib/innerWorldFiles";
 import { uploadUserFileToServer } from "@/lib/fileStorage";
 import { readCreationCornerUpload } from "@/lib/creationCornerIntake";
 import { ArtifactExportViewer } from "@/lib/rendering";
@@ -67,6 +67,10 @@ import {
 } from "@/lib/creationCornerArtifacts";
 import type { CodexArtifact } from "@shared/codex/contracts";
 import { TRANSCRIPTORY_CREATION_HANDOFF_KEY } from "@/lib/transcriptory";
+import { acceptRuntimeSourceInCreationCorner } from "@/lib/blackboardRuntimeHandoffs";
+
+const BLACKBOARD_CREATION_HANDOFF_KEY =
+  "gestaltview.blackboard.creationHandoff.v1";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -142,21 +146,36 @@ interface ArtifactResult {
     status: "draft" | "rendering" | "ready" | "failed" | "archived";
     artifact: CodexArtifact;
     manifest: CodexArtifact["exports"];
-    jobs?: Array<{ id: string; artifactId: string; format: string; status: string }>;
+    jobs?: Array<{
+      id: string;
+      artifactId: string;
+      format: string;
+      status: string;
+    }>;
   };
 }
 
 type CodexForgeResponse = {
   status: "accepted";
   artifact: CodexArtifact;
-  jobs: Array<{ id: string; artifactId: string; format: string; status: string }>;
+  jobs: Array<{
+    id: string;
+    artifactId: string;
+    format: string;
+    status: string;
+  }>;
 };
 
 type CodexRunJobResponse = {
   status: "drained" | "partial";
   artifact: CodexArtifact;
   manifest: CodexArtifact["exports"];
-  jobs: Array<{ id: string; artifactId: string; format: string; status: string }>;
+  jobs: Array<{
+    id: string;
+    artifactId: string;
+    format: string;
+    status: string;
+  }>;
   results: Array<{
     job: { id: string; artifactId: string; format: string; status: string };
     manifestItem?: CodexArtifact["exports"][number];
@@ -172,37 +191,50 @@ type CodexRunSingleJobResponse = {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const ARTIFACT_TYPES: { value: ArtifactType; label: string; glyph: string }[] = [
-  { value: "markdown",       label: "Document",      glyph: "📄" },
-  { value: "blueprint_md",   label: "Blueprint",     glyph: "🗺" },
-  { value: "blueprint_json", label: "Blueprint JSON", glyph: "⚙" },
-  { value: "image_prompt",   label: "Image Prompt",  glyph: "🖼" },
-  { value: "image",          label: "Generate Image", glyph: "✨" },
-  { value: "audio_prompt",   label: "Audio Prompt",  glyph: "🎵" },
-  { value: "audio",          label: "Generate Audio", glyph: "🔊" },
-  { value: "share_card",     label: "Share Card",    glyph: "📡" },
-  { value: "marketing_copy",  label: "Marketing Copy", glyph: "✍" },
-  { value: "session_recap",  label: "Session Recap", glyph: "🗒" },
-  { value: "mind_map",       label: "Mind Map",      glyph: "🕸" },
-  { value: "agent_prompt",   label: "Agent Prompt",  glyph: "🤖" },
-  { value: "code",           label: "Code",          glyph: "💻" },
-];
+const ARTIFACT_TYPES: { value: ArtifactType; label: string; glyph: string }[] =
+  [
+    { value: "markdown", label: "Document", glyph: "📄" },
+    { value: "blueprint_md", label: "Blueprint", glyph: "🗺" },
+    { value: "blueprint_json", label: "Blueprint JSON", glyph: "⚙" },
+    { value: "image_prompt", label: "Image Prompt", glyph: "🖼" },
+    { value: "image", label: "Generate Image", glyph: "✨" },
+    { value: "audio_prompt", label: "Audio Prompt", glyph: "🎵" },
+    { value: "audio", label: "Generate Audio", glyph: "🔊" },
+    { value: "share_card", label: "Share Card", glyph: "📡" },
+    { value: "marketing_copy", label: "Marketing Copy", glyph: "✍" },
+    { value: "session_recap", label: "Session Recap", glyph: "🗒" },
+    { value: "mind_map", label: "Mind Map", glyph: "🕸" },
+    { value: "agent_prompt", label: "Agent Prompt", glyph: "🤖" },
+    { value: "code", label: "Code", glyph: "💻" },
+  ];
 
-const SYNTHESIS_STYLES: { value: SynthesisStyle; label: string; desc: string }[] = [
-  { value: "preserve_voice", label: "Preserve Voice",  desc: "Stay exactly in your register" },
-  { value: "compress",       label: "Compress",        desc: "Irreducible essence only" },
-  { value: "expand",         label: "Expand",          desc: "Elaborate what's implied" },
-  { value: "reframe",        label: "Reframe",         desc: "New angle, same material" },
-  { value: "structural",     label: "Structural",      desc: "Clean skeleton, no prose" },
-  { value: "narrative",      label: "Narrative",       desc: "Flowing prose, one voice" },
+const SYNTHESIS_STYLES: {
+  value: SynthesisStyle;
+  label: string;
+  desc: string;
+}[] = [
+  {
+    value: "preserve_voice",
+    label: "Preserve Voice",
+    desc: "Stay exactly in your register",
+  },
+  { value: "compress", label: "Compress", desc: "Irreducible essence only" },
+  { value: "expand", label: "Expand", desc: "Elaborate what's implied" },
+  { value: "reframe", label: "Reframe", desc: "New angle, same material" },
+  {
+    value: "structural",
+    label: "Structural",
+    desc: "Clean skeleton, no prose",
+  },
+  { value: "narrative", label: "Narrative", desc: "Flowing prose, one voice" },
 ];
 
 const DESTINATIONS: { value: Destination; label: string }[] = [
-  { value: "creation_corner",     label: "Keep here" },
+  { value: "creation_corner", label: "Keep here" },
   { value: "dynamic_inner_world", label: "→ Inner World" },
-  { value: "scaffold_pending",    label: "→ Scaffold" },
-  { value: "download_only",       label: "Download only" },
-  { value: "gate_draft",          label: "→ Gate draft" },
+  { value: "scaffold_pending", label: "→ Scaffold" },
+  { value: "download_only", label: "Download only" },
+  { value: "gate_draft", label: "→ Gate draft" },
 ];
 
 const API_BASE = (import.meta as any).env?.VITE_API_URL ?? "/api";
@@ -233,36 +265,47 @@ function buildLocalCodexManifest(
 export default function CreationCornerPage() {
   useSEO(PAGE_SEO.creationCorner);
   const { user } = useAuth();
-  const { di, isReady, messages, sendMessage } = useDigitalIntelligence("creation-corner");
+  const { di, isReady, messages, sendMessage } =
+    useDigitalIntelligence("creation-corner");
   const [location] = useLocation();
 
   // ── Blueprint state ──────────────────────────────────────────────────────
-  const [blueprints, setBlueprints]               = useState<CaptureBlueprint[]>(() => readBlueprints());
-  const [selectedBlueprintId, setSelectedBlueprintId] = useState<string | null>(null);
+  const [blueprints, setBlueprints] = useState<CaptureBlueprint[]>(() =>
+    readBlueprints(),
+  );
+  const [selectedBlueprintId, setSelectedBlueprintId] = useState<string | null>(
+    null,
+  );
 
   // ── Synthesis controls ───────────────────────────────────────────────────
-  const [artifactType, setArtifactType]   = useState<ArtifactType>("markdown");
-  const [synthStyle, setSynthStyle]       = useState<SynthesisStyle>("preserve_voice");
-  const [destination, setDestination]     = useState<Destination>("creation_corner");
-  const [customTitle, setCustomTitle]     = useState("");
-  const [freeText, setFreeText]           = useState("");
-  const [selectedUploadName, setSelectedUploadName] = useState<string | null>(null);
+  const [artifactType, setArtifactType] = useState<ArtifactType>("markdown");
+  const [synthStyle, setSynthStyle] =
+    useState<SynthesisStyle>("preserve_voice");
+  const [destination, setDestination] =
+    useState<Destination>("creation_corner");
+  const [customTitle, setCustomTitle] = useState("");
+  const [freeText, setFreeText] = useState("");
+  const [selectedUploadName, setSelectedUploadName] = useState<string | null>(
+    null,
+  );
   const sourceFileInputRef = useRef<HTMLInputElement>(null);
 
   // ── Result state ─────────────────────────────────────────────────────────
-  const [result, setResult]         = useState<ArtifactResult | null>(null);
+  const [result, setResult] = useState<ArtifactResult | null>(null);
   const [previewLoaded, setPreviewLoaded] = useState(false);
   const [isRenderingExports, setIsRenderingExports] = useState(false);
   const [isSynthesizing, setIsSynthesizing] = useState(false);
   const [synthError, setSynthError] = useState<string | null>(null);
-  const [nextGenRenderResult, setNextGenRenderResult] = useState<RenderEngineReceipt | null>(null);
-  const [renderLedgerState, setRenderLedgerState] = useState<RenderLedgerState | null>(null);
+  const [nextGenRenderResult, setNextGenRenderResult] =
+    useState<RenderEngineReceipt | null>(null);
+  const [renderLedgerState, setRenderLedgerState] =
+    useState<RenderLedgerState | null>(null);
   const [isNextGenRendering, setIsNextGenRendering] = useState(false);
 
   // ── DI chat ──────────────────────────────────────────────────────────────
-  const [diInput, setDiInput]       = useState("");
-  const [diOpen, setDiOpen]         = useState(true);
-  const chatEndRef                  = useRef<HTMLDivElement>(null);
+  const [diInput, setDiInput] = useState("");
+  const [diOpen, setDiOpen] = useState(true);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -275,23 +318,86 @@ export default function CreationCornerPage() {
   }, [result?.codex?.artifact.id, result?.title]);
 
   useEffect(() => {
-    const raw = window.sessionStorage.getItem(TRANSCRIPTORY_CREATION_HANDOFF_KEY);
+    const raw = window.sessionStorage.getItem(
+      TRANSCRIPTORY_CREATION_HANDOFF_KEY,
+    );
     if (!raw) return;
     try {
-      const payload = JSON.parse(raw) as { title?: string; text?: string };
+      const payload = JSON.parse(raw) as {
+        title?: string;
+        text?: string;
+        captureId?: string;
+        handoffId?: string;
+      };
       const text = payload.text?.trim();
       if (!text) return;
       setFreeText(text);
-      setCustomTitle((current) => current || payload.title || "Transcriptory capture");
+      setCustomTitle(
+        (current) => current || payload.title || "Transcriptory capture",
+      );
+      if (payload.handoffId && payload.captureId) {
+        void acceptRuntimeSourceInCreationCorner({
+          handoffId: payload.handoffId,
+          destinationEntityRef: `creation-source:transcriptory-capture:${payload.captureId}`,
+          expectedSourceRoom: "transcriptory",
+        })
+          .then(() => {
+            window.sessionStorage.removeItem(
+              TRANSCRIPTORY_CREATION_HANDOFF_KEY,
+            );
+          })
+          .catch((error) => {
+            toast.error(
+              error instanceof Error
+                ? error.message
+                : "Transcriptory source loaded, but durable acknowledgement failed.",
+            );
+          });
+      } else {
+        window.sessionStorage.removeItem(TRANSCRIPTORY_CREATION_HANDOFF_KEY);
+      }
       toast.success("Transcriptory capture loaded as source material.");
-    } finally {
+    } catch {
       window.sessionStorage.removeItem(TRANSCRIPTORY_CREATION_HANDOFF_KEY);
+    }
+  }, []);
+
+  useEffect(() => {
+    const raw = window.sessionStorage.getItem(BLACKBOARD_CREATION_HANDOFF_KEY);
+    if (!raw) return;
+    try {
+      const payload = JSON.parse(raw) as {
+        handoffId?: string;
+        blueprintId?: string;
+      };
+      if (!payload.handoffId || !payload.blueprintId) return;
+      setSelectedBlueprintId(payload.blueprintId);
+      void acceptRuntimeSourceInCreationCorner({
+        handoffId: payload.handoffId,
+        destinationEntityRef: `creation-blueprint:${payload.blueprintId}`,
+        expectedSourceRoom: "blackboard",
+      })
+        .then(() => {
+          window.sessionStorage.removeItem(BLACKBOARD_CREATION_HANDOFF_KEY);
+          toast.success("Blackboard blueprint accepted with durable lineage.");
+        })
+        .catch((error) => {
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : "Blueprint remains local, but durable acknowledgement failed.",
+          );
+        });
+    } catch {
+      window.sessionStorage.removeItem(BLACKBOARD_CREATION_HANDOFF_KEY);
     }
   }, []);
 
   const lastSeedRef = useRef<string | null>(null);
   useEffect(() => {
-    const search = location.includes("?") ? location.split("?")[1] : window.location.search.slice(1);
+    const search = location.includes("?")
+      ? location.split("?")[1]
+      : window.location.search.slice(1);
     const params = new URLSearchParams(search);
     const seed = params.get("seed")?.trim();
     if (!seed || lastSeedRef.current === seed) {
@@ -300,7 +406,9 @@ export default function CreationCornerPage() {
 
     lastSeedRef.current = seed;
     setFreeText(seed);
-    setCustomTitle((current) => params.get("title")?.trim() || current || "Tribunal seed");
+    setCustomTitle(
+      (current) => params.get("title")?.trim() || current || "Tribunal seed",
+    );
     toast.success("Tribunal seed loaded into Creation Corner.");
   }, [location]);
 
@@ -308,7 +416,9 @@ export default function CreationCornerPage() {
   useEffect(() => {
     const refresh = (event?: Event) => {
       setBlueprints(readBlueprints());
-      const blueprintId = (event as CustomEvent<{ blueprintId?: string }> | undefined)?.detail?.blueprintId;
+      const blueprintId = (
+        event as CustomEvent<{ blueprintId?: string }> | undefined
+      )?.detail?.blueprintId;
       if (blueprintId) {
         setSelectedBlueprintId(blueprintId);
       }
@@ -318,7 +428,10 @@ export default function CreationCornerPage() {
     window.addEventListener("gestaltview:creation-blueprints-updated", refresh);
     return () => {
       window.removeEventListener("storage", refresh);
-      window.removeEventListener("gestaltview:creation-blueprints-updated", refresh);
+      window.removeEventListener(
+        "gestaltview:creation-blueprints-updated",
+        refresh,
+      );
     };
   }, []);
 
@@ -335,7 +448,9 @@ export default function CreationCornerPage() {
       writeBlueprints(next);
     };
     void hydrate();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [user?.id]);
 
   useEffect(() => {
@@ -351,7 +466,10 @@ export default function CreationCornerPage() {
   }, [blueprints, selectedBlueprintId]);
 
   const selectedBlueprint = useMemo(
-    () => blueprints.find((b) => b.id === selectedBlueprintId) ?? blueprints[0] ?? null,
+    () =>
+      blueprints.find((b) => b.id === selectedBlueprintId) ??
+      blueprints[0] ??
+      null,
     [blueprints, selectedBlueprintId],
   );
 
@@ -371,10 +489,11 @@ export default function CreationCornerPage() {
         previewHtml: material.previewHtml,
       });
       const persisted = user?.id
-        ? (await uploadUserFileToServer({
-          file: fileRecord,
-          content: material.previewHtml ?? material.previewText ?? material.text,
-        })) ?? fileRecord
+        ? ((await uploadUserFileToServer({
+            file: fileRecord,
+            content:
+              material.previewHtml ?? material.previewText ?? material.text,
+          })) ?? fileRecord)
         : fileRecord;
       appendUserFile(persisted);
       toast.success(`${material.name} added as source material.`);
@@ -384,22 +503,28 @@ export default function CreationCornerPage() {
   };
 
   const handleDeleteBlueprint = (blueprint: CaptureBlueprint) => {
-    if (!window.confirm(`Remove "${blueprint.title}" from the workshop?`)) return;
+    if (!window.confirm(`Remove "${blueprint.title}" from the workshop?`))
+      return;
     const next = removeBlueprint(blueprint.id);
     setBlueprints(next);
     setSelectedBlueprintId((cur) =>
-      cur !== blueprint.id ? cur : next[0]?.id ?? null
+      cur !== blueprint.id ? cur : (next[0]?.id ?? null),
     );
   };
 
   // ── Synthesis ────────────────────────────────────────────────────────────
   const handleSynthesize = async () => {
-    const blueprintMarkdown = selectedBlueprint?.outputs?.markdown
-      ?? (selectedBlueprint ? `# ${selectedBlueprint.title}\n\n${selectedBlueprint.summary}` : "");
+    const blueprintMarkdown =
+      selectedBlueprint?.outputs?.markdown ??
+      (selectedBlueprint
+        ? `# ${selectedBlueprint.title}\n\n${selectedBlueprint.summary}`
+        : "");
     const textInput = freeText.trim() || blueprintMarkdown;
 
     if (!textInput) {
-      setSynthError("Add some raw material first — text, a blueprint, or anything.");
+      setSynthError(
+        "Add some raw material first — text, a blueprint, or anything.",
+      );
       return;
     }
 
@@ -411,7 +536,9 @@ export default function CreationCornerPage() {
 
     try {
       const synthesisSourceCaptureIds = selectedBlueprint?.sourceOrbIds ?? [];
-      const synthesisSourceArtifactIds = selectedBlueprint ? [selectedBlueprint.id] : [];
+      const synthesisSourceArtifactIds = selectedBlueprint
+        ? [selectedBlueprint.id]
+        : [];
       const title = customTitle || undefined;
       const startedAt = Date.now();
 
@@ -435,8 +562,10 @@ export default function CreationCornerPage() {
 
         orchestrationSummary = orchestration.decision.userFacingSummary;
         targetType = orchestration.decision.artifactTargetType ?? targetType;
-        synthesisStyle = orchestration.decision.synthesisStyle ?? synthesisStyle;
-        artifactDestination = orchestration.decision.artifactDestination ?? artifactDestination;
+        synthesisStyle =
+          orchestration.decision.synthesisStyle ?? synthesisStyle;
+        artifactDestination =
+          orchestration.decision.artifactDestination ?? artifactDestination;
         safeDestination = resolveDestination(artifactType, destination);
       } catch {
         // Fall back to the local selector if the routing API is unavailable.
@@ -463,7 +592,12 @@ export default function CreationCornerPage() {
           inferEmotion: false,
           storeDerivativeSignals: true,
         },
-        tags: ["creation-corner", artifactType, synthesisStyle, safeDestination],
+        tags: [
+          "creation-corner",
+          artifactType,
+          synthesisStyle,
+          safeDestination,
+        ],
         userId: user?.id,
       });
 
@@ -491,10 +625,14 @@ export default function CreationCornerPage() {
       }
 
       if (artifactType === "image") {
-        warnings.push("Image generation is not configured here yet; returned a source-linked image prompt.");
+        warnings.push(
+          "Image generation is not configured here yet; returned a source-linked image prompt.",
+        );
       }
       if (artifactType === "audio") {
-        warnings.push("Audio generation is not configured here yet; returned a source-linked audio direction prompt.");
+        warnings.push(
+          "Audio generation is not configured here yet; returned a source-linked audio direction prompt.",
+        );
       }
 
       // ── Step 2: Attempt codex/forge API — gracefully degrade if absent ───
@@ -525,7 +663,9 @@ export default function CreationCornerPage() {
         generationMode = "codex-forge";
       } catch {
         codexResult = buildLocalCodexManifest(codexDraft);
-        warnings.push("Codex API offline — local preview remains available, but no durable render receipt exists yet.");
+        warnings.push(
+          "Codex API offline — local preview remains available, but no durable render receipt exists yet.",
+        );
       }
 
       const data: ArtifactResult = {
@@ -533,8 +673,14 @@ export default function CreationCornerPage() {
         title: synthesis.artifact.title,
         artifact_type: artifactType,
         content: synthesis.artifact.content,
-        image_prompt: artifactType === "image" || artifactType === "image_prompt" ? synthesis.artifact.content : undefined,
-        audio_prompt: artifactType === "audio" || artifactType === "audio_prompt" ? synthesis.artifact.content : undefined,
+        image_prompt:
+          artifactType === "image" || artifactType === "image_prompt"
+            ? synthesis.artifact.content
+            : undefined,
+        audio_prompt:
+          artifactType === "audio" || artifactType === "audio_prompt"
+            ? synthesis.artifact.content
+            : undefined,
         plk_resonance_score: Math.max(0, Math.min(1, resonance.score / 100)),
         generation_mode: generationMode,
         fallback_used: generationMode === "local-codex",
@@ -558,7 +704,10 @@ export default function CreationCornerPage() {
           // Only accept a full HTML document from the server renderer.
           // Any other shape (Mermaid string, JSON, partial HTML) falls through
           // to the content-aware local shell below — no warning needed.
-          if (typeof renderedPreview === "string" && /<!doctype html|<html[\s>]/i.test(renderedPreview)) {
+          if (
+            typeof renderedPreview === "string" &&
+            /<!doctype html|<html[\s>]/i.test(renderedPreview)
+          ) {
             previewHtml = renderedPreview;
           }
         } catch {
@@ -572,7 +721,9 @@ export default function CreationCornerPage() {
       setRenderLedgerState("local_preview");
 
       if (safeDestination === "dynamic_inner_world") {
-        toast.info("Inner World selected. Create a durable render, then project it explicitly.");
+        toast.info(
+          "Inner World selected. Create a durable render, then project it explicitly.",
+        );
       } else if (artifactType === "session_recap") {
         toast.success("Session Recap forged and saved to Creation Corner.");
       } else {
@@ -586,17 +737,23 @@ export default function CreationCornerPage() {
   };
 
   const handleRenderCodexExports = async () => {
-    const pendingJobs = result?.codex?.jobs?.filter((job) => job.status === "pending" || job.status === "running") ?? [];
+    const pendingJobs =
+      result?.codex?.jobs?.filter(
+        (job) => job.status === "pending" || job.status === "running",
+      ) ?? [];
     if (!result?.codex || pendingJobs.length === 0) {
       return;
     }
 
     setIsRenderingExports(true);
     try {
-      const drainResp = await fetch(`${API_BASE}/codex/artifacts/${result.codex.artifact.id}/drain-exports`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+      const drainResp = await fetch(
+        `${API_BASE}/codex/artifacts/${result.codex.artifact.id}/drain-exports`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        },
+      );
       let drainData: CodexRunJobResponse | null = null;
 
       if (drainResp.ok) {
@@ -610,7 +767,9 @@ export default function CreationCornerPage() {
           });
 
           if (!resp.ok) {
-            const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+            const err = await resp
+              .json()
+              .catch(() => ({ detail: resp.statusText }));
             throw new Error(err.detail ?? "Export rendering failed");
           }
 
@@ -618,7 +777,9 @@ export default function CreationCornerPage() {
         }
 
         drainData = {
-          status: completed.some((entry) => entry.job.status === "failed") ? "partial" : "drained",
+          status: completed.some((entry) => entry.job.status === "failed")
+            ? "partial"
+            : "drained",
           artifact: {
             ...result.codex.artifact,
             exports: completed.map((entry) => entry.manifestItem),
@@ -640,7 +801,9 @@ export default function CreationCornerPage() {
           ...current,
           codex: {
             ...current.codex,
-            status: manifest.some((item) => item.status === "pending") ? current.codex.status : "ready",
+            status: manifest.some((item) => item.status === "pending")
+              ? current.codex.status
+              : "ready",
             manifest,
             artifact: {
               ...current.codex.artifact,
@@ -650,14 +813,17 @@ export default function CreationCornerPage() {
           },
         };
       });
-      toast.success(drainData?.status === "partial" ? "Some exports rendered." : "Exports rendered.");
+      toast.success(
+        drainData?.status === "partial"
+          ? "Some exports rendered."
+          : "Exports rendered.",
+      );
     } catch (err: any) {
       toast.error(err.message ?? "Export rendering failed.");
     } finally {
       setIsRenderingExports(false);
     }
   };
-
 
   const nextGenSceneGraph: GestaltSceneGraph | null = useMemo(() => {
     if (!result) {
@@ -670,14 +836,25 @@ export default function CreationCornerPage() {
           title: result.codex.artifact.title,
           type: result.codex.artifact.kind,
           content: JSON.stringify(result.codex.artifact.body, null, 2),
-          metadata: { sourceRoom: "CreationCorner", engineVersion: result.provenance?.engineVersion },
+          metadata: {
+            sourceRoom: "CreationCorner",
+            engineVersion: result.provenance?.engineVersion,
+          },
         }
       : {
           id: result.id,
           title: result.title,
           type: result.artifact_type,
-          content: result.content ?? result.previewHtml ?? result.image_prompt ?? result.audio_prompt ?? "",
-          metadata: { sourceRoom: "CreationCorner", engineVersion: result.provenance?.engineVersion },
+          content:
+            result.content ??
+            result.previewHtml ??
+            result.image_prompt ??
+            result.audio_prompt ??
+            "",
+          metadata: {
+            sourceRoom: "CreationCorner",
+            engineVersion: result.provenance?.engineVersion,
+          },
         };
 
     return artifactsToSceneGraph([artifact], `creation_corner_${result.id}`);
@@ -710,7 +887,9 @@ export default function CreationCornerPage() {
       const serverState = payload.job?.status as RenderLedgerState | undefined;
       setRenderLedgerState(serverState ?? (payload.ok ? "ready" : "failed"));
       if (!payload.ok || payload.job?.status === "failed") {
-        toast.warning("NextGen render returned diagnostics. Review the manifest below.");
+        toast.warning(
+          "NextGen render returned diagnostics. Review the manifest below.",
+        );
         return;
       }
       toast.success(
@@ -719,7 +898,8 @@ export default function CreationCornerPage() {
           : `Render ledger state: ${payload.job?.status ?? "submitted"}.`,
       );
     } catch (error) {
-      const message = error instanceof Error ? error.message : "NextGen render failed.";
+      const message =
+        error instanceof Error ? error.message : "NextGen render failed.";
       setNextGenRenderResult({
         ok: false,
         error: { code: "RENDER_SUBMISSION_FAILED", message },
@@ -750,7 +930,9 @@ export default function CreationCornerPage() {
       );
     } catch (error) {
       setRenderLedgerState("ready");
-      toast.error(error instanceof Error ? error.message : "Projection failed.");
+      toast.error(
+        error instanceof Error ? error.message : "Projection failed.",
+      );
     }
   };
 
@@ -790,7 +972,6 @@ export default function CreationCornerPage() {
       />
 
       <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 pb-16 pt-6 sm:px-6 lg:px-8">
-
         {/* ── Header ─────────────────────────────────────────────────────── */}
         <RoomHeaderBar
           roomSlug="creation-corner"
@@ -806,7 +987,8 @@ export default function CreationCornerPage() {
             <span className="text-sky-400">⚗</span> The Workshop
           </h1>
           <p className="mt-1 text-sm text-gv-text-secondary">
-            Raw material in. Finished artifacts out. The Art Teacher sees what it wants to become.
+            Raw material in. Finished artifacts out. The Art Teacher sees what
+            it wants to become.
           </p>
         </div>
 
@@ -822,19 +1004,21 @@ export default function CreationCornerPage() {
           <BlueprintGenerativeWorkbench
             blueprint={selectedBlueprint}
             blueprints={blueprints}
-            onSelectBlueprint={(nextBlueprint) => setSelectedBlueprintId(nextBlueprint.id)}
+            onSelectBlueprint={(nextBlueprint) =>
+              setSelectedBlueprintId(nextBlueprint.id)
+            }
             currentUserId={user?.id}
           />
         </section>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_380px]">
-
           {/* ── Left column: workbench ──────────────────────────────────── */}
           <div className="space-y-5">
-
             {/* Raw material input */}
             <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm">
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-sky-400">Raw Material</h2>
+              <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-sky-400">
+                Raw Material
+              </h2>
               <input
                 ref={sourceFileInputRef}
                 type="file"
@@ -854,7 +1038,9 @@ export default function CreationCornerPage() {
                   Select uploaded material
                 </button>
                 {selectedUploadName ? (
-                  <span className="text-xs text-sky-300">Using: {selectedUploadName}</span>
+                  <span className="text-xs text-sky-300">
+                    Using: {selectedUploadName}
+                  </span>
                 ) : null}
               </div>
               <textarea
@@ -866,14 +1052,19 @@ export default function CreationCornerPage() {
               />
               {selectedBlueprint && !freeText && (
                 <p className="mt-2 text-xs text-gv-text-secondary">
-                  Using blueprint: <span className="text-sky-400">{selectedBlueprint.title}</span>
+                  Using blueprint:{" "}
+                  <span className="text-sky-400">
+                    {selectedBlueprint.title}
+                  </span>
                 </p>
               )}
             </section>
 
             {/* Artifact type grid */}
             <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm">
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-sky-400">Output Format</h2>
+              <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-sky-400">
+                Output Format
+              </h2>
               <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
                 {ARTIFACT_TYPES.map((at) => (
                   <button
@@ -886,7 +1077,9 @@ export default function CreationCornerPage() {
                     }`}
                   >
                     <span className="text-lg">{at.glyph}</span>
-                    <span className="text-center leading-tight">{at.label}</span>
+                    <span className="text-center leading-tight">
+                      {at.label}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -895,7 +1088,9 @@ export default function CreationCornerPage() {
             {/* Style + destination row */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm">
-                <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-sky-400">Synthesis Style</h2>
+                <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-sky-400">
+                  Synthesis Style
+                </h2>
                 <div className="space-y-1">
                   {SYNTHESIS_STYLES.map((s) => (
                     <button
@@ -915,11 +1110,13 @@ export default function CreationCornerPage() {
               </section>
 
               <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm">
-                <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-sky-400">Destination</h2>
+                <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-sky-400">
+                  Destination
+                </h2>
                 <div className="space-y-1">
-                  {DESTINATIONS
-                    .filter((d) => isDestinationAllowed(artifactType, d.value))
-                    .map((d) => (
+                  {DESTINATIONS.filter((d) =>
+                    isDestinationAllowed(artifactType, d.value),
+                  ).map((d) => (
                     <button
                       key={d.value}
                       onClick={() => setDestination(d.value)}
@@ -928,10 +1125,10 @@ export default function CreationCornerPage() {
                           ? "bg-purple-500/10 text-purple-300"
                           : "text-gv-text-secondary hover:bg-white/[0.04] hover:text-gv-text-primary"
                       }`}
-                      >
-                        {d.label}
-                      </button>
-                    ))}
+                    >
+                      {d.label}
+                    </button>
+                  ))}
                 </div>
 
                 <div className="mt-4">
@@ -974,14 +1171,23 @@ export default function CreationCornerPage() {
               <section className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5 backdrop-blur-sm">
                 <div className="mb-3 flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="font-semibold text-emerald-300">{result.title}</h3>
+                    <h3 className="font-semibold text-emerald-300">
+                      {result.title}
+                    </h3>
                     <p className="mt-0.5 text-[10px] text-gv-text-secondary">
-                      {result.artifact_type} · {result.generation_mode} · PLK {(result.plk_resonance_score * 100).toFixed(0)}% · {result.latency_ms.toFixed(0)}ms
+                      {result.artifact_type} · {result.generation_mode} · PLK{" "}
+                      {(result.plk_resonance_score * 100).toFixed(0)}% ·{" "}
+                      {result.latency_ms.toFixed(0)}ms
                     </p>
                     {result.codex && (
                       <p className="mt-1 text-[10px] text-sky-300">
-                        Codex {result.codex.artifact.contractVersion} · {result.codex.artifact.kind} · {result.codex.artifact.securityClass} · {result.codex.artifact.templateKey}
-                        {result.fallback_used && <span className="ml-2 text-amber-400">· local</span>}
+                        Codex {result.codex.artifact.contractVersion} ·{" "}
+                        {result.codex.artifact.kind} ·{" "}
+                        {result.codex.artifact.securityClass} ·{" "}
+                        {result.codex.artifact.templateKey}
+                        {result.fallback_used && (
+                          <span className="ml-2 text-amber-400">· local</span>
+                        )}
                       </p>
                     )}
                   </div>
@@ -1005,7 +1211,10 @@ export default function CreationCornerPage() {
                       Metadata JSON
                     </button>
                   </div>
-                  {result.codex?.jobs?.some((job) => job.status === "pending" || job.status === "running") && (
+                  {result.codex?.jobs?.some(
+                    (job) =>
+                      job.status === "pending" || job.status === "running",
+                  ) && (
                     <button
                       onClick={handleRenderCodexExports}
                       disabled={isRenderingExports}
@@ -1031,7 +1240,10 @@ export default function CreationCornerPage() {
                         <iframe
                           key={result.codex?.artifact.id ?? result.title}
                           title={`${result.title} preview`}
-                          srcDoc={result.previewHtml ?? buildCreationCornerHtml(result)}
+                          srcDoc={
+                            result.previewHtml ??
+                            buildCreationCornerHtml(result)
+                          }
                           sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
                           onLoad={() => setPreviewLoaded(true)}
                           className="min-h-[32rem] w-full bg-black"
@@ -1040,7 +1252,10 @@ export default function CreationCornerPage() {
                     </section>
                     {nextGenSceneGraph ? (
                       <section className="rounded-xl border border-cyan-300/20 bg-cyan-300/5 p-3">
-                        <GestaltRenderSurface graph={nextGenSceneGraph} showToolbar={false} />
+                        <GestaltRenderSurface
+                          graph={nextGenSceneGraph}
+                          showToolbar={false}
+                        />
                         <div className="mt-3 flex flex-wrap items-center gap-3">
                           <button
                             type="button"
@@ -1074,7 +1289,11 @@ export default function CreationCornerPage() {
                               Projected with durable receipt
                             </span>
                           ) : null}
-                          <span className="text-xs text-gv-text-muted">Scene graph preview preserves nodes, provenance, diagnostics, and export targets before server orchestration.</span>
+                          <span className="text-xs text-gv-text-muted">
+                            Scene graph preview preserves nodes, provenance,
+                            diagnostics, and export targets before server
+                            orchestration.
+                          </span>
                         </div>
                         {renderLedgerState === "local_preview" ||
                         renderLedgerState === "failed" ? (
@@ -1087,7 +1306,8 @@ export default function CreationCornerPage() {
                           renderLedgerState,
                         ) ? (
                           <p className="mt-3 text-xs text-cyan-100">
-                            Render ledger: {renderLedgerState.replaceAll("_", " ")}
+                            Render ledger:{" "}
+                            {renderLedgerState.replaceAll("_", " ")}
                           </p>
                         ) : null}
                         {nextGenRenderResult ? (
@@ -1120,15 +1340,21 @@ export default function CreationCornerPage() {
 
                 {result.image_prompt && !result.image_b64 && (
                   <div className="mt-3">
-                    <p className="mb-1 text-[10px] text-gv-text-secondary">Image prompt ready:</p>
-                    <pre className="rounded-xl border border-white/10 bg-black/40 p-3 text-xs text-sky-200">{result.image_prompt}</pre>
+                    <p className="mb-1 text-[10px] text-gv-text-secondary">
+                      Image prompt ready:
+                    </p>
+                    <pre className="rounded-xl border border-white/10 bg-black/40 p-3 text-xs text-sky-200">
+                      {result.image_prompt}
+                    </pre>
                   </div>
                 )}
 
                 {result.warnings.length > 0 && (
                   <ul className="mt-2 space-y-0.5">
                     {result.warnings.map((w, i) => (
-                      <li key={i} className="text-[10px] text-amber-400/70">{w}</li>
+                      <li key={i} className="text-[10px] text-amber-400/70">
+                        {w}
+                      </li>
                     ))}
                   </ul>
                 )}
@@ -1137,7 +1363,9 @@ export default function CreationCornerPage() {
 
             {/* Blueprint library */}
             <section>
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-sky-400">Blueprint Library</h2>
+              <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-sky-400">
+                Blueprint Library
+              </h2>
               <BlueprintLibrary
                 blueprints={blueprints}
                 selectedId={selectedBlueprint?.id ?? null}
@@ -1152,8 +1380,12 @@ export default function CreationCornerPage() {
             <aside className="flex flex-col rounded-2xl border border-purple-500/20 bg-white/[0.02] backdrop-blur-sm lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)]">
               <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
                 <div>
-                  <p className="text-xs font-semibold text-purple-300">{di.publicName}</p>
-                  <p className="text-[10px] text-gv-text-secondary">Creation Corner · Art Teacher</p>
+                  <p className="text-xs font-semibold text-purple-300">
+                    {di.publicName}
+                  </p>
+                  <p className="text-[10px] text-gv-text-secondary">
+                    Creation Corner · Art Teacher
+                  </p>
                 </div>
                 <button
                   onClick={() => setDiOpen(false)}

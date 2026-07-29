@@ -122,7 +122,9 @@ export default function TranscriptViewer({
               : "creation_corner";
         const handoff = await requestTranscriptoryHandoff({ capture, target });
         if (routedDestination !== "sanctuary") {
-          writeTranscriptoryHandoff(routedDestination, capture);
+          writeTranscriptoryHandoff(routedDestination, capture, {
+            handoffId: handoff.handoffId,
+          });
         }
         setHandoffStatus(
           `Durable handoff ${handoff.handoffId} is ${handoff.state}. Destination acceptance is still pending.`,

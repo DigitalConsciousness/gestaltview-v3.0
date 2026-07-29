@@ -1,6 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Clock3, Copy, Download, Mic, Paperclip, Send, SquareLibrary, ExternalLink, Trash2 } from "lucide-react";
+import {
+  Clock3,
+  Copy,
+  Download,
+  Mic,
+  Paperclip,
+  Send,
+  SquareLibrary,
+  ExternalLink,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { PAGE_SEO, useSEO } from "@/hooks/useSEO";
@@ -9,8 +19,14 @@ import BabylonAtmosphere from "@/components/BabylonAtmosphere";
 import BlackboardCompanionChat from "@/components/capture/BlackboardCompanionChat";
 import { ThinkingAnimation } from "@/components/thinking/ThinkingAnimation";
 import RoomStateBadge from "@/components/RoomStateBadge";
-import SessionRecapGenerator, { type RecapArtifact, type RecapMessage } from "@/components/SessionRecapGenerator";
-import { routeBlackboardResponder, type BlackboardResponderSource } from "@/lib/blackboardDiRouting";
+import SessionRecapGenerator, {
+  type RecapArtifact,
+  type RecapMessage,
+} from "@/components/SessionRecapGenerator";
+import {
+  routeBlackboardResponder,
+  type BlackboardResponderSource,
+} from "@/lib/blackboardDiRouting";
 import { getAllEmbodimentProfiles } from "@/lib/embodimentRuntime";
 import {
   Drawer,
@@ -33,7 +49,11 @@ import {
 import { PERSONAS } from "@/data/personas";
 import { getRoomPersona, setRoomPersona } from "@/lib/personaManager";
 import { uploadUserFileToServer } from "@/lib/fileStorage";
-import { appendUserFile, createUserFileRecord, type UserFileRecord } from "@/lib/innerWorldFiles";
+import {
+  appendUserFile,
+  createUserFileRecord,
+  type UserFileRecord,
+} from "@/lib/innerWorldFiles";
 import { enrichBlackboardCaptureWithResonance } from "@/lib/genEngineRoomWiring";
 import { routeBlackboardCaptureThroughPipeline } from "@/lib/profilePipeline/blackboardRouting";
 import {
@@ -42,6 +62,13 @@ import {
   type UserSurfaceSettings,
 } from "@/lib/userSurfaceSettings";
 import { TRANSCRIPTORY_BLACKBOARD_HANDOFF_KEY } from "@/lib/transcriptory";
+import {
+  acceptTranscriptoryHandoffInBlackboard,
+  appendBlackboardProfileProposal,
+  buildBlackboardProfileProposal,
+  offerBlackboardBlueprint,
+  offerBlackboardBlueprintToScaffold,
+} from "@/lib/blackboardRuntimeHandoffs";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -61,6 +88,12 @@ type ChatMessage = {
   captureId?: string;
   captureResonanceScore?: number;
   councilMetadata?: CouncilMetadata;
+  sourceCitation?: {
+    sourceRef: string;
+    handoffId?: string;
+    status: "accepted" | "local_only" | "failed";
+  };
+  persistenceScope?: "local_only";
 };
 
 type Persona = (typeof PERSONAS)[number];
@@ -80,12 +113,19 @@ const BLACKBOARD_THINKING_MESSAGES = [
 
 // ─── Council metadata builder ──────────────────────────────────────────────────
 
-function buildCouncilMetadata(text: string, personaName: string): CouncilMetadata {
+function buildCouncilMetadata(
+  text: string,
+  personaName: string,
+): CouncilMetadata {
   // Parse stance from first sentence, concerns from body, next step from last sentence
   const sentences = text.split(/(?<=[.!?])\s+/).filter(Boolean);
   const stance = sentences[0] ?? `${personaName} is present.`;
-  const concerns = sentences.slice(1, -1).filter((s) => s.length > 20).slice(0, 3);
-  const recommendedNextStep = sentences.length > 2 ? sentences[sentences.length - 1] : undefined;
+  const concerns = sentences
+    .slice(1, -1)
+    .filter((s) => s.length > 20)
+    .slice(0, 3);
+  const recommendedNextStep =
+    sentences.length > 2 ? sentences[sentences.length - 1] : undefined;
   return { stance, concerns, recommendedNextStep };
 }
 
@@ -489,7 +529,11 @@ function clearStoredMessages(): void {
 
 function getSpeechRecognition() {
   if (typeof window === "undefined") return null;
-  return (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition || null;
+  return (
+    (window as any).SpeechRecognition ||
+    (window as any).webkitSpeechRecognition ||
+    null
+  );
 }
 
 function isSessionScaffoldMessage(message: ChatMessage): boolean {
@@ -513,9 +557,14 @@ function isSessionScaffoldMessage(message: ChatMessage): boolean {
 function summarizeMessages(messages: ChatMessage[]): string[] {
   const lines = messages
     .filter((m) => !isSessionScaffoldMessage(m))
-    .map((m) => `${m.role === "user" ? "You" : m.personaSlug ?? "DI"}: ${m.text.trim()}`)
+    .map(
+      (m) =>
+        `${m.role === "user" ? "You" : (m.personaSlug ?? "DI")}: ${m.text.trim()}`,
+    )
     .filter(Boolean);
-  return lines.slice(0, 6).length > 0 ? lines.slice(0, 6) : ["The room stayed open."];
+  return lines.slice(0, 6).length > 0
+    ? lines.slice(0, 6)
+    : ["The room stayed open."];
 }
 
 function buildSummaryBlueprint(messages: ChatMessage[]): CaptureOrb[] {
@@ -523,7 +572,7 @@ function buildSummaryBlueprint(messages: ChatMessage[]): CaptureOrb[] {
     .filter((m) => !isSessionScaffoldMessage(m))
     .map((m) =>
       createCaptureOrb({
-        text: `${m.role === "user" ? "You" : m.personaSlug ?? "DI"}: ${m.text}`,
+        text: `${m.role === "user" ? "You" : (m.personaSlug ?? "DI")}: ${m.text}`,
         source: "typed",
         action: "save",
         context: "Blackboard Room summary",
@@ -542,7 +591,8 @@ function formatSessionDuration(totalMs: number): string {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
-  if (hours > 0) return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  if (hours > 0)
+    return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
@@ -578,33 +628,62 @@ function BabylonHeroCanvas({ hue = "#32b8c6" }: { hue?: string }) {
         if (!canvas) return;
         if (disposed) return;
 
-        engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, alpha: true });
+        engine = new BABYLON.Engine(canvas, true, {
+          preserveDrawingBuffer: true,
+          alpha: true,
+        });
         const scene = new BABYLON.Scene(engine);
         scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
-        const camera = new BABYLON.ArcRotateCamera("cam", -Math.PI / 2, Math.PI / 3, 13, BABYLON.Vector3.Zero(), scene);
+        const camera = new BABYLON.ArcRotateCamera(
+          "cam",
+          -Math.PI / 2,
+          Math.PI / 3,
+          13,
+          BABYLON.Vector3.Zero(),
+          scene,
+        );
         camera.lowerRadiusLimit = 8;
         camera.upperRadiusLimit = 20;
         camera.attachControl(canvas, true);
 
         const accentColor = BABYLON.Color3.FromHexString(hue);
 
-        const ambient = new BABYLON.HemisphericLight("amb", new BABYLON.Vector3(0, 1, 0), scene);
+        const ambient = new BABYLON.HemisphericLight(
+          "amb",
+          new BABYLON.Vector3(0, 1, 0),
+          scene,
+        );
         ambient.intensity = 0.28;
         ambient.diffuse = accentColor.scale(0.82);
         ambient.groundColor = new BABYLON.Color3(0.04, 0.04, 0.08);
 
-        const pt1 = new BABYLON.PointLight("pt1", new BABYLON.Vector3(0, 4, 0), scene);
+        const pt1 = new BABYLON.PointLight(
+          "pt1",
+          new BABYLON.Vector3(0, 4, 0),
+          scene,
+        );
         pt1.diffuse = accentColor;
         pt1.intensity = 1.4;
 
-        const pt2 = new BABYLON.PointLight("pt2", new BABYLON.Vector3(4, -2, 2), scene);
+        const pt2 = new BABYLON.PointLight(
+          "pt2",
+          new BABYLON.Vector3(4, -2, 2),
+          scene,
+        );
         pt2.diffuse = BABYLON.Color3.FromHexString("#ff5459");
         pt2.intensity = 0.65;
 
         const knot = BABYLON.MeshBuilder.CreateTorusKnot(
           "knot",
-          { radius: 1.9, tube: 0.32, radialSegments: 128, tubularSegments: 48, p: 3, q: 7 },
+          {
+            radius: 1.9,
+            tube: 0.32,
+            radialSegments: 128,
+            tubularSegments: 48,
+            p: 3,
+            q: 7,
+          },
           scene,
         );
         const knotMat = new BABYLON.StandardMaterial("km", scene);
@@ -618,12 +697,27 @@ function BabylonHeroCanvas({ hue = "#32b8c6" }: { hue?: string }) {
         knotWire.material = wireMat;
         knotWire.scaling = new BABYLON.Vector3(1.012, 1.012, 1.012);
 
-        const particles: { mesh: any; r: number; theta: number; phi: number; speed: number; phase: number }[] = [];
+        const particles: {
+          mesh: any;
+          r: number;
+          theta: number;
+          phi: number;
+          speed: number;
+          phase: number;
+        }[] = [];
         for (let i = 0; i < 55; i++) {
-          const sp = BABYLON.MeshBuilder.CreateSphere(`p${i}`, { diameter: 0.04 + Math.random() * 0.06 }, scene);
+          const sp = BABYLON.MeshBuilder.CreateSphere(
+            `p${i}`,
+            { diameter: 0.04 + Math.random() * 0.06 },
+            scene,
+          );
           const pm = new BABYLON.StandardMaterial(`pm${i}`, scene);
           const t = Math.random();
-          pm.emissiveColor = BABYLON.Color3.Lerp(accentColor, BABYLON.Color3.FromHexString("#ffffff"), t * 0.45);
+          pm.emissiveColor = BABYLON.Color3.Lerp(
+            accentColor,
+            BABYLON.Color3.FromHexString("#ffffff"),
+            t * 0.45,
+          );
           sp.material = pm;
           particles.push({
             mesh: sp,
@@ -712,8 +806,12 @@ export default function BlackboardRoomPage() {
   const { user, tier } = useAuth();
 
   const [draft, setDraft] = useState("");
-  const [messages, setMessages] = useState<ChatMessage[]>(() => readStoredMessages());
-  const [selectedPersonaSlugs, setSelectedPersonaSlugs] = useState<string[]>(() => [getRoomPersona("blackboard").slug]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() =>
+    readStoredMessages(),
+  );
+  const [selectedPersonaSlugs, setSelectedPersonaSlugs] = useState<string[]>(
+    () => [getRoomPersona("blackboard").slug],
+  );
   const [isRoundtable, setIsRoundtable] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [sessionEnded, setSessionEnded] = useState(false);
@@ -724,9 +822,13 @@ export default function BlackboardRoomPage() {
   const [sessionClock, setSessionClock] = useState(() => Date.now());
   const [isRecording, setIsRecording] = useState(false);
   const [canvasVisible, setCanvasVisible] = useState(true);
-  const [surfaceSettings, setSurfaceSettings] = useState<UserSurfaceSettings>(() => readUserSurfaceSettings());
+  const [surfaceSettings, setSurfaceSettings] = useState<UserSurfaceSettings>(
+    () => readUserSurfaceSettings(),
+  );
   // Phase 4: track whether a roundtable Billy synthesis has been shown
-  const [billySynthesisText, setBillySynthesisText] = useState<string | null>(null);
+  const [billySynthesisText, setBillySynthesisText] = useState<string | null>(
+    null,
+  );
   const [recapResetToken, setRecapResetToken] = useState(0);
   const lastRoundtableCountRef = useRef(0);
 
@@ -740,7 +842,10 @@ export default function BlackboardRoomPage() {
   const styleRef = useRef(false);
 
   const currentUserId = user?.id ?? "guest";
-  const embodimentProfileCount = useMemo(() => getAllEmbodimentProfiles().length, []);
+  const embodimentProfileCount = useMemo(
+    () => getAllEmbodimentProfiles().length,
+    [],
+  );
 
   const selectedPersonas = useMemo(() => {
     const list = selectedPersonaSlugs
@@ -752,8 +857,14 @@ export default function BlackboardRoomPage() {
   const selectedPersona = selectedPersonas[0] ?? getRoomPersona("blackboard");
   const availablePersonas = PERSONAS;
   const activePersonaHue = selectedPersona.atmosphereHue ?? "#32b8c6";
-  const summaryHighlights = useMemo(() => summarizeMessages(messages), [messages]);
-  const summaryCaptures = useMemo(() => buildSummaryBlueprint(messages), [messages]);
+  const summaryHighlights = useMemo(
+    () => summarizeMessages(messages),
+    [messages],
+  );
+  const summaryCaptures = useMemo(
+    () => buildSummaryBlueprint(messages),
+    [messages],
+  );
   const recapCaptures = useMemo(
     () =>
       summaryCaptures.map((capture) => ({
@@ -807,20 +918,31 @@ export default function BlackboardRoomPage() {
     };
   }, []);
 
-  useEffect(() => { writeStoredMessages(messages); }, [messages]);
+  useEffect(() => {
+    writeStoredMessages(messages);
+  }, [messages]);
 
   useEffect(() => {
-    document.documentElement.style.setProperty("--bbr-persona-hue", activePersonaHue);
+    document.documentElement.style.setProperty(
+      "--bbr-persona-hue",
+      activePersonaHue,
+    );
   }, [activePersonaHue]);
 
   useEffect(() => {
     return () => {
-      document.documentElement.style.setProperty("--bbr-persona-hue", "#32b8c6");
+      document.documentElement.style.setProperty(
+        "--bbr-persona-hue",
+        "#32b8c6",
+      );
     };
   }, []);
 
   useEffect(() => {
-    const interval = window.setInterval(() => setSessionClock(Date.now()), 1000);
+    const interval = window.setInterval(
+      () => setSessionClock(Date.now()),
+      1000,
+    );
     return () => window.clearInterval(interval);
   }, []);
 
@@ -831,14 +953,19 @@ export default function BlackboardRoomPage() {
   }, [summaryCaptures.length]);
 
   useEffect(() => {
-    if (endRef.current) endRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    if (endRef.current)
+      endRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, sessionEnded, isTimedOut, billySynthesisText]);
 
-  useEffect(() => { setRoomPersona("blackboard", selectedPersona.slug); }, [selectedPersona.slug]);
+  useEffect(() => {
+    setRoomPersona("blackboard", selectedPersona.slug);
+  }, [selectedPersona.slug]);
 
   useEffect(() => {
     const onSettingsChanged = (event: Event) => {
-      const next = (event as CustomEvent<UserSurfaceSettings>).detail ?? readUserSurfaceSettings();
+      const next =
+        (event as CustomEvent<UserSurfaceSettings>).detail ??
+        readUserSurfaceSettings();
       setSurfaceSettings(next);
       if (!next.voiceCapture) {
         recognitionRef.current?.stop?.();
@@ -846,20 +973,29 @@ export default function BlackboardRoomPage() {
     };
 
     window.addEventListener(USER_SURFACE_SETTINGS_EVENT, onSettingsChanged);
-    return () => window.removeEventListener(USER_SURFACE_SETTINGS_EVENT, onSettingsChanged);
+    return () =>
+      window.removeEventListener(
+        USER_SURFACE_SETTINGS_EVENT,
+        onSettingsChanged,
+      );
   }, []);
 
   useEffect(() => {
     const resetTimer = () => {
-      if (inactivityTimerRef.current) window.clearTimeout(inactivityTimerRef.current);
-      inactivityTimerRef.current = window.setTimeout(() => setIsTimedOut(true), INACTIVITY_LIMIT_MS);
+      if (inactivityTimerRef.current)
+        window.clearTimeout(inactivityTimerRef.current);
+      inactivityTimerRef.current = window.setTimeout(
+        () => setIsTimedOut(true),
+        INACTIVITY_LIMIT_MS,
+      );
     };
     resetTimer();
     window.addEventListener("mousemove", resetTimer);
     window.addEventListener("keydown", resetTimer);
     window.addEventListener("pointerdown", resetTimer);
     return () => {
-      if (inactivityTimerRef.current) window.clearTimeout(inactivityTimerRef.current);
+      if (inactivityTimerRef.current)
+        window.clearTimeout(inactivityTimerRef.current);
       window.removeEventListener("mousemove", resetTimer);
       window.removeEventListener("keydown", resetTimer);
       window.removeEventListener("pointerdown", resetTimer);
@@ -875,7 +1011,11 @@ export default function BlackboardRoomPage() {
     });
   };
 
-  const handleSend = async (text: string, source: "typed" | "voice" | "upload" = "typed") => {
+  const handleSend = async (
+    text: string,
+    source: "typed" | "voice" | "upload" = "typed",
+    incomingHandoff?: { handoffId: string },
+  ) => {
     const capturedText = text.trim();
     if (!capturedText || isSending) return;
     setAttachmentName(null);
@@ -890,12 +1030,37 @@ export default function BlackboardRoomPage() {
       meaning: "Direct user capture",
     });
     const previousSavedCaptures = readSavedCaptures();
+    let sourceCitation: ChatMessage["sourceCitation"];
     if (orb) {
       const routed = await routeBlackboardCaptureThroughPipeline({
         orb,
         action: "save",
         ownerUserId: currentUserId,
       });
+      if (incomingHandoff) {
+        try {
+          const accepted = await acceptTranscriptoryHandoffInBlackboard({
+            handoffId: incomingHandoff.handoffId,
+            destinationCitationId: incomingHandoff.handoffId,
+          });
+          sourceCitation = {
+            sourceRef: accepted.sourceRef,
+            handoffId: accepted.handoffId,
+            status: "accepted",
+          };
+        } catch (error) {
+          throw new Error(
+            error instanceof Error
+              ? error.message
+              : "Transcriptory source was retained locally, but durable acknowledgement failed.",
+          );
+        }
+      } else if (source === "upload") {
+        sourceCitation = {
+          sourceRef: `blackboard-capture:${routed.canonicalCapture.captureId}`,
+          status: "local_only",
+        };
+      }
       void enrichBlackboardCaptureWithResonance({
         capture: routed.orb,
         previousCaptures: previousSavedCaptures,
@@ -917,7 +1082,17 @@ export default function BlackboardRoomPage() {
 
     const responders = isRoundtable ? selectedPersonas : [selectedPersona];
     const createdAt = new Date().toISOString();
-    addChatMessages([{ id: createId("message"), role: "user", text: capturedText, createdAt, captureId: orb?.id }]);
+    addChatMessages([
+      {
+        id: createId("message"),
+        role: "user",
+        text: capturedText,
+        createdAt,
+        captureId: orb?.id,
+        sourceCitation,
+        persistenceScope: "local_only",
+      },
+    ]);
     setSessionEnded(false);
     setIsTimedOut(false);
     setIsSending(true);
@@ -933,7 +1108,8 @@ export default function BlackboardRoomPage() {
               userTier: tier,
             });
 
-            const responseText = response.text?.trim() || roomFallbackResponse();
+            const responseText =
+              response.text?.trim() || roomFallbackResponse();
             // Phase 3: populate council metadata for roundtable messages
             const councilMetadata = isRoundtable
               ? buildCouncilMetadata(responseText, persona.name)
@@ -956,15 +1132,17 @@ export default function BlackboardRoomPage() {
         }),
       );
 
-      const newDiMessages: ChatMessage[] = replies.map(({ persona, text, responseSource, councilMetadata }) => ({
-        id: createId("message"),
-        role: "di" as const,
-        text,
-        createdAt,
-        personaSlug: persona.slug,
-        responseSource,
-        councilMetadata,
-      }));
+      const newDiMessages: ChatMessage[] = replies.map(
+        ({ persona, text, responseSource, councilMetadata }) => ({
+          id: createId("message"),
+          role: "di" as const,
+          text,
+          createdAt,
+          personaSlug: persona.slug,
+          responseSource,
+          councilMetadata,
+        }),
+      );
 
       addChatMessages(newDiMessages);
 
@@ -989,15 +1167,39 @@ export default function BlackboardRoomPage() {
   };
 
   useEffect(() => {
-    const raw = window.sessionStorage.getItem(TRANSCRIPTORY_BLACKBOARD_HANDOFF_KEY);
+    const raw = window.sessionStorage.getItem(
+      TRANSCRIPTORY_BLACKBOARD_HANDOFF_KEY,
+    );
     if (!raw || isSending) return;
     try {
-      const payload = JSON.parse(raw) as { text?: string };
+      const payload = JSON.parse(raw) as {
+        text?: string;
+        handoffId?: string;
+      };
       const text = payload.text?.trim();
       if (!text) return;
-      window.sessionStorage.removeItem(TRANSCRIPTORY_BLACKBOARD_HANDOFF_KEY);
-      void handleSend(text, "upload");
-      toast.success("Transcriptory capture sent to Blackboard.");
+      void handleSend(
+        text,
+        "upload",
+        payload.handoffId ? { handoffId: payload.handoffId } : undefined,
+      )
+        .then(() => {
+          window.sessionStorage.removeItem(
+            TRANSCRIPTORY_BLACKBOARD_HANDOFF_KEY,
+          );
+        })
+        .catch((error) => {
+          toast.error(
+            error instanceof Error
+              ? `${error.message} The incoming source remains available to retry.`
+              : "Blackboard intake failed. The incoming source remains available to retry.",
+          );
+        });
+      toast.success(
+        payload.handoffId
+          ? "Transcriptory source received; durable acknowledgement is being recorded."
+          : "Local-only Transcriptory compatibility source received.",
+      );
     } catch {
       window.sessionStorage.removeItem(TRANSCRIPTORY_BLACKBOARD_HANDOFF_KEY);
     }
@@ -1022,10 +1224,17 @@ export default function BlackboardRoomPage() {
   };
 
   const handleUpload = async (file: File) => {
-    const rawText = file.type.startsWith("text/") ? await file.text() : undefined;
-    const textPreview = file.type.startsWith("text/") && !file.type.startsWith("text/html") ? rawText : undefined;
+    const rawText = file.type.startsWith("text/")
+      ? await file.text()
+      : undefined;
+    const textPreview =
+      file.type.startsWith("text/") && !file.type.startsWith("text/html")
+        ? rawText
+        : undefined;
     const htmlPreview = file.type.startsWith("text/html") ? rawText : undefined;
-    const imageDataUrl = file.type.startsWith("image/") ? await fileToDataUrl(file) : undefined;
+    const imageDataUrl = file.type.startsWith("image/")
+      ? await fileToDataUrl(file)
+      : undefined;
 
     const fileRecord: UserFileRecord = createUserFileRecord({
       userId: currentUserId,
@@ -1038,21 +1247,33 @@ export default function BlackboardRoomPage() {
     });
 
     const persisted = user?.id
-      ? (await uploadUserFileToServer({
-        file: fileRecord,
-        content: fileRecord.previewHtml ?? fileRecord.previewText ?? undefined,
-        base64DataUrl: fileRecord.previewUrl ?? fileRecord.dataUrl ?? undefined,
-      })) ?? fileRecord
+      ? ((await uploadUserFileToServer({
+          file: fileRecord,
+          content:
+            fileRecord.previewHtml ?? fileRecord.previewText ?? undefined,
+          base64DataUrl:
+            fileRecord.previewUrl ?? fileRecord.dataUrl ?? undefined,
+        })) ?? fileRecord)
       : fileRecord;
 
     appendUserFile(persisted);
     setAttachmentName(file.name);
     if (textPreview || htmlPreview) {
-      const nextDraft = [draft.trim(), `Attached ${file.name}:`, textPreview ?? htmlPreview].filter(Boolean).join("\n\n");
+      const nextDraft = [
+        draft.trim(),
+        `Attached ${file.name}:`,
+        textPreview ?? htmlPreview,
+      ]
+        .filter(Boolean)
+        .join("\n\n");
       setDraft(nextDraft);
       window.requestAnimationFrame(() => resizeTextarea(textareaRef.current));
     }
-    toast.success(user?.id ? "Saved to File Explorer." : "File kept locally. Sign in to sync it.");
+    toast.success(
+      user?.id
+        ? "Saved to File Explorer."
+        : "File kept locally. Sign in to sync it.",
+    );
   };
 
   const handleVoiceToggle = () => {
@@ -1087,12 +1308,20 @@ export default function BlackboardRoomPage() {
     };
     recognition.onerror = (event: any) => {
       setIsRecording(false);
-      toast.error(event?.error ? `Voice capture stopped: ${event.error}` : "Voice capture stopped.");
+      toast.error(
+        event?.error
+          ? `Voice capture stopped: ${event.error}`
+          : "Voice capture stopped.",
+      );
     };
     recognition.onresult = (event: any) => {
       let finalText = "";
       let interimText = "";
-      for (let index = event.resultIndex; index < event.results.length; index += 1) {
+      for (
+        let index = event.resultIndex;
+        index < event.results.length;
+        index += 1
+      ) {
         const result = event.results[index];
         const transcript = result?.[0]?.transcript ?? "";
         if (result.isFinal) finalText += transcript;
@@ -1100,10 +1329,19 @@ export default function BlackboardRoomPage() {
       }
 
       if (finalText.trim()) {
-        voiceTranscriptRef.current = [voiceTranscriptRef.current, finalText.trim()].filter(Boolean).join(" ");
+        voiceTranscriptRef.current = [
+          voiceTranscriptRef.current,
+          finalText.trim(),
+        ]
+          .filter(Boolean)
+          .join(" ");
       }
 
-      const nextDraft = [voiceBaseDraftRef.current, voiceTranscriptRef.current, interimText.trim()]
+      const nextDraft = [
+        voiceBaseDraftRef.current,
+        voiceTranscriptRef.current,
+        interimText.trim(),
+      ]
         .filter(Boolean)
         .join(" ")
         .replace(/\s+/g, " ")
@@ -1120,7 +1358,8 @@ export default function BlackboardRoomPage() {
     new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(String(reader.result ?? ""));
-      reader.onerror = () => reject(reader.error ?? new Error("Failed to read file."));
+      reader.onerror = () =>
+        reject(reader.error ?? new Error("Failed to read file."));
       reader.readAsDataURL(file);
     });
 
@@ -1129,7 +1368,9 @@ export default function BlackboardRoomPage() {
     setSessionEnded(true);
     setIsTimedOut(false);
     setIsSending(false);
-    toast.success("Session ended. The transcript is still here until you clear it.");
+    toast.success(
+      "Session ended. The transcript is still here until you clear it.",
+    );
   };
 
   const handleClearSession = () => {
@@ -1153,21 +1394,77 @@ export default function BlackboardRoomPage() {
   };
 
   const handleBlueprintExport = () => {
-    if (!blueprint) { toast.info("Gather a few turns before I package the blueprint."); return; }
+    if (!blueprint) {
+      toast.info("Gather a few turns before I package the blueprint.");
+      return;
+    }
     setIsBlueprintDrawerOpen(true);
   };
 
-  const handleSendBlueprint = () => {
+  const handleSendBlueprint = async () => {
     if (!blueprint) return;
-    appendBlueprint(blueprint);
-    setIsBlueprintDrawerOpen(false);
-    toast.success("Blueprint sent to Creation Corner.", {
-      action: { label: "Open Creation Corner", onClick: () => setLocation("/creation-corner") },
-    });
+    if (!user?.id) {
+      appendBlueprint(blueprint);
+      toast.info(
+        "Blueprint retained locally. Sign in to create a durable Creation Corner offer.",
+      );
+      return;
+    }
+    try {
+      const handoff = await offerBlackboardBlueprint({
+        ownerId: user.id,
+        blueprint,
+        selectedEmbodiments: selectedPersonaSlugs,
+      });
+      appendBlueprint(blueprint);
+      window.sessionStorage.setItem(
+        "gestaltview.blackboard.creationHandoff.v1",
+        JSON.stringify({
+          handoffId: handoff.handoffId,
+          blueprintId: blueprint.id,
+        }),
+      );
+      setIsBlueprintDrawerOpen(false);
+      toast.success(`Blueprint offer ${handoff.state}.`, {
+        action: {
+          label: "Open Creation Corner",
+          onClick: () => setLocation("/creation-corner"),
+        },
+      });
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Durable Creation Corner offer failed. The blueprint remains here.",
+      );
+    }
   };
 
   const handleSendToScaffold = async () => {
-    if (!blueprint) { toast.info("Gather a few turns before promoting to scaffold."); return; }
+    if (!blueprint) {
+      toast.info("Gather a few turns before promoting to scaffold.");
+      return;
+    }
+    if (!user?.id) {
+      toast.info(
+        "Sign in before explicitly offering this blueprint to External Scaffold.",
+      );
+      return;
+    }
+    try {
+      await offerBlackboardBlueprintToScaffold({
+        ownerId: user.id,
+        blueprint,
+        selectedEmbodiments: selectedPersonaSlugs,
+      });
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "External Scaffold offer failed. Nothing was promoted.",
+      );
+      return;
+    }
     appendBlueprint(blueprint);
 
     // Write orbs to the queue directly — this is the reliable path the Scaffold page reads from.
@@ -1187,8 +1484,25 @@ export default function BlackboardRoomPage() {
     );
 
     toast.success("Session promoted to External Scaffold.", {
-      action: { label: "Open Scaffold", onClick: () => setLocation("/external-scaffold") },
+      action: {
+        label: "Open Scaffold",
+        onClick: () => setLocation("/external-scaffold"),
+      },
     });
+  };
+
+  const handleProposeProfileMemory = () => {
+    if (!blueprint) return;
+    const proposal = buildBlackboardProfileProposal({
+      blueprintId: blueprint.id,
+      sourceCaptureIds: blueprint.sourceOrbIds,
+      selectedEmbodiments: selectedPersonaSlugs,
+      proposedMemory: blueprint.summary,
+    });
+    appendBlackboardProfileProposal(proposal);
+    toast.success(
+      "Profile memory proposal saved for review. No profile state was changed.",
+    );
   };
 
   const handleRecapArtifactReady = (artifact: RecapArtifact) => {
@@ -1207,7 +1521,9 @@ export default function BlackboardRoomPage() {
 
   const handleDownloadBlueprint = () => {
     if (!blueprint) return;
-    const blob = new Blob([blueprint.outputs.markdown], { type: "text/markdown;charset=utf-8" });
+    const blob = new Blob([blueprint.outputs.markdown], {
+      type: "text/markdown;charset=utf-8",
+    });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -1243,7 +1559,6 @@ export default function BlackboardRoomPage() {
 
       {/* ── Full-height flex column — chat takes remaining space ── */}
       <div className="relative z-10 mx-auto flex h-dvh w-full max-w-4xl flex-col overflow-hidden px-4 pb-4 pt-20 sm:px-6 sm:pt-24">
-
         {/* ── Header bar — fixed height ── */}
         <header className="flex flex-wrap items-start justify-between gap-3 flex-shrink-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -1305,7 +1620,9 @@ export default function BlackboardRoomPage() {
         <section className="mt-5 flex-shrink-0 rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_18px_60px_rgba(0,0,0,0.18)] backdrop-blur-md">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/42">Embodiment Tribunal</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/42">
+                Embodiment Tribunal
+              </p>
               <p className="mt-2 text-sm leading-6 text-white/62">
                 {isRoundtable && selectedPersonas.length > 1
                   ? `${selectedPersonas.length} voices active.`
@@ -1321,7 +1638,9 @@ export default function BlackboardRoomPage() {
             </Link>
           </div>
           <p className="mt-3 text-xs leading-5 text-white/42">
-            /tribunal opens <span className="text-white/60">AgentCouncilPage.tsx</span> from Blackboard Room.
+            /tribunal opens{" "}
+            <span className="text-white/60">AgentCouncilPage.tsx</span> from
+            Blackboard Room.
           </p>
         </section>
 
@@ -1336,10 +1655,24 @@ export default function BlackboardRoomPage() {
               style={{ padding: "32px 24px" }}
             >
               <div>
-                <p style={{ fontFamily: "'Cabin Sketch', cursive", fontSize: "1rem", color: "rgba(50,184,198,0.55)", letterSpacing: "0.04em" }}>
+                <p
+                  style={{
+                    fontFamily: "'Cabin Sketch', cursive",
+                    fontSize: "1rem",
+                    color: "rgba(50,184,198,0.55)",
+                    letterSpacing: "0.04em",
+                  }}
+                >
                   The room is open.
                 </p>
-                <p style={{ fontFamily: "'Geist','Inter',system-ui,sans-serif", fontSize: "0.8rem", color: "rgba(255,255,255,0.28)", marginTop: 6 }}>
+                <p
+                  style={{
+                    fontFamily: "'Geist','Inter',system-ui,sans-serif",
+                    fontSize: "0.8rem",
+                    color: "rgba(255,255,255,0.28)",
+                    marginTop: 6,
+                  }}
+                >
                   Start with a thought. Billy keeps the thread.
                 </p>
               </div>
@@ -1348,10 +1681,13 @@ export default function BlackboardRoomPage() {
             messages.map((message) => {
               const persona =
                 message.role === "di"
-                  ? PERSONAS.find((p) => p.slug === message.personaSlug) ?? selectedPersona
+                  ? (PERSONAS.find((p) => p.slug === message.personaSlug) ??
+                    selectedPersona)
                   : null;
               // Phase 2: per-DI hue pulled from persona.auroraColor CSS var
-              const accentColor = persona ? `var(${persona.auroraColor})` : "var(--gv-aurora-cyan)";
+              const accentColor = persona
+                ? `var(${persona.auroraColor})`
+                : "var(--gv-aurora-cyan)";
               const rawHex = persona?.atmosphereHue ?? activePersonaHue;
 
               return (
@@ -1363,7 +1699,11 @@ export default function BlackboardRoomPage() {
                     // Phase 2: avatar orb uses per-DI accent color
                     <div
                       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-[10px] font-semibold uppercase tracking-[0.2em] text-white/90"
-                      style={{ borderColor: accentColor, backgroundColor: "rgba(255,255,255,0.04)", boxShadow: `0 0 10px ${rawHex}44` }}
+                      style={{
+                        borderColor: accentColor,
+                        backgroundColor: "rgba(255,255,255,0.04)",
+                        boxShadow: `0 0 10px ${rawHex}44`,
+                      }}
                     >
                       {persona?.name.slice(0, 1) ?? "D"}
                     </div>
@@ -1371,35 +1711,107 @@ export default function BlackboardRoomPage() {
 
                   <div
                     className="bbr-message-stack"
-                    style={{ display: "flex", flexDirection: "column", alignItems: message.role === "user" ? "flex-end" : "flex-start" }}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems:
+                        message.role === "user" ? "flex-end" : "flex-start",
+                    }}
                   >
-                    <div className={message.role === "di" ? "bbr-label-di" : "bbr-label-user"}>
+                    <div
+                      className={
+                        message.role === "di"
+                          ? "bbr-label-di"
+                          : "bbr-label-user"
+                      }
+                    >
                       {/* Phase 2: inline orb dot in label for DI */}
                       {message.role === "di" && (
                         <span
                           className="bbr-di-orb"
-                          style={{ backgroundColor: accentColor, color: accentColor }}
+                          style={{
+                            backgroundColor: accentColor,
+                            color: accentColor,
+                          }}
                         />
                       )}
-                      <span style={message.role === "di" ? { color: accentColor } : undefined}>
-                        {message.role === "user" ? "You" : persona?.name ?? selectedPersona.name}
+                      <span
+                        style={
+                          message.role === "di"
+                            ? { color: accentColor }
+                            : undefined
+                        }
+                      >
+                        {message.role === "user"
+                          ? "You"
+                          : (persona?.name ?? selectedPersona.name)}
                       </span>
-                      <span style={{ marginLeft: 8, opacity: 0.4, fontFamily: "'Geist','Inter',system-ui,sans-serif", fontSize: "0.66rem" }}>
-                        {new Date(message.createdAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+                      <span
+                        style={{
+                          marginLeft: 8,
+                          opacity: 0.4,
+                          fontFamily: "'Geist','Inter',system-ui,sans-serif",
+                          fontSize: "0.66rem",
+                        }}
+                      >
+                        {new Date(message.createdAt).toLocaleTimeString([], {
+                          hour: "numeric",
+                          minute: "2-digit",
+                        })}
                       </span>
                     </div>
 
                     {/* Phase 2: bubble border uses per-DI hue via inline CSS var */}
                     <div
                       className={[
-                        message.role === "di" ? "bbr-bubble-di" : "bbr-bubble-user",
-                        message.responseSource === "di-runtime" ? "di-response" : "",
-                        message.captureResonanceScore && message.captureResonanceScore > 0.7 ? "resonance-response" : "",
+                        message.role === "di"
+                          ? "bbr-bubble-di"
+                          : "bbr-bubble-user",
+                        message.responseSource === "di-runtime"
+                          ? "di-response"
+                          : "",
+                        message.captureResonanceScore &&
+                        message.captureResonanceScore > 0.7
+                          ? "resonance-response"
+                          : "",
                       ].join(" ")}
-                      style={message.role === "di" ? { "--bbr-bubble-hue": rawHex } as React.CSSProperties : undefined}
+                      style={
+                        message.role === "di"
+                          ? ({
+                              "--bbr-bubble-hue": rawHex,
+                            } as React.CSSProperties)
+                          : undefined
+                      }
                     >
-                      <p className={message.role === "di" ? "bbr-text-di" : "bbr-text-user"}>{message.text}</p>
+                      <p
+                        className={
+                          message.role === "di"
+                            ? "bbr-text-di"
+                            : "bbr-text-user"
+                        }
+                      >
+                        {message.text}
+                      </p>
                     </div>
+                    {message.sourceCitation ? (
+                      <div className="mt-2 max-w-xl rounded-xl border border-cyan-300/15 bg-cyan-300/[0.06] px-3 py-2 text-xs leading-5 text-cyan-50/72">
+                        <span className="font-mono uppercase tracking-[0.14em]">
+                          {message.sourceCitation.status === "accepted"
+                            ? "Durable cited source"
+                            : message.sourceCitation.status === "failed"
+                              ? "Acknowledgement failed"
+                              : "Local-only source"}
+                        </span>
+                        <span className="mt-1 block break-all text-white/48">
+                          {message.sourceCitation.sourceRef}
+                        </span>
+                      </div>
+                    ) : message.role === "user" &&
+                      message.persistenceScope === "local_only" ? (
+                      <div className="mt-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-white/40">
+                        Local Blackboard session · {message.id}
+                      </div>
+                    ) : null}
 
                     {/* Phase 3: council metadata card — only in roundtable mode */}
                     {message.role === "di" && message.councilMetadata ? (
@@ -1407,13 +1819,23 @@ export default function BlackboardRoomPage() {
                         className="bbr-council-card"
                         style={{ borderColor: `${rawHex}22` }}
                       >
-                        <div className="bbr-council-label">Council position</div>
-                        <p className="bbr-council-stance">{message.councilMetadata.stance}</p>
-                        {message.councilMetadata.concerns.map((concern, idx) => (
-                          <p key={idx} className="bbr-council-concern">{concern}</p>
-                        ))}
+                        <div className="bbr-council-label">
+                          Council position
+                        </div>
+                        <p className="bbr-council-stance">
+                          {message.councilMetadata.stance}
+                        </p>
+                        {message.councilMetadata.concerns.map(
+                          (concern, idx) => (
+                            <p key={idx} className="bbr-council-concern">
+                              {concern}
+                            </p>
+                          ),
+                        )}
                         {message.councilMetadata.recommendedNextStep && (
-                          <p className="bbr-council-nextstep">→ {message.councilMetadata.recommendedNextStep}</p>
+                          <p className="bbr-council-nextstep">
+                            → {message.councilMetadata.recommendedNextStep}
+                          </p>
                         )}
                       </div>
                     ) : null}
@@ -1434,7 +1856,10 @@ export default function BlackboardRoomPage() {
             <div className="bbr-message-row flex items-end gap-3 justify-start bbr-msg-enter">
               <div
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-[10px] font-semibold uppercase tracking-[0.2em] text-white/90"
-                style={{ borderColor: activePersonaHue, backgroundColor: "rgba(255,255,255,0.04)" }}
+                style={{
+                  borderColor: activePersonaHue,
+                  backgroundColor: "rgba(255,255,255,0.04)",
+                }}
               >
                 {selectedPersona.name.slice(0, 1)}
               </div>
@@ -1450,7 +1875,9 @@ export default function BlackboardRoomPage() {
           {billySynthesisText && !isSending ? (
             <div className="bbr-message-row flex justify-start bbr-msg-enter">
               <div className="bbr-billy-synthesis">
-                <div className="bbr-billy-synthesis-label">Billy · synthesis</div>
+                <div className="bbr-billy-synthesis-label">
+                  Billy · synthesis
+                </div>
                 <p className="bbr-billy-synthesis-text">{billySynthesisText}</p>
               </div>
             </div>
@@ -1464,10 +1891,15 @@ export default function BlackboardRoomPage() {
           <section className="mt-4 flex-shrink-0 max-h-[32dvh] overflow-y-auto rounded-[2rem] border border-cyan-300/12 bg-cyan-300/[0.05] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.18)] backdrop-blur-md sm:p-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold text-white">Here's what we covered. A few things stood out.</p>
+                <p className="text-sm font-semibold text-white">
+                  Here's what we covered. A few things stood out.
+                </p>
                 <ul className="mt-3 space-y-2 text-sm leading-6 text-white/72">
                   {summaryHighlights.map((highlight) => (
-                    <li key={highlight} className="rounded-[1rem] border border-white/8 bg-black/20 px-3 py-2">
+                    <li
+                      key={highlight}
+                      className="rounded-[1rem] border border-white/8 bg-black/20 px-3 py-2"
+                    >
                       {highlight}
                     </li>
                   ))}
@@ -1516,9 +1948,12 @@ export default function BlackboardRoomPage() {
           <section className="mt-4 flex-shrink-0 rounded-[2rem] border border-violet-300/12 bg-violet-300/[0.05] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.18)] backdrop-blur-md sm:p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-violet-200/70">Session recap</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-violet-200/70">
+                  Session recap
+                </p>
                 <p className="mt-2 text-sm leading-6 text-white/72">
-                  Billy can turn the captured thread into a living recap. Nothing moves rooms until you choose a destination.
+                  Billy can turn the captured thread into a living recap.
+                  Nothing moves rooms until you choose a destination.
                 </p>
               </div>
               <button
@@ -1559,16 +1994,26 @@ export default function BlackboardRoomPage() {
           </div>
 
           <div className="bbr-glass-toolbar">
-            <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1, minWidth: 0 }}>
-              <span style={{
-                fontFamily: "'Geist','Inter',system-ui,sans-serif",
-                fontSize: "0.68rem",
-                color: "rgba(50,184,198,0.4)",
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                whiteSpace: "nowrap",
-                flexShrink: 0,
-              }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                flex: 1,
+                minWidth: 0,
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "'Geist','Inter',system-ui,sans-serif",
+                  fontSize: "0.68rem",
+                  color: "rgba(50,184,198,0.4)",
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  whiteSpace: "nowrap",
+                  flexShrink: 0,
+                }}
+              >
                 DI Embodiment
               </span>
               <select
@@ -1577,12 +2022,21 @@ export default function BlackboardRoomPage() {
                 onChange={(e) => setSelectedPersonaSlugs([e.target.value])}
               >
                 {availablePersonas.map((p) => (
-                  <option key={p.slug} value={p.slug}>{p.name}</option>
+                  <option key={p.slug} value={p.slug}>
+                    {p.name}
+                  </option>
                 ))}
               </select>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                flexShrink: 0,
+              }}
+            >
               <input
                 ref={fileInputRef}
                 type="file"
@@ -1643,37 +2097,57 @@ export default function BlackboardRoomPage() {
                 sessionCaptureCount={summaryCaptures.length}
                 savedCount={savedCount}
                 innerWorldCount={innerWorldCount}
-                latestActionLabel={attachmentName ? `Attachment ready: ${attachmentName}` : messages.length > 0 ? "Session held" : null}
+                latestActionLabel={
+                  attachmentName
+                    ? `Attachment ready: ${attachmentName}`
+                    : messages.length > 0
+                      ? "Session held"
+                      : null
+                }
                 latestOrbTitle={latestCapture?.title ?? null}
                 blueprintReady={Boolean(blueprint)}
-                blueprintLabel={blueprint ? blueprint.title : "No blueprint yet"}
+                blueprintLabel={
+                  blueprint ? blueprint.title : "No blueprint yet"
+                }
                 onPromoteBlueprint={handleBlueprintExport}
                 onSendToCreationCorner={handleSendBlueprint}
               />
             </div>
 
             <section className="mt-4 rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-4 backdrop-blur-md flex-shrink-0">
-              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/42">Room signal</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/42">
+                Room signal
+              </p>
               <div className="mt-3 space-y-2 text-sm leading-6 text-white/68">
                 <p>Session state: {roomStatusLabel}</p>
                 <p>Current voice: {selectedPersona.voiceDescription}</p>
                 <p>Embodiment registry: {embodimentProfileCount} profiles.</p>
-                <p>Keep the thread visible until you decide what becomes structure.</p>
+                <p>
+                  Keep the thread visible until you decide what becomes
+                  structure.
+                </p>
               </div>
             </section>
           </>
         ) : null}
-
       </div>
 
       {/* ── Blueprint Drawer ── */}
-      <Drawer open={isBlueprintDrawerOpen} onOpenChange={setIsBlueprintDrawerOpen} direction="bottom">
+      <Drawer
+        open={isBlueprintDrawerOpen}
+        onOpenChange={setIsBlueprintDrawerOpen}
+        direction="bottom"
+      >
         <DrawerContent className="border-t border-white/10 bg-[#05070b] text-white">
           <div className="mx-auto mt-4 h-1.5 w-24 rounded-full bg-white/12" />
           <DrawerHeader className="border-b border-white/8 px-5 pb-5 pt-5 sm:px-6">
-            <DrawerTitle className="text-2xl font-semibold text-white">Blueprint preview</DrawerTitle>
+            <DrawerTitle className="text-2xl font-semibold text-white">
+              Blueprint preview
+            </DrawerTitle>
             <DrawerDescription className="mt-2 max-w-3xl text-sm leading-6 text-white/58">
-              Billy has gathered the session into a draft blueprint. Review the shape, copy the markdown, save a file, or send it onward to Creation Corner or External Scaffold.
+              Billy has gathered the session into a draft blueprint. Review the
+              shape, copy the markdown, save a file, or send it onward to
+              Creation Corner or External Scaffold.
             </DrawerDescription>
           </DrawerHeader>
 
@@ -1681,25 +2155,47 @@ export default function BlackboardRoomPage() {
             <div className="grid gap-5 overflow-y-auto px-5 py-5 sm:px-6 lg:grid-cols-[0.95fr_1.05fr]">
               <div className="space-y-4">
                 <section className="rounded-[1.4rem] border border-white/10 bg-white/[0.04] p-4">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/42">Blueprint</p>
-                  <h2 className="mt-2 text-2xl font-semibold text-white">{blueprint.title}</h2>
-                  <p className="mt-2 text-sm leading-6 text-white/66">{blueprint.summary}</p>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/42">
+                    Blueprint
+                  </p>
+                  <h2 className="mt-2 text-2xl font-semibold text-white">
+                    {blueprint.title}
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-white/66">
+                    {blueprint.summary}
+                  </p>
                 </section>
                 <section className="rounded-[1.4rem] border border-white/10 bg-white/[0.04] p-4">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/42">Session notes</p>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/42">
+                    Session notes
+                  </p>
                   <ul className="mt-3 space-y-2 text-sm leading-6 text-white/72">
                     {summaryHighlights.map((highlight) => (
-                      <li key={highlight} className="rounded-[1rem] border border-white/8 bg-black/20 px-3 py-2">{highlight}</li>
+                      <li
+                        key={highlight}
+                        className="rounded-[1rem] border border-white/8 bg-black/20 px-3 py-2"
+                      >
+                        {highlight}
+                      </li>
                     ))}
                   </ul>
                 </section>
                 <section className="rounded-[1.4rem] border border-white/10 bg-white/[0.04] p-4">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/42">Source captures</p>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/42">
+                    Source captures
+                  </p>
                   <ul className="mt-3 space-y-2 text-sm leading-6 text-white/72">
                     {summaryCaptures.map((capture) => (
-                      <li key={capture.id} className="rounded-[1rem] border border-white/8 bg-black/20 px-3 py-2">
-                        <span className="block text-white/84">{capture.title}</span>
-                        <span className="mt-1 block text-xs uppercase tracking-[0.18em] text-white/38">{capture.source}</span>
+                      <li
+                        key={capture.id}
+                        className="rounded-[1rem] border border-white/8 bg-black/20 px-3 py-2"
+                      >
+                        <span className="block text-white/84">
+                          {capture.title}
+                        </span>
+                        <span className="mt-1 block text-xs uppercase tracking-[0.18em] text-white/38">
+                          {capture.source}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -1708,8 +2204,12 @@ export default function BlackboardRoomPage() {
               <section className="rounded-[1.4rem] border border-white/10 bg-black/30 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/42">Markdown</p>
-                    <p className="mt-2 text-sm leading-6 text-white/56">This is the export payload Creation Corner will receive.</p>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/42">
+                      Markdown
+                    </p>
+                    <p className="mt-2 text-sm leading-6 text-white/56">
+                      This is the export payload Creation Corner will receive.
+                    </p>
                   </div>
                   <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-white/50">
                     {blueprint.outputs.markdown.length} chars
@@ -1755,6 +2255,14 @@ export default function BlackboardRoomPage() {
                 className="inline-flex items-center gap-2 rounded-full border border-amber-300/25 bg-amber-300/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-300/14 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <ExternalLink className="size-4" /> Send to External Scaffold
+              </button>
+              <button
+                type="button"
+                onClick={handleProposeProfileMemory}
+                disabled={!blueprint}
+                className="inline-flex items-center gap-2 rounded-full border border-violet-300/25 bg-violet-300/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-300/14 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Propose profile memory
               </button>
             </div>
           </DrawerFooter>

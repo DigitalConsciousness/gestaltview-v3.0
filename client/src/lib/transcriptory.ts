@@ -119,6 +119,7 @@ export function formatTranscriptoryFailureMessage(
 export function writeTranscriptoryHandoff(
   destination: "blackboard" | "creation",
   capture: TranscriptoryCapture,
+  durableReceipt?: { handoffId: string },
 ): void {
   if (typeof window === "undefined") return;
   const key =
@@ -129,6 +130,7 @@ export function writeTranscriptoryHandoff(
     key,
     JSON.stringify({
       captureId: capture.id,
+      handoffId: durableReceipt?.handoffId,
       title: capture.title,
       text: buildTranscriptoryHandoffText(capture),
       createdAt: new Date().toISOString(),

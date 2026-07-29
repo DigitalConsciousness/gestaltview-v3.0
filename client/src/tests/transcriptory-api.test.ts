@@ -129,6 +129,39 @@ describe("Transcriptory client API", () => {
     });
   });
 
+  it("includes the durable handoff id in the destination compatibility packet", async () => {
+    const values = new Map<string, string>();
+    vi.stubGlobal("window", {
+      sessionStorage: {
+        setItem: (key: string, value: string) => values.set(key, value),
+      },
+    });
+    const { TRANSCRIPTORY_BLACKBOARD_HANDOFF_KEY, writeTranscriptoryHandoff } =
+      await import("@/lib/transcriptory");
+    writeTranscriptoryHandoff(
+      "blackboard",
+      {
+        id: "capture-1",
+        title: "Cited source",
+        rawTranscript: "Exact words",
+        summary: "",
+        themes: [],
+        linkedCaptures: [],
+        status: "ready",
+        createdAt: "2026-07-29T00:00:00.000Z",
+        updatedAt: "2026-07-29T00:00:00.000Z",
+      },
+      { handoffId: "handoff-1" },
+    );
+
+    expect(
+      JSON.parse(values.get(TRANSCRIPTORY_BLACKBOARD_HANDOFF_KEY) ?? "{}"),
+    ).toMatchObject({
+      captureId: "capture-1",
+      handoffId: "handoff-1",
+    });
+  });
+
   it("loads searchable library results and detail payloads through normalized Transcriptory helpers", async () => {
     fetchMock
       .mockResolvedValueOnce({

@@ -8240,3 +8240,70 @@ remain Phase 7C scope.
 - The outside guide/founder retains the Phase 7C GO/HOLD decision.
 
 ---
+
+# CurrentState — Inside-Out Convergence Phase 7C (2026-07-29)
+
+**Scope:** Make Blackboard a canonical consumer and producer while preserving
+existing local room behavior. This slice does not execute the Phase 7D
+three-room proof, apply production DDL, deploy, or begin Phase 8.
+
+## Known
+
+- Phase 7A–7B left durable handoffs in `offered`; the Blackboard and Creation
+  Corner compatibility readers did not acknowledge them.
+- Blackboard typed, voice, and uploaded captures already route through
+  `routeBlackboardCaptureThroughPipeline`, preserving their source type and
+  canonical capture identity.
+- Blackboard recap and blueprint exports already existed, but Creation Corner
+  and External Scaffold transfers were browser-local actions without shared
+  lifecycle receipts.
+- Blackboard messages remain local-first under `gv.blackboard.chat.v1`; that
+  storage identity is retained rather than silently reclassified as durable.
+
+## Attempted and changed
+
+- Added `client/src/lib/blackboardRuntimeHandoffs.ts` as the room adapter over
+  the Phase 6 client. It does not define a second envelope.
+- Transcriptory compatibility packets now carry their durable handoff ID.
+  Blackboard resolves the owner-scoped offer, creates a stable citation, and
+  records an `accepted` receipt with `blackboard-citation:<handoff_id>`.
+- Accepted Transcriptory sources render a visible source citation. Legacy
+  packets remain labeled local-only.
+- Intake removes the compatibility packet only after Blackboard processing
+  succeeds. A persistence or acknowledgement failure retains the packet for
+  retry.
+- Blackboard blueprint offers to Creation Corner include source references,
+  capture references, selected embodiment participation, and consent scope
+  without copying private blueprint body text into the shared receipt.
+- Creation Corner acknowledges Blackboard blueprint and Transcriptory source
+  offers with destination references.
+- External Scaffold promotion now requires an explicit authenticated durable
+  offer before local queue/pipeline work begins.
+- “Propose profile memory” creates a reviewable local proposal linked to the
+  blueprint and source captures. It does not mutate profile or memory state.
+- New Blackboard user messages are visibly labeled as local session records and
+  retain their existing message IDs.
+
+## Observed and open
+
+- Adapter tests cover Transcriptory acceptance, idempotent reopen, Blackboard
+  blueprint offer, Creation Corner acceptance, explicit External Scaffold
+  offer, selected embodiment context, body non-duplication, and profile
+  proposal behavior.
+- Six focused contract, client, routing, and integration files pass with
+  **27/27 tests**.
+- `git diff --check` passes.
+- Compiler/build verification remains environmental rather than green:
+  `pnpm run build` was terminated during `tsc` with `SIGTERM` and no
+  diagnostic. A separate `pnpm exec vite build` transformed all **5,434
+  modules**, then was also terminated with `SIGTERM` while rendering chunks.
+  Neither termination is evidence of a source error, but neither is recorded
+  as a successful production build.
+- Phase 7D remains open: the complete
+  `Transcriptory → Blackboard → Creation Corner` fixture has not yet been
+  executed against an applied handoff migration.
+- Authority is **Bridge** for the local Phase 7C adapters and **Hold** for
+  production durability claims or Phase 8 until Phase 7D evidence and outside
+  review exist.
+
+---
