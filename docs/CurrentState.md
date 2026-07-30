@@ -8479,3 +8479,13 @@ explicit degraded/disabled states. Reddit is private-in-post by default with
 installation policy controls; Discord is ephemeral by default and requires no
 Gateway or privileged intents. Platform playtests and credential configuration
 remain operator deployment steps.
+
+- The adapter default and Devvit HTTP allowlist now target the confirmed
+  production runtime at `https://gestaltview-v3-psi.vercel.app`.
+- Reddit uses `GET /api/actions/health` as its low-cost readiness signal and
+  keeps Billy conversation traffic on the protected
+  `POST /api/insight-bot/respond` boundary. Generic Actions mutations are not
+  exposed to the Reddit browser.
+- Production observation on 2026-07-30: Actions health returned HTTP 200 with
+  schema `2.1.0` and platform version `67dfe7919b66`; the Insight-Bot route
+  returned the expected HTTP 405/`Allow: POST` response to a GET probe.
