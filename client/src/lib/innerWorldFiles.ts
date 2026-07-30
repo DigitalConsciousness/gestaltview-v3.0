@@ -1,9 +1,16 @@
 import { appFetchJson } from "@/lib/appFetch";
 import { formatFileSize, isTextPreviewableFile } from "@/lib/artifact";
 
-export type FileRoomOrigin = "blackboard" | "creation_corner" | "dynamic_inner_world" | "external_scaffold" | "unknown";
+export type FileRoomOrigin =
+  | "blackboard"
+  | "creation_corner"
+  | "dynamic_inner_world"
+  | "external_scaffold"
+  | "sanctuary"
+  | "unknown";
 
-export type UserFileKind = "markdown" | "html" | "pdf" | "text" | "image" | "audio" | "video" | "binary";
+export type UserFileKind =
+  "markdown" | "html" | "pdf" | "text" | "image" | "audio" | "video" | "binary";
 
 export type UserFileRecord = {
   id: string;
@@ -24,13 +31,7 @@ export type UserFileRecord = {
 };
 
 export type InnerWorldArtifactStatus =
-  | "queued"
-  | "rendering"
-  | "ready"
-  | "failed"
-  | "draft"
-  | "active"
-  | "archived";
+  "queued" | "rendering" | "ready" | "failed" | "draft" | "active" | "archived";
 
 export type InnerWorldArtifactOrigin =
   | "render_projection_verified"
@@ -59,7 +60,8 @@ export type InnerWorldArtifactRecord = {
   originKind?: InnerWorldArtifactOrigin;
 };
 
-export type ArtifactViewKind = "html" | "markdown" | "json_scene_graph" | "audio" | "image" | "raw";
+export type ArtifactViewKind =
+  "html" | "markdown" | "json_scene_graph" | "audio" | "image" | "raw";
 
 export type InnerWorldArtifactView = {
   kind: ArtifactViewKind;
@@ -111,7 +113,8 @@ export const FILE_STORAGE_KEYS = {
   selectedFile: "gestaltview.blackboard.selectedFile.v1",
 } as const;
 
-export const ARCHIVED_INNER_WORLD_ARTIFACTS_KEY = "gv.dynamicInnerWorld.archived.v1";
+export const ARCHIVED_INNER_WORLD_ARTIFACTS_KEY =
+  "gv.dynamicInnerWorld.archived.v1";
 
 // Tombstone key — persists IDs of permanently deleted artifacts so the
 // server-merge loop can never resurrect them.
@@ -137,7 +140,9 @@ const GALLERY_STATUS_LABELS: Record<InnerWorldArtifactStatus, string> = {
 };
 
 function hasBrowserStorage(): boolean {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+  return (
+    typeof window !== "undefined" && typeof window.localStorage !== "undefined"
+  );
 }
 
 function readJson<T>(key: string, fallback: T): T {
@@ -161,7 +166,10 @@ function writeJson<T>(key: string, value: T): void {
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
-    console.warn(`[innerWorldFiles] local storage write failed for ${key}`, error);
+    console.warn(
+      `[innerWorldFiles] local storage write failed for ${key}`,
+      error,
+    );
   }
 }
 
@@ -199,13 +207,21 @@ export function slugifyFileName(name: string): string {
 export function isMarkdownFile(name: string, mimeType = ""): boolean {
   const lowerName = name.toLowerCase();
   const lowerMime = mimeType.toLowerCase();
-  return lowerName.endsWith(".md") || lowerName.endsWith(".markdown") || lowerMime.includes("markdown");
+  return (
+    lowerName.endsWith(".md") ||
+    lowerName.endsWith(".markdown") ||
+    lowerMime.includes("markdown")
+  );
 }
 
 export function isHtmlFile(name: string, mimeType = ""): boolean {
   const lowerName = name.toLowerCase();
   const lowerMime = mimeType.toLowerCase();
-  return lowerName.endsWith(".html") || lowerName.endsWith(".htm") || lowerMime.includes("html");
+  return (
+    lowerName.endsWith(".html") ||
+    lowerName.endsWith(".htm") ||
+    lowerMime.includes("html")
+  );
 }
 
 export function isPdfFile(name: string, mimeType = ""): boolean {
@@ -236,6 +252,8 @@ export function roomOriginLabel(origin: FileRoomOrigin): string {
       return "Dynamic Inner World";
     case "external_scaffold":
       return "External Scaffold";
+    case "sanctuary":
+      return "Sanctuary";
     default:
       return "Unknown";
   }
@@ -262,7 +280,9 @@ export function fileKindLabel(kind: UserFileKind): string {
   }
 }
 
-export function artifactStatusLabel(status?: InnerWorldArtifactStatus | null): string {
+export function artifactStatusLabel(
+  status?: InnerWorldArtifactStatus | null,
+): string {
   if (!status) {
     return "Ready";
   }
@@ -304,14 +324,23 @@ export function artifactOriginLabel(origin: InnerWorldArtifactOrigin): string {
   }
 }
 
-export function isMuseumVisibleArtifact(artifact: Pick<InnerWorldArtifactRecord, "status">): boolean {
+export function isMuseumVisibleArtifact(
+  artifact: Pick<InnerWorldArtifactRecord, "status">,
+): boolean {
   const status = artifact.status ?? "ready";
   return status === "ready" || status === "active";
 }
 
-export function isGalleryStagingStatus(status?: InnerWorldArtifactStatus | null): boolean {
+export function isGalleryStagingStatus(
+  status?: InnerWorldArtifactStatus | null,
+): boolean {
   const resolved = status ?? "ready";
-  return resolved === "queued" || resolved === "rendering" || resolved === "failed" || resolved === "draft";
+  return (
+    resolved === "queued" ||
+    resolved === "rendering" ||
+    resolved === "failed" ||
+    resolved === "draft"
+  );
 }
 
 function safeParseJson(value: string): unknown {
@@ -328,13 +357,19 @@ function isSceneGraphPayload(value: unknown): boolean {
   }
 
   const record = value as Record<string, unknown>;
-  return record.schema === "nextgen.scene-graph.v1" || (Array.isArray(record.nodes) && Array.isArray(record.edges));
+  return (
+    record.schema === "nextgen.scene-graph.v1" ||
+    (Array.isArray(record.nodes) && Array.isArray(record.edges))
+  );
 }
 
-export function classifyInnerWorldArtifactView(artifact: InnerWorldArtifactRecord): InnerWorldArtifactView {
+export function classifyInnerWorldArtifactView(
+  artifact: InnerWorldArtifactRecord,
+): InnerWorldArtifactView {
   const rawSource = artifact.html.trim();
   const lowered = rawSource.toLowerCase();
-  const parsedJson = rawSource && /^[\[{]/.test(rawSource) ? safeParseJson(rawSource) : null;
+  const parsedJson =
+    rawSource && /^[\[{]/.test(rawSource) ? safeParseJson(rawSource) : null;
 
   if (lowered.startsWith("data:image/")) {
     return {
@@ -345,7 +380,10 @@ export function classifyInnerWorldArtifactView(artifact: InnerWorldArtifactRecor
     };
   }
 
-  if (lowered.startsWith("data:audio/") || (lowered.startsWith("blob:") && artifact.tags.includes("audio"))) {
+  if (
+    lowered.startsWith("data:audio/") ||
+    (lowered.startsWith("blob:") && artifact.tags.includes("audio"))
+  ) {
     return {
       kind: "audio",
       primaryRenderable: true,
@@ -387,8 +425,14 @@ export function classifyInnerWorldArtifactView(artifact: InnerWorldArtifactRecor
   };
 }
 
-function fileTagsFromRecord(name: string, kind: UserFileKind, roomOrigin: FileRoomOrigin): string[] {
-  const extension = name.includes(".") ? name.split(".").pop()?.toLowerCase() ?? "" : "";
+function fileTagsFromRecord(
+  name: string,
+  kind: UserFileKind,
+  roomOrigin: FileRoomOrigin,
+): string[] {
+  const extension = name.includes(".")
+    ? (name.split(".").pop()?.toLowerCase() ?? "")
+    : "";
   return Array.from(
     new Set(
       [
@@ -403,7 +447,9 @@ function fileTagsFromRecord(name: string, kind: UserFileKind, roomOrigin: FileRo
   );
 }
 
-export function formatFileRecordSize(record: Pick<UserFileRecord, "sizeBytes">): string {
+export function formatFileRecordSize(
+  record: Pick<UserFileRecord, "sizeBytes">,
+): string {
   return formatFileSize(record.sizeBytes);
 }
 
@@ -449,13 +495,21 @@ export function writeUserFiles(files: UserFileRecord[]): void {
 }
 
 export function appendUserFile(file: UserFileRecord): UserFileRecord[] {
-  const next = [file, ...readUserFiles().filter((item) => item.id !== file.id)].slice(0, MAX_USER_FILES);
+  const next = [
+    file,
+    ...readUserFiles().filter((item) => item.id !== file.id),
+  ].slice(0, MAX_USER_FILES);
   writeUserFiles(next);
   return next;
 }
 
-export function updateUserFile(fileId: string, updater: (file: UserFileRecord) => UserFileRecord): UserFileRecord[] {
-  const next = readUserFiles().map((file) => (file.id === fileId ? updater(file) : file));
+export function updateUserFile(
+  fileId: string,
+  updater: (file: UserFileRecord) => UserFileRecord,
+): UserFileRecord[] {
+  const next = readUserFiles().map((file) =>
+    file.id === fileId ? updater(file) : file,
+  );
   writeUserFiles(next);
   return next;
 }
@@ -484,7 +538,9 @@ function sanitizeInlineHtml(html: string): string {
   try {
     const parser = new DOMParser();
     const document = parser.parseFromString(html, "text/html");
-    document.querySelectorAll("script, iframe, object, embed").forEach((node) => node.remove());
+    document
+      .querySelectorAll("script, iframe, object, embed")
+      .forEach((node) => node.remove());
     document.querySelectorAll("*").forEach((node) => {
       Array.from(node.attributes).forEach((attribute) => {
         const name = attribute.name.toLowerCase();
@@ -502,7 +558,9 @@ function sanitizeInlineHtml(html: string): string {
 
 export function buildArtifactHtmlDocument(file: UserFileRecord): string {
   const safePreviewText = escapeHtml(file.previewText ?? "");
-  const safeInlineHtml = sanitizeInlineHtml(file.previewHtml ?? file.previewText ?? "");
+  const safeInlineHtml = sanitizeInlineHtml(
+    file.previewHtml ?? file.previewText ?? "",
+  );
 
   if (file.kind === "html" && safeInlineHtml) {
     return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>
@@ -545,7 +603,12 @@ export function getFileInsertText(file: UserFileRecord): string {
     return `[PDF attachment: ${file.name}]`;
   }
 
-  if (file.kind === "image" || file.kind === "audio" || file.kind === "video" || file.kind === "binary") {
+  if (
+    file.kind === "image" ||
+    file.kind === "audio" ||
+    file.kind === "video" ||
+    file.kind === "binary"
+  ) {
     return `[${fileKindLabel(file.kind)} attachment: ${file.name}]`;
   }
 
@@ -562,7 +625,10 @@ function stripHtml(html: string): string {
   }
 
   if (typeof window === "undefined" || typeof DOMParser === "undefined") {
-    return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+    return html
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   try {
@@ -570,25 +636,44 @@ function stripHtml(html: string): string {
     const document = parser.parseFromString(html, "text/html");
     return document.body.textContent?.replace(/\s+/g, " ").trim() ?? "";
   } catch {
-    return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+    return html
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 }
 
 export function readInnerWorldArtifacts(): InnerWorldArtifactRecord[] {
-  return readJson<InnerWorldArtifactRecord[]>(FILE_STORAGE_KEYS.innerWorldArtifacts, []);
+  return readJson<InnerWorldArtifactRecord[]>(
+    FILE_STORAGE_KEYS.innerWorldArtifacts,
+    [],
+  );
 }
 
-export function writeInnerWorldArtifacts(artifacts: InnerWorldArtifactRecord[]): void {
-  writeJson(FILE_STORAGE_KEYS.innerWorldArtifacts, artifacts.slice(0, MAX_ARTIFACTS));
+export function writeInnerWorldArtifacts(
+  artifacts: InnerWorldArtifactRecord[],
+): void {
+  writeJson(
+    FILE_STORAGE_KEYS.innerWorldArtifacts,
+    artifacts.slice(0, MAX_ARTIFACTS),
+  );
   emitInnerWorldArtifactsUpdated();
 }
 
 export function readArchivedInnerWorldArtifacts(): InnerWorldArtifactRecord[] {
-  return readJson<InnerWorldArtifactRecord[]>(ARCHIVED_INNER_WORLD_ARTIFACTS_KEY, []);
+  return readJson<InnerWorldArtifactRecord[]>(
+    ARCHIVED_INNER_WORLD_ARTIFACTS_KEY,
+    [],
+  );
 }
 
-export function writeArchivedInnerWorldArtifacts(artifacts: InnerWorldArtifactRecord[]): void {
-  writeJson(ARCHIVED_INNER_WORLD_ARTIFACTS_KEY, artifacts.slice(0, MAX_ARTIFACTS));
+export function writeArchivedInnerWorldArtifacts(
+  artifacts: InnerWorldArtifactRecord[],
+): void {
+  writeJson(
+    ARCHIVED_INNER_WORLD_ARTIFACTS_KEY,
+    artifacts.slice(0, MAX_ARTIFACTS),
+  );
   emitInnerWorldArtifactsUpdated();
 }
 
@@ -644,24 +729,33 @@ export function mergeInnerWorldArtifacts(
     const existing = merged.get(artifact.id);
     if (
       !existing ||
-      parseArtifactTimestamp(artifact.updatedAt) >= parseArtifactTimestamp(existing.updatedAt)
+      parseArtifactTimestamp(artifact.updatedAt) >=
+        parseArtifactTimestamp(existing.updatedAt)
     ) {
       merged.set(artifact.id, artifact);
     }
   }
 
   return [...merged.values()].sort((a, b) => {
-    const updatedDelta = parseArtifactTimestamp(b.updatedAt) - parseArtifactTimestamp(a.updatedAt);
+    const updatedDelta =
+      parseArtifactTimestamp(b.updatedAt) - parseArtifactTimestamp(a.updatedAt);
     if (updatedDelta !== 0) {
       return updatedDelta;
     }
 
-    return parseArtifactTimestamp(b.createdAt) - parseArtifactTimestamp(a.createdAt);
+    return (
+      parseArtifactTimestamp(b.createdAt) - parseArtifactTimestamp(a.createdAt)
+    );
   });
 }
 
-export function appendInnerWorldArtifact(artifact: InnerWorldArtifactRecord): InnerWorldArtifactRecord[] {
-  const next = [artifact, ...readInnerWorldArtifacts().filter((item) => item.id !== artifact.id)].slice(0, MAX_ARTIFACTS);
+export function appendInnerWorldArtifact(
+  artifact: InnerWorldArtifactRecord,
+): InnerWorldArtifactRecord[] {
+  const next = [
+    artifact,
+    ...readInnerWorldArtifacts().filter((item) => item.id !== artifact.id),
+  ].slice(0, MAX_ARTIFACTS);
   writeInnerWorldArtifacts(next);
   void createInnerWorldArtifactOnServer({ artifact });
   return next;
@@ -671,7 +765,9 @@ export function updateInnerWorldArtifact(
   artifactId: string,
   updater: (artifact: InnerWorldArtifactRecord) => InnerWorldArtifactRecord,
 ): InnerWorldArtifactRecord[] {
-  const next = readInnerWorldArtifacts().map((artifact) => (artifact.id === artifactId ? updater(artifact) : artifact));
+  const next = readInnerWorldArtifacts().map((artifact) =>
+    artifact.id === artifactId ? updater(artifact) : artifact,
+  );
   writeInnerWorldArtifacts(next);
   const updatedArtifact = next.find((artifact) => artifact.id === artifactId);
   if (updatedArtifact) {
@@ -686,15 +782,21 @@ export function updateInnerWorldArtifact(
  * 2. Removes from localStorage.
  * 3. Fires DELETE to the server (best-effort; tombstone survives even if this races).
  */
-export function removeInnerWorldArtifact(artifactId: string): InnerWorldArtifactRecord[] {
+export function removeInnerWorldArtifact(
+  artifactId: string,
+): InnerWorldArtifactRecord[] {
   writeDeletedArtifactId(artifactId);
-  const next = readInnerWorldArtifacts().filter((artifact) => artifact.id !== artifactId);
+  const next = readInnerWorldArtifacts().filter(
+    (artifact) => artifact.id !== artifactId,
+  );
   writeInnerWorldArtifacts(next);
   void deleteInnerWorldArtifactFromServer(artifactId);
   return next;
 }
 
-export function archiveInnerWorldArtifact(artifactId: string): InnerWorldArtifactLifecycleResult {
+export function archiveInnerWorldArtifact(
+  artifactId: string,
+): InnerWorldArtifactLifecycleResult {
   const active = readInnerWorldArtifacts();
   const artifact = active.find((item) => item.id === artifactId);
   const archived = readArchivedInnerWorldArtifacts();
@@ -709,7 +811,10 @@ export function archiveInnerWorldArtifact(artifactId: string): InnerWorldArtifac
     updatedAt: new Date().toISOString(),
   };
   const nextActive = active.filter((item) => item.id !== artifactId);
-  const nextArchived = [archivedArtifact, ...archived.filter((item) => item.id !== artifactId)].slice(0, MAX_ARTIFACTS);
+  const nextArchived = [
+    archivedArtifact,
+    ...archived.filter((item) => item.id !== artifactId),
+  ].slice(0, MAX_ARTIFACTS);
 
   writeInnerWorldArtifacts(nextActive);
   writeArchivedInnerWorldArtifacts(nextArchived);
@@ -718,7 +823,9 @@ export function archiveInnerWorldArtifact(artifactId: string): InnerWorldArtifac
   return { active: nextActive, archived: nextArchived };
 }
 
-export function restoreInnerWorldArtifact(artifactId: string): InnerWorldArtifactLifecycleResult {
+export function restoreInnerWorldArtifact(
+  artifactId: string,
+): InnerWorldArtifactLifecycleResult {
   const active = readInnerWorldArtifacts();
   const archived = readArchivedInnerWorldArtifacts();
   const artifact = archived.find((item) => item.id === artifactId);
@@ -729,10 +836,14 @@ export function restoreInnerWorldArtifact(artifactId: string): InnerWorldArtifac
 
   const restoredArtifact = {
     ...artifact,
-    status: artifact.status === "archived" ? "ready" : artifact.status ?? "ready",
+    status:
+      artifact.status === "archived" ? "ready" : (artifact.status ?? "ready"),
     updatedAt: new Date().toISOString(),
   };
-  const nextActive = [restoredArtifact, ...active.filter((item) => item.id !== artifactId)].slice(0, MAX_ARTIFACTS);
+  const nextActive = [
+    restoredArtifact,
+    ...active.filter((item) => item.id !== artifactId),
+  ].slice(0, MAX_ARTIFACTS);
   const nextArchived = archived.filter((item) => item.id !== artifactId);
 
   writeInnerWorldArtifacts(nextActive);
@@ -746,10 +857,16 @@ export function restoreInnerWorldArtifact(artifactId: string): InnerWorldArtifac
  * Hard-deletes from both active and archived lists plus the server.
  * Tombstones the ID so it cannot return via merge.
  */
-export function clearInnerWorldArtifact(artifactId: string): InnerWorldArtifactLifecycleResult {
+export function clearInnerWorldArtifact(
+  artifactId: string,
+): InnerWorldArtifactLifecycleResult {
   writeDeletedArtifactId(artifactId);
-  const nextActive = readInnerWorldArtifacts().filter((artifact) => artifact.id !== artifactId);
-  const nextArchived = readArchivedInnerWorldArtifacts().filter((artifact) => artifact.id !== artifactId);
+  const nextActive = readInnerWorldArtifacts().filter(
+    (artifact) => artifact.id !== artifactId,
+  );
+  const nextArchived = readArchivedInnerWorldArtifacts().filter(
+    (artifact) => artifact.id !== artifactId,
+  );
 
   writeInnerWorldArtifacts(nextActive);
   writeArchivedInnerWorldArtifacts(nextArchived);
@@ -777,14 +894,22 @@ export async function purgeAllInnerWorldArtifacts(): Promise<number> {
 
   // Best-effort server purge — delete every known ID individually.
   const allIds = [...active, ...archived].map((a) => a.id);
-  await Promise.allSettled(allIds.map((id) => deleteInnerWorldArtifactFromServer(id)));
+  await Promise.allSettled(
+    allIds.map((id) => deleteInnerWorldArtifactFromServer(id)),
+  );
 
   return total;
 }
 
-export function removeArtifactsForSourceFile(sourceFileId: string): InnerWorldArtifactRecord[] {
-  const removed = readInnerWorldArtifacts().filter((artifact) => artifact.sourceFileId === sourceFileId);
-  const next = readInnerWorldArtifacts().filter((artifact) => artifact.sourceFileId !== sourceFileId);
+export function removeArtifactsForSourceFile(
+  sourceFileId: string,
+): InnerWorldArtifactRecord[] {
+  const removed = readInnerWorldArtifacts().filter(
+    (artifact) => artifact.sourceFileId === sourceFileId,
+  );
+  const next = readInnerWorldArtifacts().filter(
+    (artifact) => artifact.sourceFileId !== sourceFileId,
+  );
   writeInnerWorldArtifacts(next);
   for (const artifact of removed) {
     writeDeletedArtifactId(artifact.id);
@@ -797,14 +922,24 @@ function sanitizeSummary(value: string): string {
   return value.replace(/\s+/g, " ").trim();
 }
 
-export function createInnerWorldArtifactFromFile(file: UserFileRecord, userId: string): InnerWorldArtifactRecord {
+export function createInnerWorldArtifactFromFile(
+  file: UserFileRecord,
+  userId: string,
+): InnerWorldArtifactRecord {
   const now = new Date().toISOString();
   const summarySource = sanitizeSummary(getFileInsertText(file));
-  const summary = summarySource.length > 120 ? `${summarySource.slice(0, 117)}...` : summarySource || `${fileKindLabel(file.kind)} artifact`;
-  const artifactBody = file.kind === "html" ? sanitizeInlineHtml(file.previewHtml ?? file.previewText ?? "") : escapeHtml(file.previewText ?? "");
-  const bodyHtml = file.kind === "html"
-    ? artifactBody
-    : `<pre style="margin:0;white-space:pre-wrap;word-break:break-word;font-family:ui-monospace, SFMono-Regular, Menlo, monospace;font-size:14px;line-height:1.7;">${artifactBody}</pre>`;
+  const summary =
+    summarySource.length > 120
+      ? `${summarySource.slice(0, 117)}...`
+      : summarySource || `${fileKindLabel(file.kind)} artifact`;
+  const artifactBody =
+    file.kind === "html"
+      ? sanitizeInlineHtml(file.previewHtml ?? file.previewText ?? "")
+      : escapeHtml(file.previewText ?? "");
+  const bodyHtml =
+    file.kind === "html"
+      ? artifactBody
+      : `<pre style="margin:0;white-space:pre-wrap;word-break:break-word;font-family:ui-monospace, SFMono-Regular, Menlo, monospace;font-size:14px;line-height:1.7;">${artifactBody}</pre>`;
 
   return {
     id: createId("artifact"),
@@ -829,23 +964,36 @@ export function createInnerWorldArtifactFromFile(file: UserFileRecord, userId: s
     originRoom: file.roomOrigin,
     originDiId: null,
     evidenceNodeIds: [file.id],
-    tags: Array.from(new Set([file.kind, file.roomOrigin, ...file.tags])).slice(0, 12),
+    tags: Array.from(new Set([file.kind, file.roomOrigin, ...file.tags])).slice(
+      0,
+      12,
+    ),
     status: "ready",
   };
 }
 
-export function pinFileToInnerWorld(file: UserFileRecord, userId: string): InnerWorldArtifactRecord[] {
+export function pinFileToInnerWorld(
+  file: UserFileRecord,
+  userId: string,
+): InnerWorldArtifactRecord[] {
   const artifact = createInnerWorldArtifactFromFile(file, userId);
   const next = appendInnerWorldArtifact(artifact);
-  return next.filter((item) => item.sourceFileId !== file.id || item.id === artifact.id).slice(0, MAX_ARTIFACTS);
+  return next
+    .filter((item) => item.sourceFileId !== file.id || item.id === artifact.id)
+    .slice(0, MAX_ARTIFACTS);
 }
 
 export function getUserFileById(fileId: string): UserFileRecord | null {
   return readUserFiles().find((file) => file.id === fileId) ?? null;
 }
 
-export function getInnerWorldArtifactById(artifactId: string): InnerWorldArtifactRecord | null {
-  return readInnerWorldArtifacts().find((artifact) => artifact.id === artifactId) ?? null;
+export function getInnerWorldArtifactById(
+  artifactId: string,
+): InnerWorldArtifactRecord | null {
+  return (
+    readInnerWorldArtifacts().find((artifact) => artifact.id === artifactId) ??
+    null
+  );
 }
 
 function normalizeServerFile(record: PersistedFilePayload): UserFileRecord {
@@ -867,7 +1015,9 @@ function normalizeServerFile(record: PersistedFilePayload): UserFileRecord {
   };
 }
 
-function normalizeServerArtifact(record: PersistedArtifactPayload): InnerWorldArtifactRecord {
+function normalizeServerArtifact(
+  record: PersistedArtifactPayload,
+): InnerWorldArtifactRecord {
   const artifact: InnerWorldArtifactRecord = {
     id: record.id,
     userId: record.userId,
@@ -892,11 +1042,16 @@ function normalizeServerArtifact(record: PersistedArtifactPayload): InnerWorldAr
   };
 }
 
-export async function loadUserFilesFromServer(): Promise<UserFileRecord[] | null> {
-  const result = await appFetchJson<{ files: PersistedFilePayload[] }>("/api/inner-world/files", {
-    timeoutMs: 15_000,
-    retries: 0,
-  });
+export async function loadUserFilesFromServer(): Promise<
+  UserFileRecord[] | null
+> {
+  const result = await appFetchJson<{ files: PersistedFilePayload[] }>(
+    "/api/inner-world/files",
+    {
+      timeoutMs: 15_000,
+      retries: 0,
+    },
+  );
 
   if (!result.ok) {
     return null;
@@ -910,17 +1065,20 @@ export async function uploadUserFileToServer(input: {
   content?: string;
   base64DataUrl?: string;
 }): Promise<UserFileRecord | null> {
-  const result = await appFetchJson<{ file: PersistedFilePayload }>("/api/inner-world/files", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      file: input.file,
-      content: input.content ?? null,
-      base64DataUrl: input.base64DataUrl ?? null,
-    }),
-    timeoutMs: 20_000,
-    retryUnsafe: true,
-  });
+  const result = await appFetchJson<{ file: PersistedFilePayload }>(
+    "/api/inner-world/files",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        file: input.file,
+        content: input.content ?? null,
+        base64DataUrl: input.base64DataUrl ?? null,
+      }),
+      timeoutMs: 20_000,
+      retryUnsafe: true,
+    },
+  );
 
   if (!result.ok) {
     return null;
@@ -929,21 +1087,31 @@ export async function uploadUserFileToServer(input: {
   return normalizeServerFile(result.data.file);
 }
 
-export async function deleteUserFileFromServer(fileId: string): Promise<boolean> {
-  const result = await appFetchJson<{ ok: boolean }>(`/api/inner-world/files/${encodeURIComponent(fileId)}`, {
-    method: "DELETE",
-    timeoutMs: 15_000,
-    retryUnsafe: true,
-  });
+export async function deleteUserFileFromServer(
+  fileId: string,
+): Promise<boolean> {
+  const result = await appFetchJson<{ ok: boolean }>(
+    `/api/inner-world/files/${encodeURIComponent(fileId)}`,
+    {
+      method: "DELETE",
+      timeoutMs: 15_000,
+      retryUnsafe: true,
+    },
+  );
 
   return result.ok && result.data.ok;
 }
 
-export async function getUserFileShareUrlFromServer(fileId: string): Promise<string | null> {
-  const result = await appFetchJson<{ signedUrl: string }>(`/api/inner-world/files/${encodeURIComponent(fileId)}/share`, {
-    timeoutMs: 15_000,
-    retries: 0,
-  });
+export async function getUserFileShareUrlFromServer(
+  fileId: string,
+): Promise<string | null> {
+  const result = await appFetchJson<{ signedUrl: string }>(
+    `/api/inner-world/files/${encodeURIComponent(fileId)}/share`,
+    {
+      timeoutMs: 15_000,
+      retries: 0,
+    },
+  );
 
   if (!result.ok) {
     return null;
@@ -952,11 +1120,16 @@ export async function getUserFileShareUrlFromServer(fileId: string): Promise<str
   return result.data.signedUrl || null;
 }
 
-export async function loadInnerWorldArtifactsFromServer(): Promise<InnerWorldArtifactRecord[] | null> {
-  const result = await appFetchJson<{ artifacts: PersistedArtifactPayload[] }>("/api/inner-world/artifacts", {
-    timeoutMs: 15_000,
-    retries: 0,
-  });
+export async function loadInnerWorldArtifactsFromServer(): Promise<
+  InnerWorldArtifactRecord[] | null
+> {
+  const result = await appFetchJson<{ artifacts: PersistedArtifactPayload[] }>(
+    "/api/inner-world/artifacts",
+    {
+      timeoutMs: 15_000,
+      retries: 0,
+    },
+  );
 
   if (!result.ok) {
     return null;
@@ -968,15 +1141,18 @@ export async function loadInnerWorldArtifactsFromServer(): Promise<InnerWorldArt
 export async function createInnerWorldArtifactOnServer(input: {
   artifact: InnerWorldArtifactRecord;
 }): Promise<InnerWorldArtifactRecord | null> {
-  const result = await appFetchJson<{ artifact: PersistedArtifactPayload }>("/api/inner-world/artifacts", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      artifact: input.artifact,
-    }),
-    timeoutMs: 20_000,
-    retryUnsafe: true,
-  });
+  const result = await appFetchJson<{ artifact: PersistedArtifactPayload }>(
+    "/api/inner-world/artifacts",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        artifact: input.artifact,
+      }),
+      timeoutMs: 20_000,
+      retryUnsafe: true,
+    },
+  );
 
   if (!result.ok) {
     return null;
@@ -985,12 +1161,17 @@ export async function createInnerWorldArtifactOnServer(input: {
   return normalizeServerArtifact(result.data.artifact);
 }
 
-export async function deleteInnerWorldArtifactFromServer(artifactId: string): Promise<boolean> {
-  const result = await appFetchJson<{ ok: boolean }>(`/api/inner-world/artifacts/${encodeURIComponent(artifactId)}`, {
-    method: "DELETE",
-    timeoutMs: 15_000,
-    retryUnsafe: true,
-  });
+export async function deleteInnerWorldArtifactFromServer(
+  artifactId: string,
+): Promise<boolean> {
+  const result = await appFetchJson<{ ok: boolean }>(
+    `/api/inner-world/artifacts/${encodeURIComponent(artifactId)}`,
+    {
+      method: "DELETE",
+      timeoutMs: 15_000,
+      retryUnsafe: true,
+    },
+  );
 
   return result.ok && result.data.ok;
 }

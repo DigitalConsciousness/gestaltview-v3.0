@@ -857,7 +857,7 @@ describe("Transcriptory API", () => {
     );
     expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toMatchObject({
       audio_url: "https://cdn.assemblyai.com/upload/audio.webm",
-      speech_models: ["universal-3-pro", "universal-2"],
+      speech_models: ["universal-3-5-pro", "universal-2"],
     });
     expect(builder.calls.eq).toContainEqual(["id", "capture-1"]);
     expect(builder.calls.eq).toContainEqual(["user_id", "user-1"]);

@@ -25,6 +25,10 @@ type ScrapbookItem = {
   preview: string;
   mimeType: string;
   createdAt: string;
+  updatedAt: string;
+  syncState: "local_only" | "syncing" | "synced" | "conflict";
+  sourceKind?: "authored" | "transcriptory" | "imported" | "conflict_recovery";
+  sourceEntityRef?: string | null;
 };
 
 const SCRAPBOOK_STORAGE_KEY = "gv.sanctuary.scrapbook.v1";
@@ -55,7 +59,8 @@ function readFileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result ?? ""));
-    reader.onerror = () => reject(reader.error ?? new Error("Failed to read file."));
+    reader.onerror = () =>
+      reject(reader.error ?? new Error("Failed to read file."));
     reader.readAsDataURL(file);
   });
 }
@@ -64,17 +69,24 @@ function readFileAsText(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result ?? ""));
-    reader.onerror = () => reject(reader.error ?? new Error("Failed to read file."));
+    reader.onerror = () =>
+      reject(reader.error ?? new Error("Failed to read file."));
     reader.readAsText(file);
   });
 }
 
-function deriveKindFromNameAndMime(name: string, mimeType = ""): ScrapbookItem["kind"] {
+function deriveKindFromNameAndMime(
+  name: string,
+  mimeType = "",
+): ScrapbookItem["kind"] {
   if (mimeType.startsWith("image/")) {
     return "image";
   }
 
-  if (mimeType.startsWith("text/") || /\.(md|markdown|txt|poem|html|htm)$/i.test(name)) {
+  if (
+    mimeType.startsWith("text/") ||
+    /\.(md|markdown|txt|poem|html|htm)$/i.test(name)
+  ) {
     if (/poem/i.test(name)) {
       return "poem";
     }
@@ -88,22 +100,36 @@ function deriveKindFromNameAndMime(name: string, mimeType = ""): ScrapbookItem["
 }
 
 function createCaption(file: File, text: string): string {
-  const firstLine = text.split(/\r?\n/).find((line) => line.trim().length > 0)?.trim() ?? "";
+  const firstLine =
+    text
+      .split(/\r?\n/)
+      .find((line) => line.trim().length > 0)
+      ?.trim() ?? "";
   if (firstLine) {
-    return firstLine.length > 96 ? `${firstLine.slice(0, 93).trim()}…` : firstLine;
+    return firstLine.length > 96
+      ? `${firstLine.slice(0, 93).trim()}…`
+      : firstLine;
   }
 
   return file.name.replace(/\.[^.]+$/, "") || file.name;
 }
 
-function materializeScrapbookItem(record: SanctuaryScrapbookRecord): ScrapbookItem {
+function materializeScrapbookItem(
+  record: SanctuaryScrapbookRecord,
+): ScrapbookItem {
   const file = record.file;
   const name = file?.name ?? record.caption?.trim() ?? "Scrapbook item";
   const mimeType = file?.mimeType ?? "application/octet-stream";
-  const kind = file ? deriveKindFromNameAndMime(file.name, file.mimeType) : "binary";
+  const kind = file
+    ? deriveKindFromNameAndMime(file.name, file.mimeType)
+    : "binary";
   const preview = file
-    ? file.previewUrl ?? file.previewHtml ?? file.previewText ?? record.caption ?? name
-    : record.caption ?? name;
+    ? (file.previewUrl ??
+      file.previewHtml ??
+      file.previewText ??
+      record.caption ??
+      name)
+    : (record.caption ?? name);
 
   return {
     id: record.id,
@@ -114,10 +140,17 @@ function materializeScrapbookItem(record: SanctuaryScrapbookRecord): ScrapbookIt
     preview,
     mimeType,
     createdAt: record.createdAt,
+    updatedAt: record.updatedAt,
+    syncState: "synced",
+    sourceKind: record.sourceKind,
+    sourceEntityRef: record.sourceEntityRef,
   };
 }
 
-function fileToPreviewValue(file: UserFileRecord, kind: ScrapbookItem["kind"]): string {
+function fileToPreviewValue(
+  file: UserFileRecord,
+  kind: ScrapbookItem["kind"],
+): string {
   if (kind === "image") {
     return file.previewUrl ?? file.dataUrl ?? file.previewText ?? "";
   }
@@ -126,7 +159,11 @@ function fileToPreviewValue(file: UserFileRecord, kind: ScrapbookItem["kind"]): 
 }
 
 function isMarkdownScrapbookItem(item: ScrapbookItem): boolean {
-  return item.name.toLowerCase().endsWith(".md") || item.name.toLowerCase().endsWith(".markdown") || item.mimeType.toLowerCase().includes("markdown");
+  return (
+    item.name.toLowerCase().endsWith(".md") ||
+    item.name.toLowerCase().endsWith(".markdown") ||
+    item.mimeType.toLowerCase().includes("markdown")
+  );
 }
 
 export default function ScrapbookPanel() {
@@ -136,8 +173,13 @@ export default function ScrapbookPanel() {
   const latestCaptionRef = useRef<Record<string, string>>({});
   const initialItems = useMemo(() => readStoredItems(), []);
   const [items, setItems] = useState<ScrapbookItem[]>(initialItems);
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(initialItems[0]?.id ?? null);
-  const selectedItem = useMemo(() => items.find((item) => item.id === selectedItemId) ?? items[0] ?? null, [items, selectedItemId]);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(
+    initialItems[0]?.id ?? null,
+  );
+  const selectedItem = useMemo(
+    () => items.find((item) => item.id === selectedItemId) ?? items[0] ?? null,
+    [items, selectedItemId],
+  );
 
   useEffect(() => {
     writeStoredItems(items);
@@ -145,10 +187,39 @@ export default function ScrapbookPanel() {
 
   useEffect(() => {
     return () => {
-      Object.values(captionTimersRef.current).forEach((timerId) => window.clearTimeout(timerId));
+      Object.values(captionTimersRef.current).forEach((timerId) =>
+        window.clearTimeout(timerId),
+      );
       captionTimersRef.current = {};
     };
   }, []);
+
+  useEffect(() => {
+    const addTranscriptoryScrap = (event: Event) => {
+      const detail = (
+        event as CustomEvent<{ captureId: string; transcript: string }>
+      ).detail;
+      if (!detail?.captureId || !detail.transcript) return;
+      const file = new File(
+        [detail.transcript],
+        `sanctuary-voice-${detail.captureId}.txt`,
+        { type: "text/plain" },
+      );
+      void addItem(file, {
+        sourceKind: "transcriptory",
+        sourceEntityRef: `transcriptory-capture:${detail.captureId}`,
+      });
+    };
+    window.addEventListener(
+      "gestaltview:sanctuary:add-transcriptory-scrap",
+      addTranscriptoryScrap,
+    );
+    return () =>
+      window.removeEventListener(
+        "gestaltview:sanctuary:add-transcriptory-scrap",
+        addTranscriptoryScrap,
+      );
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -177,7 +248,9 @@ export default function ScrapbookPanel() {
       }
 
       const localIds = new Set(localItems.map((item) => item.id));
-      const remoteOnlyItems = nextItems.filter((item) => !localIds.has(item.id));
+      const remoteOnlyItems = nextItems.filter(
+        (item) => !localIds.has(item.id),
+      );
       const mergedItems = [...remoteOnlyItems, ...localItems];
 
       if (mergedItems.length !== localItems.length) {
@@ -211,11 +284,20 @@ export default function ScrapbookPanel() {
       itemId: item.id,
       fileId: item.fileId,
       caption: caption.trim() || null,
+      sourceKind: item.sourceKind,
+      sourceEntityRef: item.sourceEntityRef,
     });
 
     if (!remoteItem) {
+      setItems((current) =>
+        current.map((entry) =>
+          entry.id === item.id ? { ...entry, syncState: "local_only" } : entry,
+        ),
+      );
       if (latestCaptionRef.current[item.id] === caption) {
-        toast.error("Could not sync the scrapbook item. Your local copy was kept.");
+        toast.error(
+          "Could not sync the scrapbook item. Your local copy was kept.",
+        );
       }
       return;
     }
@@ -225,7 +307,9 @@ export default function ScrapbookPanel() {
     }
 
     const nextItem = materializeScrapbookItem(remoteItem);
-    setItems((current) => current.map((entry) => (entry.id === nextItem.id ? nextItem : entry)));
+    setItems((current) =>
+      current.map((entry) => (entry.id === nextItem.id ? nextItem : entry)),
+    );
   };
 
   const scheduleCaptionSync = (item: ScrapbookItem, caption: string) => {
@@ -239,20 +323,27 @@ export default function ScrapbookPanel() {
     }, SCRAPBOOK_CAPTION_DEBOUNCE_MS);
   };
 
-  const addItem = async (file: File) => {
+  const addItem = async (
+    file: File,
+    source?: {
+      sourceKind: "transcriptory";
+      sourceEntityRef: string;
+    },
+  ) => {
     if (!user?.id) {
       toast.error("Sign in to add scrapbook items.");
       return;
     }
 
     const kind = deriveKindFromNameAndMime(file.name, file.type);
-    const text = kind === "image" ? "" : await readFileAsText(file).catch(() => "");
+    const text =
+      kind === "image" ? "" : await readFileAsText(file).catch(() => "");
     const preview = kind === "image" ? await readFileAsDataUrl(file) : text;
     const caption = createCaption(file, text || file.name);
     const fileRecord = createUserFileRecord({
       userId: user.id,
       file,
-      roomOrigin: "blackboard",
+      roomOrigin: "sanctuary",
       previewText: kind === "image" ? caption : text,
       previewHtml: kind === "image" ? undefined : text,
       dataUrl: kind === "image" ? preview : undefined,
@@ -278,6 +369,10 @@ export default function ScrapbookPanel() {
       preview: fileToPreviewValue(persistedFile, kind),
       mimeType: file.type || "application/octet-stream",
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      syncState: fileSynced ? "syncing" : "local_only",
+      sourceKind: source?.sourceKind ?? "authored",
+      sourceEntityRef: source?.sourceEntityRef ?? null,
     };
 
     setItems((current) => [item, ...current].slice(0, 120));
@@ -288,25 +383,42 @@ export default function ScrapbookPanel() {
         itemId: item.id,
         fileId: persistedFile.id,
         caption: item.caption,
+        sourceKind: source?.sourceKind,
+        sourceEntityRef: source?.sourceEntityRef,
       });
 
       if (remoteItem) {
         const nextItem = materializeScrapbookItem(remoteItem);
-        setItems((current) => current.map((entry) => (entry.id === nextItem.id ? nextItem : entry)));
+        setItems((current) =>
+          current.map((entry) => (entry.id === nextItem.id ? nextItem : entry)),
+        );
       } else {
         toast.error("Saved the file, but the scrapbook copy couldn't sync.");
       }
 
       toast.success("Saved to File Explorer.");
     } else {
-      toast.error("Could not sync the file to File Explorer. Kept a local copy.");
+      toast.error(
+        "Could not sync the file to File Explorer. Kept a local copy.",
+      );
     }
   };
 
   const updateCaption = (itemId: string, caption: string) => {
     const currentItem = items.find((item) => item.id === itemId);
     latestCaptionRef.current[itemId] = caption;
-    setItems((current) => current.map((item) => (item.id === itemId ? { ...item, caption } : item)));
+    setItems((current) =>
+      current.map((item) =>
+        item.id === itemId
+          ? {
+              ...item,
+              caption,
+              updatedAt: new Date().toISOString(),
+              syncState: user?.id ? "syncing" : "local_only",
+            }
+          : item,
+      ),
+    );
 
     if (currentItem) {
       scheduleCaptionSync(currentItem, caption);
@@ -317,8 +429,12 @@ export default function ScrapbookPanel() {
     <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.18)] backdrop-blur-md sm:p-6">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold text-gv-text-primary">Scrapbook</p>
-          <p className="mt-1 text-xs text-gv-text-muted">Images, notes, and poems stay private.</p>
+          <p className="text-sm font-semibold text-gv-text-primary">
+            Scrapbook
+          </p>
+          <p className="mt-1 text-xs text-gv-text-muted">
+            Images, notes, and poems stay private.
+          </p>
         </div>
 
         <button
@@ -346,7 +462,9 @@ export default function ScrapbookPanel() {
           try {
             await addItem(file);
           } catch (error) {
-            toast.error(error instanceof Error ? error.message : "Could not add item.");
+            toast.error(
+              error instanceof Error ? error.message : "Could not add item.",
+            );
           }
         }}
       />
@@ -368,22 +486,42 @@ export default function ScrapbookPanel() {
               >
                 <div className="aspect-[4/3] overflow-hidden rounded-[1rem] border border-white/10 bg-black/30">
                   {item.kind === "image" ? (
-                    <img src={item.preview} alt={item.caption || item.name} className="h-full w-full object-cover" />
+                    <img
+                      src={item.preview}
+                      alt={item.caption || item.name}
+                      className="h-full w-full object-cover"
+                    />
                   ) : (
                     <div className="flex h-full items-center justify-center px-4 py-5 text-sm leading-6 text-gv-text-secondary">
-                      <p className="line-clamp-4">{item.preview || item.name}</p>
+                      <p className="line-clamp-4">
+                        {item.preview || item.name}
+                      </p>
                     </div>
                   )}
                 </div>
 
-                <p className="mt-3 text-sm font-semibold text-gv-text-primary">{item.name}</p>
-                <p className="mt-1 line-clamp-2 text-xs leading-5 text-gv-text-muted">{item.caption}</p>
+                <p className="mt-3 text-sm font-semibold text-gv-text-primary">
+                  {item.name}
+                </p>
+                <p className="mt-1 line-clamp-2 text-xs leading-5 text-gv-text-muted">
+                  {item.caption}
+                </p>
+                <span className="mt-2 inline-flex rounded-full border border-white/10 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-gv-text-muted">
+                  {item.syncState === "synced"
+                    ? "synced"
+                    : item.syncState === "syncing"
+                      ? "syncing"
+                      : item.syncState === "conflict"
+                        ? "conflict preserved"
+                        : "local only"}
+                </span>
               </button>
             );
           })
         ) : (
           <div className="col-span-full rounded-[1.4rem] border border-dashed border-white/10 bg-black/20 p-6 text-center text-sm text-gv-text-muted">
-            Add an image, note, or poem. It will stay in the Scrapbook and in File Explorer.
+            Add an image, note, or poem. It will stay in the Scrapbook and in
+            File Explorer.
           </div>
         )}
       </div>
@@ -392,8 +530,12 @@ export default function ScrapbookPanel() {
         <div className="mt-4 rounded-[1.5rem] border border-white/10 bg-black/25 p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-semibold text-gv-text-primary">{selectedItem.name}</p>
-              <p className="mt-1 text-xs text-gv-text-muted">{selectedItem.mimeType}</p>
+              <p className="text-sm font-semibold text-gv-text-primary">
+                {selectedItem.name}
+              </p>
+              <p className="mt-1 text-xs text-gv-text-muted">
+                {selectedItem.mimeType}
+              </p>
             </div>
             <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-gv-text-secondary">
               {selectedItem.kind}
@@ -425,12 +567,15 @@ export default function ScrapbookPanel() {
                 Caption
                 <input
                   value={selectedItem.caption}
-                  onChange={(event) => updateCaption(selectedItem.id, event.target.value)}
+                  onChange={(event) =>
+                    updateCaption(selectedItem.id, event.target.value)
+                  }
                   className="mt-2 w-full rounded-full border border-white/10 bg-black/30 px-4 py-3 text-sm text-gv-text-primary outline-none transition-colors focus:border-gv-aurora-cyan/30"
                 />
               </label>
               <div className="rounded-[1.1rem] border border-gv-aurora-emerald/20 bg-gv-aurora-emerald/10 p-4 text-sm leading-6 text-gv-text-secondary">
-                The Scrapbook is private. The file is in File Explorer. The note stays here.
+                The Scrapbook is private. The file is in File Explorer. The note
+                stays here.
               </div>
               <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-gv-text-muted">
                 <Sparkles className="h-3.5 w-3.5 text-gv-aurora-cyan" />

@@ -1,3 +1,70 @@
+# CurrentState — Inside-Out Convergence Phase 8 Sanctuary (2026-07-30)
+
+**Authority:** The founder explicitly accepted the Phase 7 fixture and recovery
+path and authorized Phase 8 work in the current `main` worktree. Phase 9 has not
+begun.
+
+## Known
+
+- Sanctuary already used the owner-scoped `journals`, `scrapbook_items`, and
+  private `user_files` paths, plus the local keys
+  `gv.sanctuary.journal.v1` and `gv.sanctuary.scrapbook.v1`.
+- The existing journal schema modeled one current document per user but could
+  not represent source lineage, archive state, revisions, or recoverable
+  concurrent-edit conflicts.
+- Sanctuary browser speech previously wrote directly into the journal and did
+  not preserve a raw Transcriptory audio source.
+- AssemblyAI rejected the configured deprecated `universal-3-pro` model and
+  instructed the runtime to use `universal-3-5-pro`.
+
+## Attempted and changed
+
+- Added the local-only Phase 8 migration
+  `20260730010000_sanctuary_convergence_v1.sql`. It extends the existing
+  Sanctuary tables with source, archive, and revision metadata and adds a
+  private owner-scoped conflict-version recovery table. It has not been applied
+  to production.
+- Journal writes now use optimistic timestamps. A material stale write returns
+  `409` and preserves both local and remote payloads instead of overwriting.
+- Journal and scrapbook surfaces visibly distinguish `local only`, `syncing`,
+  `synced`, and conflict-recovery state while retaining their existing browser
+  caches.
+- Sanctuary voice now records real audio through `MediaRecorder`, creates and
+  transcribes the source through Transcriptory, offers and acknowledges a
+  durable Sanctuary handoff, then asks the user to choose journal, scrapbook,
+  or capture-only. Browser speech recognition is no longer the durable path.
+- Transcriptory now submits AssemblyAI model priority
+  `["universal-3-5-pro", "universal-2"]`.
+- Scrapbook uploads now truthfully identify `roomOrigin: "sanctuary"` and retain
+  optional Transcriptory source lineage.
+
+## Observed
+
+- Focused Phase 8/Transcriptory verification passes: **34/34 tests across 5
+  files**.
+- `pnpm exec tsc --noEmit --pretty false` passes.
+- `git diff --check` passes.
+- Three build attempts transformed all **5,435 modules**, then were externally
+  killed during chunk rendering (`SIGTERM` twice and `SIGKILL` once). This is
+  environmental/resource evidence, not a passing build receipt.
+- The Vite development server starts successfully after approved local port
+  access. The Playwright wrapper could not launch because it requires system
+  Chrome at `/opt/google/chrome/chrome`; only cached Chromium was present.
+- Local Supabase migration/RLS execution and production persistence remain
+  unobserved.
+
+## Developmental state and gate
+
+- Sanctuary Phase 8 is **integrated and locally evaluated** at focused API,
+  contract, and type-check boundaries.
+- Production migration, live owner-isolation/storage proof, successful
+  production build, and browser screenshot remain open.
+- **Authority: Hold** at the Phase 8 evidence gate. Do not begin Phase 9 or
+  claim Sanctuary production-operational until the missing receipts are
+  recovered or explicitly dispositioned.
+
+---
+
 # CurrentState — Insight-Bot runtime bridge integrated (2026-07-30)
 
 **Scope of this pass:** Adapted the supplied

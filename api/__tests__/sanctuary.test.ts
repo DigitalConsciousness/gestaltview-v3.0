@@ -66,9 +66,12 @@ type BuilderOptions = {
 function createBuilder(options: BuilderOptions = {}) {
   const calls = {
     eq: [] as Array<[string, unknown]>,
-    upsert: [] as Array<[Record<string, unknown>, Record<string, unknown> | undefined]>,
+    upsert: [] as Array<
+      [Record<string, unknown>, Record<string, unknown> | undefined]
+    >,
     select: [] as string[],
     onConflict: [] as string[],
+    insert: [] as Array<Record<string, unknown>>,
   };
   const builder: any = {
     calls,
@@ -96,11 +99,18 @@ function createBuilder(options: BuilderOptions = {}) {
       }
       return builder;
     },
+    insert(payload: Record<string, unknown>) {
+      calls.insert.push(payload);
+      return Promise.resolve({ data: null, error: null });
+    },
     single() {
       return Promise.resolve({ data: options.singleData ?? null, error: null });
     },
     maybeSingle() {
-      return Promise.resolve({ data: options.maybeSingleData ?? null, error: null });
+      return Promise.resolve({
+        data: options.maybeSingleData ?? null,
+        error: null,
+      });
     },
   };
   return builder;
@@ -203,7 +213,9 @@ describe("sanctuary persistence API", () => {
       },
     });
     getInnerWorldSupabaseAdminMock.mockReturnValue({
-      from: vi.fn((table: string) => (table === "scrapbook_items" ? scrapbookBuilder : fileBuilder)),
+      from: vi.fn((table: string) =>
+        table === "scrapbook_items" ? scrapbookBuilder : fileBuilder,
+      ),
     });
 
     const req = {
@@ -238,4 +250,53 @@ describe("sanctuary persistence API", () => {
       },
     });
   });
+
+  it("preserves both journal versions when optimistic concurrency detects a conflict", async () => {
+    const module = await loadJournalModule();
+    const journalBuilder = createBuilder({
+      maybeSingleData: {
+        id: "11111111-1111-1111-1111-111111111111",
+        source_ref: "sanctuary-journal-local",
+        user_id: "user-1",
+        content: "<p>Remote words</p>",
+        source_kind: "authored",
+        source_entity_ref: null,
+        archived_at: null,
+        revision: 2,
+        created_at: "2026-07-30T00:00:00.000Z",
+        updated_at: "2026-07-30T02:00:00.000Z",
+      },
+    });
+    const conflictBuilder = createBuilder();
+    getInnerWorldSupabaseAdminMock.mockReturnValue({
+      from: vi.fn((table: string) =>
+        table === "journals" ? journalBuilder : conflictBuilder,
+      ),
+    });
+    const res = createRes();
+
+    await module.default(
+      {
+        method: "POST",
+        headers: {},
+        body: {
+          journalId: "sanctuary-journal-local",
+          content: "<p>Local words</p>",
+          expectedUpdatedAt: "2026-07-30T01:00:00.000Z",
+        },
+      } as never,
+      res as never,
+    );
+
+    expect(res.statusCode).toBe(409);
+    expect(conflictBuilder.calls.insert[0]).toMatchObject({
+      owner_id: "user-1",
+      entity_kind: "journal",
+      source_ref: "sanctuary-journal-local",
+      local_payload: { content: "<p>Local words</p>" },
+      remote_payload: { content: "<p>Remote words</p>" },
+    });
+    expect(journalBuilder.calls.upsert).toEqual([]);
+  });
+
 });

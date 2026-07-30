@@ -4,7 +4,10 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { requireAuth } from "../_lib/auth.js";
 import { applyCorsHeaders } from "../_lib/cors.js";
 import { sendJson } from "../_lib/response.js";
-import { buildInnerWorldFilePayload, getInnerWorldSupabaseAdmin } from "../_lib/inner-world.js";
+import {
+  buildInnerWorldFilePayload,
+  getInnerWorldSupabaseAdmin,
+} from "../_lib/inner-world.js";
 
 type FileRow = {
   id: string;
@@ -31,13 +34,20 @@ type ScrapbookRow = {
   caption: string | null;
   created_at: string;
   updated_at?: string | null;
+  source_kind?: string;
+  source_entity_ref?: string | null;
+  archived_at?: string | null;
+  revision?: number;
 };
 
 async function loadScrapbookItems(supabase: any, userId: string) {
   const { data, error } = await supabase
     .from("scrapbook_items")
-    .select("id,source_ref,user_id,file_id,source_file_ref,caption,created_at,updated_at")
+    .select(
+      "id,source_ref,user_id,file_id,source_file_ref,caption,source_kind,source_entity_ref,archived_at,revision,created_at,updated_at",
+    )
     .eq("user_id", userId)
+    .is("archived_at", null)
     .order("created_at", { ascending: false })
     .limit(300);
 
@@ -46,14 +56,31 @@ async function loadScrapbookItems(supabase: any, userId: string) {
   }
 
   const rows = (data ?? []) as ScrapbookRow[];
-  const sourceFileRefs = Array.from(new Set(rows.map((row) => row.source_file_ref).filter((value): value is string => Boolean(value))));
-  const fileIds = Array.from(new Set(rows.map((row) => row.file_id).filter((value): value is string => Boolean(value))));
+  const sourceFileRefs = Array.from(
+    new Set(
+      rows
+        .map((row) => row.source_file_ref)
+        .filter((value): value is string => Boolean(value)),
+    ),
+  );
+  const fileIds = Array.from(
+    new Set(
+      rows
+        .map((row) => row.file_id)
+        .filter((value): value is string => Boolean(value)),
+    ),
+  );
 
-  const fileMap = new Map<string, Awaited<ReturnType<typeof buildInnerWorldFilePayload>>>();
+  const fileMap = new Map<
+    string,
+    Awaited<ReturnType<typeof buildInnerWorldFilePayload>>
+  >();
   if (sourceFileRefs.length > 0) {
     const { data: fileRows, error: fileError } = await supabase
       .from("user_files")
-      .select("id,source_ref,user_id,name,mime_type,size_bytes,storage_path,room_origin,tags,preview_text,preview_html,created_at,updated_at")
+      .select(
+        "id,source_ref,user_id,name,mime_type,size_bytes,storage_path,room_origin,tags,preview_text,preview_html,created_at,updated_at",
+      )
       .eq("user_id", userId)
       .in("source_ref", sourceFileRefs);
 
@@ -74,7 +101,9 @@ async function loadScrapbookItems(supabase: any, userId: string) {
   if (missingFileIds.length > 0) {
     const { data: fileRows, error: fileError } = await supabase
       .from("user_files")
-      .select("id,source_ref,user_id,name,mime_type,size_bytes,storage_path,room_origin,tags,preview_text,preview_html,created_at,updated_at")
+      .select(
+        "id,source_ref,user_id,name,mime_type,size_bytes,storage_path,room_origin,tags,preview_text,preview_html,created_at,updated_at",
+      )
       .eq("user_id", userId)
       .in("id", missingFileIds);
 
@@ -97,14 +126,24 @@ async function loadScrapbookItems(supabase: any, userId: string) {
     fileId: row.source_file_ref ?? row.file_id,
     caption: row.caption,
     createdAt: row.created_at,
-    file: row.source_file_ref || row.file_id ? (fileMap.get(row.source_file_ref ?? row.file_id ?? "") ?? null) : null,
+    updatedAt: row.updated_at ?? row.created_at,
+    sourceKind: row.source_kind ?? "authored",
+    sourceEntityRef: row.source_entity_ref ?? null,
+    archivedAt: row.archived_at ?? null,
+    revision: row.revision ?? 1,
+    file:
+      row.source_file_ref || row.file_id
+        ? (fileMap.get(row.source_file_ref ?? row.file_id ?? "") ?? null)
+        : null,
   }));
 }
 
 async function loadItemFile(supabase: any, userId: string, fileId: string) {
   const sourceRefResult = await supabase
     .from("user_files")
-    .select("id,source_ref,user_id,name,mime_type,size_bytes,storage_path,room_origin,tags,preview_text,preview_html,created_at,updated_at")
+    .select(
+      "id,source_ref,user_id,name,mime_type,size_bytes,storage_path,room_origin,tags,preview_text,preview_html,created_at,updated_at",
+    )
     .eq("user_id", userId)
     .eq("source_ref", fileId)
     .maybeSingle();
@@ -116,13 +155,17 @@ async function loadItemFile(supabase: any, userId: string, fileId: string) {
   if (sourceRefResult.data) {
     return {
       row: sourceRefResult.data as FileRow,
-      payload: await buildInnerWorldFilePayload(sourceRefResult.data as FileRow),
+      payload: await buildInnerWorldFilePayload(
+        sourceRefResult.data as FileRow,
+      ),
     };
   }
 
   const idResult = await supabase
     .from("user_files")
-    .select("id,source_ref,user_id,name,mime_type,size_bytes,storage_path,room_origin,tags,preview_text,preview_html,created_at,updated_at")
+    .select(
+      "id,source_ref,user_id,name,mime_type,size_bytes,storage_path,room_origin,tags,preview_text,preview_html,created_at,updated_at",
+    )
     .eq("user_id", userId)
     .eq("id", fileId)
     .maybeSingle();
@@ -166,7 +209,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       sendJson(res, 200, { items });
     } catch (error) {
       sendJson(res, 500, {
-        error: error instanceof Error ? error.message : "Failed to load scrapbook items.",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to load scrapbook items.",
       });
     }
     return;
@@ -181,11 +227,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     itemId?: unknown;
     fileId?: unknown;
     caption?: unknown;
+    sourceKind?: unknown;
+    sourceEntityRef?: unknown;
   };
 
-  const itemId = typeof body.itemId === "string" && body.itemId.trim() ? body.itemId.trim() : randomUUID();
-  const fileId = typeof body.fileId === "string" && body.fileId.trim() ? body.fileId.trim() : "";
+  const itemId =
+    typeof body.itemId === "string" && body.itemId.trim()
+      ? body.itemId.trim()
+      : randomUUID();
+  const fileId =
+    typeof body.fileId === "string" && body.fileId.trim()
+      ? body.fileId.trim()
+      : "";
   const caption = typeof body.caption === "string" ? body.caption.trim() : "";
+  const sourceKind =
+    body.sourceKind === "transcriptory" || body.sourceKind === "imported"
+      ? body.sourceKind
+      : "authored";
+  const sourceEntityRef =
+    typeof body.sourceEntityRef === "string" && body.sourceEntityRef.trim()
+      ? body.sourceEntityRef.trim()
+      : null;
 
   if (!fileId) {
     sendJson(res, 400, { error: "Missing file id." });
@@ -208,14 +270,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           file_id: file.row.id,
           source_file_ref: file.row.source_ref ?? file.row.id,
           caption: caption || null,
+          source_kind: sourceKind,
+          source_entity_ref: sourceEntityRef,
         },
         { onConflict: "source_ref" },
       )
-      .select("id,source_ref,user_id,file_id,source_file_ref,caption,created_at,updated_at")
+      .select(
+        "id,source_ref,user_id,file_id,source_file_ref,caption,source_kind,source_entity_ref,archived_at,revision,created_at,updated_at",
+      )
       .single();
 
     if (error || !data) {
-      sendJson(res, 500, { error: error?.message ?? "Failed to save scrapbook item." });
+      sendJson(res, 500, {
+        error: error?.message ?? "Failed to save scrapbook item.",
+      });
       return;
     }
 
@@ -226,12 +294,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         fileId: data.source_file_ref ?? data.file_id,
         caption: data.caption,
         createdAt: data.created_at,
+        updatedAt: data.updated_at ?? data.created_at,
+        sourceKind: data.source_kind ?? "authored",
+        sourceEntityRef: data.source_entity_ref ?? null,
+        archivedAt: data.archived_at ?? null,
+        revision: data.revision ?? 1,
         file: file.payload,
       },
     });
   } catch (error) {
     sendJson(res, 500, {
-      error: error instanceof Error ? error.message : "Failed to save scrapbook item.",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to save scrapbook item.",
     });
   }
 }

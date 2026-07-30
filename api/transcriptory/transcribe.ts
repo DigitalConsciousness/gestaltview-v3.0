@@ -18,7 +18,7 @@ import {
 export const config = { api: { bodyParser: false } };
 
 const ASSEMBLYAI_BASE_URL = "https://api.assemblyai.com";
-const ASSEMBLYAI_SPEECH_MODELS = ["universal-3-pro", "universal-2"];
+const ASSEMBLYAI_SPEECH_MODELS = ["universal-3-5-pro", "universal-2"];
 const TRANSCRIPTORY_AUDIO_BUCKET = "transcriptory_audio_files";
 const MAX_POLL_ATTEMPTS = 8;
 

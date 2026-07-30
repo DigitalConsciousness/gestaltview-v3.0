@@ -2,7 +2,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Mic, MicOff } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
-import { loadSanctuaryJournalFromServer, saveSanctuaryJournalRecordToServer } from "@/lib/sanctuaryContent";
+import TranscriptoryRecorder from "@/components/TranscriptoryRecorder";
+import {
+  createTranscriptoryCapture,
+  requestTranscriptoryHandoff,
+  transcribeTranscriptoryAudio,
+} from "@/lib/transcriptory";
+import { acceptTranscriptoryHandoffInSanctuary } from "@/lib/sanctuaryRuntimeHandoffs";
+import {
+  loadSanctuaryJournalFromServer,
+  saveSanctuaryJournalRecordWithResult,
+} from "@/lib/sanctuaryContent";
 import {
   readUserSurfaceSettings,
   USER_SURFACE_SETTINGS_EVENT,
@@ -14,6 +24,7 @@ type JournalEntry = {
   content: string;
   createdAt: string;
   updatedAt: string;
+  syncState?: "local_only" | "syncing" | "synced" | "conflict";
 };
 
 const JOURNAL_STORAGE_KEY = "gv.sanctuary.journal.v1";
@@ -55,39 +66,50 @@ function writeStoredJournal(entry: JournalEntry): void {
 }
 
 function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+  return html
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function isLater(left: string, right: string): boolean {
   return Date.parse(left) > Date.parse(right);
 }
 
-function toJournalEntry(record: { id: string; content: string; createdAt: string; updatedAt: string }): JournalEntry {
+function toJournalEntry(record: {
+  id: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}): JournalEntry {
   return {
     id: record.id,
     content: record.content,
     createdAt: record.createdAt,
     updatedAt: record.updatedAt,
+    syncState: "synced",
   };
-}
-
-function getSpeechRecognition() {
-  if (typeof window === "undefined") return null;
-  return (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition || null;
 }
 
 export default function JournalEditor() {
   const { user } = useAuth();
   const editorRef = useRef<HTMLDivElement | null>(null);
   const saveTimerRef = useRef<number | null>(null);
-  const recognitionRef = useRef<any>(null);
-  const voiceBaseRef = useRef("");
-  const voiceTranscriptRef = useRef("");
   const initialJournal = useMemo(() => readStoredJournal(), []);
   const [journal, setJournal] = useState(initialJournal);
-  const [savedState, setSavedState] = useState<"saved" | "saving">("saved");
+  const [savedState, setSavedState] = useState<
+    "local_only" | "saving" | "synced" | "conflict"
+  >(user?.id ? "saving" : "local_only");
   const [isListening, setIsListening] = useState(false);
-  const [surfaceSettings, setSurfaceSettings] = useState<UserSurfaceSettings>(() => readUserSurfaceSettings());
+  const [voiceProcessing, setVoiceProcessing] = useState(false);
+  const [voiceChoice, setVoiceChoice] = useState<{
+    captureId: string;
+    transcript: string;
+  } | null>(null);
+  const [surfaceSettings, setSurfaceSettings] = useState<UserSurfaceSettings>(
+    () => readUserSurfaceSettings(),
+  );
 
   useEffect(() => {
     if (editorRef.current && editorRef.current.innerHTML !== journal.content) {
@@ -101,21 +123,26 @@ export default function JournalEditor() {
         window.clearTimeout(saveTimerRef.current);
         saveTimerRef.current = null;
       }
-      recognitionRef.current?.stop?.();
     };
   }, []);
 
   useEffect(() => {
     const onSettingsChanged = (event: Event) => {
-      const next = (event as CustomEvent<UserSurfaceSettings>).detail ?? readUserSurfaceSettings();
+      const next =
+        (event as CustomEvent<UserSurfaceSettings>).detail ??
+        readUserSurfaceSettings();
       setSurfaceSettings(next);
       if (!next.voiceCapture) {
-        recognitionRef.current?.stop?.();
+        setIsListening(false);
       }
     };
 
     window.addEventListener(USER_SURFACE_SETTINGS_EVENT, onSettingsChanged);
-    return () => window.removeEventListener(USER_SURFACE_SETTINGS_EVENT, onSettingsChanged);
+    return () =>
+      window.removeEventListener(
+        USER_SURFACE_SETTINGS_EVENT,
+        onSettingsChanged,
+      );
   }, []);
 
   useEffect(() => {
@@ -161,18 +188,32 @@ export default function JournalEditor() {
 
   const syncJournal = async (content: string) => {
     if (!user?.id) {
-      setSavedState("saved");
+      setSavedState("local_only");
       return;
     }
 
-    const remoteJournal = await saveSanctuaryJournalRecordToServer({ journalId: journal.id, content });
-    if (!remoteJournal) {
+    const result = await saveSanctuaryJournalRecordWithResult({
+      journalId: journal.id,
+      content,
+      expectedUpdatedAt:
+        journal.syncState === "synced" ? journal.updatedAt : undefined,
+    });
+    if (!result.ok) {
+      if (result.status === 409) {
+        setSavedState("conflict");
+        toast.error(
+          "This journal changed elsewhere. Both versions were preserved.",
+        );
+        return;
+      }
       if ((editorRef.current?.innerHTML ?? "") === content) {
-        setSavedState("saved");
+        setSavedState("local_only");
         toast.error("Could not sync the journal. Your local copy was kept.");
       }
       return;
     }
+    const remoteJournal = result.data.journal;
+    if (!remoteJournal) return;
 
     if ((editorRef.current?.innerHTML ?? "") !== content) {
       return;
@@ -181,20 +222,21 @@ export default function JournalEditor() {
     const next = toJournalEntry(remoteJournal);
     setJournal(next);
     writeStoredJournal(next);
-    setSavedState("saved");
+    setSavedState("synced");
   };
 
   const queueSave = () => {
     const content = editorRef.current?.innerHTML ?? journal.content;
-    const next = {
+    const next: JournalEntry = {
       ...journal,
       content,
       updatedAt: new Date().toISOString(),
+      syncState: user?.id ? "syncing" : "local_only",
     };
 
     setJournal(next);
     writeStoredJournal(next);
-    setSavedState("saving");
+    setSavedState(user?.id ? "saving" : "local_only");
 
     if (saveTimerRef.current) {
       window.clearTimeout(saveTimerRef.current);
@@ -222,14 +264,15 @@ export default function JournalEditor() {
     if (editorRef.current) {
       editorRef.current.innerHTML = html;
     }
-    const next = {
+    const next: JournalEntry = {
       ...journal,
       content: html,
       updatedAt: new Date().toISOString(),
+      syncState: user?.id ? "syncing" : "local_only",
     };
     setJournal(next);
     writeStoredJournal(next);
-    setSavedState("saving");
+    setSavedState(user?.id ? "saving" : "local_only");
   };
 
   const toggleVoice = () => {
@@ -238,56 +281,90 @@ export default function JournalEditor() {
       return;
     }
 
-    if (isListening) {
-      recognitionRef.current?.stop?.();
+    setIsListening((current) => !current);
+  };
+
+  const preserveVoiceSource = async (file: File) => {
+    if (!user?.id) {
+      toast.error("Sign in before preserving a Sanctuary voice source.");
       return;
     }
-
-    const SpeechRecognition = getSpeechRecognition();
-    if (!SpeechRecognition) {
-      toast.error("Voice capture is unavailable in this browser.");
-      return;
+    setVoiceProcessing(true);
+    try {
+      const capture = await createTranscriptoryCapture({
+        title: `Sanctuary voice — ${new Date().toLocaleString()}`,
+        status: "pending",
+        sourceKind: "audio",
+        sourceLabel: "Sanctuary voice",
+      });
+      const transcription = await transcribeTranscriptoryAudio({
+        captureId: capture.id,
+        file,
+      });
+      const readyCapture = transcription.capture ?? {
+        ...capture,
+        rawTranscript: transcription.transcript,
+        transcriptText: transcription.transcript,
+        transcriptStatus: "ready",
+        status: "ready",
+      };
+      const offered = await requestTranscriptoryHandoff({
+        capture: readyCapture,
+        target: "sanctuary",
+      });
+      await acceptTranscriptoryHandoffInSanctuary({
+        handoffId: offered.handoffId,
+        captureId: capture.id,
+      });
+      setVoiceChoice({
+        captureId: capture.id,
+        transcript: transcription.transcript,
+      });
+      setIsListening(false);
+      toast.success("Voice source preserved in Transcriptory.");
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "The voice source could not be preserved.",
+      );
+    } finally {
+      setVoiceProcessing(false);
     }
+  };
 
-    const recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = "en-US";
-    recognition.onstart = () => {
-      voiceBaseRef.current = editorRef.current?.innerHTML ?? journal.content;
-      voiceTranscriptRef.current = "";
-      setIsListening(true);
-    };
-    recognition.onend = () => {
-      setIsListening(false);
-      recognitionRef.current = null;
-      flushSave();
-    };
-    recognition.onerror = (event: any) => {
-      setIsListening(false);
-      toast.error(event?.error ? `Voice capture stopped: ${event.error}` : "Voice capture stopped.");
-    };
-    recognition.onresult = (event: any) => {
-      let finalText = "";
-      let interimText = "";
-      for (let index = event.resultIndex; index < event.results.length; index += 1) {
-        const result = event.results[index];
-        const transcript = result?.[0]?.transcript ?? "";
-        if (result.isFinal) finalText += transcript;
-        else interimText += transcript;
-      }
+  const useVoiceAsJournal = () => {
+    if (!voiceChoice) return;
+    const escaped = voiceChoice.transcript
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+    const html = [
+      editorRef.current?.innerHTML ?? journal.content,
+      `<p>${escaped}</p>`,
+    ]
+      .filter(Boolean)
+      .join("<br />");
+    setEditorHtml(html);
+    void saveSanctuaryJournalRecordWithResult({
+      journalId: journal.id,
+      content: html,
+      expectedUpdatedAt:
+        journal.syncState === "synced" ? journal.updatedAt : undefined,
+      sourceKind: "transcriptory",
+      sourceEntityRef: `transcriptory-capture:${voiceChoice.captureId}`,
+    });
+    setVoiceChoice(null);
+  };
 
-      if (finalText.trim()) {
-        voiceTranscriptRef.current = [voiceTranscriptRef.current, finalText.trim()].filter(Boolean).join(" ");
-      }
-
-      const transcript = [voiceTranscriptRef.current, interimText.trim()].filter(Boolean).join(" ").trim();
-      const html = [voiceBaseRef.current, transcript ? `<p>${transcript}</p>` : ""].filter(Boolean).join("<br />");
-      setEditorHtml(html);
-    };
-
-    recognitionRef.current = recognition;
-    recognition.start();
+  const useVoiceAsScrapbook = () => {
+    if (!voiceChoice) return;
+    window.dispatchEvent(
+      new CustomEvent("gestaltview:sanctuary:add-transcriptory-scrap", {
+        detail: voiceChoice,
+      }),
+    );
+    setVoiceChoice(null);
   };
 
   return (
@@ -295,7 +372,9 @@ export default function JournalEditor() {
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-sm font-semibold text-gv-text-primary">Journal</p>
-          <p className="mt-1 text-xs text-gv-text-muted">Autosaves quietly as you write.</p>
+          <p className="mt-1 text-xs text-gv-text-muted">
+            Autosaves quietly as you write.
+          </p>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-2">
           <button
@@ -310,15 +389,77 @@ export default function JournalEditor() {
                   : "cursor-not-allowed border-white/8 bg-black/10 text-white/30"
             }`}
           >
-            {isListening ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
+            {isListening ? (
+              <MicOff className="h-3.5 w-3.5" />
+            ) : (
+              <Mic className="h-3.5 w-3.5" />
+            )}
             {isListening ? "listening" : "voice"}
           </button>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs text-white/55">
             <Check className="h-3.5 w-3.5 text-gv-aurora-emerald" />
-            {savedState === "saved" ? "saved" : "saving"}
+            {savedState === "synced"
+              ? "synced"
+              : savedState === "saving"
+                ? "syncing"
+                : savedState === "conflict"
+                  ? "conflict preserved"
+                  : "local only"}
           </div>
         </div>
       </div>
+
+      {isListening ? (
+        <div className="mt-4">
+          <TranscriptoryRecorder
+            onRecordingReady={(file) => void preserveVoiceSource(file)}
+          />
+          <p className="mt-2 text-xs text-gv-text-muted">
+            Audio is preserved in Transcriptory first. Nothing is added to this
+            journal until you choose.
+          </p>
+        </div>
+      ) : null}
+
+      {voiceProcessing ? (
+        <p className="mt-4 text-sm text-gv-text-secondary">
+          Preserving audio and preparing its transcript…
+        </p>
+      ) : null}
+
+      {voiceChoice ? (
+        <div className="mt-4 rounded-[1.3rem] border border-cyan-200/20 bg-cyan-200/[0.07] p-4">
+          <p className="text-sm font-semibold text-gv-text-primary">
+            Where should this preserved voice capture rest?
+          </p>
+          <p className="mt-2 line-clamp-3 text-sm leading-6 text-gv-text-secondary">
+            {voiceChoice.transcript}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={useVoiceAsJournal}
+              className="rounded-full border border-white/15 px-3 py-2 text-xs"
+            >
+              Add to journal
+            </button>
+            <button
+              type="button"
+              onClick={useVoiceAsScrapbook}
+              className="rounded-full border border-white/15 px-3 py-2 text-xs"
+            >
+              Add to scrapbook
+            </button>
+            <button
+              type="button"
+              onClick={() => setVoiceChoice(null)}
+              className="rounded-full border border-white/10 px-3 py-2 text-xs text-gv-text-muted"
+            >
+              Keep capture only
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <div className="relative mt-4">
         <div
