@@ -8470,3 +8470,12 @@ three-room proof, apply production DDL, deploy, or begin Phase 8.
   review exist.
 
 ---
+## Insight-Bot 2.0 platform adapters (2026-07-30)
+
+`insight-bot-2/` now contains deployable Reddit Devvit Web and Discord HTTPS
+interaction adapters for Billy. Both use the canonical
+`POST /api/insight-bot/respond` GestaltView boundary, public context only, and
+explicit degraded/disabled states. Reddit is private-in-post by default with
+installation policy controls; Discord is ephemeral by default and requires no
+Gateway or privileged intents. Platform playtests and credential configuration
+remain operator deployment steps.
