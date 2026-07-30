@@ -8489,3 +8489,9 @@ remain operator deployment steps.
 - Production observation on 2026-07-30: Actions health returned HTTP 200 with
   schema `2.1.0` and platform version `67dfe7919b66`; the Insight-Bot route
   returned the expected HTTP 405/`Allow: POST` response to a GET probe.
+- The repo now contains a protected `POST /api/insight-bot/execute` approval
+  bridge. Devvit verifies actions against its Redis-cached Billy response;
+  approved capture/artifact payloads persist as deterministic
+  `insight_bot_runtime_events` receipts and must be read back before the UI says
+  `Preserved`. This code is local until the Vercel deployment is updated and
+  the bridge migration/service-role configuration are confirmed in production.
