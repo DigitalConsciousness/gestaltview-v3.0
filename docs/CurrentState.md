@@ -1,3 +1,34 @@
+# CurrentState — Insight-Bot runtime bridge integrated (2026-07-30)
+
+**Scope of this pass:** Adapted the supplied
+`Insight-Bot-GestaltView-Alignment-2026-07-29.zip` into the current GestaltView
+runtime. No production migration, deployment, credential rotation, or external
+Reddit/Discord/Devvit mutation was performed.
+
+## Known / Changed / Evidence
+
+- **Known:** Insight-Bot remains a public integration doorway, not a second
+  runtime, private-memory store, or Billy identity.
+- **Changed:** Added the versioned shared adapter contract and the native
+  `POST /api/insight-bot/respond` runtime endpoint backed by GestaltView's
+  existing LLM router.
+- **Changed:** The endpoint requires a server token, preserves original input,
+  rejects private-memory requests, emits approval-gated proposals, filters
+  public artifact proposals, returns trace metadata, and prevents automatic
+  public posting on a detected crisis path.
+- **Changed:** Added a private, RLS-enabled Supabase bridge migration and
+  integration/operator documentation. Persistence is modeled but intentionally
+  not connected until installation identity, retention, and consent policy are
+  approved.
+- **Evidence:** Focused contract tests, TypeScript/build validation, and
+  formatting checks pass. Local migration lint was attempted but could not
+  connect because the local Supabase/Postgres stack was not running.
+- **Boundary:** Production token configuration, migration application,
+  channel-adapter wiring, historic credential rotation, and live platform
+  posting are not observed and must not be claimed as operational.
+
+---
+
 # CurrentState — Runtime skill layered audit and refinement (2026-07-28)
 
 **Scope of this pass:** Installed the user-provided `gestaltview-layered-audit` and `gestaltview-refine-skills` packages, used both on the canonical GestaltView v3 app-runtime skill, and made no production or user-visible runtime mutation.
