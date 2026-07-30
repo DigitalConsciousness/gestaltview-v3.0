@@ -222,6 +222,15 @@ export interface BucketDropRow {
   promoted_at: string | null;
 }
 
+export interface InsightBotRuntimeEventRow {
+  id: string;
+  conversation_id: string | null;
+  request_id: string;
+  event_kind: string;
+  payload: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface OrchestrationDecisionRow {
   id: string;
   decision_id: string;
@@ -615,6 +624,19 @@ export async function insertRow(
   }
 
   return true;
+}
+
+export async function getInsightBotRuntimeEvent(
+  id: string,
+): Promise<InsightBotRuntimeEventRow | null> {
+  if (!hasConfig() || !id) return null;
+  const response = await request(
+    `/rest/v1/insight_bot_runtime_events?id=eq.${encodeURIComponent(id)}&select=id,conversation_id,request_id,event_kind,payload,created_at&limit=1`,
+    { method: "GET" },
+  );
+  if (!response.ok) return null;
+  const rows = (await response.json()) as InsightBotRuntimeEventRow[];
+  return rows[0] ?? null;
 }
 
 export async function listBucketDrops(userId: string, limit = 100): Promise<BucketDropRow[]> {

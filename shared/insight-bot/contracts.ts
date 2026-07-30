@@ -90,6 +90,67 @@ export interface InsightRuntimeResponse {
   };
 }
 
+export const INSIGHT_EXECUTION_ACTIONS = ["capture", "artifact"] as const;
+export type InsightExecutionAction = (typeof INSIGHT_EXECUTION_ACTIONS)[number];
+
+export interface InsightExecutionRequest {
+  schemaVersion: typeof INSIGHT_BOT_SCHEMA_VERSION;
+  requestId: string;
+  action: InsightExecutionAction;
+  actionIndex: number;
+  installationKey: string;
+  source: InsightRuntimeRequest["source"];
+  approvedContent: string;
+  consent: {
+    approved: true;
+    retainContent: true;
+    approvedAt: string;
+  };
+}
+
+export interface InsightExecutionReceipt {
+  schemaVersion: typeof INSIGHT_BOT_SCHEMA_VERSION;
+  receiptId: string;
+  requestId: string;
+  action: InsightExecutionAction;
+  status: "persisted";
+  persistedAt: string;
+  idempotentReplay: boolean;
+}
+
+export function parseInsightExecutionRequest(
+  value: unknown,
+): InsightExecutionRequest {
+  if (!isObject(value)) throw new Error("Execution body must be an object");
+  if (value.schemaVersion !== INSIGHT_BOT_SCHEMA_VERSION) {
+    throw new Error("Unsupported Insight-Bot schema version");
+  }
+  if (typeof value.requestId !== "string" || !value.requestId.trim()) {
+    throw new Error("requestId is required");
+  }
+  if (!INSIGHT_EXECUTION_ACTIONS.includes(value.action as InsightExecutionAction)) {
+    throw new Error("Unsupported execution action");
+  }
+  if (!Number.isInteger(value.actionIndex) || Number(value.actionIndex) < 0) {
+    throw new Error("actionIndex must be a non-negative integer");
+  }
+  if (
+    typeof value.installationKey !== "string" ||
+    !value.installationKey.trim() ||
+    !isObject(value.source) ||
+    typeof value.approvedContent !== "string" ||
+    !value.approvedContent.trim() ||
+    value.approvedContent.length > 20_000 ||
+    !isObject(value.consent) ||
+    value.consent.approved !== true ||
+    value.consent.retainContent !== true ||
+    typeof value.consent.approvedAt !== "string"
+  ) {
+    throw new Error("Execution approval and content are required");
+  }
+  return value as unknown as InsightExecutionRequest;
+}
+
 function isObject(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }

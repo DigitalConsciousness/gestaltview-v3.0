@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   INSIGHT_BOT_SCHEMA_VERSION,
   assertInsightRuntimeResponse,
+  parseInsightExecutionRequest,
   parseInsightRuntimeRequest,
   toPublicInsightResponse,
   type InsightRuntimeResponse,
@@ -71,5 +72,29 @@ describe("Insight-Bot runtime contracts", () => {
     expect(toPublicInsightResponse(response).actions).toEqual([
       expect.objectContaining({ kind: "capture" }),
     ]);
+  });
+
+  it("requires explicit retention approval for execution", () => {
+    const execution = {
+      schemaVersion: INSIGHT_BOT_SCHEMA_VERSION,
+      requestId: "request-1",
+      action: "capture",
+      actionIndex: 0,
+      installationKey: "reddit:test",
+      source: request.source,
+      approvedContent: "Keep my words intact.",
+      consent: {
+        approved: true,
+        retainContent: true,
+        approvedAt: new Date().toISOString(),
+      },
+    };
+    expect(parseInsightExecutionRequest(execution).action).toBe("capture");
+    expect(() =>
+      parseInsightExecutionRequest({
+        ...execution,
+        consent: { ...execution.consent, retainContent: false },
+      }),
+    ).toThrow(/approval and content/);
   });
 });

@@ -35,6 +35,19 @@ must be connected deliberately after the installation identity, retention
 policy, and public-conversation consent policy are approved. The bridge tables
 must not become an authority for private GestaltView memory.
 
+## Approved execution endpoint
+
+`POST /api/insight-bot/execute` uses the same server-only bearer token as the
+response route. It accepts only `capture` and `artifact` proposals with explicit
+approval and retention consent. The Reddit adapter verifies that the requested
+action exists in its cached runtime response before forwarding execution.
+
+Execution writes a deterministic, retry-safe receipt to
+`insight_bot_runtime_events`. The event is a public-channel integration receipt;
+it is not private Billy memory and does not create a `bucket_drops` row for an
+unlinked Reddit identity. Success is returned only after the stored row can be
+read back.
+
 ## Operational contract
 
 - Preserve the user's original text in the request.
