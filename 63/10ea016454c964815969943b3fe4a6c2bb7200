@@ -1,0 +1,49 @@
+docs/shopify/phase-0-offer-and-security-audit-2026-08-01.md
+  s_8405771d9a9890::t_0ad5dd94c9d27e 1-49
+server/__tests__/storefront-shopify.test.ts
+  s_8405771d9a9890::t_0ad5dd94c9d27e 1-75
+server/gate/service.ts
+  s_8405771d9a9890::t_efc9c7072f1ea9 891,974,1671-1674,1715-1718
+client/src/features/storefront/components/EditionMetadata.tsx
+  s_8405771d9a9890::t_7fc1a44e59ebe7 1-24
+server/storefront/shopify.ts
+  s_8405771d9a9890::t_b019b1258f8455 1-144
+client/src/features/storefront/api/catalog.ts
+  s_8405771d9a9890::t_7fc1a44e59ebe7 1-7
+shopify.app.toml
+  s_8405771d9a9890::t_0ad5dd94c9d27e 1-77
+client/src/components/SubpageQuickNav.tsx
+  s_8405771d9a9890::t_c3a3983496993f 47,64,68,84,104
+client/src/pages/ConsultingPage.tsx
+  s_8405771d9a9890::t_c3a3983496993f 60,63
+shared/storefront/contracts.ts
+  s_8405771d9a9890::t_b019b1258f8455 1-98
+client/src/pages/CollaboratorRequisitionPage.tsx
+  s_8405771d9a9890::t_c3a3983496993f 99,102
+client/src/features/storefront/pages/ArtifactEditionPage.tsx
+  s_8405771d9a9890::t_7fc1a44e59ebe7 1-42
+client/src/features/storefront/pages/StorefrontPage.tsx
+  s_8405771d9a9890::t_7fc1a44e59ebe7 1-131
+api/storefront/catalog.ts
+  s_8405771d9a9890::t_b019b1258f8455 1-22
+client/src/features/storefront/state/useStorefrontCatalog.ts
+  s_8405771d9a9890::t_7fc1a44e59ebe7 1-35
+client/src/App.tsx
+  s_8405771d9a9890::t_c3a3983496993f 100-101,125,171,186,192-194
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "6310ea016454c964815969943b3fe4a6c2bb7200",
+  "prompts": {},
+  "sessions": {
+    "s_8405771d9a9890": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fbd5c-b8b4-7911-85b6-a26303ae076f",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "GitHub <noreply@github.com>"
+    }
+  }
+}
