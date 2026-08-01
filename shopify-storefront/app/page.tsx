@@ -1,110 +1,35 @@
-import Link from "next/link";
 import { connection } from "next/server";
 
-import { EditionMetadata } from "./components/edition-metadata";
-import { formatProductPrice, getStorefrontCatalog, primaryAppUrl } from "@/lib/storefront";
-
-const lanes = [
-  {
-    number: "01",
-    title: "Acquire an Artifact",
-    copy: "Finished, versioned authored editions. Durable formats first; provenance before polish.",
-    href: "#issued-artifacts",
-    action: "Inspect issued editions",
-    signal: "cyan",
-  },
-  {
-    number: "02",
-    title: "Shape a Working Relationship",
-    copy: "Describe the work, context, boundaries, and memory agreement. Founder review precedes payment.",
-    href: primaryAppUrl("/collaborator-requisition"),
-    action: "Open requisition terminal",
-    signal: "violet",
-  },
-  {
-    number: "03",
-    title: "Enter the Living Framework",
-    copy: "Hosted continuity opens only after entitlement, recovery, cancellation, and export are proven.",
-    href: "#living-framework",
-    action: "Read release boundary",
-    signal: "amber",
-  },
-] as const;
+import { FieldVendingMachine } from "./components/field-vending-machine";
+import { getStorefrontCatalog, primaryAppUrl } from "@/lib/storefront";
 
 export default async function Home() {
   await connection();
   const catalog = await getStorefrontCatalog();
-  const artifacts = catalog.products.filter((product) =>
-    ["orientation", "artifact", "studio", "self_serve_package"].includes(product.offerKind),
-  );
-
   return (
     <main>
       <div className="atmosphere" aria-hidden="true" />
       <div className="shell">
         <nav className="topline" aria-label="Primary">
           <a href={primaryAppUrl()} className="wordmark">GestaltView</a>
-          <span className="system-state"><i /> Artifact Exchange · Phase 1</span>
+          <span className="system-state"><i /> Field station · {catalog.source === "shopify" ? "catalog synchronized" : "safe preview inventory"}</span>
         </nav>
 
         <header className="hero">
-          <p className="eyebrow">Public requisition terminal / issued editions</p>
-          <h1>Choose what kind of relationship you are entering.</h1>
+          <p className="eyebrow">GestaltView field vending station / original equipment, no mystery crates</p>
+          <h1>Useful infrastructure for an unnecessarily difficult civilization.</h1>
           <p className="hero-copy">
-            Artifacts are durable authored editions. Collaborators are founder-reviewed working
-            relationships. Hosted access is a later continuity contract—not a personality subscription.
+            Start with what you are trying to make possible. Inspect what enters, what comes out,
+            what remains optional, and what the machine absolutely does not do. Configure only after something fits.
           </p>
+          <a className="hero-action" href="#field-station">Find the right compartment <span aria-hidden="true">↓</span></a>
         </header>
-
-        <section aria-labelledby="lanes-heading">
-          <div className="section-heading">
-            <span>Signal map</span>
-            <h2 id="lanes-heading">Three illuminated lanes</h2>
-          </div>
-          <div className="lane-grid">
-            {lanes.map((lane) => (
-              <article className={`lane lane-${lane.signal}`} key={lane.number}>
-                <span className="lane-number">{lane.number}</span>
-                <h3>{lane.title}</h3>
-                <p>{lane.copy}</p>
-                <a href={lane.href}>{lane.action}<span aria-hidden="true">→</span></a>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section id="issued-artifacts" className="artifact-section" aria-labelledby="artifact-heading">
-          <div className="section-heading">
-            <span>Small-batch public shelf</span>
-            <h2 id="artifact-heading">Issued editions</h2>
-          </div>
-          {catalog.notice ? <p className="notice" role="status">{catalog.notice}</p> : null}
-          <div className="artifact-list">
-            {artifacts.map((product) => (
-              <article className="artifact" key={product.id}>
-                <div className="artifact-copy">
-                  <div className="issued-line">
-                    <span>Issued edition</span>
-                    <strong>{formatProductPrice(product)}</strong>
-                  </div>
-                  <h3>{product.title}</h3>
-                  <p>{product.description}</p>
-                  {product.commerceRoute === "free_issue" ? (
-                    <a className="primary-action" href={primaryAppUrl(product.edition?.interactivePath || "/orientation")}>Open free issue <span aria-hidden="true">→</span></a>
-                  ) : (
-                    <Link className="primary-action" href={`/artifacts/${product.handle}`}>Inspect edition <span aria-hidden="true">→</span></Link>
-                  )}
-                </div>
-                {product.edition ? <EditionMetadata edition={product.edition} /> : null}
-              </article>
-            ))}
-          </div>
-        </section>
+        <div id="field-station">{catalog.notice ? <p className="notice" role="status">{catalog.notice} Your choices have not been submitted.</p> : null}<FieldVendingMachine products={catalog.products} checkoutEnabled={catalog.checkoutEnabled} /></div>
 
         <section id="living-framework" className="release-boundary">
-          <p className="eyebrow">Release boundary / priority 3</p>
-          <h2>Living Framework access is deliberately downstream.</h2>
-          <p>Hosted access remains unpublished until recurring entitlement, account recovery, cancellation, export, deletion, and support expectations pass end-to-end verification.</p>
+          <p className="eyebrow">Safe exit / continuity boundary</p>
+          <h2>You can leave without losing something you never asked us to save.</h2>
+          <p>Browsing and configuring this station do not create GestaltView continuity. A paid Shopify order is verified server-side before a bounded activation receipt is created; source material is requested separately and only with consent.</p>
         </section>
 
         <footer>

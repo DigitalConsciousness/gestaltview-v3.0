@@ -96,6 +96,50 @@ const launchFallback: StorefrontProduct[] = [
     edition: null,
     variants: [],
   },
+  {
+    id: "launch:continuity-starter",
+    handle: "continuity-starter",
+    title: "Continuity Starter",
+    description: "A bounded entry into capture, Billy, and preserved threads. Publication waits for the full entitlement and consent bridge.",
+    offerKind: "hosted_access",
+    commerceRoute: "hosted_signup",
+    image: null,
+    edition: null,
+    variants: [],
+  },
+  {
+    id: "launch:creation-station",
+    handle: "creation-station",
+    title: "Creation Station",
+    description: "Structured intake, blueprinting, and inspectable artifact proposals with execution kept behind approval.",
+    offerKind: "studio",
+    commerceRoute: "hosted_signup",
+    image: null,
+    edition: null,
+    variants: [],
+  },
+  {
+    id: "launch:embodiment-workshop",
+    handle: "embodiment-workshop",
+    title: "Embodiment Workshop",
+    description: "A scoped role, voice, capability, refusal, provenance, and governance package—not a digital identity for sale.",
+    offerKind: "custom_collaborator",
+    commerceRoute: "hosted_signup",
+    image: null,
+    edition: null,
+    variants: [],
+  },
+  {
+    id: "launch:evidence-diligence",
+    handle: "evidence-diligence-station",
+    title: "Evidence & Diligence Station",
+    description: "Chronology, claims, provenance, unresolved questions, and audit-ready receipts with certainty kept calibrated.",
+    offerKind: "self_serve_package",
+    commerceRoute: "hosted_signup",
+    image: null,
+    edition: null,
+    variants: [],
+  },
 ];
 
 const catalogQuery = `#graphql
@@ -253,6 +297,42 @@ export async function getStorefrontCatalog(): Promise<StorefrontCatalog> {
       notice: "The live artifact shelf could not be reached. Safe launch paths are shown instead.",
     };
   }
+}
+
+const cartMutation = `#graphql
+  mutation GestaltViewCartCreate($input: CartInput!) {
+    cartCreate(input: $input) {
+      cart { id checkoutUrl }
+      userErrors { field message }
+      warnings { message }
+    }
+  }
+`;
+
+export async function createStorefrontCart(input: {
+  variantId: string;
+  attributes: Array<{ key: string; value: string }>;
+}): Promise<{ checkoutUrl: string }> {
+  const domain = process.env.SHOPIFY_STORE_DOMAIN?.trim().replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN?.trim();
+  if (!domain || !token) throw new Error("shopify_not_configured");
+  const response = await fetch(`https://${domain}/api/${STOREFRONT_API_VERSION}/graphql.json`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Shopify-Storefront-Access-Token": token },
+    body: JSON.stringify({
+      query: cartMutation,
+      variables: { input: { lines: [{ merchandiseId: input.variantId, quantity: 1, attributes: input.attributes }] } },
+    }),
+    cache: "no-store",
+  });
+  if (!response.ok) throw new Error(`cart_http_${response.status}`);
+  const payload = (await response.json()) as {
+    data?: { cartCreate?: { cart?: { checkoutUrl?: string }; userErrors?: Array<{ message?: string }> } };
+    errors?: unknown[];
+  };
+  const result = payload.data?.cartCreate;
+  if (payload.errors?.length || result?.userErrors?.length || !result?.cart?.checkoutUrl) throw new Error("cart_graphql_error");
+  return { checkoutUrl: result.cart.checkoutUrl };
 }
 
 export function formatProductPrice(product: StorefrontProduct): string {

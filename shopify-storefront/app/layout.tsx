@@ -7,8 +7,8 @@ export const metadata: Metadata = {
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
       : "http://localhost:3000",
   ),
-  title: "GestaltView Artifact Exchange",
-  description: "Issued artifacts, founder-reviewed collaborator requisitions, and the path into the living GestaltView framework.",
+  title: "GestaltView Field Vending Station",
+  description: "Intent-led artifacts, continuity entry points, creation packages, evidence work, and founder-reviewed collaborations.",
 };
 
 export default function RootLayout({

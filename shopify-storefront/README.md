@@ -1,4 +1,4 @@
-# GestaltView Artifact Exchange
+# GestaltView Field Vending Station
 
 Standalone Next.js/Vercel storefront for GestaltView's Shopify-backed public
 catalog. Shopify owns public artifact products, variants, prices, and later
@@ -27,12 +27,17 @@ requisition fallback paths while keeping paid issuance disabled.
 
 Do not prefix Shopify credentials with `NEXT_PUBLIC_`.
 
-## Phase boundary
+## Runtime and phase boundary
 
-- Phase 1 catalog and issued-edition views are implemented.
+- The intent-led field station, product inspection drawers, configuration boundary,
+  and Shopify Storefront API cart creation are implemented.
 - Product metadata is accepted only through explicit app-owned offer and route
   fields with a complete edition/provenance record.
-- Checkout stays disabled until Phase 2 webhook, fulfillment, duplicate-event,
-  refund, and entitlement evidence passes.
+- `STOREFRONT_CHECKOUT_ENABLED` remains the commissioning gate. Cart code being
+  present does not authorize payment: checkout stays disabled until webhook
+  verification, fulfillment, duplicate-event, refund, activation-receipt, and
+  entitlement evidence passes.
+- Unpublished product families render as plainly unavailable compartments; they
+  are not promises of present capability.
 - Private embodiment, buyer, requisition, and memory data must never be written
   into Shopify product custom data.

@@ -8551,3 +8551,11 @@ remain operator deployment steps.
   `insight_bot_runtime_events` receipts and must be read back before the UI says
   `Preserved`. This code is local until the Vercel deployment is updated and
   the bridge migration/service-role configuration are confirmed in production.
+
+# 2026-08-01 — Field vending storefront convergence
+
+- `shopify-storefront/` now implements the intent-first GestaltView Field Vending Station: visitors orient by desired outcome, inspect inputs/outputs/exclusions and proof, then configure only relevant choices.
+- The standalone Next.js runtime can create Shopify Storefront API carts through a server-only route after revalidating the selected product, variant, availability, commerce route, and checkout commissioning flag.
+- Shopify remains authoritative for price, cart, checkout, and payment. Browsing/configuration does not create GestaltView continuity, and no browser-paid signal is treated as activation authority.
+- Planned Continuity, Creation, Embodiment, and Evidence bays are visible but plainly unavailable until their activation/fulfillment contracts are commissioned.
+- The paid-order webhook, replay-safe Supabase activation records, refund behavior, and user-visible activation receipt remain release blockers; `STOREFRONT_CHECKOUT_ENABLED` must remain false until those gates are proven.
