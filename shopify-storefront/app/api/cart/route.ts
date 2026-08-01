@@ -1,3 +1,5 @@
+import { randomBytes } from "node:crypto";
+
 import { createStorefrontCart, getStorefrontCatalog } from "@/lib/storefront";
 
 type CartRequest = {
@@ -34,15 +36,17 @@ export async function POST(request: Request) {
         .map(([key, value]) => ({ key: `gestaltview_${key.slice(0, 40)}`, value: value.slice(0, 120) }))
     : [];
   try {
+    const activationClaimToken = randomBytes(32).toString("base64url");
     const cart = await createStorefrontCart({
       variantId: variant.id,
       attributes: [
-        { key: "gestaltview_offer_handle", value: product.handle },
-        { key: "gestaltview_manifest_version", value: "1.0.0" },
+        { key: "_gestaltview_offer_handle", value: product.handle },
+        { key: "_gestaltview_manifest_version", value: "1.0.0" },
+        { key: "_gestaltview_activation_token", value: activationClaimToken },
         ...configuration,
       ],
     });
-    return Response.json(cart, { headers: { "Cache-Control": "no-store" } });
+    return Response.json({ ...cart, activationClaimToken, receiptPath: "/activation" }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("[shopify-storefront] cart creation failed", error instanceof Error ? error.message : "unknown");
     return Response.json({ error: "checkout_unavailable" }, { status: 502 });

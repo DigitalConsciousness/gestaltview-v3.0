@@ -58,6 +58,9 @@
     "api/gen-engine/*.ts": {
       "includeFiles": "api/_lib/**,shared/rendering/**"
     },
+    "api/storefront/*.ts": {
+      "includeFiles": "api/_lib/**,server/storefront/**"
+    },
     "api/render/*.ts": {
       "includeFiles": "api/_lib/**,shared/rendering/**"
     },

@@ -37,6 +37,9 @@ Do not prefix Shopify credentials with `NEXT_PUBLIC_`.
   present does not authorize payment: checkout stays disabled until webhook
   verification, fulfillment, duplicate-event, refund, activation-receipt, and
   entitlement evidence passes.
+- Cart creation issues a high-entropy buyer-held activation claim. Only its hash
+  is persisted after a verified Shopify webhook; `/activation` uses the claim to
+  display the receipt without exposing order or buyer tables.
 - Unpublished product families render as plainly unavailable compartments; they
   are not promises of present capability.
 - Private embodiment, buyer, requisition, and memory data must never be written

@@ -29,8 +29,11 @@ export function FieldVendingMachine({ products, checkoutEnabled }: { products: S
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ variantId: variant.id, offerHandle: product.handle, configuration }),
       });
-      const payload = (await response.json()) as { checkoutUrl?: string; error?: string };
+      const payload = (await response.json()) as { checkoutUrl?: string; activationClaimToken?: string; receiptPath?: string; error?: string };
       if (!response.ok || !payload.checkoutUrl) throw new Error(payload.error || "checkout_unavailable");
+      if (payload.activationClaimToken) {
+        localStorage.setItem("gestaltview:lastActivationClaim", JSON.stringify({ token: payload.activationClaimToken, offerHandle: product.handle, receiptPath: payload.receiptPath || "/activation", createdAt: new Date().toISOString() }));
+      }
       window.location.assign(payload.checkoutUrl);
     } catch {
       setCheckoutState("failed");
