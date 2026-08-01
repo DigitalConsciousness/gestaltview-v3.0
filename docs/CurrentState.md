@@ -1,3 +1,48 @@
+# CurrentState — Shopify storefront Phase 0/1 implemented (2026-08-01)
+
+**Scope:** Implemented the approved Shopify storefront specification through its
+explicit Phase 0/Phase 1 boundary. No Shopify product, connected-store, Vercel,
+Stripe, or production Supabase mutation was performed. Phase 2 checkout,
+webhook, entitlement, and fulfillment work remains gated.
+
+## Changed
+
+- Added `/store` as the canonical three-lane Artifact Exchange and
+  `/store/artifacts/:handle` as the issued-edition deep view.
+- Redirected legacy public pricing entry points to the exchange and routed the
+  collaborator lane into the existing relationship-first founder-review flow.
+- Added a server-only, pinned `2026-07` Shopify Storefront API catalog adapter.
+  It allowlists public fields, validates explicit offer/commerce-route values,
+  rejects incomplete edition records, and returns a safe launch fallback when
+  Shopify is unconfigured.
+- Added app-owned Shopify metaobject/metafield definitions, server-only
+  environment documentation, and the Phase 0 offer/security audit.
+- Kept artifact checkout visibly disabled pending Phase 2 evidence.
+- Corrected the existing GATE detail contract so founder-review orders retain
+  `request_review` compatibility and draft status until a quote is issued.
+
+## Observed
+
+- Focused Shopify/GATE verification passes: **14/14 tests across 2 files**.
+- `pnpm exec tsc --noEmit --pretty false` passes.
+- `pnpm run build` passes after transforming **5,441 modules**.
+- `git diff --check` passes.
+- Playwright CLI browser verification was attempted, but the environment lacks
+  system Chrome at `/opt/google/chrome/chrome`; no browser observation or
+  screenshot is claimed.
+
+## Release boundary
+
+- Shopify CLI app linking/definition deployment, connected-store catalog
+  reads, plan eligibility, real product values, and preview-origin checks are
+  unobserved.
+- Production GATE migration/RLS state and two-identity denial evidence remain
+  unobserved.
+- Phase 2 may not begin until these Phase 0 external checks are dispositioned
+  and checkout/fulfillment work is separately authorized.
+
+---
+
 # CurrentState — Inside-Out Convergence Phase 8 Sanctuary (2026-07-30)
 
 **Authority:** The founder explicitly accepted the Phase 7 fixture and recovery

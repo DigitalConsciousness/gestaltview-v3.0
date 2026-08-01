@@ -39,7 +39,7 @@ The Phase 1 Shopify query allowlists title, handle, description, featured image,
 1. Link `shopify.app.toml` to the connected app with Shopify CLI and replace generated app/origin values.
 2. Deploy definitions before writing any product values.
 3. Create test products and populate explicit `offer_kind`, `commerce_route`, and complete edition references.
-4. Configure only server-side variables from `.env.shopify.example` in Vercel.
+4. Configure only server-side variables from `config/shopify.env.example` in Vercel.
 5. Keep `STOREFRONT_CHECKOUT_ENABLED=false` until Phase 2 is separately authorized and verified.
 6. Verify the connected Shopify plan supports checkout and publish required store policies.
 7. Apply and test the approved GATE migration in the intended Supabase environment with two identities.
