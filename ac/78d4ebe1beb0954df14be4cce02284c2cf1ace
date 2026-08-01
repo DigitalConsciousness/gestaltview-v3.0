@@ -1,0 +1,42 @@
+shopify-storefront/app/api/cart/route.ts
+  s_892621f9bb01ae::t_bc340f1a3ab5ef 1-50
+shopify-storefront/app/components/field-vending-machine.tsx
+  s_892621f9bb01ae::t_5feb77394ebed0 88
+  s_892621f9bb01ae::t_bc340f1a3ab5ef 1-87,89-108
+shopify-storefront/app/globals.css
+  s_892621f9bb01ae::t_bc1ad6de1f82ca 22,43-86,88-89
+shopify-storefront/README.md
+  s_892621f9bb01ae::t_5feb77394ebed0 1,30,32-33,36-41
+shopify-storefront/lib/offers.ts
+  s_892621f9bb01ae::t_5feb77394ebed0 104-107
+  s_892621f9bb01ae::t_bc340f1a3ab5ef 1-103,108-115
+shopify-storefront/shopify.env.example.txt
+  s_892621f9bb01ae::t_bc340f1a3ab5ef 16-19
+shopify-storefront/lib/storefront.ts
+  s_892621f9bb01ae::t_bc340f1a3ab5ef 302-337
+  s_892621f9bb01ae::t_47f211b87d6640 99-142
+shopify-storefront/app/page.tsx
+  s_892621f9bb01ae::t_bc340f1a3ab5ef 3-4,19-20,22-23,25,27,30-32
+  s_892621f9bb01ae::t_991186981d930b 15
+shopify-storefront/app/layout.tsx
+  s_892621f9bb01ae::t_bc340f1a3ab5ef 10-11
+docs/CurrentState.md
+  s_892621f9bb01ae::t_5feb77394ebed0 8555-8561
+  s_892621f9bb01ae::t_991186981d930b 8554
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "ac78d4ebe1beb0954df14be4cce02284c2cf1ace",
+  "prompts": {},
+  "sessions": {
+    "s_892621f9bb01ae": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fbe0e-6a3b-7273-9bcb-82c7b52559d1",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "GitHub <noreply@github.com>"
+    }
+  }
+}
