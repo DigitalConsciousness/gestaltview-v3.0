@@ -1,0 +1,77 @@
+# GestaltView's store-specific Shopify app configuration.
+# Replace the two commissioning placeholders through `shopify app config link`
+# before deploying definitions to the connected store.
+client_id = "replace-through-shopify-app-config-link"
+name = "GestaltView Artifact Exchange"
+application_url = "https://replace-with-production-origin.invalid"
+embedded = false
+
+[build]
+automatically_update_urls_on_dev = true
+
+[access_scopes]
+scopes = "read_products,write_products"
+
+[auth]
+redirect_urls = []
+
+[webhooks]
+api_version = "2026-07"
+
+[metaobjects.app.artifact_edition]
+name = "GestaltView Artifact Edition"
+display_name_field = "name"
+access.admin = "merchant_read_write"
+access.storefront = "public_read"
+
+[metaobjects.app.artifact_edition.fields.name]
+name = "Edition Name"
+type = "single_line_text_field"
+required = true
+
+[metaobjects.app.artifact_edition.fields.version]
+name = "Version"
+type = "single_line_text_field"
+required = true
+
+[metaobjects.app.artifact_edition.fields.formats]
+name = "Formats"
+type = "list.single_line_text_field"
+required = true
+
+[metaobjects.app.artifact_edition.fields.license]
+name = "License"
+type = "multi_line_text_field"
+required = true
+
+[metaobjects.app.artifact_edition.fields.update_policy]
+name = "Update Policy"
+type = "multi_line_text_field"
+required = true
+
+[metaobjects.app.artifact_edition.fields.provenance_summary]
+name = "Provenance Summary"
+type = "multi_line_text_field"
+required = true
+
+[metaobjects.app.artifact_edition.fields.interactive_path]
+name = "Interactive Path"
+type = "url"
+
+[product.metafields.app.offer_kind]
+name = "GestaltView Offer Kind"
+type = "single_line_text_field"
+access.admin = "merchant_read_write"
+access.storefront = "public_read"
+
+[product.metafields.app.commerce_route]
+name = "GestaltView Commerce Route"
+type = "single_line_text_field"
+access.admin = "merchant_read_write"
+access.storefront = "public_read"
+
+[product.metafields.app.artifact_edition]
+name = "GestaltView Artifact Edition"
+type = "metaobject_reference<$app:artifact_edition>"
+access.admin = "merchant_read_write"
+access.storefront = "public_read"

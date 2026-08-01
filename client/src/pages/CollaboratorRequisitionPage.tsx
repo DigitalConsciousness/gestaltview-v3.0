@@ -96,10 +96,10 @@ export default function CollaboratorRequisitionPage() {
       <div className="relative mx-auto max-w-[1540px] px-4 py-6 sm:px-6 lg:px-10">
         <nav className="flex flex-wrap items-center justify-between gap-4 border-b border-[#89a597]/15 pb-5">
           <Link
-            href="/"
+            href="/store"
             className="font-mono text-xs uppercase tracking-[0.24em] text-[#a7b9b0] transition hover:text-white"
           >
-            GestaltView / Requisition Terminal
+            Artifact Exchange / Requisition Terminal
           </Link>
           <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-[#66e7b4]">
             <span className="h-2 w-2 animate-pulse rounded-full bg-[#66e7b4]" />

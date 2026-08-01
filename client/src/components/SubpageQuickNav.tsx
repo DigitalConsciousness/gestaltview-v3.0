@@ -44,7 +44,7 @@ function resolveSecondaryTarget(location: string): QuickNavTarget | null {
   }
 
   if (location === "/agent-trainer/runtime") {
-    return { href: "/agent-trainer", label: "Pricing" };
+    return { href: "/store", label: "Artifact Exchange" };
   }
 
   if (location === "/founder-runtime") {
@@ -61,11 +61,11 @@ function resolveSecondaryTarget(location: string): QuickNavTarget | null {
   }
 
   if (location === "/demo") {
-    return { href: "/pricing", label: "Pricing" };
+    return { href: "/store", label: "Artifact Exchange" };
   }
 
   if (location === "/signup") {
-    return { href: "/pricing", label: "Pricing" };
+    return { href: "/store", label: "Artifact Exchange" };
   }
 
   if (location === "/agent_builder" || location === "/agent-builder") {
@@ -81,7 +81,7 @@ function resolveSecondaryTarget(location: string): QuickNavTarget | null {
   }
 
   if (location === "/lair") {
-    return { href: "/agent-trainer", label: "Agent Trainer" };
+    return { href: "/store", label: "Artifact Exchange" };
   }
 
   if (location === "/app") {
@@ -101,7 +101,7 @@ function resolveSecondaryTarget(location: string): QuickNavTarget | null {
     location === "/agent-trainer/package-builder" ||
     location.startsWith("/agent-trainer/orders/")
   ) {
-    return { href: "/agent-trainer", label: "Agent Trainer" };
+    return { href: "/store", label: "Artifact Exchange" };
   }
 
   if (location === "/agent-trainer/control-plane") {

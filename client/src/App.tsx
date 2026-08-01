@@ -97,6 +97,8 @@ const AgentCouncilPage = lazy(() => import("./pages/AgentCouncilPage"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const SpotifyCallbackPage = lazy(() => import("./pages/SpotifyCallbackPage"));
+const StorefrontPage = lazy(() => import("./features/storefront/pages/StorefrontPage"));
+const ArtifactEditionPage = lazy(() => import("./features/storefront/pages/ArtifactEditionPage"));
 // ── Modules ──────────────────────────────────────────────────────────────────
 const ResumeRockstarModule = lazy(() => import("./modules/Resume_Rockstar"));
 const SymbioCoderModule = lazy(() => import("./modules/Symbio_Coder"));
@@ -120,6 +122,7 @@ function shouldShowRuntimeNav(pathname: string): boolean {
     "/privacy",
     "/terms",
     "/faq",
+    "/store",
     "/404",
   ].some((blocked) => pathname === blocked || pathname.startsWith(`${blocked}/`));
 }
@@ -165,7 +168,7 @@ function Router() {
       <Route path="/engine" component={EnginePage} />
       <Route path="/codex" component={CodexPage} />
       <Route path="/agent-trainer/runtime" component={HostedAgentTrainerPage} />
-      <Route path="/agent-trainer/pricing" component={AgentTrainerPricing} />
+      <Route path="/agent-trainer/pricing" component={() => <Redirect to="/store" />} />
       <Route
         path="/agent-trainer/package-builder"
         component={CollaboratorRequisitionPage}
@@ -180,13 +183,15 @@ function Router() {
         path="/agent-trainer/control-plane"
         component={ProtectedTrainerControlPlaneRoute}
       />
-      <Route path="/agent-trainer" component={AgentTrainerPricing} />
+      <Route path="/agent-trainer" component={() => <Redirect to="/store" />} />
       <Route path="/record" component={DiligenceExplorer} />
       <Route path="/billy/voicestudio" component={BillyVoiceStudioPage} />
       <Route path="/billy" component={BillyLive} />
 
       {/* ── Monetization + Auth ── */}
-      <Route path="/pricing" component={Pricing} />
+      <Route path="/store/artifacts/:handle" component={ArtifactEditionPage} />
+      <Route path="/store" component={StorefrontPage} />
+      <Route path="/pricing" component={() => <Redirect to="/store" />} />
       <Route path="/demo" component={DemoPage} />
       <Route path="/signup" component={SignupPage} />
       <Route path="/app/sandbox" component={MultiModalSandboxPage} />

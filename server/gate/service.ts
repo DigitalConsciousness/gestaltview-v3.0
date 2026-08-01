@@ -888,7 +888,7 @@ export async function createGateOrderForCheckout(
       buyerEmail: email,
       companyName: input.companyName?.trim() || analysis.draft.companyName,
       status:
-        analysis.compatibility.checkoutMode === "request_review"
+        input.requestFounderReview || analysis.compatibility.checkoutMode === "request_review"
           ? "review_requested"
           : "awaiting_payment",
       updatedAt: nowIso(),
@@ -971,7 +971,7 @@ export async function createGateOrderForCheckout(
     buyerEmail: email,
     companyName: input.companyName?.trim() || analysis.draft.companyName,
     status:
-      analysis.compatibility.checkoutMode === "request_review"
+      input.requestFounderReview || analysis.compatibility.checkoutMode === "request_review"
         ? "review_requested"
         : "awaiting_payment",
     updatedAt: nowIso(),
@@ -1668,7 +1668,10 @@ export async function getGateOrderDetail(
       throw new Error("Order draft not found.");
     }
 
-    const analysis = analyzeGateDraft(draftRecord.draft);
+    const analysis = applyFounderReviewRequirement(
+      analyzeGateDraft(draftRecord.draft),
+      order.orderStatus === "review_requested",
+    );
     const buyer = await getGateBuyerById(order.buyerId);
     const items = await listGateOrderItems(order.id);
     const buildJobs = await listGateBuildJobs(order.id);
@@ -1709,7 +1712,10 @@ export async function getGateOrderDetail(
     throw new Error("Order draft not found.");
   }
 
-  const analysis = analyzeGateDraft(draft);
+  const analysis = applyFounderReviewRequirement(
+    analyzeGateDraft(draft),
+    order.orderStatus === "review_requested",
+  );
   const buyer = state.buyers.find((entry) => entry.id === order.buyerId) ?? null;
   const items = state.orderItems.filter((item) => item.orderId === order.id);
   const buildJobs = state.buildJobs.filter((job) => job.orderId === order.id);
