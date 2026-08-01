@@ -1,0 +1,23 @@
+docs/shopify/phase-0-offer-and-security-audit-2026-08-01.md
+  s_8405771d9a9890::t_fc8f136a8f12b8 42
+config/shopify.env.example
+  s_8405771d9a9890::t_fc8f136a8f12b8 1-12
+docs/CurrentState.md
+  s_8405771d9a9890::t_3b10d5976dd9b3 1-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "4962fc8a5273a5bcf86d4bcfa8743f4a133cfdec",
+  "prompts": {},
+  "sessions": {
+    "s_8405771d9a9890": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fbd5c-b8b4-7911-85b6-a26303ae076f",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "GitHub <noreply@github.com>"
+    }
+  }
+}
