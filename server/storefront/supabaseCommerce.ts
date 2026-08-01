@@ -38,15 +38,16 @@ export class SupabaseCommerceRepository implements CommerceRepository {
         .select("status,attempt_count").eq("external_event_id", event.eventId).eq("shop_domain", event.shopDomain).single();
       if (lookupError || !existing) throw new Error(`event_replay_lookup_failed:${lookupError?.code || "missing_row"}`);
       if (existing.status !== "failed") return "duplicate";
-      const { error: retryError } = await this.database.from("commerce_event_log").update({
+      const { data: retried, error: retryError } = await this.database.from("commerce_event_log").update({
         status: "processing",
         attempt_count: Number(existing.attempt_count || 1) + 1,
         error_code: null,
         error_detail: null,
         payload_sha256: event.payloadHash,
         updated_at: new Date().toISOString(),
-      }).eq("external_event_id", event.eventId).eq("shop_domain", event.shopDomain).eq("status", "failed");
+      }).eq("external_event_id", event.eventId).eq("shop_domain", event.shopDomain).eq("status", "failed").select("id").maybeSingle();
       if (retryError) throw new Error(`event_replay_claim_failed:${retryError.code || "unknown"}`);
+      if (!retried) return "duplicate";
       return "claimed";
     }
     if (error) throw new Error(`event_claim_failed:${error.code || "unknown"}`);
@@ -54,6 +55,12 @@ export class SupabaseCommerceRepository implements CommerceRepository {
   }
 
   async processPaidOrder(order: VerifiedOrder): Promise<void> {
+    const { data: existingOrder, error: existingOrderError } = await this.database.from("commerce_orders")
+      .select("status").eq("shop_domain", order.shopDomain).eq("external_order_id", order.externalOrderId).maybeSingle();
+    if (existingOrderError) throw new Error(`order_lookup_failed:${existingOrderError.code || "unknown"}`);
+    const preservedStatus = ["cancelled", "refunded", "partially_refunded", "disputed"].includes(existingOrder?.status)
+      ? existingOrder.status
+      : "verified_paid";
     const { data: commerceOrder, error: orderError } = await this.database.from("commerce_orders").upsert({
       shop_domain: order.shopDomain,
       external_order_id: order.externalOrderId,
@@ -62,7 +69,7 @@ export class SupabaseCommerceRepository implements CommerceRepository {
       currency: order.currency,
       total_amount: order.totalAmount,
       financial_status: order.financialStatus,
-      status: "verified_paid",
+      status: preservedStatus,
       paid_at: order.paidAt,
       raw_summary: order.summary,
       updated_at: new Date().toISOString(),
@@ -76,8 +83,14 @@ export class SupabaseCommerceRepository implements CommerceRepository {
       if (offerError) throw new Error(`offer_lookup_failed:${offerError.code || "unknown"}`);
       const offer = offerData as OfferRow | null;
       const approved = offer?.review_status === "approved" && offer.manifest_version === claim.manifestVersion;
-      const status = approved ? "pending_consent" : "blocked";
-      const statusDetail = approved
+      const terminal = preservedStatus === "cancelled" || preservedStatus === "refunded" || preservedStatus === "disputed";
+      const partial = preservedStatus === "partially_refunded";
+      const status = terminal ? "revoked" : partial ? "partial" : approved ? "pending_consent" : "blocked";
+      const statusDetail = terminal
+        ? "The order reached a terminal cancellation, refund, or dispute state. Activation remains revoked."
+        : partial
+          ? "A refund was reported. Activation remains under review until the remaining paid scope is verified."
+          : approved
         ? "Payment verified. Activation waits for the buyer to confirm consent and source-material boundaries."
         : offer
           ? "Payment verified, but the purchased manifest version is not approved for activation."
@@ -98,14 +111,14 @@ export class SupabaseCommerceRepository implements CommerceRepository {
       const { error: receiptError } = await this.database.from("activation_receipts").upsert({
         activation_request_id: request.id,
         claim_token_hash: claim.tokenHash,
-        state: approved ? "ready" : "blocked",
-        headline: approved ? "Payment verified. Activation is ready for your decision." : "Payment verified. Activation is waiting at a manifest boundary.",
+        state: terminal ? "revoked" : partial ? "partial" : approved ? "ready" : "blocked",
+        headline: terminal ? "Activation remains revoked following the Shopify order state." : partial ? "A refund was reported; activation is under review." : approved ? "Payment verified. Activation is ready for your decision." : "Payment verified. Activation is waiting at a manifest boundary.",
         detail: statusDetail,
         known_facts: ["Shopify reported this order as paid", `Offer: ${claim.offerHandle}`, `Manifest: ${claim.manifestVersion}`],
-        unknowns: approved ? ["Whether you want to connect this purchase to GestaltView continuity"] : ["Whether this offer/version should be activated"],
+        unknowns: terminal ? [] : partial ? ["The remaining paid scope that may still be eligible"] : approved ? ["Whether you want to connect this purchase to GestaltView continuity"] : ["Whether this offer/version should be activated"],
         input_preserved: false,
-        next_action_label: approved ? "Review activation and consent" : "Contact GestaltView support",
-        next_action_path: approved ? "/activation/consent" : "/contact",
+        next_action_label: !terminal && !partial && approved ? "Review activation and consent" : "Contact GestaltView support",
+        next_action_path: !terminal && !partial && approved ? "/auth/consent" : "/contact",
         updated_at: new Date().toISOString(),
       }, { onConflict: "activation_request_id" });
       if (receiptError) throw new Error(`receipt_upsert_failed:${receiptError.code || "unknown"}`);
@@ -121,13 +134,14 @@ export class SupabaseCommerceRepository implements CommerceRepository {
   }
 
   private async transitionOrder(shopDomain: string, externalOrderId: string, orderStatus: string, receiptState: string, cancelledAt: string | null): Promise<void> {
-    const { data: order, error } = await this.database.from("commerce_orders").update({
+    const { data: order, error } = await this.database.from("commerce_orders").upsert({
+      shop_domain: shopDomain,
+      external_order_id: externalOrderId,
       status: orderStatus,
       cancelled_at: cancelledAt,
       updated_at: new Date().toISOString(),
-    }).eq("shop_domain", shopDomain).eq("external_order_id", externalOrderId).select("id").maybeSingle();
+    }, { onConflict: "shop_domain,external_order_id" }).select("id").single();
     if (error) throw new Error(`order_transition_failed:${error.code || "unknown"}`);
-    if (!order) return;
     const { data: requests, error: requestsError } = await this.database.from("activation_requests")
       .update({ status: receiptState === "revoked" ? "revoked" : "partial", status_detail: receiptState === "revoked" ? "The Shopify order was cancelled or fully refunded. Activation has been revoked." : "Shopify reported a refund. Access remains under review until the remaining order state is verified.", revoked_at: receiptState === "revoked" ? new Date().toISOString() : null, updated_at: new Date().toISOString() })
       .eq("commerce_order_id", order.id).select("id");

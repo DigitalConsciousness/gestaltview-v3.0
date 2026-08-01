@@ -8559,3 +8559,11 @@ remain operator deployment steps.
 - Shopify remains authoritative for price, cart, checkout, and payment. Browsing/configuration does not create GestaltView continuity, and no browser-paid signal is treated as activation authority.
 - Planned Continuity, Creation, Embodiment, and Evidence bays are visible but plainly unavailable until their activation/fulfillment contracts are commissioned.
 - The paid-order webhook, replay-safe Supabase activation records, refund behavior, and user-visible activation receipt remain release blockers; `STOREFRONT_CHECKOUT_ENABLED` must remain false until those gates are proven.
+
+# 2026-08-01 — Shopify commerce activation bridge
+
+- Shopify cart lines now carry a private, high-entropy activation claim; the browser retains the claim while Supabase stores only its SHA-256 hash after a verified paid-order event.
+- `/api/storefront/webhook-shopify` verifies the raw request body with Shopify HMAC-SHA256, deduplicates on Shopify webhook ID, persists failures for retry, and handles paid, cancelled, and refund transitions.
+- Six service-only Supabase tables now hold the approved offer manifest, proof references, verified order identity, activation requests, user-visible receipts, and event provenance. RLS is enabled on every table; `anon` and `authenticated` have no grants.
+- The standalone Shopify runtime exposes `/activation`, with explicit ready, missing, delayed, blocked, partial, and revoked receipt states. Purchase does not import source material or silently create continuity.
+- Repository tests, TypeScript, both production builds, local migration execution, RLS/grant assertions, and Supabase schema lint pass. Production still requires connected-app webhook deployment, approved `storefront_offers` rows, secrets, and an end-to-end Shopify test order before checkout is enabled.
