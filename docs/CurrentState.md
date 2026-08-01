@@ -7,6 +7,11 @@ webhook, entitlement, and fulfillment work remains gated.
 
 ## Changed
 
+- Implemented the separately deployable Next.js 16 storefront in
+  `shopify-storefront/`, including its server-rendered Shopify catalog adapter,
+  fallback terminal, issued-edition route, primary-app handoffs, responsive
+  industrial visual system, reduced-motion behavior, Vercel environment
+  contract, and isolated Turbopack root.
 - Added `/store` as the canonical three-lane Artifact Exchange and
   `/store/artifacts/:handle` as the issued-edition deep view.
 - Redirected legacy public pricing entry points to the exchange and routed the
@@ -23,11 +28,17 @@ webhook, entitlement, and fulfillment work remains gated.
 
 ## Observed
 
+- The isolated `shopify-storefront` ESLint run passes with no warnings.
+- Its Next.js production build passes and emits dynamic `/` and
+  `/artifacts/[handle]` routes.
+- A local production-server request to `/` returns `200` with the three lanes,
+  safe fallback orientation edition, canonical requisition handoff, metadata,
+  and disabled paid-issuance state in the server-rendered HTML.
 - Focused Shopify/GATE verification passes: **14/14 tests across 2 files**.
 - `pnpm exec tsc --noEmit --pretty false` passes.
 - `pnpm run build` passes after transforming **5,441 modules**.
 - `git diff --check` passes.
-- Playwright CLI browser verification was attempted, but the environment lacks
+- Playwright CLI browser verification was attempted for both surfaces, but the environment lacks
   system Chrome at `/opt/google/chrome/chrome`; no browser observation or
   screenshot is claimed.
 
