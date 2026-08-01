@@ -1,0 +1,52 @@
+server/storefront/supabaseCommerce.ts
+  s_892621f9bb01ae::t_9edab090070f98 36-51,73,75,77
+  s_892621f9bb01ae::t_c0d8e7e5c4daa3 2-14,18-25,27-35,52-72,74,76,78-134,136-157,159-164
+  s_892621f9bb01ae::t_0a186062331b4c 1,15-17,26,135,158
+shopify-storefront/app/activation/page.tsx
+  s_892621f9bb01ae::t_97c4f8118b34a7 1-7
+server/storefront/commerce.ts
+  s_892621f9bb01ae::t_97d0dbe1dcc555 1-121,126-135
+  s_892621f9bb01ae::t_9edab090070f98 122-125
+supabase/migrations/20260801161716_storefront_commerce_activation_v1.sql
+  s_892621f9bb01ae::t_97d0dbe1dcc555 1-129
+shopify-storefront/app/api/cart/route.ts
+  s_892621f9bb01ae::t_97c4f8118b34a7 1-2,39,43-45,49
+api/storefront/webhook-shopify.ts
+  s_892621f9bb01ae::t_c0d8e7e5c4daa3 1-52
+shopify-storefront/app/components/field-vending-machine.tsx
+  s_892621f9bb01ae::t_97c4f8118b34a7 32,34-36
+shopify-storefront/app/globals.css
+  s_892621f9bb01ae::t_97c4f8118b34a7 86-90
+api/storefront/activation-receipt.ts
+  s_892621f9bb01ae::t_c0d8e7e5c4daa3 1-23
+vercel.json
+  s_892621f9bb01ae::t_c0d8e7e5c4daa3 61-63
+shopify.app.toml
+  s_892621f9bb01ae::t_c0d8e7e5c4daa3 13,21-23
+shopify-storefront/app/api/activation-receipt/route.ts
+  s_892621f9bb01ae::t_9edab090070f98 7-9
+  s_892621f9bb01ae::t_97c4f8118b34a7 1-6,10-13
+shopify-storefront/app/activation/activation-receipt.tsx
+  s_892621f9bb01ae::t_97c4f8118b34a7 1-22,32-35,42-48
+  s_892621f9bb01ae::t_eab5a7404dfa60 23-31,36-41
+shopify-storefront/README.md
+  s_892621f9bb01ae::t_97c4f8118b34a7 40-42
+server/__tests__/storefront-commerce-activation.test.ts
+  s_892621f9bb01ae::t_9edab090070f98 1-86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "9a474c6c9d0d52f41e01908e05e9e2fb164a83e0",
+  "prompts": {},
+  "sessions": {
+    "s_892621f9bb01ae": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fbe0e-6a3b-7273-9bcb-82c7b52559d1",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "GitHub <noreply@github.com>"
+    }
+  }
+}
