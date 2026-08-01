@@ -1,0 +1,42 @@
+shopify-storefront/app/components/edition-metadata.tsx
+  s_8405771d9a9890::t_25b40d1364eb57 1-20
+shopify-storefront/lib/storefront.ts
+  s_8405771d9a9890::t_25b40d1364eb57 1-265
+shopify-storefront/app/artifacts/[handle]/page.tsx
+  s_8405771d9a9890::t_25b40d1364eb57 1-48
+shopify-storefront/app/layout.tsx
+  s_8405771d9a9890::t_10073b74b2bd8f 5-9
+  s_8405771d9a9890::t_25b40d1364eb57 10-11
+  s_8405771d9a9890::t_3cf42213697c1e 20
+docs/CurrentState.md
+  s_8405771d9a9890::t_3a42957bcc89be 10-14,31-36,41
+shopify-storefront/README.md
+  s_8405771d9a9890::t_90486ce31d536d 1-38
+shopify-storefront/app/page.tsx
+  s_8405771d9a9890::t_25b40d1364eb57 1-117
+shopify-storefront/app/globals.css
+  s_8405771d9a9890::t_9ce12079e77224 4-43
+  s_8405771d9a9890::t_3cf42213697c1e 3
+shopify-storefront/next.config.ts
+  s_8405771d9a9890::t_3cf42213697c1e 4-9
+shopify-storefront/shopify.env.example.txt
+  s_8405771d9a9890::t_9ce12079e77224 5-7
+shopify-storefront/package-lock.json
+  ai_agent 1-6822
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "a120b0c47e18e35b6d7e8d7649952eafde7035b6",
+  "prompts": {},
+  "sessions": {
+    "s_8405771d9a9890": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fbd5c-b8b4-7911-85b6-a26303ae076f",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "GitHub <noreply@github.com>"
+    }
+  }
+}
