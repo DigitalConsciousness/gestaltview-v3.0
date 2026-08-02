@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-07-28T03:57:58.268078+00:00",
+    "generated_at": "2026-08-02T06:00:11.136253+00:00",
     "generator": "scripts/generate_repo_manifest.py",
     "repo": "gestaltview-v2",
     "version": "2.0",
@@ -74,54 +74,53 @@
     ]
   },
   "summary": {
-    "total_files": 1504,
-    "total_size_bytes": 15897249,
-    "total_size_kb": 15524.7,
+    "total_files": 1542,
+    "total_size_bytes": 16219950,
+    "total_size_kb": 15839.8,
     "files_by_category": {
-      "doc": 147,
+      "doc": 151,
       "other": 22,
       "data": 16,
-      "source": 262,
-      "config": 16,
-      "test": 194,
-      "api": 213,
+      "source": 269,
+      "config": 17,
+      "test": 201,
+      "api": 218,
       "canonical": 11,
-      "component": 253,
+      "component": 255,
       "style": 6,
-      "page": 78,
+      "page": 81,
       "route": 2,
-      "shared": 110,
+      "shared": 113,
       "script": 69,
-      "orientation": 7,
-      "migration": 98
+      "orientation": 9,
+      "migration": 102
     },
-    "routes_count": 115,
-    "api_endpoints_count": 206,
-    "canonical_docs_count": 163,
-    "test_scripts_count": 199,
+    "routes_count": 118,
+    "api_endpoints_count": 211,
+    "canonical_docs_count": 169,
+    "test_scripts_count": 206,
     "git_branch": "main",
-    "git_commit": "99a410970dc5",
-    "git_dirty_files": 13
+    "git_commit": "91369064c48e",
+    "git_dirty_files": 12
   },
   "git": {
     "branch": "main",
-    "commit_sha": "99a410970dc56ba2947728d588d6eb288c0d06d0",
-    "commit_message": "99a4109 commit",
-    "commit_date": "2026-07-28T02:54:47Z",
+    "commit_sha": "91369064c48eef3da865a1143d380e0bf0dbe1d6",
+    "commit_message": "9136906 commit",
+    "commit_date": "2026-08-01T16:28:27Z",
     "dirty_files": [
-      "M supabase/config.toml",
-      " M supabase/migrations/20260330115505_trainer_security_hardening.sql",
-      " M supabase/migrations/20260330120000_trainer_core.sql",
-      " M supabase/migrations/20260410200000_resolve_legacy_tables_rls.sql",
-      " M supabase/migrations/20260420150000_human_continuity_schema.sql",
-      " M supabase/migrations/20260429120000_gestaltview_module_registry.sql",
-      " M supabase/migrations/20260601000300_profile_pipeline_v1_backfill.sql",
-      " M supabase/migrations/20260616000100_identity_subject_human_profiles.sql",
-      " M supabase/migrations/20260617131000_create_portrait_inference_runs.sql",
-      " M supabase/migrations/20260617133000_create_portrait_helper_functions.sql",
-      " M supabase/migrations/202607080001_operation_render_reasoning_voice.sql",
-      "?? supabase/migrations/20260728030146_defer_trainer_security_hardening_until_core_exists.sql",
-      "?? supabase/migrations/20260728030522_deferred_human_continuity_repair.sql"
+      "M .perplexity/CurrentState.md",
+      " M .perplexity/REPO_MANIFEST.json",
+      " M .perplexity/REPO_MANIFEST.md",
+      " M .perplexity/REPO_README.md",
+      " M .perplexity/SYNC_MANIFEST.json",
+      " M .perplexity/agents-skills-manifest.json",
+      " M .perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.json",
+      " M .perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.md",
+      " M .perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/07_CURRENT_STATE_AND_EVIDENCE/CurrentState.md",
+      " M .snapshots/config.json",
+      " M docs/gestaltview-v2.manifest.json",
+      " M docs/gestaltview-v2.manifest.md"
     ]
   },
   "dependencies": {
@@ -403,6 +402,10 @@
       "source_file": "client/src/App.tsx"
     },
     {
+      "route": "/collaborator-requisition",
+      "source_file": "client/src/App.tsx"
+    },
+    {
       "route": "/consulting",
       "source_file": "client/src/App.tsx"
     },
@@ -639,6 +642,14 @@
       "source_file": "client/src/App.tsx"
     },
     {
+      "route": "/store",
+      "source_file": "client/src/App.tsx"
+    },
+    {
+      "route": "/store/artifacts/:handle",
+      "source_file": "client/src/App.tsx"
+    },
+    {
       "route": "/symbiocoder",
       "source_file": "client/src/App.tsx"
     },
@@ -829,7 +840,7 @@
     {
       "endpoint": "/api/_lib/supabase",
       "handler_file": "api/_lib/supabase.ts",
-      "size_bytes": "51447"
+      "size_bytes": "52140"
     },
     {
       "endpoint": "/api/_lib/supabaseOidc",
@@ -1119,7 +1130,7 @@
     {
       "endpoint": "/api/gate/[...path]",
       "handler_file": "api/gate/[...path].ts",
-      "size_bytes": "41"
+      "size_bytes": "106"
     },
     {
       "endpoint": "/api/gate/build-job-regenerate",
@@ -1174,7 +1185,7 @@
     {
       "endpoint": "/api/gate/webhook-stripe",
       "handler_file": "api/gate/webhook-stripe.ts",
-      "size_bytes": "264"
+      "size_bytes": "329"
     },
     {
       "endpoint": "/api/gen-engine/ambient-scan",
@@ -1270,6 +1281,16 @@
       "endpoint": "/api/inner-world/files/[id]/share",
       "handler_file": "api/inner-world/files/[id]/share.ts",
       "size_bytes": "1989"
+    },
+    {
+      "endpoint": "/api/insight-bot/execute",
+      "handler_file": "api/insight-bot/execute.ts",
+      "size_bytes": "4091"
+    },
+    {
+      "endpoint": "/api/insight-bot/respond",
+      "handler_file": "api/insight-bot/respond.ts",
+      "size_bytes": "4962"
     },
     {
       "endpoint": "/api/insights",
@@ -1474,7 +1495,7 @@
     {
       "endpoint": "/api/sanctuary/journal",
       "handler_file": "api/sanctuary/journal.ts",
-      "size_bytes": "3046"
+      "size_bytes": "5390"
     },
     {
       "endpoint": "/api/sanctuary/journals",
@@ -1484,7 +1505,7 @@
     {
       "endpoint": "/api/sanctuary/scrapbook",
       "handler_file": "api/sanctuary/scrapbook.ts",
-      "size_bytes": "6998"
+      "size_bytes": "8476"
     },
     {
       "endpoint": "/api/schema/dashboard",
@@ -1510,6 +1531,21 @@
       "endpoint": "/api/sessionRecap",
       "handler_file": "api/sessionRecap.ts",
       "size_bytes": "3731"
+    },
+    {
+      "endpoint": "/api/storefront/activation-receipt",
+      "handler_file": "api/storefront/activation-receipt.ts",
+      "size_bytes": "1203"
+    },
+    {
+      "endpoint": "/api/storefront/catalog",
+      "handler_file": "api/storefront/catalog.ts",
+      "size_bytes": "988"
+    },
+    {
+      "endpoint": "/api/storefront/webhook-shopify",
+      "handler_file": "api/storefront/webhook-shopify.ts",
+      "size_bytes": "2500"
     },
     {
       "endpoint": "/api/stripe/agent-trainer-checkout",
@@ -1709,7 +1745,7 @@
     {
       "endpoint": "/api/transcriptory/transcribe",
       "handler_file": "api/transcriptory/transcribe.ts",
-      "size_bytes": "20916"
+      "size_bytes": "21842"
     },
     {
       "endpoint": "/api/vibecoder/analyze",
@@ -1799,6 +1835,7 @@
     "api/__tests__/gen-engine.test.ts",
     "api/__tests__/identity-memory-write.test.ts",
     "api/__tests__/identity-policy.test.ts",
+    "api/__tests__/insight-bot-contracts.test.ts",
     "api/__tests__/keep-alive.test.ts",
     "api/__tests__/launch-auth-hardening.test.ts",
     "api/__tests__/lib.test.ts",
@@ -1838,6 +1875,7 @@
     "client/src/tests/blackboard-di-routing.test.ts",
     "client/src/tests/blackboard-profile-pipeline-routing.test.ts",
     "client/src/tests/blackboard-recap-artifacts.test.ts",
+    "client/src/tests/blackboard-runtime-handoffs.test.ts",
     "client/src/tests/bucket-drops.test.ts",
     "client/src/tests/creation-corner-artifacts.test.ts",
     "client/src/tests/creation-corner-blueprint-handoff.test.ts",
@@ -1871,6 +1909,7 @@
     "client/src/tests/musicaldna-spotify.test.ts",
     "client/src/tests/nextgen-render-client.test.ts",
     "client/src/tests/personas.test.ts",
+    "client/src/tests/phase7-three-room-proof.test.ts",
     "client/src/tests/profile-preferences.test.ts",
     "client/src/tests/profilePipeline.capture.test.ts",
     "client/src/tests/profilePipeline.provenance.test.ts",
@@ -1879,6 +1918,7 @@
     "client/src/tests/rendering-format-aliases.test.ts",
     "client/src/tests/room-state.test.ts",
     "client/src/tests/roundtable-mention-parser.test.ts",
+    "client/src/tests/sanctuary-runtime-handoffs.test.ts",
     "client/src/tests/sandbox-artifacts.test.ts",
     "client/src/tests/scaffold-storage.test.ts",
     "client/src/tests/session-recap-download.test.ts",
@@ -1898,12 +1938,15 @@
     "scripts/test-orientation-checkin.sh",
     "server/__tests__/council-persona-health.test.ts",
     "server/__tests__/council-runner.test.ts",
+    "server/__tests__/storefront-commerce-activation.test.ts",
+    "server/__tests__/storefront-shopify.test.ts",
     "server/__tests__/trainer-governance.test.ts",
     "server/__tests__/trainer-hyperagent-migration.test.ts",
     "shared/embodiment/profile-contract.test.ts",
     "shared/gravity/protocol.test.ts",
     "shared/orchestration/execution.test.ts",
     "shared/orchestration/workers.test.ts",
+    "shared/sanctuary/contracts.test.ts",
     "tests/api/inner-world-artifact-payload.test.ts",
     "tests/api/render-engine.integration.test.ts",
     "tests/api/render-idempotency.test.ts",
@@ -2009,8 +2052,8 @@
       "path": "README.md",
       "category": "doc",
       "size_bytes": 14379,
-      "sha256": "c0157c8abe9c16d58c6489eba12982531af64c25d973d7d5f60026bf19775dc1",
-      "last_modified": "2026-07-16T15:53:27+00:00",
+      "sha256": "b2422274ab7cd6c7050d496ac4c4b735e2a6594597d7bb5f7406dfd20a421363",
+      "last_modified": "2026-07-30T18:28:16.894167+00:00",
       "word_count": 1728
     },
     {
@@ -2184,10 +2227,10 @@
     {
       "path": "docs/APIFlow.md",
       "category": "doc",
-      "size_bytes": 12523,
-      "sha256": "1644f6655cfc431203a52ce4213de8e9cbd77399d900e3c1af7bd364f9aaec0d",
-      "last_modified": "2026-07-16T15:53:27+00:00",
-      "word_count": 1672
+      "size_bytes": 13635,
+      "sha256": "f6eab5fe97f3714c5fb2217918e28b0defeab5e1dee2277aa6f49131303ad6a0",
+      "last_modified": "2026-07-29T03:20:52.650888+00:00",
+      "word_count": 1810
     },
     {
       "path": "docs/ArchitecturalStructure.md",
@@ -2288,10 +2331,10 @@
     {
       "path": "docs/CurrentState.md",
       "category": "doc",
-      "size_bytes": 565010,
-      "sha256": "c8c1e102d21f370a5c560b094f6bb5e3e3d48a56864e77237e60ce8d402f68c3",
-      "last_modified": "2026-07-27T22:33:56.221309+00:00",
-      "word_count": 69381
+      "size_bytes": 594383,
+      "sha256": "ca1aa24fbb2d123ba29b91adbc92210a6d1031d8a77adabf8c3d58635820aefd",
+      "last_modified": "2026-08-01T16:26:16.944936+00:00",
+      "word_count": 72824
     },
     {
       "path": "docs/Deep_Dive_Into_GestaltView_By_Perplexity.md",
@@ -2638,6 +2681,14 @@
       "word_count": 2234
     },
     {
+      "path": "docs/audits/gestaltview-app-runtime-layered-audit-2026-07-28.md",
+      "category": "doc",
+      "size_bytes": 7998,
+      "sha256": "a224ff728aa8a0701603191a55a3829f0bd162da95874d4a03933a366431905a",
+      "last_modified": "2026-07-29T03:20:52.658889+00:00",
+      "word_count": 1038
+    },
+    {
       "path": "docs/billy-founder-session-persistence.md",
       "category": "doc",
       "size_bytes": 4922,
@@ -2720,10 +2771,18 @@
     {
       "path": "docs/gestaltview-v2.manifest.md",
       "category": "doc",
-      "size_bytes": 45155,
-      "sha256": "f2ca7b836a471dc1188a61e81db94441ba9b8f5b13fe641b73a93080cf42de36",
-      "last_modified": "2026-07-25T09:25:21.602202+00:00",
-      "word_count": 4638
+      "size_bytes": 47278,
+      "sha256": "3ccfcccb18cc4607976b580435d01bb84ad386a6fc05fda30a2836baed62b03b",
+      "last_modified": "2026-08-02T05:59:58.750434+00:00",
+      "word_count": 4799
+    },
+    {
+      "path": "docs/integrations/insight-bot-runtime.md",
+      "category": "doc",
+      "size_bytes": 2769,
+      "sha256": "5e0cb612a94ad978afd559bc45f48278a1b2869c662e8b559ee312d3a9c5b845",
+      "last_modified": "2026-07-30T19:44:56.084877+00:00",
+      "word_count": 360
     },
     {
       "path": "docs/launch/phase6-schema-fit-audit-2026-07-27.md",
@@ -2732,6 +2791,14 @@
       "sha256": "985e8b4cb70f1b634194b4b4b3e0b030767e34ebf2ceca43a6fc9f191a636202",
       "last_modified": "2026-07-27T22:37:44.771321+00:00",
       "word_count": 922
+    },
+    {
+      "path": "docs/launch/relationship-first-requisition.md",
+      "category": "doc",
+      "size_bytes": 3486,
+      "sha256": "768e64e20987222e6e07a5433cc08b718e2dc5e0ffa1b1672e6e392d67d32953",
+      "last_modified": "2026-07-29T03:20:52.661889+00:00",
+      "word_count": 493
     },
     {
       "path": "docs/license.md",
@@ -2852,6 +2919,14 @@
       "sha256": "93e546d4d988d2b57d7f3a4e49df16055bd6f4231bf936d0889ad1360b3ac03f",
       "last_modified": "2026-07-16T15:53:27+00:00",
       "word_count": 340
+    },
+    {
+      "path": "docs/shopify/phase-0-offer-and-security-audit-2026-08-01.md",
+      "category": "doc",
+      "size_bytes": 3822,
+      "sha256": "73b004f6a4fd7eb45a5124143c937a85997061b1ca8d3255b637b9200c246551",
+      "last_modified": "2026-08-01T12:56:59.348998+00:00",
+      "word_count": 505
     },
     {
       "path": "docs/supabase-free-tier-workaround-research-prompt.md",
@@ -3238,6 +3313,22 @@
       "word_count": 2612
     },
     {
+      "path": "orientation/GestaltView_Comprehensive_Overview.md",
+      "category": "orientation",
+      "size_bytes": 23485,
+      "sha256": "d7bad7443a109c0571d45eb54a2651d8adc8ccd6b31d2618405f821de688c11e",
+      "last_modified": "2026-07-30T18:33:34.993147+00:00",
+      "word_count": 3824
+    },
+    {
+      "path": "orientation/Thread-to-System-Map.md",
+      "category": "orientation",
+      "size_bytes": 14733,
+      "sha256": "2e1fcdb36528fe16d15c645ce91880f5bd1990d19847b7a265770fbebe320ceb",
+      "last_modified": "2026-07-30T18:33:34.994147+00:00",
+      "word_count": 1905
+    },
+    {
       "path": "scripts/README.md",
       "category": "script",
       "size_bytes": 3977,
@@ -3315,8 +3406,8 @@
       "path": "README.md",
       "category": "doc",
       "size_bytes": 14379,
-      "sha256": "c0157c8abe9c16d58c6489eba12982531af64c25d973d7d5f60026bf19775dc1",
-      "last_modified": "2026-07-16T15:53:27+00:00",
+      "sha256": "b2422274ab7cd6c7050d496ac4c4b735e2a6594597d7bb5f7406dfd20a421363",
+      "last_modified": "2026-07-30T18:28:16.894167+00:00",
       "word_count": 1728
     },
     {
@@ -3426,6 +3517,13 @@
       "last_modified": "2026-07-16T15:53:27+00:00"
     },
     {
+      "path": "shopify.app.toml",
+      "category": "config",
+      "size_bytes": 2244,
+      "sha256": "22d29346eeb6bb0bd989e99bb3d5419d6e916c0aa26787ff1ee9944fe2a7b504",
+      "last_modified": "2026-08-01T16:20:17.267950+00:00"
+    },
+    {
       "path": "skills-lock.json",
       "category": "data",
       "size_bytes": 2318,
@@ -3463,9 +3561,9 @@
     {
       "path": "vercel.json",
       "category": "data",
-      "size_bytes": 3134,
-      "sha256": "f9c879fdbac699a057b8ca324d349f2a8bbbc165b163fbb85c2c77cfb69e441e",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 3227,
+      "sha256": "0b544d66a7cb3b89011e65d359cfd04ea081811a6cd7ea6512a36e3c179f2aae",
+      "last_modified": "2026-08-01T16:20:17.104950+00:00"
     },
     {
       "path": "vite.config.ts",
@@ -3781,9 +3879,9 @@
     {
       "path": "api/__tests__/gate.test.ts",
       "category": "test",
-      "size_bytes": 23404,
-      "sha256": "838370095f65df6b162ad9f9068a18fabe1898417c2f0e05633b5ff3b322bec2",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 28305,
+      "sha256": "da0fe5f92e9c9657f87be21147361786df794c8c1385ff947e2bd7769045a5e2",
+      "last_modified": "2026-07-29T03:20:52.479888+00:00"
     },
     {
       "path": "api/__tests__/gen-engine-artifacts.test.ts",
@@ -3819,6 +3917,13 @@
       "size_bytes": 1048,
       "sha256": "eb0ca7d86d1f9b5521428abe38518cfc1f8276bd1c3a7c083eb1cdefe21bc65b",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "api/__tests__/insight-bot-contracts.test.ts",
+      "category": "test",
+      "size_bytes": 3004,
+      "sha256": "5af48c6453968449b7a16dc90bb9d89c91b53fb55a9533318958d888246ed1d5",
+      "last_modified": "2026-07-30T19:44:43.207878+00:00"
     },
     {
       "path": "api/__tests__/keep-alive.test.ts",
@@ -3949,9 +4054,9 @@
     {
       "path": "api/__tests__/sanctuary.test.ts",
       "category": "test",
-      "size_bytes": 6771,
-      "sha256": "ce55abb0989802ec56f2b3f8f1152561680175d50f50d91c84f065a3e9e12232",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 8552,
+      "sha256": "7dce58706115210cd2a2f481955be7deea26664e8509b4042d599d371922a426",
+      "last_modified": "2026-07-30T00:36:32.806147+00:00"
     },
     {
       "path": "api/__tests__/schema-dashboard.test.ts",
@@ -4019,9 +4124,9 @@
     {
       "path": "api/__tests__/transcriptory.test.ts",
       "category": "test",
-      "size_bytes": 36852,
-      "sha256": "8e9eae56ff8e84be2513e88337223ad77c10c68d39f34aa0b800544f9ee30d31",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 37927,
+      "sha256": "ad9b510306ae99cc192bdee4e1ad0d3409378f1963b23b6572cc6caf3e4a093d",
+      "last_modified": "2026-07-30T00:29:19.548162+00:00"
     },
     {
       "path": "api/__tests__/workbook-items.test.ts",
@@ -4201,9 +4306,9 @@
     {
       "path": "api/_lib/supabase.ts",
       "category": "api",
-      "size_bytes": 51447,
-      "sha256": "ecc13c4b1fa995d5f3d5e7f32bdaa3693d1deb43086918288088d0efa81ea983",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 52140,
+      "sha256": "36ebdf314503c798769b9566cdec577233d9f5b7d3a800f009003acb589c15bc",
+      "last_modified": "2026-07-30T19:42:58.513884+00:00"
     },
     {
       "path": "api/_lib/supabaseOidc.ts",
@@ -4621,9 +4726,9 @@
     {
       "path": "api/gate/[...path].ts",
       "category": "api",
-      "size_bytes": 41,
-      "sha256": "066d27b664a85a73522bb5fb7c33c29fe507392b46106df1449b2ed846218a58",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 106,
+      "sha256": "0719edabe9e873631856f6139f5c893441790ce3a118a732eb5125cbec44e80b",
+      "last_modified": "2026-07-29T03:20:52.479888+00:00"
     },
     {
       "path": "api/gate/_delegate.ts",
@@ -4635,9 +4740,9 @@
     {
       "path": "api/gate/_handler.ts",
       "category": "api",
-      "size_bytes": 11464,
-      "sha256": "01a92c45d71b27ab2675323acca7f58f3e53bb66882e5444b206e742b6c670b9",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 16462,
+      "sha256": "76ebafa570a59c6a240eae1020a7d47921f55ead39ac8ccb3255f963e1a69ce2",
+      "last_modified": "2026-07-29T03:20:52.551888+00:00"
     },
     {
       "path": "api/gate/build-job-regenerate.ts",
@@ -4712,9 +4817,9 @@
     {
       "path": "api/gate/webhook-stripe.ts",
       "category": "api",
-      "size_bytes": 264,
-      "sha256": "eb1746f221ed2a150d2ef46fec86ce337089b1d30213d58d8eb5cf5960d1299a",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 329,
+      "sha256": "555fd5da8703483f265dfe1797775144e6454fb224ee48b95b8d40fa78b089c0",
+      "last_modified": "2026-07-29T03:20:52.552888+00:00"
     },
     {
       "path": "api/gen-engine/_shared.ts",
@@ -4855,6 +4960,20 @@
       "size_bytes": 4731,
       "sha256": "f1d046d0eaffc2e84fbc7cd9231848f6c9c1fb8ac4282b3a3f95852ffcbb4cca",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "api/insight-bot/execute.ts",
+      "category": "api",
+      "size_bytes": 4091,
+      "sha256": "1ed2e146e2f68a8e7a9060f1161277cef8485313f5f4eb664f066b7295174487",
+      "last_modified": "2026-07-30T19:44:42.525878+00:00"
+    },
+    {
+      "path": "api/insight-bot/respond.ts",
+      "category": "api",
+      "size_bytes": 4962,
+      "sha256": "b02883e69863654380995fe2dd318d5fc3a13cf782dbad62c4eeea1450ed4b40",
+      "last_modified": "2026-07-30T19:07:04.299020+00:00"
     },
     {
       "path": "api/insights.ts",
@@ -5146,9 +5265,9 @@
     {
       "path": "api/sanctuary/journal.ts",
       "category": "api",
-      "size_bytes": 3046,
-      "sha256": "d8222ed9852ea9413c21f23da80d360d0ca4d885365144803797f90030a437d0",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 5390,
+      "sha256": "0abac352695cb146e9d4244471dde53ec8f865b5c76f7abfcad91e264f116a8d",
+      "last_modified": "2026-07-30T00:36:26.311147+00:00"
     },
     {
       "path": "api/sanctuary/journals.ts",
@@ -5160,9 +5279,9 @@
     {
       "path": "api/sanctuary/scrapbook.ts",
       "category": "api",
-      "size_bytes": 6998,
-      "sha256": "e1f9b0c1e323fb98d841c768505dd53b5d11423d33d0e81b1dff19986a0b1ae9",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 8476,
+      "sha256": "5ddda95ebcf41790fc97c60b1a3f654b55e5c3f37c44a411876da6f3f3cc6356",
+      "last_modified": "2026-07-30T00:36:26.603147+00:00"
     },
     {
       "path": "api/schema/dashboard.ts",
@@ -5198,6 +5317,27 @@
       "size_bytes": 3731,
       "sha256": "0f9213826954d18a846893ad41299b5781e1200cfd4e527a51c36097a25f1819",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "api/storefront/activation-receipt.ts",
+      "category": "api",
+      "size_bytes": 1203,
+      "sha256": "4bbd17d5a595995c231d9086049b8160ae40d0263009b1a438c4541b07952b61",
+      "last_modified": "2026-08-01T16:26:16.609936+00:00"
+    },
+    {
+      "path": "api/storefront/catalog.ts",
+      "category": "api",
+      "size_bytes": 988,
+      "sha256": "6b9807e5f3259eb57bb4053fb3d0ae51a47819f0660b707b1eab0b8668b70447",
+      "last_modified": "2026-08-01T12:49:12.983976+00:00"
+    },
+    {
+      "path": "api/storefront/webhook-shopify.ts",
+      "category": "api",
+      "size_bytes": 2500,
+      "sha256": "437aff0f80635a8d214220d8d21a9f4e64f413a1b9acf50ce3cda052fd0fcd95",
+      "last_modified": "2026-08-01T16:20:16.766950+00:00"
     },
     {
       "path": "api/stripe/agent-trainer-checkout.ts",
@@ -5482,9 +5622,9 @@
     {
       "path": "api/transcriptory/transcribe.ts",
       "category": "api",
-      "size_bytes": 20916,
-      "sha256": "0e483030a66d2c371c8a67ccadbba235ddd2c9ee649c4f2d059baf90a6bd9da7",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 21842,
+      "sha256": "1213d1c43292a67d578529c87d135aa8024205d637882fd80a27d5be2e6300b7",
+      "last_modified": "2026-07-30T00:29:19.296162+00:00"
     },
     {
       "path": "api/vibecoder/analyze.ts",
@@ -5538,9 +5678,9 @@
     {
       "path": "client/src/App.tsx",
       "category": "source",
-      "size_bytes": 19227,
-      "sha256": "cad0e8baeb48b3a3f6ec01f337702ec30a1423e7aa46485ae7fd68529f6966a5",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 19763,
+      "sha256": "5e357a58a95b6d4b5cda052ad86fad4da30977ecb112f2a886d9a70fec99933f",
+      "last_modified": "2026-08-01T12:51:02.459981+00:00"
     },
     {
       "path": "client/src/canonical/CURRENT_STATE.md",
@@ -6037,6 +6177,13 @@
       "last_modified": "2026-07-16T15:53:27+00:00"
     },
     {
+      "path": "client/src/components/FounderRequisitionQuotePanel.tsx",
+      "category": "component",
+      "size_bytes": 5886,
+      "sha256": "e77c7daf13fc9edaef4171e40b69774ff4886fa9c2f2b0a937d908ecf046aca0",
+      "last_modified": "2026-07-29T03:20:52.552888+00:00"
+    },
+    {
       "path": "client/src/components/FrequencyTherapySection.tsx",
       "category": "component",
       "size_bytes": 31898,
@@ -6053,9 +6200,9 @@
     {
       "path": "client/src/components/GATEEntrypointWizard.tsx",
       "category": "component",
-      "size_bytes": 49980,
-      "sha256": "498cc062375b87259f2c21fcf7609f268264456ccde557f8a89c3d046f20220f",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 50250,
+      "sha256": "dd5e6366062093c5e39b922c284278910f67bbc44375353d82e84d92edd07fb6",
+      "last_modified": "2026-07-29T03:20:52.553889+00:00"
     },
     {
       "path": "client/src/components/GATEPackageSummary.tsx",
@@ -6116,9 +6263,9 @@
     {
       "path": "client/src/components/JournalEditor.tsx",
       "category": "component",
-      "size_bytes": 10851,
-      "sha256": "084c33a428777394301284078fc9bbcda88e28063d40305b4363f5ba4a7b646e",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 14618,
+      "sha256": "cee826218fa43616cfb522d72d97a9da4d9f422ae66a3974a26729013d8df0d0",
+      "last_modified": "2026-07-30T00:36:27.777147+00:00"
     },
     {
       "path": "client/src/components/LifeTapestry.tsx",
@@ -6284,9 +6431,9 @@
     {
       "path": "client/src/components/ScrapbookPanel.tsx",
       "category": "component",
-      "size_bytes": 15835,
-      "sha256": "d1e4eab629ac08e6a5c623afb6943db70effc3db61204ed30fa73999018ce897",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 18989,
+      "sha256": "fa0414fa9c0ac142feac2e07a37e4ea21b3a474b8c593cd38f9e30c973ab4baa",
+      "last_modified": "2026-07-30T00:36:59.420146+00:00"
     },
     {
       "path": "client/src/components/ServicesConsulting.tsx",
@@ -6305,9 +6452,9 @@
     {
       "path": "client/src/components/SubpageQuickNav.tsx",
       "category": "component",
-      "size_bytes": 4613,
-      "sha256": "438a4242b4ae527f9bab3af7c1aa991cd863170b0a49cee400c379e513708bb8",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 4623,
+      "sha256": "d6f1b4b8a74cd65c6b10293aac5ef07518796cdd7d51ac1ce4b7b0769bf94496",
+      "last_modified": "2026-08-01T12:51:02.624981+00:00"
     },
     {
       "path": "client/src/components/SymbioCoderDemo.tsx",
@@ -6354,9 +6501,9 @@
     {
       "path": "client/src/components/TranscriptViewer.tsx",
       "category": "component",
-      "size_bytes": 11226,
-      "sha256": "374076fba9bad3d1a97f9f5859d0bd9c1d316e0bbaf4e9345ab36381fcd0ee22",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 14380,
+      "sha256": "47c1c82b137a29723a099ef91138ef41a5cb1ded84ecb6090f5bc326476a02b3",
+      "last_modified": "2026-07-29T03:39:39.522849+00:00"
     },
     {
       "path": "client/src/components/TranscriptoryRecorder.tsx",
@@ -7563,6 +7710,41 @@
       "last_modified": "2026-07-16T15:53:27+00:00"
     },
     {
+      "path": "client/src/features/storefront/api/catalog.ts",
+      "category": "source",
+      "size_bytes": 423,
+      "sha256": "dd5c2d837511e1407444fbd5368f4da283e43fc7393fe80e7fe0261fd10396e5",
+      "last_modified": "2026-08-01T12:50:29.862979+00:00"
+    },
+    {
+      "path": "client/src/features/storefront/components/EditionMetadata.tsx",
+      "category": "component",
+      "size_bytes": 1106,
+      "sha256": "708d58345c950b5ab5ef293af5e5faad1201e496a9620dae207672507a3a4ac7",
+      "last_modified": "2026-08-01T12:50:30.422980+00:00"
+    },
+    {
+      "path": "client/src/features/storefront/pages/ArtifactEditionPage.tsx",
+      "category": "page",
+      "size_bytes": 2936,
+      "sha256": "826a49dba5f933e7ce9911d13f2e62d68df8103caad05fefdfae2fef3ffc7a8a",
+      "last_modified": "2026-08-01T12:50:30.837980+00:00"
+    },
+    {
+      "path": "client/src/features/storefront/pages/StorefrontPage.tsx",
+      "category": "page",
+      "size_bytes": 7309,
+      "sha256": "eceda4640a586898b801bb5a015bae523c99471a9f520965ad5505b6d451b222",
+      "last_modified": "2026-08-01T12:50:30.681980+00:00"
+    },
+    {
+      "path": "client/src/features/storefront/state/useStorefrontCatalog.ts",
+      "category": "source",
+      "size_bytes": 1090,
+      "sha256": "95656c80a14989d5624034ffb649e79437dd38c2aaf18000af8c0e53a624d329",
+      "last_modified": "2026-08-01T12:50:30.167979+00:00"
+    },
+    {
       "path": "client/src/features/workbook/WorkbookSyncPanel.tsx",
       "category": "source",
       "size_bytes": 12457,
@@ -7906,6 +8088,13 @@
       "last_modified": "2026-07-25T05:43:13.564045+00:00"
     },
     {
+      "path": "client/src/lib/blackboardRuntimeHandoffs.ts",
+      "category": "source",
+      "size_bytes": 7271,
+      "sha256": "8a5cafdc961cf3458bf710cca12a47564b6d1941f0b9bc7e0b91be80676ddc3f",
+      "last_modified": "2026-07-29T03:57:49.746812+00:00"
+    },
+    {
       "path": "client/src/lib/bucketDrops.ts",
       "category": "source",
       "size_bytes": 5777,
@@ -8048,9 +8237,9 @@
     {
       "path": "client/src/lib/gateApi.ts",
       "category": "source",
-      "size_bytes": 5021,
-      "sha256": "058a7ff1500c0eb39d7ccca492431ece4c32763446e091bb0f2453875ae43c16",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 5873,
+      "sha256": "ef82e24b2726a2e681a6e5334cad2da00e9cb95a448b3164a9aa71aa8a5caa97",
+      "last_modified": "2026-07-29T03:20:52.558888+00:00"
     },
     {
       "path": "client/src/lib/genEngineClient.ts",
@@ -8083,9 +8272,9 @@
     {
       "path": "client/src/lib/innerWorldFiles.ts",
       "category": "source",
-      "size_bytes": 34544,
-      "sha256": "6311cae64a298ff7ddba06fe824601291f16189d9108df126abef529e7024f6b",
-      "last_modified": "2026-07-27T19:10:56.801977+00:00"
+      "size_bytes": 35402,
+      "sha256": "de3702fe5df66c9833979d3346eea5f8643524f4badff9bd7e03ed58297dc32e",
+      "last_modified": "2026-07-30T00:36:28.323147+00:00"
     },
     {
       "path": "client/src/lib/insightsContent.ts",
@@ -8678,9 +8867,16 @@
     {
       "path": "client/src/lib/sanctuaryContent.ts",
       "category": "source",
-      "size_bytes": 2478,
-      "sha256": "c6af9738a5d0b60c23de3d186bda0339caadea9db1061faf3069d0a4262d5e6a",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 3979,
+      "sha256": "8d612ae34957789eac63334b38a7806fffcbf72879ed6f97360d45040295d24b",
+      "last_modified": "2026-07-30T00:36:28.377147+00:00"
+    },
+    {
+      "path": "client/src/lib/sanctuaryRuntimeHandoffs.ts",
+      "category": "source",
+      "size_bytes": 1090,
+      "sha256": "353972fdae2aac77361eaae9fea915c704d2bf6bfdcea10deb49ae5b65d0abfb",
+      "last_modified": "2026-07-30T00:36:28.407147+00:00"
     },
     {
       "path": "client/src/lib/sandboxArtifacts.ts",
@@ -8755,9 +8951,9 @@
     {
       "path": "client/src/lib/transcriptory.ts",
       "category": "source",
-      "size_bytes": 10250,
-      "sha256": "3d00c6635f758550e0118bf0f34910bf5f29fed9d7d251299305815eda1b1a18",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 14377,
+      "sha256": "4895b209a88ffe90743551e8d0521116b5c2cc8881047d2fd2eae8f4891917c1",
+      "last_modified": "2026-07-29T03:39:39.329849+00:00"
     },
     {
       "path": "client/src/lib/transcriptoryDownloads.ts",
@@ -9094,9 +9290,9 @@
     {
       "path": "client/src/pages/BlackboardRoomPage.tsx",
       "category": "page",
-      "size_bytes": 71232,
-      "sha256": "172bd8c397d4b0445d35580039c5a11926f0bdbf9c647a4b022a48e175d29f1a",
-      "last_modified": "2026-07-25T05:43:14.307045+00:00"
+      "size_bytes": 82208,
+      "sha256": "5a31bf6792b43d09b5c63e03c9635433dcae7ee13be33dea4dae77d85aabcf9e",
+      "last_modified": "2026-07-29T03:55:51.373816+00:00"
     },
     {
       "path": "client/src/pages/BrainSparksPage.tsx",
@@ -9127,11 +9323,18 @@
       "last_modified": "2026-07-16T15:53:27+00:00"
     },
     {
+      "path": "client/src/pages/CollaboratorRequisitionPage.tsx",
+      "category": "page",
+      "size_bytes": 10658,
+      "sha256": "107d14527971f61db26eb85358b7614059c3f42a45e74a480bb0835e700b9e90",
+      "last_modified": "2026-08-01T12:51:02.778981+00:00"
+    },
+    {
       "path": "client/src/pages/ConsultingPage.tsx",
       "category": "page",
-      "size_bytes": 7656,
-      "sha256": "96f56ead220ad11bfe81554eb0d1aa81639216d38cc400bd210609deb345d272",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 7698,
+      "sha256": "7c58350e7dd8081b03fdb0cf7e59bfcc2890832fa05179a9f0e43d63c68a8409",
+      "last_modified": "2026-08-01T12:51:02.938981+00:00"
     },
     {
       "path": "client/src/pages/ContactPage.tsx",
@@ -9150,9 +9353,9 @@
     {
       "path": "client/src/pages/CreationCornerPage.tsx",
       "category": "page",
-      "size_bytes": 52678,
-      "sha256": "2a4382933ae444f5dd45d8a72380c738508dc7560d74468f9cc354c66fd89e4f",
-      "last_modified": "2026-07-27T19:07:43.568984+00:00"
+      "size_bytes": 57603,
+      "sha256": "78159206fa27d0501d6e5309d3ed86518b3f4696e8ce2e923a672a6fdb13de67",
+      "last_modified": "2026-07-29T03:56:02.734815+00:00"
     },
     {
       "path": "client/src/pages/DashboardPage.tsx",
@@ -9234,16 +9437,16 @@
     {
       "path": "client/src/pages/FounderRuntimePage.tsx",
       "category": "page",
-      "size_bytes": 8063,
-      "sha256": "f34ec2c08008a839eae6224ce378efd112fad3e734d8d48c1fa8837df6af6d22",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 8195,
+      "sha256": "a620f124bee4ce94cea900403585a804fa946e0421bac2a279f5b767d9c8168f",
+      "last_modified": "2026-07-29T03:20:52.558888+00:00"
     },
     {
       "path": "client/src/pages/GATEOrderStatusPage.tsx",
       "category": "page",
-      "size_bytes": 20230,
-      "sha256": "fd7c372567f6d74b2f401ec8e7c5802b1bd9cec144cf7bda092e6bdaf4f9db8a",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 23103,
+      "sha256": "5f44aecdcc1dfafdcca740b41f74f2b1be4cf3f898b30d1e1de891d48ac1fc65",
+      "last_modified": "2026-07-29T03:20:52.558888+00:00"
     },
     {
       "path": "client/src/pages/GATEPackageBuilderPage.tsx",
@@ -9486,9 +9689,9 @@
     {
       "path": "client/src/pages/TranscriptoryPage.tsx",
       "category": "page",
-      "size_bytes": 16573,
-      "sha256": "94b84ad55511f16d9c42e2fe0f68031fb0c4cb766f133ef96301d51e6ac44eb9",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 20638,
+      "sha256": "2abed1e9cf4d48363affdefc909a990d26ba19c206f132a778976bdcd5b4275f",
+      "last_modified": "2026-07-29T03:31:49.045866+00:00"
     },
     {
       "path": "client/src/pages/TribunalPage.tsx",
@@ -9629,6 +9832,13 @@
       "size_bytes": 3972,
       "sha256": "1db190b9fbf030e1ab146e61fa6f270ec346035a3179c9ba5a1219f11846133d",
       "last_modified": "2026-07-25T05:42:35.122047+00:00"
+    },
+    {
+      "path": "client/src/tests/blackboard-runtime-handoffs.test.ts",
+      "category": "test",
+      "size_bytes": 9275,
+      "sha256": "8a9e8382824d16c79d2064efa05becf65c10029c8fb04678bfa0c28a158aa6ba",
+      "last_modified": "2026-07-29T03:57:53.043812+00:00"
     },
     {
       "path": "client/src/tests/bucket-drops.test.ts",
@@ -9862,6 +10072,13 @@
       "last_modified": "2026-07-16T15:53:27+00:00"
     },
     {
+      "path": "client/src/tests/phase7-three-room-proof.test.ts",
+      "category": "test",
+      "size_bytes": 8115,
+      "sha256": "7ab10a2aa9e32c21c86b43a831b0762256f2f4555b0a6e959b58cea220a580ac",
+      "last_modified": "2026-07-29T03:57:53.143811+00:00"
+    },
+    {
       "path": "client/src/tests/profile-preferences.test.ts",
       "category": "test",
       "size_bytes": 943,
@@ -9918,6 +10135,13 @@
       "last_modified": "2026-07-16T15:53:27+00:00"
     },
     {
+      "path": "client/src/tests/sanctuary-runtime-handoffs.test.ts",
+      "category": "test",
+      "size_bytes": 1955,
+      "sha256": "184e1d3700df7957ada14fd480905ac77355a0ab26c3a1705b6441018bf915e2",
+      "last_modified": "2026-07-30T00:36:28.433147+00:00"
+    },
+    {
       "path": "client/src/tests/sandbox-artifacts.test.ts",
       "category": "test",
       "size_bytes": 3394,
@@ -9948,9 +10172,9 @@
     {
       "path": "client/src/tests/transcriptory-api.test.ts",
       "category": "test",
-      "size_bytes": 6838,
-      "sha256": "13cd99780cbd3b182354725989d4df0342c46ca7d8ec88930ba82a1a22e08eb4",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 13022,
+      "sha256": "6fd4cc33ac6b122a0c34cc5582f55b85ba51e08dd3666134c7e3f1d2a0508c4e",
+      "last_modified": "2026-07-29T03:51:16.179825+00:00"
     },
     {
       "path": "client/src/tests/transcriptory-downloads.test.ts",
@@ -10319,9 +10543,9 @@
     {
       "path": "shared/gate/schemas.ts",
       "category": "shared",
-      "size_bytes": 22822,
-      "sha256": "d8ed319e5bd779e2fb99bb75e5e5c64c9f1a3f0041c3efe4e8486dc89314efb5",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 23592,
+      "sha256": "8ed79fe2c8cc506bd9ab1be03823f09fe9f5bce15ea88e2410460b46a51e04c5",
+      "last_modified": "2026-07-29T03:20:52.665889+00:00"
     },
     {
       "path": "shared/gate/sidekick.ts",
@@ -10385,6 +10609,13 @@
       "size_bytes": 1212,
       "sha256": "e6a640139daf183c5623f480627c27f0b50aac020116ed173985236748c70c99",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "shared/insight-bot/contracts.ts",
+      "category": "shared",
+      "size_bytes": 7078,
+      "sha256": "0519c1ea877ea96b58aeeea0c06051cfa9f0d00f104a8a219525493a1d40bc76",
+      "last_modified": "2026-07-30T19:42:57.093884+00:00"
     },
     {
       "path": "shared/llm/plk.ts",
@@ -10752,11 +10983,32 @@
       "last_modified": "2026-07-16T15:53:27+00:00"
     },
     {
+      "path": "shared/sanctuary/contracts.test.ts",
+      "category": "test",
+      "size_bytes": 1101,
+      "sha256": "9446d9ea38d39082c7fe4afb4bce45398606e99cd7c9c2b768db346f09cfe967",
+      "last_modified": "2026-07-30T00:36:28.492147+00:00"
+    },
+    {
+      "path": "shared/sanctuary/contracts.ts",
+      "category": "shared",
+      "size_bytes": 1482,
+      "sha256": "6e8be7f76a67dd1cd0c058815944d7a6419cc43797af450c72067e1faf4f413b",
+      "last_modified": "2026-07-30T00:36:28.467147+00:00"
+    },
+    {
       "path": "shared/sessionRecap.ts",
       "category": "shared",
       "size_bytes": 24608,
       "sha256": "48887b020a8b2610ddd14b4783226808fec92ee058aef765aba1b6de61bb48e4",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "shared/storefront/contracts.ts",
+      "category": "shared",
+      "size_bytes": 2729,
+      "sha256": "52a02ae327206aa302a08cb52b8419436739a2add4b24e51ff63b958b534c6dd",
+      "last_modified": "2026-08-01T12:49:12.460976+00:00"
     },
     {
       "path": "shared/tribunal/evaluate.ts",
@@ -11341,6 +11593,20 @@
       "last_modified": "2026-07-16T15:53:27+00:00"
     },
     {
+      "path": "server/__tests__/storefront-commerce-activation.test.ts",
+      "category": "test",
+      "size_bytes": 4253,
+      "sha256": "66883a5a75ea01bd745cee8024fc0ba42425433c4c0c43733c66f262e30b71e2",
+      "last_modified": "2026-08-01T16:21:59.981946+00:00"
+    },
+    {
+      "path": "server/__tests__/storefront-shopify.test.ts",
+      "category": "test",
+      "size_bytes": 3643,
+      "sha256": "e75e072a759c219ffeced3d87d918b5f6f14ac639eaf3a112d18bdda37faab7b",
+      "last_modified": "2026-08-01T12:52:13.585984+00:00"
+    },
+    {
       "path": "server/__tests__/trainer-governance.test.ts",
       "category": "test",
       "size_bytes": 4357,
@@ -11567,16 +11833,16 @@
     {
       "path": "server/gate/repository.ts",
       "category": "source",
-      "size_bytes": 21716,
-      "sha256": "87e92004fa619f70ffd0189946cab9f0459f931ebc9dfb1e768299e5f9721e30",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 22292,
+      "sha256": "a25d1847a546fcac117398d6ae83e6b6cea0041309ba90c4e5dccfb63de89b79",
+      "last_modified": "2026-07-29T03:20:52.661889+00:00"
     },
     {
       "path": "server/gate/service.ts",
       "category": "source",
-      "size_bytes": 50869,
-      "sha256": "457bf2448efecf4512176c0d20ed965c96475fc0f9972b38449be9926f24d244",
-      "last_modified": "2026-07-16T15:53:27+00:00"
+      "size_bytes": 57909,
+      "sha256": "e3bfddfdd957f57b78eb68f5b89247862f12043db3348aa978c4aac99f2ba7ec",
+      "last_modified": "2026-08-01T12:53:39.701988+00:00"
     },
     {
       "path": "server/gate/store.ts",
@@ -11654,6 +11920,27 @@
       "size_bytes": 1295,
       "sha256": "3d998f5071710230bf2a5ff0fbceeb440568523582f5521556a8be6701aab372",
       "last_modified": "2026-07-16T15:53:27+00:00"
+    },
+    {
+      "path": "server/storefront/commerce.ts",
+      "category": "source",
+      "size_bytes": 6214,
+      "sha256": "a627d1639e043b15e5956b7874200b345620d449e03df8d07e387714f84c9c64",
+      "last_modified": "2026-08-01T16:21:59.369946+00:00"
+    },
+    {
+      "path": "server/storefront/shopify.ts",
+      "category": "source",
+      "size_bytes": 5460,
+      "sha256": "2fa3875869c2efb4ac09787fa481d333c01c47679592acea5bb4e04189c68525",
+      "last_modified": "2026-08-01T12:49:12.727976+00:00"
+    },
+    {
+      "path": "server/storefront/supabaseCommerce.ts",
+      "category": "source",
+      "size_bytes": 11639,
+      "sha256": "e5b602af19d96c451e54170d4ac0887bc81f366569dc69f2a124331143b6e3c2",
+      "last_modified": "2026-08-01T16:27:26.850933+00:00"
     },
     {
       "path": "server/supabase_integration.py",
@@ -11773,10 +12060,10 @@
     {
       "path": "docs/APIFlow.md",
       "category": "doc",
-      "size_bytes": 12523,
-      "sha256": "1644f6655cfc431203a52ce4213de8e9cbd77399d900e3c1af7bd364f9aaec0d",
-      "last_modified": "2026-07-16T15:53:27+00:00",
-      "word_count": 1672
+      "size_bytes": 13635,
+      "sha256": "f6eab5fe97f3714c5fb2217918e28b0defeab5e1dee2277aa6f49131303ad6a0",
+      "last_modified": "2026-07-29T03:20:52.650888+00:00",
+      "word_count": 1810
     },
     {
       "path": "docs/ArchitecturalStructure.md",
@@ -11877,10 +12164,10 @@
     {
       "path": "docs/CurrentState.md",
       "category": "doc",
-      "size_bytes": 565010,
-      "sha256": "c8c1e102d21f370a5c560b094f6bb5e3e3d48a56864e77237e60ce8d402f68c3",
-      "last_modified": "2026-07-27T22:33:56.221309+00:00",
-      "word_count": 69381
+      "size_bytes": 594383,
+      "sha256": "ca1aa24fbb2d123ba29b91adbc92210a6d1031d8a77adabf8c3d58635820aefd",
+      "last_modified": "2026-08-01T16:26:16.944936+00:00",
+      "word_count": 72824
     },
     {
       "path": "docs/Deep_Dive_Into_GestaltView_By_Perplexity.md",
@@ -12234,6 +12521,14 @@
       "word_count": 2234
     },
     {
+      "path": "docs/audits/gestaltview-app-runtime-layered-audit-2026-07-28.md",
+      "category": "doc",
+      "size_bytes": 7998,
+      "sha256": "a224ff728aa8a0701603191a55a3829f0bd162da95874d4a03933a366431905a",
+      "last_modified": "2026-07-29T03:20:52.658889+00:00",
+      "word_count": 1038
+    },
+    {
       "path": "docs/billy-founder-session-persistence.md",
       "category": "doc",
       "size_bytes": 4922,
@@ -12316,17 +12611,25 @@
     {
       "path": "docs/gestaltview-v2.manifest.json",
       "category": "data",
-      "size_bytes": 490664,
-      "sha256": "54a33e6306546f27a1b2a537e717bdab105d4374812e07fcffcd40df3bbfbabb",
-      "last_modified": "2026-07-25T09:25:21.595202+00:00"
+      "size_bytes": 511374,
+      "sha256": "59c92a9960e917ef5d0d9d1480ff65128c81d8e0f775a58b0c2c2d3c73a3ca19",
+      "last_modified": "2026-08-02T05:59:58.748434+00:00"
     },
     {
       "path": "docs/gestaltview-v2.manifest.md",
       "category": "doc",
-      "size_bytes": 45155,
-      "sha256": "f2ca7b836a471dc1188a61e81db94441ba9b8f5b13fe641b73a93080cf42de36",
-      "last_modified": "2026-07-25T09:25:21.602202+00:00",
-      "word_count": 4638
+      "size_bytes": 47278,
+      "sha256": "3ccfcccb18cc4607976b580435d01bb84ad386a6fc05fda30a2836baed62b03b",
+      "last_modified": "2026-08-02T05:59:58.750434+00:00",
+      "word_count": 4799
+    },
+    {
+      "path": "docs/integrations/insight-bot-runtime.md",
+      "category": "doc",
+      "size_bytes": 2769,
+      "sha256": "5e0cb612a94ad978afd559bc45f48278a1b2869c662e8b559ee312d3a9c5b845",
+      "last_modified": "2026-07-30T19:44:56.084877+00:00",
+      "word_count": 360
     },
     {
       "path": "docs/launch/phase6-schema-fit-audit-2026-07-27.md",
@@ -12335,6 +12638,14 @@
       "sha256": "985e8b4cb70f1b634194b4b4b3e0b030767e34ebf2ceca43a6fc9f191a636202",
       "last_modified": "2026-07-27T22:37:44.771321+00:00",
       "word_count": 922
+    },
+    {
+      "path": "docs/launch/relationship-first-requisition.md",
+      "category": "doc",
+      "size_bytes": 3486,
+      "sha256": "768e64e20987222e6e07a5433cc08b718e2dc5e0ffa1b1672e6e392d67d32953",
+      "last_modified": "2026-07-29T03:20:52.661889+00:00",
+      "word_count": 493
     },
     {
       "path": "docs/license.md",
@@ -12455,6 +12766,14 @@
       "sha256": "93e546d4d988d2b57d7f3a4e49df16055bd6f4231bf936d0889ad1360b3ac03f",
       "last_modified": "2026-07-16T15:53:27+00:00",
       "word_count": 340
+    },
+    {
+      "path": "docs/shopify/phase-0-offer-and-security-audit-2026-08-01.md",
+      "category": "doc",
+      "size_bytes": 3822,
+      "sha256": "73b004f6a4fd7eb45a5124143c937a85997061b1ca8d3255b637b9200c246551",
+      "last_modified": "2026-08-01T12:56:59.348998+00:00",
+      "word_count": 505
     },
     {
       "path": "docs/supabase-free-tier-workaround-research-prompt.md",
@@ -12888,6 +13207,22 @@
       "sha256": "dda1bc61da6e8f359d7d84cb2d161b0cfa7c6a1cd3e72362a31fa7c5cc35f7e4",
       "last_modified": "2026-07-16T15:53:27+00:00",
       "word_count": 2612
+    },
+    {
+      "path": "orientation/GestaltView_Comprehensive_Overview.md",
+      "category": "orientation",
+      "size_bytes": 23485,
+      "sha256": "d7bad7443a109c0571d45eb54a2651d8adc8ccd6b31d2618405f821de688c11e",
+      "last_modified": "2026-07-30T18:33:34.993147+00:00",
+      "word_count": 3824
+    },
+    {
+      "path": "orientation/Thread-to-System-Map.md",
+      "category": "orientation",
+      "size_bytes": 14733,
+      "sha256": "2e1fcdb36528fe16d15c645ce91880f5bd1990d19847b7a265770fbebe320ceb",
+      "last_modified": "2026-07-30T18:33:34.994147+00:00",
+      "word_count": 1905
     },
     {
       "path": "orientation/build_orientation_checkpoint.py",
@@ -13602,6 +13937,34 @@
       "size_bytes": 20148,
       "sha256": "99f0caf540d4f0c2433fc06237a22edf2c5bb17c014b607fb52234fffee7a35a",
       "last_modified": "2026-07-28T03:19:29.069062+00:00"
+    },
+    {
+      "path": "supabase/migrations/20260728050045_relationship_first_requisition.sql",
+      "category": "migration",
+      "size_bytes": 7150,
+      "sha256": "d37b5024097724b1c7c9ad83c183e5f8010a82a2786014bf5919436e1b5940de",
+      "last_modified": "2026-07-29T03:20:52.668889+00:00"
+    },
+    {
+      "path": "supabase/migrations/20260729000000_insight_bot_runtime_bridge.sql",
+      "category": "migration",
+      "size_bytes": 2683,
+      "sha256": "6f8ca36343138ace5830b00ad0d996929419dc40a120d76b93d4b6e83e6de41f",
+      "last_modified": "2026-07-30T00:17:08.038188+00:00"
+    },
+    {
+      "path": "supabase/migrations/20260730010000_sanctuary_convergence_v1.sql",
+      "category": "migration",
+      "size_bytes": 2984,
+      "sha256": "b0e489218b2241e0d92f8aca1a996389d903f8da060bf8742d749f239b3f9d3e",
+      "last_modified": "2026-07-30T00:28:26.548164+00:00"
+    },
+    {
+      "path": "supabase/migrations/20260801161716_storefront_commerce_activation_v1.sql",
+      "category": "migration",
+      "size_bytes": 6337,
+      "sha256": "9f97babdd9302304afb66c8874679bedbe043ec05b600526718ba3dd393a0369",
+      "last_modified": "2026-08-01T16:18:39.140954+00:00"
     },
     {
       "path": "tests/api/inner-world-artifact-payload.test.ts",

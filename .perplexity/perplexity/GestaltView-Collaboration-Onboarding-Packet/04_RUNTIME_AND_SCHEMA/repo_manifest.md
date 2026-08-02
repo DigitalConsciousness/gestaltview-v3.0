@@ -1,9 +1,9 @@
 # GestaltView v2 — Repository Manifest
 
-> Generated: `2026-07-28T03:57:58.268078+00:00`
+> Generated: `2026-08-02T06:00:11.136253+00:00`
 > Branch: `main`
-> Commit: `99a410970dc5`
-> 99a4109 commit
+> Commit: `91369064c48e`
+> 9136906 commit
 
 ---
 
@@ -11,32 +11,32 @@
 
 | Metric | Value |
 |---|---|
-| Total files | 1504 |
-| Total size | 15524.7 KB |
-| Routes | 115 |
-| API endpoints | 206 |
-| Canonical docs | 163 |
-| Test inventory | 199 |
-| Uncommitted files | 13 |
+| Total files | 1542 |
+| Total size | 15839.8 KB |
+| Routes | 118 |
+| API endpoints | 211 |
+| Canonical docs | 169 |
+| Test inventory | 206 |
+| Uncommitted files | 12 |
 
 ### Files by Category
 
-- **api**: 213
+- **api**: 218
 - **canonical**: 11
-- **component**: 253
-- **config**: 16
+- **component**: 255
+- **config**: 17
 - **data**: 16
-- **doc**: 147
-- **migration**: 98
-- **orientation**: 7
+- **doc**: 151
+- **migration**: 102
+- **orientation**: 9
 - **other**: 22
-- **page**: 78
+- **page**: 81
 - **route**: 2
 - **script**: 69
-- **shared**: 110
-- **source**: 262
+- **shared**: 113
+- **source**: 269
 - **style**: 6
-- **test**: 194
+- **test**: 201
 
 ---
 
@@ -103,6 +103,7 @@
 | `/codex` | `client/src/App.tsx` |
 | `/cog-os` | `client/src/App.tsx` |
 | `/collaboration-proof` | `client/src/App.tsx` |
+| `/collaborator-requisition` | `client/src/App.tsx` |
 | `/consulting` | `client/src/App.tsx` |
 | `/contact` | `client/src/App.tsx` |
 | `/continuum-codex` | `client/src/App.tsx` |
@@ -162,6 +163,8 @@
 | `/signin` | `client/src/App.tsx` |
 | `/signup` | `client/src/App.tsx` |
 | `/spotify/callback` | `client/src/App.tsx` |
+| `/store` | `client/src/App.tsx` |
+| `/store/artifacts/:handle` | `client/src/App.tsx` |
 | `/symbiocoder` | `client/src/App.tsx` |
 | `/terms` | `client/src/App.tsx` |
 | `/transcriptory` | `client/src/App.tsx` |
@@ -210,7 +213,7 @@
 | `/api/_lib/requestGuard` | `api/_lib/requestGuard.ts` | 2808 bytes |
 | `/api/_lib/response` | `api/_lib/response.ts` | 2106 bytes |
 | `/api/_lib/sentry` | `api/_lib/sentry.ts` | 5997 bytes |
-| `/api/_lib/supabase` | `api/_lib/supabase.ts` | 51447 bytes |
+| `/api/_lib/supabase` | `api/_lib/supabase.ts` | 52140 bytes |
 | `/api/_lib/supabaseOidc` | `api/_lib/supabaseOidc.ts` | 6722 bytes |
 | `/api/_lib/transcriptory` | `api/_lib/transcriptory.ts` | 7552 bytes |
 | `/api/_lib/user` | `api/_lib/user.ts` | 638 bytes |
@@ -268,7 +271,7 @@
 | `/api/embodiment/list` | `api/embodiment/list.ts` | 1290 bytes |
 | `/api/embodiment/upsert` | `api/embodiment/upsert.ts` | 2612 bytes |
 | `/api/embodiments/by-route` | `api/embodiments/by-route.ts` | 2941 bytes |
-| `/api/gate/[...path]` | `api/gate/[...path].ts` | 41 bytes |
+| `/api/gate/[...path]` | `api/gate/[...path].ts` | 106 bytes |
 | `/api/gate/build-job-regenerate` | `api/gate/build-job-regenerate.ts` | 369 bytes |
 | `/api/gate/build-job-run` | `api/gate/build-job-run.ts` | 362 bytes |
 | `/api/gate/checkout` | `api/gate/checkout.ts` | 254 bytes |
@@ -279,7 +282,7 @@
 | `/api/gate/order-download` | `api/gate/order-download.ts` | 357 bytes |
 | `/api/gate/order-redeem` | `api/gate/order-redeem.ts` | 355 bytes |
 | `/api/gate/support-request` | `api/gate/support-request.ts` | 261 bytes |
-| `/api/gate/webhook-stripe` | `api/gate/webhook-stripe.ts` | 264 bytes |
+| `/api/gate/webhook-stripe` | `api/gate/webhook-stripe.ts` | 329 bytes |
 | `/api/gen-engine/ambient-scan` | `api/gen-engine/ambient-scan.ts` | 565 bytes |
 | `/api/gen-engine/artifact` | `api/gen-engine/artifact.ts` | 1648 bytes |
 | `/api/gen-engine/artifacts` | `api/gen-engine/artifacts.ts` | 10004 bytes |
@@ -299,6 +302,8 @@
 | `/api/inner-world/files` | `api/inner-world/files.ts` | 4731 bytes |
 | `/api/inner-world/files/[id]` | `api/inner-world/files/[id].ts` | 2430 bytes |
 | `/api/inner-world/files/[id]/share` | `api/inner-world/files/[id]/share.ts` | 1989 bytes |
+| `/api/insight-bot/execute` | `api/insight-bot/execute.ts` | 4091 bytes |
+| `/api/insight-bot/respond` | `api/insight-bot/respond.ts` | 4962 bytes |
 | `/api/insights` | `api/insights.ts` | 7231 bytes |
 | `/api/keep-alive` | `api/keep-alive.ts` | 6533 bytes |
 | `/api/llm-proxy` | `api/llm-proxy.ts` | 7644 bytes |
@@ -339,14 +344,17 @@
 | `/api/resume-rockstar/score-section` | `api/resume-rockstar/score-section.ts` | 1863 bytes |
 | `/api/runtime-handoffs` | `api/runtime-handoffs/index.ts` | 3156 bytes |
 | `/api/runtime-handoffs/[id]` | `api/runtime-handoffs/[id].ts` | 3973 bytes |
-| `/api/sanctuary/journal` | `api/sanctuary/journal.ts` | 3046 bytes |
+| `/api/sanctuary/journal` | `api/sanctuary/journal.ts` | 5390 bytes |
 | `/api/sanctuary/journals` | `api/sanctuary/journals.ts` | 40 bytes |
-| `/api/sanctuary/scrapbook` | `api/sanctuary/scrapbook.ts` | 6998 bytes |
+| `/api/sanctuary/scrapbook` | `api/sanctuary/scrapbook.ts` | 8476 bytes |
 | `/api/schema/dashboard` | `api/schema/dashboard.ts` | 1458 bytes |
 | `/api/session/dashboard` | `api/session/dashboard.ts` | 21993 bytes |
 | `/api/session/memory` | `api/session/memory.ts` | 5745 bytes |
 | `/api/session/state` | `api/session/state.ts` | 1320 bytes |
 | `/api/sessionRecap` | `api/sessionRecap.ts` | 3731 bytes |
+| `/api/storefront/activation-receipt` | `api/storefront/activation-receipt.ts` | 1203 bytes |
+| `/api/storefront/catalog` | `api/storefront/catalog.ts` | 988 bytes |
+| `/api/storefront/webhook-shopify` | `api/storefront/webhook-shopify.ts` | 2500 bytes |
 | `/api/stripe/agent-trainer-checkout` | `api/stripe/agent-trainer-checkout.ts` | 6688 bytes |
 | `/api/stripe/checkout` | `api/stripe/checkout.ts` | 3980 bytes |
 | `/api/stripe/stripe-webhook` | `api/stripe/stripe-webhook.ts` | 100 bytes |
@@ -386,7 +394,7 @@
 | `/api/transcriptory/captures/[id]/handoff` | `api/transcriptory/captures/[id]/handoff.ts` | 2173 bytes |
 | `/api/transcriptory/sessions` | `api/transcriptory/sessions.ts` | 2168 bytes |
 | `/api/transcriptory/sessions/[id]` | `api/transcriptory/sessions/[id].ts` | 2252 bytes |
-| `/api/transcriptory/transcribe` | `api/transcriptory/transcribe.ts` | 20916 bytes |
+| `/api/transcriptory/transcribe` | `api/transcriptory/transcribe.ts` | 21842 bytes |
 | `/api/vibecoder/analyze` | `api/vibecoder/analyze.ts` | 3230 bytes |
 | `/api/voice/billy` | `api/voice/billy.ts` | 5260 bytes |
 | `/api/workbook/items` | `api/workbook/items.ts` | 4556 bytes |
@@ -450,6 +458,7 @@
 - `api/__tests__/gen-engine.test.ts`
 - `api/__tests__/identity-memory-write.test.ts`
 - `api/__tests__/identity-policy.test.ts`
+- `api/__tests__/insight-bot-contracts.test.ts`
 - `api/__tests__/keep-alive.test.ts`
 - `api/__tests__/launch-auth-hardening.test.ts`
 - `api/__tests__/lib.test.ts`
@@ -489,6 +498,7 @@
 - `client/src/tests/blackboard-di-routing.test.ts`
 - `client/src/tests/blackboard-profile-pipeline-routing.test.ts`
 - `client/src/tests/blackboard-recap-artifacts.test.ts`
+- `client/src/tests/blackboard-runtime-handoffs.test.ts`
 - `client/src/tests/bucket-drops.test.ts`
 - `client/src/tests/creation-corner-artifacts.test.ts`
 - `client/src/tests/creation-corner-blueprint-handoff.test.ts`
@@ -522,6 +532,7 @@
 - `client/src/tests/musicaldna-spotify.test.ts`
 - `client/src/tests/nextgen-render-client.test.ts`
 - `client/src/tests/personas.test.ts`
+- `client/src/tests/phase7-three-room-proof.test.ts`
 - `client/src/tests/profile-preferences.test.ts`
 - `client/src/tests/profilePipeline.capture.test.ts`
 - `client/src/tests/profilePipeline.provenance.test.ts`
@@ -530,6 +541,7 @@
 - `client/src/tests/rendering-format-aliases.test.ts`
 - `client/src/tests/room-state.test.ts`
 - `client/src/tests/roundtable-mention-parser.test.ts`
+- `client/src/tests/sanctuary-runtime-handoffs.test.ts`
 - `client/src/tests/sandbox-artifacts.test.ts`
 - `client/src/tests/scaffold-storage.test.ts`
 - `client/src/tests/session-recap-download.test.ts`
@@ -549,12 +561,15 @@
 - `scripts/test-orientation-checkin.sh`
 - `server/__tests__/council-persona-health.test.ts`
 - `server/__tests__/council-runner.test.ts`
+- `server/__tests__/storefront-commerce-activation.test.ts`
+- `server/__tests__/storefront-shopify.test.ts`
 - `server/__tests__/trainer-governance.test.ts`
 - `server/__tests__/trainer-hyperagent-migration.test.ts`
 - `shared/embodiment/profile-contract.test.ts`
 - `shared/gravity/protocol.test.ts`
 - `shared/orchestration/execution.test.ts`
 - `shared/orchestration/workers.test.ts`
+- `shared/sanctuary/contracts.test.ts`
 - `tests/api/inner-world-artifact-payload.test.ts`
 - `tests/api/render-engine.integration.test.ts`
 - `tests/api/render-idempotency.test.ts`
@@ -634,7 +649,7 @@
 | `config/MANIFESTINGEST.md` | 287 | 2124 bytes |
 | `docs/20260420_schema_delta.md` | 245 | 2106 bytes |
 | `docs/AIFlow.md` | 1219 | 9797 bytes |
-| `docs/APIFlow.md` | 1672 | 12523 bytes |
+| `docs/APIFlow.md` | 1810 | 13635 bytes |
 | `docs/ArchitecturalStructure.md` | 1539 | 13729 bytes |
 | `docs/BrandVoice.md` | 2187 | 14060 bytes |
 | `docs/CODEX_ALIGNMENT_SPEC.md` | 443 | 3703 bytes |
@@ -647,7 +662,7 @@
 | `docs/ContinuityStack.md` | 412 | 3070 bytes |
 | `docs/CoreOSWorkflowAndKnowledgeSynthesis.md` | 518 | 4371 bytes |
 | `docs/CurrentState.CoreOSAddendum-2026-05-07.md` | 245 | 1795 bytes |
-| `docs/CurrentState.md` | 69381 | 565010 bytes |
+| `docs/CurrentState.md` | 72824 | 594383 bytes |
 | `docs/Deep_Dive_Into_GestaltView_By_Perplexity.md` | 6422 | 44705 bytes |
 | `docs/DirectoryMapAndWorkflow.md` | 532 | 3791 bytes |
 | `docs/GIL_Protocol.md` | 265 | 2414 bytes |
@@ -691,6 +706,7 @@
 | `docs/adr/003-perplexity-computer-tools.md` | 404 | 3226 bytes |
 | `docs/agent-trainer-package-scope.md` | 395 | 2880 bytes |
 | `docs/audits/codex-artifact-rendering-pipeline-audit.md` | 2234 | 16811 bytes |
+| `docs/audits/gestaltview-app-runtime-layered-audit-2026-07-28.md` | 1038 | 7998 bytes |
 | `docs/billy-founder-session-persistence.md` | 718 | 4922 bytes |
 | `docs/billy-mode-switch-design.md` | 665 | 4308 bytes |
 | `docs/embodiment/EMBODIMENT_CHAT_PLANE_IMPLEMENTATION_PLAN.md` | 156 | 1197 bytes |
@@ -701,8 +717,10 @@
 | `docs/embodiment/EMBODIMENT_OPEN_QUESTIONS.md` | 216 | 1425 bytes |
 | `docs/embodiment/EMBODIMENT_RUNTIME_GAP_MATRIX.md` | 367 | 2192 bytes |
 | `docs/embodiment/PROFILE_DISTINCTIVENESS_MATRIX.md` | 311 | 1901 bytes |
-| `docs/gestaltview-v2.manifest.md` | 4638 | 45155 bytes |
+| `docs/gestaltview-v2.manifest.md` | 4799 | 47278 bytes |
+| `docs/integrations/insight-bot-runtime.md` | 360 | 2769 bytes |
 | `docs/launch/phase6-schema-fit-audit-2026-07-27.md` | 922 | 9484 bytes |
+| `docs/launch/relationship-first-requisition.md` | 493 | 3486 bytes |
 | `docs/license.md` | 793 | 5556 bytes |
 | `docs/md-refresh-status-2026-03-24.md` | 200 | 1899 bytes |
 | `docs/operation-render/CODEX_FULL_SWEEP_HANDOFF.md` | 251 | 2600 bytes |
@@ -718,6 +736,7 @@
 | `docs/react_flow_mind_maps.md` | 3429 | 23374 bytes |
 | `docs/rendering/RenderingEngineGuide.md` | 713 | 5392 bytes |
 | `docs/schema-alignment-gap-map.md` | 340 | 2751 bytes |
+| `docs/shopify/phase-0-offer-and-security-audit-2026-08-01.md` | 505 | 3822 bytes |
 | `docs/supabase-free-tier-workaround-research-prompt.md` | 683 | 4949 bytes |
 | `docs/superpowers/plans/2026-05-25-gestaltview-di-runtime.md` | 4598 | 44112 bytes |
 | `docs/superpowers/plans/2026-06-21-tribunal-roundtable-redesign.md` | 741 | 6169 bytes |
@@ -766,6 +785,8 @@
 | `docs/wikis/SymbioCoder_v2.0-wiki-v1.md` | 20465 | 199102 bytes |
 | `orientation/CurrentState.md` | 582 | 4737 bytes |
 | `orientation/GAP_AUDIT_2026-06.md` | 2612 | 23491 bytes |
+| `orientation/GestaltView_Comprehensive_Overview.md` | 3824 | 23485 bytes |
+| `orientation/Thread-to-System-Map.md` | 1905 | 14733 bytes |
 | `scripts/README.md` | 553 | 3977 bytes |
 | `shared/orchestration/SKILL.md` | 732 | 5254 bytes |
 
@@ -773,22 +794,21 @@
 
 ## Git Status
 
-13 uncommitted change(s):
+12 uncommitted change(s):
 
 ```
-M supabase/config.toml
- M supabase/migrations/20260330115505_trainer_security_hardening.sql
- M supabase/migrations/20260330120000_trainer_core.sql
- M supabase/migrations/20260410200000_resolve_legacy_tables_rls.sql
- M supabase/migrations/20260420150000_human_continuity_schema.sql
- M supabase/migrations/20260429120000_gestaltview_module_registry.sql
- M supabase/migrations/20260601000300_profile_pipeline_v1_backfill.sql
- M supabase/migrations/20260616000100_identity_subject_human_profiles.sql
- M supabase/migrations/20260617131000_create_portrait_inference_runs.sql
- M supabase/migrations/20260617133000_create_portrait_helper_functions.sql
- M supabase/migrations/202607080001_operation_render_reasoning_voice.sql
-?? supabase/migrations/20260728030146_defer_trainer_security_hardening_until_core_exists.sql
-?? supabase/migrations/20260728030522_deferred_human_continuity_repair.sql
+M .perplexity/CurrentState.md
+ M .perplexity/REPO_MANIFEST.json
+ M .perplexity/REPO_MANIFEST.md
+ M .perplexity/REPO_README.md
+ M .perplexity/SYNC_MANIFEST.json
+ M .perplexity/agents-skills-manifest.json
+ M .perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.json
+ M .perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.md
+ M .perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/07_CURRENT_STATE_AND_EVIDENCE/CurrentState.md
+ M .snapshots/config.json
+ M docs/gestaltview-v2.manifest.json
+ M docs/gestaltview-v2.manifest.md
 ```
 
 ---

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T03:57:58.715Z",
+  "generatedAt": "2026-08-02T06:00:11.203Z",
   "contextContract": "gestaltview.di-context.v1",
   "sourceRoot": ".",
   "payloadRoot": "perplexity",
@@ -8,37 +8,37 @@
     {
       "source": "docs/CurrentState.md",
       "target": "CurrentState.md",
-      "sha256": "c8c1e102d21f370a5c560b094f6bb5e3e3d48a56864e77237e60ce8d402f68c3",
+      "sha256": "ca1aa24fbb2d123ba29b91adbc92210a6d1031d8a77adabf8c3d58635820aefd",
       "inSync": true
     },
     {
       "source": "docs/CurrentState.md",
       "target": "perplexity/GestaltView-Collaboration-Onboarding-Packet/07_CURRENT_STATE_AND_EVIDENCE/CurrentState.md",
-      "sha256": "c8c1e102d21f370a5c560b094f6bb5e3e3d48a56864e77237e60ce8d402f68c3",
+      "sha256": "ca1aa24fbb2d123ba29b91adbc92210a6d1031d8a77adabf8c3d58635820aefd",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.json",
       "target": "REPO_MANIFEST.json",
-      "sha256": "36b6bb30c7c3a7df547103eb1f3e266aaa45d9d5cbeb8068229f925a5fb6fc74",
+      "sha256": "db804f325d206d095fb25c71244681c750414b022bb825f2c57089401d0e3de2",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.md",
       "target": "REPO_MANIFEST.md",
-      "sha256": "48c3e96332ae22500f8b042c7986064596489f85bf21b918d6231c5d7d59d7b5",
+      "sha256": "aad1bab6384d1d2f4e07408434bf0f57ea77366fac37419dde002b0081ec99ee",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.json",
       "target": "perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.json",
-      "sha256": "36b6bb30c7c3a7df547103eb1f3e266aaa45d9d5cbeb8068229f925a5fb6fc74",
+      "sha256": "db804f325d206d095fb25c71244681c750414b022bb825f2c57089401d0e3de2",
       "inSync": true
     },
     {
       "source": "docs/gestaltview-v2.manifest.md",
       "target": "perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.md",
-      "sha256": "48c3e96332ae22500f8b042c7986064596489f85bf21b918d6231c5d7d59d7b5",
+      "sha256": "aad1bab6384d1d2f4e07408434bf0f57ea77366fac37419dde002b0081ec99ee",
       "inSync": true
     },
     {
@@ -68,7 +68,7 @@
     {
       "source": "README.md",
       "target": "REPO_README.md",
-      "sha256": "c0157c8abe9c16d58c6489eba12982531af64c25d973d7d5f60026bf19775dc1",
+      "sha256": "b2422274ab7cd6c7050d496ac4c4b735e2a6594597d7bb5f7406dfd20a421363",
       "inSync": true
     },
     {
@@ -80,7 +80,7 @@
     {
       "source": ".agents/skills/manifest.json",
       "target": "agents-skills-manifest.json",
-      "sha256": "0ef44e36e3864115ce197d3f7569ac8e4e2473f514fe312f287aec8149f43467",
+      "sha256": "2a3816a056d1b25fa11e7fd2d1acbdf6e3430bb26ac97ff0fbd11829431883d0",
       "inSync": true
     }
   ]

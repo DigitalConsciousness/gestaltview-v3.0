@@ -149,7 +149,8 @@
         "generated/",
         "gestaltview_supabase_recreation_package",
         "GestaltView_Vision_Blueprint_Package",
-        "agent_trainer"
+        "agent_trainer",
+        ".next"
 
    
     ],
