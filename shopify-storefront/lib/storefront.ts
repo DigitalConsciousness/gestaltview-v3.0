@@ -3,6 +3,7 @@ export const STOREFRONT_API_VERSION = "2026-07";
 export type OfferKind =
   | "orientation"
   | "artifact"
+  | "service"
   | "studio"
   | "self_serve_package"
   | "custom_collaborator"
@@ -49,6 +50,7 @@ export type StorefrontCatalog = {
 const offerKinds = new Set<OfferKind>([
   "orientation",
   "artifact",
+  "service",
   "studio",
   "self_serve_package",
   "custom_collaborator",
@@ -62,7 +64,25 @@ const commerceRoutes = new Set<CommerceRoute>([
   "hosted_signup",
 ]);
 
+export const sprintProduct: StorefrontProduct = {
+  id: "gid://shopify/Product/8985408208975",
+  handle: "project-convergence-sprint",
+  title: "GestaltView Project Convergence Sprint",
+  description: "A founder-led, evidence-backed convergence pass for one scattered project.",
+  offerKind: "service",
+  commerceRoute: "shopify_checkout",
+  image: null,
+  edition: null,
+  variants: [{
+    id: "gid://shopify/ProductVariant/46345021718607",
+    title: "Founding rate",
+    availableForSale: true,
+    price: { amount: "495.00", currencyCode: "USD" },
+  }],
+};
+
 const launchFallback: StorefrontProduct[] = [
+  sprintProduct,
   {
     id: "launch:orientation-dossier",
     handle: "enter-gestaltview-orientation-dossier",
@@ -281,12 +301,15 @@ export async function getStorefrontCatalog(): Promise<StorefrontCatalog> {
       errors?: unknown[];
     };
     if (payload.errors?.length) throw new Error("catalog_graphql_error");
+    const products = (payload.data?.products?.nodes ?? [])
+      .map(parseProduct)
+      .filter((product): product is StorefrontProduct => product !== null);
     return {
       source: "shopify",
       checkoutEnabled: process.env.STOREFRONT_CHECKOUT_ENABLED === "true",
-      products: (payload.data?.products?.nodes ?? [])
-        .map(parseProduct)
-        .filter((product): product is StorefrontProduct => product !== null),
+      products: products.some((product) => product.handle === sprintProduct.handle)
+        ? products
+        : [sprintProduct, ...products],
     };
   } catch (error) {
     console.error("[shopify-storefront] catalog unavailable", error instanceof Error ? error.message : "unknown");

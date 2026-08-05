@@ -100,7 +100,26 @@ const custom: OfferPresentation = {
   voiceProfile: "cheerful_infrastructure",
 };
 
+const convergenceSprint: OfferPresentation = {
+  manifestVersion: "1.0.0",
+  family: "Custom Systems Counter",
+  intents: ["preserve", "create", "evidence", "custom"],
+  plainPromise: "One trustworthy view of a scattered project, plus a coherent blueprint and one implementation-ready artifact.",
+  enters: ["One project", "Up to three repositories", "Up to 25 documents", "Only material explicitly supplied after private intake"],
+  happens: ["Keith leads an evidence-backed convergence pass", "Facts, inference, contradictions, and missing bridges stay distinguishable"],
+  dispenses: ["Evidence-calibrated system map", "Prioritized 30-day path", "One implementation-ready artifact", "45-minute review and handoff"],
+  firstReceipt: "Payment is verified first. The five-business-day clock starts only after private intake is accepted.",
+  exclusions: ["Implementation", "Unlimited material", "Automatic source import", "Guaranteed inclusion of every idea"],
+  proofLabel: "Inspect the complete Sprint contract",
+  proofHref: "/store/project-convergence-sprint",
+  activationMode: "human_handoff",
+  activationTime: "Five business days after intake acceptance",
+  configuration: [],
+  voiceProfile: "cheerful_infrastructure",
+};
+
 export function presentationFor(product: StorefrontProduct): OfferPresentation {
+  if (product.handle === "project-convergence-sprint") return convergenceSprint;
   if (product.handle === "continuity-starter") return { ...artifact, family: "Continuity Starter", intents: ["preserve", "continuity"], activationMode: "runtime", activationTime: "Not yet commissioned" };
   if (product.handle === "creation-station") return { ...artifact, family: "Creation Station", intents: ["preserve", "create"], activationMode: "hybrid", activationTime: "Not yet commissioned" };
   if (product.handle === "embodiment-workshop") return { ...custom, family: "Embodiment Workshop", intents: ["embodiment", "custom"], activationMode: "human_handoff", activationTime: "Not yet commissioned" };

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { intents, presentationFor, type IntentId } from "@/lib/offers";
@@ -24,16 +25,13 @@ export function FieldVendingMachine({ products, checkoutEnabled }: { products: S
     setCheckoutState("working");
     setCheckoutError(null);
     try {
-      const response = await fetch("/api/cart", {
+      const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ variantId: variant.id, offerHandle: product.handle, configuration }),
+        body: JSON.stringify({ handle: product.handle, manifestVersion: "1.0.0" }),
       });
-      const payload = (await response.json()) as { checkoutUrl?: string; activationClaimToken?: string; receiptPath?: string; error?: string };
+      const payload = (await response.json()) as { checkoutUrl?: string; error?: string };
       if (!response.ok || !payload.checkoutUrl) throw new Error(payload.error || "checkout_unavailable");
-      if (payload.activationClaimToken) {
-        localStorage.setItem("gestaltview:lastActivationClaim", JSON.stringify({ token: payload.activationClaimToken, offerHandle: product.handle, receiptPath: payload.receiptPath || "/activation", createdAt: new Date().toISOString() }));
-      }
       window.location.assign(payload.checkoutUrl);
     } catch {
       setCheckoutState("failed");
@@ -93,6 +91,7 @@ export function FieldVendingMachine({ products, checkoutEnabled }: { products: S
                     <div className="decision-rail">
                       {isFree ? <a className="dispense-button" href={primaryAppUrl(product.edition?.interactivePath || offer.proofHref)}>Open the free issue →</a> : null}
                       {isRequisition ? <a className="dispense-button" href={primaryAppUrl("/collaborator-requisition")}>Begin a scoped requisition →</a> : null}
+                      {product.handle === "project-convergence-sprint" ? <Link className="dispense-button" href="/store/project-convergence-sprint">Inspect the full Sprint contract →</Link> : null}
                       {canCheckout ? <button className="dispense-button" type="button" disabled={checkoutState === "working"} onClick={() => beginCheckout(product)}>{checkoutState === "working" ? "Shopify is preparing checkout…" : `Continue to Shopify · ${formatProductPrice(product)}`}</button> : null}
                       {!canCheckout && !isFree && !isRequisition ? <p className="unavailable-note">Checkout is not open for this compartment. No payment or configuration was submitted.</p> : null}
                       <p className="boundary-copy">Shopify owns price, cart, payment, taxes, discounts, and its order confirmation. GestaltView receives only the bounded activation event after server verification.</p>
