@@ -94,3 +94,11 @@ node_modules
 
 .env*
 !.env.phase5.example
+
+# Local Netlify folder
+.netlify
+
+# amplify
+.amplify
+amplify_outputs*
+amplifyconfiguration*
