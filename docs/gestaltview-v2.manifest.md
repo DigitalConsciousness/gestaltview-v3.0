@@ -1,9 +1,9 @@
 # GestaltView v2 — Repository Manifest
 
-> Generated: `2026-08-02T06:00:11.136253+00:00`
+> Generated: `2026-08-05T02:46:39.654789+00:00`
 > Branch: `main`
-> Commit: `91369064c48e`
-> 9136906 commit
+> Commit: `003203dd89cc`
+> 003203d feat: Implement storefront offer and security features
 
 ---
 
@@ -11,13 +11,13 @@
 
 | Metric | Value |
 |---|---|
-| Total files | 1542 |
-| Total size | 15839.8 KB |
+| Total files | 1544 |
+| Total size | 15862.5 KB |
 | Routes | 118 |
 | API endpoints | 211 |
-| Canonical docs | 169 |
+| Canonical docs | 170 |
 | Test inventory | 206 |
-| Uncommitted files | 12 |
+| Uncommitted files | 0 |
 
 ### Files by Category
 
@@ -26,8 +26,8 @@
 - **component**: 255
 - **config**: 17
 - **data**: 16
-- **doc**: 151
-- **migration**: 102
+- **doc**: 152
+- **migration**: 103
 - **orientation**: 9
 - **other**: 22
 - **page**: 81
@@ -662,7 +662,7 @@
 | `docs/ContinuityStack.md` | 412 | 3070 bytes |
 | `docs/CoreOSWorkflowAndKnowledgeSynthesis.md` | 518 | 4371 bytes |
 | `docs/CurrentState.CoreOSAddendum-2026-05-07.md` | 245 | 1795 bytes |
-| `docs/CurrentState.md` | 72824 | 594383 bytes |
+| `docs/CurrentState.md` | 73008 | 595938 bytes |
 | `docs/Deep_Dive_Into_GestaltView_By_Perplexity.md` | 6422 | 44705 bytes |
 | `docs/DirectoryMapAndWorkflow.md` | 532 | 3791 bytes |
 | `docs/GIL_Protocol.md` | 265 | 2414 bytes |
@@ -717,7 +717,7 @@
 | `docs/embodiment/EMBODIMENT_OPEN_QUESTIONS.md` | 216 | 1425 bytes |
 | `docs/embodiment/EMBODIMENT_RUNTIME_GAP_MATRIX.md` | 367 | 2192 bytes |
 | `docs/embodiment/PROFILE_DISTINCTIVENESS_MATRIX.md` | 311 | 1901 bytes |
-| `docs/gestaltview-v2.manifest.md` | 4799 | 47278 bytes |
+| `docs/gestaltview-v2.manifest.md` | 4821 | 47892 bytes |
 | `docs/integrations/insight-bot-runtime.md` | 360 | 2769 bytes |
 | `docs/launch/phase6-schema-fit-audit-2026-07-27.md` | 922 | 9484 bytes |
 | `docs/launch/relationship-first-requisition.md` | 493 | 3486 bytes |
@@ -730,6 +730,7 @@
 | `docs/operation-render/acceptance-checklist.md` | 375 | 2458 bytes |
 | `docs/operation-render/dependency-audit.md` | 600 | 4251 bytes |
 | `docs/operation-render/runtime-page-audit.md` | 387 | 2649 bytes |
+| `docs/operations/project-convergence-sprint-commissioning.md` | 313 | 2328 bytes |
 | `docs/orchestration/execution-spine.md` | 408 | 3157 bytes |
 | `docs/origin-story.md` | 585 | 4036 bytes |
 | `docs/paradox-financial-integrity-framing.md` | 729 | 4573 bytes |
@@ -794,22 +795,7 @@
 
 ## Git Status
 
-12 uncommitted change(s):
-
-```
-M .perplexity/CurrentState.md
- M .perplexity/REPO_MANIFEST.json
- M .perplexity/REPO_MANIFEST.md
- M .perplexity/REPO_README.md
- M .perplexity/SYNC_MANIFEST.json
- M .perplexity/agents-skills-manifest.json
- M .perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.json
- M .perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.md
- M .perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/07_CURRENT_STATE_AND_EVIDENCE/CurrentState.md
- M .snapshots/config.json
- M docs/gestaltview-v2.manifest.json
- M docs/gestaltview-v2.manifest.md
-```
+✓ Working tree clean.
 
 ---
 

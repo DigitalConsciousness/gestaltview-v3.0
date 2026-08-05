@@ -1,3 +1,34 @@
+# CurrentState — Project Convergence Sprint Phase A integrated (2026-08-05)
+
+**Scope:** Locally integrate the approved `$495` Project Convergence Sprint
+commerce boundary into the existing Next.js field-vending storefront. No
+deployment, production migration, secret change, Shopify mutation, test charge,
+refund, publication, commit, push, or PR is included.
+
+## Changed
+
+- Added the full Sprint contract at `/store/project-convergence-sprint` and made
+  it the first paid bay in the existing vending-machine shell.
+- Replaced the browser-held pre-payment activation claim with the approved
+  order/email claim at `/activate`. Tokens are signed, fragment-delivered,
+  pepper-hashed, 30-minute, one-time values and are not stored in browser state.
+- Reduced the storefront commerce surface to four functions: checkout, raw-byte
+  Shopify webhook, claim, and readiness health.
+- Added exact product/variant/manifest mapping, `$495.00 USD` quantity-one and
+  no-discount validation, transactional event processing, stale-worker fencing,
+  refund/cancellation preservation, and service-only Supabase access.
+- Added the canonical hardening migration and focused contract tests plus the
+  protected-preview commissioning and rollback procedure.
+
+## Boundary
+
+Checkout remains disabled. Live Shopify inventory/product/app state, deployed
+secrets, Vercel function shape, Supabase migration/RLS state, controlled
+order/replay/claim/refund/cancellation, and public launch remain commissioning
+gates requiring separate authorization and observed evidence.
+
+---
+
 # CurrentState — Shopify storefront Phase 0/1 implemented (2026-08-01)
 
 **Scope:** Implemented the approved Shopify storefront specification through its

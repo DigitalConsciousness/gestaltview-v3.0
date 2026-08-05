@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-08-02T06:00:11.136253+00:00",
+    "generated_at": "2026-08-05T02:46:39.654789+00:00",
     "generator": "scripts/generate_repo_manifest.py",
     "repo": "gestaltview-v2",
     "version": "2.0",
@@ -74,11 +74,11 @@
     ]
   },
   "summary": {
-    "total_files": 1542,
-    "total_size_bytes": 16219950,
-    "total_size_kb": 15839.8,
+    "total_files": 1544,
+    "total_size_bytes": 16243206,
+    "total_size_kb": 15862.5,
     "files_by_category": {
-      "doc": 151,
+      "doc": 152,
       "other": 22,
       "data": 16,
       "source": 269,
@@ -93,35 +93,22 @@
       "shared": 113,
       "script": 69,
       "orientation": 9,
-      "migration": 102
+      "migration": 103
     },
     "routes_count": 118,
     "api_endpoints_count": 211,
-    "canonical_docs_count": 169,
+    "canonical_docs_count": 170,
     "test_scripts_count": 206,
     "git_branch": "main",
-    "git_commit": "91369064c48e",
-    "git_dirty_files": 12
+    "git_commit": "003203dd89cc",
+    "git_dirty_files": 0
   },
   "git": {
     "branch": "main",
-    "commit_sha": "91369064c48eef3da865a1143d380e0bf0dbe1d6",
-    "commit_message": "9136906 commit",
-    "commit_date": "2026-08-01T16:28:27Z",
-    "dirty_files": [
-      "M .perplexity/CurrentState.md",
-      " M .perplexity/REPO_MANIFEST.json",
-      " M .perplexity/REPO_MANIFEST.md",
-      " M .perplexity/REPO_README.md",
-      " M .perplexity/SYNC_MANIFEST.json",
-      " M .perplexity/agents-skills-manifest.json",
-      " M .perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.json",
-      " M .perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/04_RUNTIME_AND_SCHEMA/repo_manifest.md",
-      " M .perplexity/perplexity/GestaltView-Collaboration-Onboarding-Packet/07_CURRENT_STATE_AND_EVIDENCE/CurrentState.md",
-      " M .snapshots/config.json",
-      " M docs/gestaltview-v2.manifest.json",
-      " M docs/gestaltview-v2.manifest.md"
-    ]
+    "commit_sha": "003203dd89cc0139b7711b556a05bd3763f3e9fc",
+    "commit_message": "003203d feat: Implement storefront offer and security features",
+    "commit_date": "2026-08-05T02:45:46Z",
+    "dirty_files": []
   },
   "dependencies": {
     "name": "gestaltview-v2",
@@ -2331,10 +2318,10 @@
     {
       "path": "docs/CurrentState.md",
       "category": "doc",
-      "size_bytes": 594383,
-      "sha256": "ca1aa24fbb2d123ba29b91adbc92210a6d1031d8a77adabf8c3d58635820aefd",
-      "last_modified": "2026-08-01T16:26:16.944936+00:00",
-      "word_count": 72824
+      "size_bytes": 595938,
+      "sha256": "130c7bb44e9b360179e38b57ea8dc315011f58192b7788b09d1fd41c3cb2fb58",
+      "last_modified": "2026-08-05T02:38:48.948807+00:00",
+      "word_count": 73008
     },
     {
       "path": "docs/Deep_Dive_Into_GestaltView_By_Perplexity.md",
@@ -2771,10 +2758,10 @@
     {
       "path": "docs/gestaltview-v2.manifest.md",
       "category": "doc",
-      "size_bytes": 47278,
-      "sha256": "3ccfcccb18cc4607976b580435d01bb84ad386a6fc05fda30a2836baed62b03b",
-      "last_modified": "2026-08-02T05:59:58.750434+00:00",
-      "word_count": 4799
+      "size_bytes": 47892,
+      "sha256": "aad1bab6384d1d2f4e07408434bf0f57ea77366fac37419dde002b0081ec99ee",
+      "last_modified": "2026-08-02T06:00:11.188433+00:00",
+      "word_count": 4821
     },
     {
       "path": "docs/integrations/insight-bot-runtime.md",
@@ -2871,6 +2858,14 @@
       "sha256": "718dbefa2e7713cc4342b0e591e5df2243b95053b98a9a4fb1d9e35f83604345",
       "last_modified": "2026-07-16T15:53:27+00:00",
       "word_count": 387
+    },
+    {
+      "path": "docs/operations/project-convergence-sprint-commissioning.md",
+      "category": "doc",
+      "size_bytes": 2328,
+      "sha256": "9830c1dae02796308791d6fe218fb3e37424cb3f5420f24ef9717309a5042a18",
+      "last_modified": "2026-08-05T02:43:14.016804+00:00",
+      "word_count": 313
     },
     {
       "path": "docs/orchestration/execution-spine.md",
@@ -12164,10 +12159,10 @@
     {
       "path": "docs/CurrentState.md",
       "category": "doc",
-      "size_bytes": 594383,
-      "sha256": "ca1aa24fbb2d123ba29b91adbc92210a6d1031d8a77adabf8c3d58635820aefd",
-      "last_modified": "2026-08-01T16:26:16.944936+00:00",
-      "word_count": 72824
+      "size_bytes": 595938,
+      "sha256": "130c7bb44e9b360179e38b57ea8dc315011f58192b7788b09d1fd41c3cb2fb58",
+      "last_modified": "2026-08-05T02:38:48.948807+00:00",
+      "word_count": 73008
     },
     {
       "path": "docs/Deep_Dive_Into_GestaltView_By_Perplexity.md",
@@ -12611,17 +12606,17 @@
     {
       "path": "docs/gestaltview-v2.manifest.json",
       "category": "data",
-      "size_bytes": 511374,
-      "sha256": "59c92a9960e917ef5d0d9d1480ff65128c81d8e0f775a58b0c2c2d3c73a3ca19",
-      "last_modified": "2026-08-02T05:59:58.748434+00:00"
+      "size_bytes": 512086,
+      "sha256": "db804f325d206d095fb25c71244681c750414b022bb825f2c57089401d0e3de2",
+      "last_modified": "2026-08-02T06:00:11.185433+00:00"
     },
     {
       "path": "docs/gestaltview-v2.manifest.md",
       "category": "doc",
-      "size_bytes": 47278,
-      "sha256": "3ccfcccb18cc4607976b580435d01bb84ad386a6fc05fda30a2836baed62b03b",
-      "last_modified": "2026-08-02T05:59:58.750434+00:00",
-      "word_count": 4799
+      "size_bytes": 47892,
+      "sha256": "aad1bab6384d1d2f4e07408434bf0f57ea77366fac37419dde002b0081ec99ee",
+      "last_modified": "2026-08-02T06:00:11.188433+00:00",
+      "word_count": 4821
     },
     {
       "path": "docs/integrations/insight-bot-runtime.md",
@@ -12718,6 +12713,14 @@
       "sha256": "718dbefa2e7713cc4342b0e591e5df2243b95053b98a9a4fb1d9e35f83604345",
       "last_modified": "2026-07-16T15:53:27+00:00",
       "word_count": 387
+    },
+    {
+      "path": "docs/operations/project-convergence-sprint-commissioning.md",
+      "category": "doc",
+      "size_bytes": 2328,
+      "sha256": "9830c1dae02796308791d6fe218fb3e37424cb3f5420f24ef9717309a5042a18",
+      "last_modified": "2026-08-05T02:43:14.016804+00:00",
+      "word_count": 313
     },
     {
       "path": "docs/orchestration/execution-spine.md",
@@ -13965,6 +13968,13 @@
       "size_bytes": 6337,
       "sha256": "9f97babdd9302304afb66c8874679bedbe043ec05b600526718ba3dd393a0369",
       "last_modified": "2026-08-01T16:18:39.140954+00:00"
+    },
+    {
+      "path": "supabase/migrations/202608040001_storefront_transactional_webhook_and_claims.sql",
+      "category": "migration",
+      "size_bytes": 18047,
+      "sha256": "0da03acc3fd53eb818ed94d9be75b5084f4334ed534aeedcca9d958b776d7db9",
+      "last_modified": "2026-08-05T02:38:29.901807+00:00"
     },
     {
       "path": "tests/api/inner-world-artifact-payload.test.ts",
